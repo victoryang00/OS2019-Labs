@@ -15,13 +15,13 @@ struct option {
   bool* target;
 };
 struct process {
-  pid_t pid = 0;
-  pid_t ppid = 0;
-  char name[32] = ""; // man 2 prctl -> maximum 16 bytes
-  char state = 'S';   // man 7 proc  -> character type
-  struct process *child = NULL; // child process
-  struct process *next = NULL;  // next process (same level)
-} rootProcess;
+  pid_t pid;
+  pid_t ppid;
+  char name[32]; // man 2 prctl -> maximum 16 bytes
+  char state;    // man 7 proc  -> character type
+  struct process *child; // child process
+  struct process *next;  // next process (same level)
+} rootProcess = {0, 0, "root", 'X', NULL, NULL};
 
 /* 3 functionality option of the program */
 static bool OP_SHOWPID = false;
@@ -41,6 +41,7 @@ int parseOptions(int, char*[]);
 int printPSTree();
 bool isNumber(char *);
 struct process readProcess(char *);
+void addProcessToTree(struct process *);
 
 /* main entry of the program */
 int main(int argc, char *argv[]) {
@@ -96,6 +97,9 @@ int printPSTree() {
     }  
   }
   closedir(dr);
+
+  // TODO: USE RECURSIVE METHOD TO PRINT THE TREE.
+
   return 0;
 }
 
@@ -114,5 +118,8 @@ struct process readProcess(char* pidStr) {
   sprintf(statFile, "/proc/%s/stat", pidStr);
   FILE* sfp = fopen(statFile, "r");
   fscanf(sfp, "%d (%s) %c %d", &proc->pid, proc->name, &proc->state, &proc->ppid);
+
+  // TODO: HOW TO ADD THE PROCESS TO PSTREE?
+
   return *proc;
 }
