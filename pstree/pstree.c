@@ -3,8 +3,8 @@
 #include <stdbool.h>
 
 struct option {
-  char* name,
-  bool* target
+  char* name;
+  bool* target;
 };
 
 const option[] = [
