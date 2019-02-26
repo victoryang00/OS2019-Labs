@@ -134,11 +134,13 @@ void readProcess(char* pidStr) {
 }
 
 struct process* findProcess(pid_t pid, struct process* cur) {
+  /* start from root if not given */
+  if (!cur) cur = &rootProcess;
+
   /* end of recursion (found) */
   if (cur->pid == pid) return cur;
 
-  /* start from root if not given */
-  if (!cur) cur = &rootProcess;
+  /* start of next recursion (go deeper or parallel) */
   struct process* result = NULL;  
   if (cur->child) {
     result = findProcess(pid, cur->child);
