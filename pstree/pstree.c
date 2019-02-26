@@ -160,6 +160,7 @@ void addProcess(struct process* proc) {
   struct process* parent = findProcess(proc->ppid, NULL);
   if (!parent) {
     printf("no parent!\n");
+    assert(0);
     parent = &rootProcess;
   } else {
     printf("parent is %s\n", parent->name);
