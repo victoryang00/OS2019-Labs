@@ -105,7 +105,7 @@ bool isNumber(char *s) {
 
 struct process readProcess(char* pidStr) {
   char statFile[128] = "";
-  struct process *proc = new struct process;
+  struct process *proc = malloc(sizeof(struct process));
 
   sprintf(statFile, "/proc/%s/stat", pidStr);
   FILE* sfp = fopen(statFile, "r");
