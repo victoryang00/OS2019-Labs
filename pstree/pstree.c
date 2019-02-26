@@ -138,10 +138,7 @@ void readProcess(char* pidStr) {
   }  
 }
 
-struct process* findProcess(pid_t pid, struct process* cur) {
-  /* start from root if not given */
-  if (!cur) cur = &rootProcess;
-
+struct process* findProcess(pid_t pid, struct process* cur = &rootProcess) {
   /* end of recursion (found) */
   if (cur->pid == pid) return cur;
 
@@ -162,7 +159,7 @@ void addProcess(struct process* proc) {
   /* If the process is an orphan (parent is dead),
    * then it does not appear in the process tree. 
    * (same as pstree from UNIX. [really???]) */
-  struct process* parent = findProcess(proc->ppid, NULL);
+  struct process* parent = findProcess(proc->ppid);
   if (!parent) return;
   else {
     proc->parent = parent;
