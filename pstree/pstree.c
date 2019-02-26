@@ -17,7 +17,7 @@ struct option {
 struct process {
   pid_t pid;
   pid_t ppid;
-  char name[64];
+  char name[128];
   char status[8];
 };
 
