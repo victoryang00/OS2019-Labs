@@ -5,10 +5,9 @@
 int parseOptions(int, char*[]);
 
 int main(int argc, char *argv[]) {
-  printf("Hello, World!\n");
-  int NR_errop = parseOptions(argc, argv);
-  if (!NR_errop) {
-    fprintf(stderr, "Invalid option %s. Aborted.", argv[NR_errop]);
+  int NR_errop = 0;
+  if (!(NR_errop = parseOptions(argc, argv)) {
+    fprintf(stderr, "Invalid option \"%s\". Aborted.", argv[NR_errop]);
     return -1;
   } else {
     // parse OK
