@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>
+#include <dirent.h>
 #include <stdbool.h>
 
 /* define option struct (class) */
@@ -25,24 +26,25 @@ const int NR_OPTIONS = (int) sizeof(options) / sizeof(struct option);
 
 /* definition of functions */
 int parseOptions(int, char*[]);
-void printPSTree();
+int printPSTree();
+bool isNumber(char *);
 
 /* main entry of the program */
 int main(int argc, char *argv[]) {
   int ErrArgc = 0;
   if ((ErrArgc = parseOptions(argc, argv)) != 0) {
     /* option parse failed */
-    perror("Invalid option \"%s\". Aborted.\n", argv[ErrArgc]);
+    fprintf(stderr, "Invalid option \"%s\". Aborted.\n", argv[ErrArgc]);
     return -1;
   } else {
     /* option parse OK */
     if (OP_VERSION) {
       printf("pstree v0.0.0 from MiniLabs of OSLab.\n"
-          "By doowzs (Tianyun Zhang) [171860508].");
+          "By doowzs (Tianyun Zhang) [171860508].\n");
       return 0;
     } else {
-      printPSTree();
-      return 0;
+      int result = printPSTree();
+      return result;
     }
   }
 }
@@ -67,6 +69,22 @@ int parseOptions(int argc, char *argv[]) {
   return 0;
 }
 
-void printPSTree() {
-  //TODO: implement the function
+int printPSTree() {
+  DIR *dir = opendir("/proc");
+  if (dir = NULL) {
+    fprintf(stderr, "Error opening /proc folder. Aborted.\n");
+    return -1;
+  }
+  struct dirent *dp;
+  while ((dp = readdir(dr)) != NULL) {
+    if (isNumber(dp->d_name)) printf("%s\n", dp->d_name);
+  }
+}
+
+bool isNumber(char *s) {
+  int len = strlen(s);
+  for (int i = 0; i < len; ++i) {
+    if (!isdigit(s[i])) return false;
+  }
+  return true;
 }
