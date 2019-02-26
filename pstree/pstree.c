@@ -17,8 +17,8 @@ struct option {
 struct process {
   pid_t pid;
   pid_t ppid;
-  char* name;
-  char* status;
+  char name[64];
+  char status[8];
 };
 
 /* 3 functionality option of the program */
