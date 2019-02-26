@@ -32,8 +32,9 @@ struct process {
   pid_t ppid;
   char name[32]; // man 2 prctl -> maximum 16 bytes
   char state;    // man 7 proc  -> character type
-  struct process *child; // child process
-  struct process *next;  // next process (same level)
+  struct process *parent; // parent process
+  struct process *child;  // child process
+  struct process *next;   // next process (same level)
 } rootProcess = {0, 0, "root", 'X', NULL, NULL};
 
 /* 3 functionality option of the program */
@@ -56,6 +57,8 @@ bool isNumber(char*);
 void readProcess(char*);
 struct process* findProcess(pid_t, struct process*);
 void addProcess(struct process*);
+void printProcess(struct process*);
+void printParentProcesses(struct process*);
 
 /* main entry of the program */
 int main(int argc, char *argv[]) {
@@ -111,8 +114,7 @@ int printPSTree() {
   }
   closedir(dr);
 
-  // TODO: USE RECURSIVE METHOD TO PRINT THE TREE.
-
+  printProcess(0, &rootProcess);
   return 0;
 }
 
@@ -163,7 +165,22 @@ void addProcess(struct process* proc) {
   struct process* parent = findProcess(proc->ppid, NULL);
   if (!parent) return;
   else {
+    proc->parent = parent;
     proc->next = parent->child;
     parent->child = proc;
   }
+}
+
+void printProcess(struct process* proc) {
+  printParentProcesses(proc);
+  printf("%s", proc->name);
+  printf("\n");
+}
+
+void printParentProcesses(struct process* proc) {
+  /* Print the vertical lines of parent processes */
+  if (!proc->parent) return;
+  printParentProcesses(proc->parent);
+  printf("%*s", strlen(proc->name), "");
+  printf("---");
 }
