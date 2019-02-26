@@ -106,7 +106,6 @@ int printPSTree() {
   struct dirent *dp;
   while ((dp = readdir(dr)) != NULL) {
     if (isNumber(dp->d_name)) {
-      printf("%s\n", dp->d_name);
       readProcess(dp->d_name);
     }  
   }
