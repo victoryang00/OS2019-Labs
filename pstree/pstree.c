@@ -110,6 +110,6 @@ struct process readProcess(char* pidStr) {
 
   sprintf(statFile, "/proc/%s/stat", pidStr);
   FILE* sfp = fopen(statFile, "r");
-  fscanf(sfp, "%d (%s) %s %d", proc->pid, proc->name, proc->status, proc->ppid);
+  fscanf(sfp, "%d (%s) %s %d", &proc->pid, proc->name, proc->status, &proc->ppid);
   return *proc;
 }
