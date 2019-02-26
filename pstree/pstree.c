@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <assert.h>
-#include <bool.h>
+#include <stdbool.h>
 
 static bool option_P = false;
 
