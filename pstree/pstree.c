@@ -3,7 +3,8 @@
 #include <stdbool.h>
 
 struct option {
-  char* name, full_name;
+  const char* name;
+  const char* full_name;
   bool* target;
 };
 
