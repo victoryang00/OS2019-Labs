@@ -26,7 +26,7 @@ void printPSTree();
 
 /* main entry of the program */
 int main(int argc, char *argv[]) {
-  printf("sizeof options is %d\n", NR_OPTIONS);
+  printf("sizeof options is %ld\n", NR_OPTIONS);
   int ErrArgc = 0;
   if ((ErrArgc = parseOptions(argc, argv)) != 0) {
     // option parse failed
