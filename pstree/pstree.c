@@ -18,7 +18,7 @@ const struct option options[] = {
   { "-n", "--numeric-sort", &OP_N },
   { "-V", "--version",      &OP_V }
 };
-const size_t NR_OPTIONS = sizeof(options) / sizeof(struct option);
+const int NR_OPTIONS = (int) sizeof(options) / sizeof(struct option);
 
 /* definition of functions */
 int parseOptions(int, char*[]);
