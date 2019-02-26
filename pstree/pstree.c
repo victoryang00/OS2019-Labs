@@ -175,6 +175,9 @@ void printProcess(struct process* proc) {
   printParentProcesses(proc);
   printf("%s", proc->name);
   printf("\n");
+  
+  if (proc->child) printProcess(proc->child);
+  if (proc->next) printProcess(proc->next);
 }
 
 void printParentProcesses(struct process* proc) {
