@@ -51,7 +51,7 @@ int parseOptions(int argc, char *argv[]) {
           || !strcmp(argv[i], options[op].full_name)) {
         hasMatch = true;
         *(options[op].target) = true;
-        printf("Matched!\n");
+        printf("Best Match!\n");
       }
     }
     if (!hasMatch) return i; // match failed
