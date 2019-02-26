@@ -2,6 +2,8 @@
 #include <assert.h>
 #include <stdbool.h>
 
+void parseOptions(int, char*[]);
+
 int main(int argc, char *argv[]) {
   printf("Hello, World!\n");
   parseOptions(argc, argv);
