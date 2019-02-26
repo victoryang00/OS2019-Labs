@@ -1,5 +1,8 @@
 #include <stdio.h>
 #include <assert.h>
+#include <bool.h>
+
+static bool option_P = false;
 
 int main(int argc, char *argv[]) {
   printf("Hello, World!\n");
