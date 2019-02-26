@@ -23,7 +23,12 @@ int parseOptions(int argc, char *argv[]) {
   for (int i = 1; i < argc; ++i) {
     assert(argv[i]); // always true
     printf("argv[%d] = %s\n", i, argv[i]);
+    // TODO: parse detailed functions.
   }
   assert(!argv[argc]); // always true
   return 0;
+}
+
+void printPSTree() {
+  //TODO: implement the function
 }
