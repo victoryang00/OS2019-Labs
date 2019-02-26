@@ -3,12 +3,16 @@
 #include <stdbool.h>
 
 struct option {
-  char* name;
+  const char* name, full_name;
   bool* target;
 };
 
+static bool OP_P, OP_N, OP_V;
+
 const struct option options[] = { 
-  {"aaa", &option_n}
+  { "-p", "--show-pids",    &OP_P }, 
+  { "-n", "--numeric-sort", &OP_N },
+  { "-V", "--version",      &OP_V }
 };
 
 int parseOptions(int, char*[]);
