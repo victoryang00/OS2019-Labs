@@ -11,13 +11,15 @@ struct option {
 };
 
 /* 3 functionality option of the program */
-static bool OP_P, OP_N, OP_V;
+static bool OP_SHOWPID = false;
+static bool OP_NUMERIC = false;
+static bool OP_VERSION = false;
 
 /* ICS-PA style options array */
 const struct option options[] = { 
-  { "-p", "--show-pids",    &OP_P }, 
-  { "-n", "--numeric-sort", &OP_N },
-  { "-V", "--version",      &OP_V }
+  { "-p", "--show-pids",    &OP_SHOWPID }, 
+  { "-n", "--numeric-sort", &OP_NUMERIC },
+  { "-V", "--version",      &OP_VERSION }
 };
 const int NR_OPTIONS = (int) sizeof(options) / sizeof(struct option);
 
@@ -34,9 +36,15 @@ int main(int argc, char *argv[]) {
     return -1;
   } else {
     /* option parse OK */
-    printPSTree();
+    if (OP_VERSION) {
+      printf("pstree v0.0.0 from MiniLabs of OSLab.\n"
+          "By doowzs (Tianyun Zhang) [171860508].");
+      return 0;
+    } else {
+      printPSTree();
+      return 0;
+    }
   }
-  return 0;
 }
 
 int parseOptions(int argc, char *argv[]) {
@@ -51,7 +59,6 @@ int parseOptions(int argc, char *argv[]) {
           || !strcmp(argv[i], options[op].full_name)) {
         hasMatch = true;
         *(options[op].target) = true;
-        printf("Best Match!\n");
       }
     }
     if (!hasMatch) return i; // match failed
