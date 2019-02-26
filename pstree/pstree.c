@@ -7,7 +7,7 @@ struct option {
   bool* target;
 };
 
-const option[] = [
+const option options[] = [
   {"aaa", &option_n}
 ];
 
