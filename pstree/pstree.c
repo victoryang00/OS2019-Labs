@@ -1,3 +1,13 @@
+/**
+ * TREE STRUCT OF PROCESSES
+ *
+ * ROOT -> 1st child -> grandchild...
+ *             |
+ *         2nd child -> grandchild...
+ *             |
+ *         NULL (end)
+ */
+
 #include <stdio.h>
 #include <ctype.h>
 #include <stdlib.h>
@@ -39,9 +49,10 @@ const int NR_OPTIONS = (int) sizeof(options) / sizeof(struct option);
 /* definition of functions */
 int parseOptions(int, char*[]);
 int printPSTree();
-bool isNumber(char *);
-struct process readProcess(char *);
-void addProcessToTree(struct process *);
+bool isNumber(char*);
+void readProcess(char*);
+struct process* findProcess(pid_t, struct process*);
+void addProcess(struct process*);
 
 /* main entry of the program */
 int main(int argc, char *argv[]) {
@@ -111,15 +122,37 @@ bool isNumber(char *s) {
   return true;
 }
 
-struct process readProcess(char* pidStr) {
-  char statFile[128] = "";
-  struct process *proc = malloc(sizeof(struct process));
+void readProcess(char* pidStr) {
+  char statFile[64] = "";
+  struct process* proc = malloc(sizeof(struct process));
 
   sprintf(statFile, "/proc/%s/stat", pidStr);
   FILE* sfp = fopen(statFile, "r");
   fscanf(sfp, "%d (%s) %c %d", &proc->pid, proc->name, &proc->state, &proc->ppid);
 
-  // TODO: HOW TO ADD THE PROCESS TO PSTREE?
+  addProcess(proc);
+}
 
-  return *proc;
+struct process* findProcess(pid_t pid, struct process* cur) {
+  /* end of recursion (found) */
+  if (cur->pid == pid) return cur;
+
+  /* start from root if not given */
+  if (!cur) cur = &rootProcess;
+  struct process* result = NULL;  
+  if (cur->child) {
+    result = findProcess(pid, cur->child);
+    if (result) return result;
+  }
+  if (cur->next) {
+    result = findProcess(pid, cur->next);
+    if (result) return result;
+  }
+  return NULL; // not found
+}
+
+void addProcess(struct process* proc) {
+  struct process* parent = findProcess(proc->ppid, NULL);
+  proc->next = parent->child;
+  parent->child = proc;
 }
