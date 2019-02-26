@@ -80,6 +80,7 @@ int printPSTree() {
   while ((dp = readdir(dr)) != NULL) {
     if (isNumber(dp->d_name)) printf("%s\n", dp->d_name);
   }
+  return 0;
 }
 
 bool isNumber(char *s) {
