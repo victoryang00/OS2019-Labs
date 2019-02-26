@@ -124,14 +124,14 @@ bool isNumber(char *s) {
 
 void readProcess(char* pidStr) {
   char statFile[64] = "";
-  struct process* proc = malloc(sizeof(struct process));
 
   sprintf(statFile, "/proc/%s/stat", pidStr);
   FILE* sfp = fopen(statFile, "r");
-  if (!sfp) printf("FUCK!!!\n");
-  fscanf(sfp, "%d %s %c %d", &proc->pid, proc->name, &proc->state, &proc->ppid);
-
-  addProcess(proc);
+  if (sfp) { 
+    struct process* proc = malloc(sizeof(struct process));
+    fscanf(sfp, "%d %s %c %d", &proc->pid, proc->name, &proc->state, &proc->ppid);
+    addProcess(proc);
+  }  
 }
 
 struct process* findProcess(pid_t pid, struct process* cur) {
