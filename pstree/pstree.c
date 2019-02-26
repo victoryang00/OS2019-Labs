@@ -7,9 +7,9 @@ struct option {
   bool* target;
 };
 
-const struct option options[] = [
+const struct option options[] = { 
   {"aaa", &option_n}
-];
+};
 
 int parseOptions(int, char*[]);
 void printPSTree();
