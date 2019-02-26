@@ -114,7 +114,7 @@ int printPSTree() {
   }
   closedir(dr);
 
-  printProcess(0, &rootProcess);
+  printProcess(&rootProcess);
   return 0;
 }
 
