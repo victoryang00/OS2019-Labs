@@ -157,7 +157,12 @@ void addProcess(struct process* proc) {
   printf("pid=%d, name=%s, ppid=%d, ", proc->pid, proc->name, proc->ppid);
   fflush(stdout);
   struct process* parent = findProcess(proc->ppid, NULL);
-  printf("parent is %s\n", parent->name);
+  if (!parent) {
+    printf("no parent!\n");
+    parent = &rootProcess;
+  } else {
+    printf("parent is %s\n", parent->name);
+  }
 
   proc->next = parent->child;
   parent->child = proc;
