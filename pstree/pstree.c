@@ -154,9 +154,9 @@ struct process* findProcess(pid_t pid, struct process* cur) {
 }
 
 void addProcess(struct process* proc) {
+  printf("pid=%d, name=%s, ppid=%d, ", proc->pid, proc->name, proc->ppid);
   struct process* parent = findProcess(proc->ppid, NULL);
-
-  printf("pid=%d, name=%s, ppid=%d, father is %s\n", proc->pid, proc->name, proc->ppid, parent->name);
+  printf("parent is %s\n", parent->name);
 
   proc->next = parent->child;
   parent->child = proc;
