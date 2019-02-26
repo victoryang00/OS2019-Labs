@@ -172,7 +172,10 @@ void addProcess(struct process* proc) {
 }
 
 void printProcess(struct process* proc) {
-  printf("%s%s%s", proc->next ? "-+-" : "---", proc->name, proc->child ? "" : "\n");
+  printf("%s%s%s", 
+      (proc == &rootProcess ? "" : (proc->next ? "-+-" : "---")), 
+      proc->name, 
+      proc->child ? "" : "\n");
   
   if (proc->child) printProcess(proc->child);
   if (proc->next) {
