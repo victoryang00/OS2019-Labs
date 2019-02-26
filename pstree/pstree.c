@@ -3,6 +3,7 @@
 #include <string.h>
 #include <assert.h>
 #include <dirent.h>
+#include <memory.h>
 #include <stdbool.h>
 #include <sys/types.h>
 
