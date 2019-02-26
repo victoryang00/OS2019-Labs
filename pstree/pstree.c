@@ -17,8 +17,8 @@ struct option {
 struct process {
   pid_t pid;
   pid_t ppid;
-  char name[128];
-  char status[8];
+  char name[32]; // man 2 prctl -> maximum 16 bytes
+  char state;    // man 7 proc  -> character type
 };
 
 /* 3 functionality option of the program */
@@ -111,6 +111,6 @@ struct process readProcess(char* pidStr) {
 
   sprintf(statFile, "/proc/%s/stat", pidStr);
   FILE* sfp = fopen(statFile, "r");
-  fscanf(sfp, "%d (%s) %s %d", &proc->pid, proc->name, proc->status, &proc->ppid);
+  fscanf(sfp, "%d (%s) %c %d", &proc->pid, proc->name, &proc->state, &proc->ppid);
   return *proc;
 }
