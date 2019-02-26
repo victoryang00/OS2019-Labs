@@ -72,7 +72,7 @@ int parseOptions(int argc, char *argv[]) {
 
 int printPSTree() {
   DIR *dr = opendir("/proc");
-  if (dr = NULL) {
+  if (dr == NULL) {
     fprintf(stderr, "Error opening /proc folder. Aborted.\n");
     return -1;
   }
