@@ -15,11 +15,13 @@ struct option {
   bool* target;
 };
 struct process {
-  pid_t pid;
-  pid_t ppid;
-  char name[32]; // man 2 prctl -> maximum 16 bytes
-  char state;    // man 7 proc  -> character type
-};
+  pid_t pid = 0;
+  pid_t ppid = 0;
+  char name[32] = ""; // man 2 prctl -> maximum 16 bytes
+  char state = 'S';   // man 7 proc  -> character type
+  struct process *child = NULL; // child process
+  struct process *next = NULL;  // next process (same level)
+} rootProcess;
 
 /* 3 functionality option of the program */
 static bool OP_SHOWPID = false;
