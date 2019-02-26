@@ -2,14 +2,23 @@
 #include <assert.h>
 #include <stdbool.h>
 
+typedef struct {
+  char* name,
+  bool* target
+} option;
+
+const option[] = [
+  {"aaa", &option_n}
+];
+
 int parseOptions(int, char*[]);
 void printPSTree();
 
 int main(int argc, char *argv[]) {
-  int NR_errop = 0;
-  if ((NR_errop = parseOptions(argc, argv)) != 0) {
+  int ErrArgc = 0;
+  if ((ErrArgc = parseOptions(argc, argv)) != 0) {
     // option parse failed
-    fprintf(stderr, "Invalid option \"%s\". Aborted.\n", argv[NR_errop]);
+    fprintf(stderr, "Invalid option \"%s\". Aborted.\n", argv[ErrArgc]);
     return -1;
   } else {
     // option parse OK
