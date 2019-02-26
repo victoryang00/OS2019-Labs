@@ -6,6 +6,9 @@
  *         2nd child -> grandchild...
  *             |
  *         NULL (end)
+ *
+ * died parent      orphan child
+ *      X       ->  (disappear)
  */
 
 #include <stdio.h>
@@ -155,17 +158,13 @@ struct process* findProcess(pid_t pid, struct process* cur) {
 }
 
 void addProcess(struct process* proc) {
-  printf("pid=%d, name=%s, ppid=%d, ", proc->pid, proc->name, proc->ppid);
-  fflush(stdout);
+  /* If the process is an orphan (parent is dead),
+   * then it does not appear in the process tree. 
+   * (same as pstree from UNIX. [really???]) */
   struct process* parent = findProcess(proc->ppid, NULL);
-  if (!parent) {
-    printf("no parent!\n");
-    assert(0);
-    parent = &rootProcess;
-  } else {
-    printf("parent is %s\n", parent->name);
+  if (!parent) return;
+  else {
+    proc->next = parent->child;
+    parent->child = proc;
   }
-
-  proc->next = parent->child;
-  parent->child = proc;
 }
