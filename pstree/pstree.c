@@ -114,7 +114,6 @@ int printPSTree() {
   }
   closedir(dr);
 
-  printf("%s\n", findProcess(1, NULL)->name);
   printProcess(&rootProcess);
   return 0;
 }
@@ -173,9 +172,12 @@ void addProcess(struct process* proc) {
 }
 
 void printProcess(struct process* proc) {
-  printf("%s%s%s", 
+  char pidStr[32] = "";
+  if (OP_SHOWPID) sprintf(pidStr, "(%d)", proc->pid);
+
+  printf("%s%s%s%s", 
       (proc == &rootProcess ? "" : (proc->next ? "-+-" : "---")), 
-      proc->name, 
+      proc->name, pidStr, 
       proc->child ? "" : "\n");
   
   if (proc->child) printProcess(proc->child);
