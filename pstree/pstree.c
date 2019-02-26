@@ -128,6 +128,7 @@ void readProcess(char* pidStr) {
 
   sprintf(statFile, "/proc/%s/stat", pidStr);
   FILE* sfp = fopen(statFile, "r");
+  if (!sfp) printf("FUCK!!!\n");
   fscanf(sfp, "%d %s %c %d", &proc->pid, proc->name, &proc->state, &proc->ppid);
 
   addProcess(proc);
