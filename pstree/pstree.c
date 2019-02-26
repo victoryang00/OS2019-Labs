@@ -21,6 +21,7 @@ int parseOptions(int argc, char *argv[]) {
     assert(argv[i]); // always true
     printf("argv[%d] = %s\n", i, argv[i]);
   }
+  return 1;
   assert(!argv[argc]); // always true
   return 0;
 }
