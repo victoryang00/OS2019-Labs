@@ -2,10 +2,10 @@
 #include <assert.h>
 #include <stdbool.h>
 
-typedef struct {
+struct option {
   char* name,
   bool* target
-} option;
+};
 
 const option[] = [
   {"aaa", &option_n}
