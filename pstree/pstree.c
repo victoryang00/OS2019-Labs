@@ -4,6 +4,7 @@
 #include <assert.h>
 #include <dirent.h>
 #include <stdbool.h>
+#include <sys/types.h>
 
 /* define option and pid struct (class) */
 struct option {
@@ -90,7 +91,7 @@ int printPSTree() {
       readProcess(dp->d_name);
     }  
   }
-  close(dr);
+  closedir(dr);
   return 0;
 }
 
