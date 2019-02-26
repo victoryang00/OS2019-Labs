@@ -5,11 +5,17 @@
 #include <dirent.h>
 #include <stdbool.h>
 
-/* define option struct (class) */
+/* define option and pid struct (class) */
 struct option {
   const char* name;
   const char* full_name;
   bool* target;
+};
+struct process {
+  pid_t pid;
+  pid_t ppid;
+  char* name;
+  char status;
 };
 
 /* 3 functionality option of the program */
@@ -29,6 +35,7 @@ const int NR_OPTIONS = (int) sizeof(options) / sizeof(struct option);
 int parseOptions(int, char*[]);
 int printPSTree();
 bool isNumber(char *);
+struct process readProcess(char *);
 
 /* main entry of the program */
 int main(int argc, char *argv[]) {
@@ -78,8 +85,12 @@ int printPSTree() {
   }
   struct dirent *dp;
   while ((dp = readdir(dr)) != NULL) {
-    if (isNumber(dp->d_name)) printf("%s\n", dp->d_name);
+    if (isNumber(dp->d_name)) {
+      printf("%s\n", dp->d_name);
+      readProcess(dp->d_name);
+    }  
   }
+  close(dr);
   return 0;
 }
 
@@ -89,4 +100,14 @@ bool isNumber(char *s) {
     if (!isdigit(s[i])) return false;
   }
   return true;
+}
+
+struct process readProcess(char* pidStr) {
+  char statFile[128] = "";
+  struct process *proc = new struct process;
+
+  sprintf(statFile, "/proc/%s/stat", pidStr);
+  FILE* sfp = fopen(statFile, "r");
+  freadf(sfp, "%d (%s) %s %d", proc->pid, proc->name, proc->status, proc->ppid);
+  return *proc;
 }
