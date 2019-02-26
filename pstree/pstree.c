@@ -32,7 +32,7 @@ int main(int argc, char *argv[]) {
   int ErrArgc = 0;
   if ((ErrArgc = parseOptions(argc, argv)) != 0) {
     /* option parse failed */
-    fprintf(stderr, "Invalid option \"%s\". Aborted.\n", argv[ErrArgc]);
+    perror("Invalid option \"%s\". Aborted.\n", argv[ErrArgc]);
     return -1;
   } else {
     /* option parse OK */
