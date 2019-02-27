@@ -208,6 +208,5 @@ void printParentProcesses(struct process* proc) {
   if (proc->parent) printParentProcesses(proc->parent);
   printf("%s%*s",
       (proc == &rootProcess ? "" : "|  "),
-      //(int) strlen(proc->name), "",
-      strlen(proc->name), "");
+      (int) strlen(proc->name), "");
 }
