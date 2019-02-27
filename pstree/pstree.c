@@ -148,6 +148,7 @@ void readProcess(char* pidStr, char* taskPidStr) {
     struct process* proc = malloc(sizeof(struct process));
     fscanf(sfp, "%d (%s %c %d", &proc->pid, proc->name, &proc->state, &proc->ppid);
     proc->name[strlen(proc->name) - 1] = '\0';
+    printf("%s(%d)\n", proc->pid, proc->name);
     proc->parent = proc->child = proc->next = NULL;
     if (taskPidStr) {
       proc->ppid = (pid_t) strtol(pidStr, NULL, 10);
@@ -213,8 +214,6 @@ void addProcess(struct process* proc) {
           parent->child = proc;
         }
       }
-    } else {
-      printf("ORPHAN: %s(%d)\n", proc->name, proc->pid);
     }
   }
 }
