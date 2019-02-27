@@ -38,7 +38,7 @@ struct process {
   struct process *child;  // child process
   struct process *next;   // next process (same level)
 } rootProcess = {1, 0, "systemd", 'X', NULL, NULL},
-  rootOrphan = {0, 0, "pseudoProcess", 'X', NULL, NULL};
+  rootOrphan = {0, 0, "Orphans", 'X', NULL, NULL};
 
 /* 3 functionality option of the program */
 static bool OP_SHOWPID = false;
@@ -236,7 +236,7 @@ void printProcess(struct process* proc) {
   
   if (proc->child) printProcess(proc->child);
   if (proc->next) {
-    //printParentProcesses(proc->next->parent);
+    printParentProcesses(proc->next->parent);
     printProcess(proc->next);
   }
 }
