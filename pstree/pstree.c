@@ -134,7 +134,6 @@ int printPSTree() {
 
   checkOrphans();
   printProcess(&rootProcess); // print pstree
-  printf("OK!\n");
   printProcess(&rootOrphan);  // print orphans
   return 0;
 }
@@ -231,7 +230,7 @@ void printProcess(struct process* proc) {
   if (OP_SHOWPID) printProcessPID(proc);
 
   printf("%s%s%s", 
-      (proc == &rootProcess ? "" : (proc == proc->parent->child ? (proc->next ? "-+-" : "---") : (proc->next ? " |-" : " `-"))), 
+      ((proc == &rootProcess || proc == &rootOrphan) ? "" : (proc == proc->parent->child ? (proc->next ? "-+-" : "---") : (proc->next ? " |-" : " `-"))), 
       proc->name, 
       proc->child ? "" : "\n");
   
