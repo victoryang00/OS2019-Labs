@@ -173,7 +173,7 @@ void addProcess(struct process* proc) {
      * then it does not appear in the process tree. 
      * (same as pstree from UNIX. [really???]) */
     struct process* parent = findProcess(proc->ppid, NULL);
-    if (!parent || parent->pid == proc->pid) return;
+    if (!parent) return;
     else {
       proc->parent = parent;
       struct process* child = parent->child;
@@ -198,7 +198,7 @@ void printProcess(struct process* proc) {
   
   if (proc->child) printProcess(proc->child);
   if (proc->next) {
-    printParentProcesses(proc->next);
+    printParentProcesses(proc->next->parent);
     printProcess(proc->next);
   }
 }
