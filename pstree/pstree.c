@@ -37,8 +37,7 @@ struct process {
   struct process *parent; // parent process
   struct process *child;  // child process
   struct process *next;   // next process (same level)
-} rootProcess = {1, 0, "systemd", 'X', NULL, NULL},
-  rootOrphan = {0, 0, "orphans", 'X', NULL, NULL};
+} rootProcess = {1, 0, "systemd", 'X', NULL, NULL};
 
 /* 3 functionality option of the program */
 static bool OP_SHOWPID = false;
@@ -62,8 +61,6 @@ struct process* findProcess(pid_t, struct process*);
 void addProcess(struct process*);
 void printProcess(struct process*);
 void printParentProcesses(struct process*);
-void addOrphan(struct process*);
-void printOrphans();
 
 /* main entry of the program */
 int main(int argc, char *argv[]) {
@@ -132,7 +129,6 @@ int printPSTree() {
   closedir(dr);
 
   printProcess(&rootProcess); // print pstree
-  printOrphans();
   return 0;
 }
 
@@ -218,7 +214,7 @@ void addProcess(struct process* proc) {
         }
       }
     } else {
-      addOrphan(proc);
+      printf("ORPHAN: %s(%d)\n", proc->name, proc->pid);
     }
   }
 }
@@ -245,23 +241,4 @@ void printParentProcesses(struct process* proc) {
   printf("%s%*s",
       (proc == &rootProcess ? "" : (proc->next ? " | " : "   ")),
       (int) strlen(proc->name), "");
-}
-
-void addOrphan(struct process* orphan) {
-  struct process* op = &rootOrphan;
-  if (op->next == NULL) {
-    op->next = orphan;
-  } else {
-    while (op->next) op = op->next;
-    op->next = orphan;
-  }
-}
-
-void printOrphans() {
-  printf("Orphans:\n");
-  struct process* op = &rootOrphan;
-  while (op->next) {
-    op = op->next;
-    printf("- %s(%d)\n", op->name, op->pid);
-  }
 }
