@@ -1,9 +1,42 @@
 /**
+ * For teachers and other readers:
+ * 
+ * HOW THIS $HIT CODE WORKS:
+ * 0. Workflow:
+ *    main() -> parseOptions() -> printPSTree()
+ * 1. I used a ICS-PA style array to parse all 
+ *    options in an iteration.
+ * 2. Read the /proc directory and open numeric
+ *    folders one by one.
+ * 3. When reading one process, read all its
+ *    threads and add them into the tree. If -n
+ *    option is given, then sort the tree when
+ *    inserting the process nodes.
+ * 4. The tree is constructed by the following
+ *    linked data structure.
+ * 5. Perform a recursive algorithm to print
+ *    the tree to screen in a neat way.
+ * 6. If -p option is given, then print the PID
+ *    of processes to proc->name array when 
+ *    printing the process tree.
+ *
  * +------------------------------------------+
- * | TREE STRUCT OF PROCESSES                 |
+ * | DATA STRUCTURE OF A PROCESS              |
+ * |                                          |
+ * | struct process                           |
+ * |  |- pid:    the id of this process       |
+ * |  |- ppid:   the id of parent process     |
+ * |  |          (ppid or tgid for threads)   |
+ * |  |- name:   the name of process          |
+ * |  |- state:  not used in my program       |
+ * |  |- parent: pointer to parent node       |
+ * |  |- child:  pointer to first child       |
+ * |  `- next:   pointer to next brother      |
+ * +------------------------------------------+
+ * | TREE STRUCTURE OF PROCESSES              |
  * |                                          |
  * | systemd -> 1st child -> grandchild 1...  |
- * |                |              |          |
+ * |   (1)          |              |          |
  * |                |        grandchild 2...  |
  * |                |                         |
  * |            2nd child -> grandchild...    |
@@ -11,7 +44,7 @@
  * |            NULL (end)                    |
  * |                                          |
  * | died parent      orphan child            |
- * |      X       ->  (disappear)             |
+ * |      X       ->  (disappear in tree)     |
  * +------------------------------------------+
  */
 
@@ -41,7 +74,7 @@ struct process {
   struct process *next;   // next process (same level)
 } rootProcess = {1, 0, "systemd", 'X', NULL, NULL};
 
-/* 3 functionality option of the program */
+/* 3 functionality options of the program */
 static bool OP_SHOWPID = false;
 static bool OP_NUMERIC = false;
 static bool OP_VERSION = false;
