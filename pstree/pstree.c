@@ -186,14 +186,15 @@ struct process* readProcess(char* pidStr, struct process* parent) {
     proc->name[strlen(proc->name) - 1] = '\0';
     proc->parent = proc->child = proc->next = NULL;
     if (parent) {
-      proc->ppid = (pid_t) strtol(pidStr, NULL, 10);
+      proc->ppid = parent->pid; 
       sprintf(proc->name, "{%.16s}", parent->name);
     }
     addProcess(proc);
     fclose(sfp); // I forgot to close the stream and caused bug.
     return proc;
+  } else {
+    return NULL;
   }
-  return NULL;
 }
 
 void attachProcessPID(struct process* proc) {
