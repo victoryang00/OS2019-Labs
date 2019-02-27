@@ -63,8 +63,6 @@ void addProcess(struct process*);
 void printProcess(struct process*);
 void printParentProcesses(struct process*);
 void addOrphan(struct process*);
-void checkOrphans();
-void printOrphans();
 
 /* main entry of the program */
 int main(int argc, char *argv[]) {
@@ -132,9 +130,7 @@ int printPSTree() {
   }
   closedir(dr);
 
-  checkOrphans();
   printProcess(&rootProcess); // print pstree
-  if (rootOrphan.next) printProcess(&rootOrphan);  // print orphans
   return 0;
 }
 
@@ -219,8 +215,6 @@ void addProcess(struct process* proc) {
           parent->child = proc;
         }
       }
-    } else {
-      addOrphan(proc);
     }
   }
 }
@@ -230,7 +224,7 @@ void printProcess(struct process* proc) {
   if (OP_SHOWPID) printProcessPID(proc);
 
   printf("%s%s%s", 
-      ((proc == &rootProcess || proc == &rootOrphan) ? "" : (proc == proc->parent->child ? (proc->next ? "-+-" : "---") : (proc->next ? " |-" : " `-"))), 
+      (proc == &rootProcess ? "" : (proc == proc->parent->child ? (proc->next ? "-+-" : "---") : (proc->next ? " |-" : " `-"))), 
       proc->name, 
       proc->child ? "" : "\n");
   
@@ -247,14 +241,6 @@ void printParentProcesses(struct process* proc) {
   /* Print the vertical lines of parent processes */
   if (proc->parent) printParentProcesses(proc->parent);
   printf("%s%*s",
-      ((proc == &rootProcess || proc == &rootOrphan) ? "" : (proc->next ? " | " : "   ")),
+      (proc == &rootProcess ? "" : (proc->next ? " | " : "   ")),
       (int) strlen(proc->name), "");
-}
-
-void addOrphan(struct process* orphan) { 
-  orphan->next = rootOrphan.next;
-  rootOrphan.next = orphan;
-}
-
-void checkOrphans() {
 }
