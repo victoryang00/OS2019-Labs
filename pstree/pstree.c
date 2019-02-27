@@ -56,7 +56,7 @@ const int NR_OPTIONS = (int) sizeof(options) / sizeof(struct option);
 int parseOptions(int, char*[]);
 int printPSTree();
 bool isNumber(char*);
-void readProcess(char*);
+void readProcess(char*, char*);
 struct process* findProcess(pid_t, struct process*);
 void addProcess(struct process*);
 void printProcess(struct process*);
@@ -111,20 +111,20 @@ int printPSTree() {
   struct dirent *dp;
   while ((dp = readdir(dr)) != NULL) {
     if (isNumber(dp->d_name)) {
-      /* read the process and its children */
-      readProcess(dp->d_name);
-/*
-      char taskFolder[320] = "";
-      sprintf(taskFolder, "/proc/%s/task", dp->d_name);
+      /* read the process */
+      readProcess(dp->d_name, NULL);
+      /* read child threads */
+      char taskFolder[64] = "/proc/";
+      strncat(taskFolder, dp->d_name, 16);
+      strcat(taskFolder, "/task");
       DIR *taskdr = opendir(taskFolder);
       if (taskdr) { // process may die at this moment
         struct dirent *childp;
         while ((childp = readdir(taskdr)) != NULL) {
-          if (isNumber(childp->d_name)) readProcess(childp->d_name);
+          if (isNumber(childp->d_name)) readProcess(dp->d_name, childp->d_name);
         }
       }
-*/
-    }  
+    }
   }
   closedir(dr);
 
@@ -140,15 +140,25 @@ bool isNumber(char *s) {
   return true;
 }
 
-void readProcess(char* pidStr) {
+void readProcess(char* pidStr, char* taskPidStr) {
   char statFile[64] = "";
 
-  sprintf(statFile, "/proc/%s/stat", pidStr);
+  if (!taskPidStr) {
+    /* read a process */
+    sprintf(statFile, "/proc/%s/stat", pidStr);
+  } else {
+    /* read a child thread */
+    sprintf(statFile, "/proc/%s/task/%s/stat", pidStr, taskPidStr);
+  }
+
   FILE* sfp = fopen(statFile, "r");
   if (sfp) { // process may die before this moment 
     struct process* proc = malloc(sizeof(struct process));
     fscanf(sfp, "%d (%s %c %d", &proc->pid, proc->name, &proc->state, &proc->ppid);
     proc->name[strlen(proc->name) - 1] = '\0';
+    if (taskPidStr) {
+      sprintf(proc->name, "\{%s\}", proc->name);
+    }
     if (OP_SHOWPID) {
       char pidStr[32] = "";
       sprintf(pidStr, "(%d)", proc->pid);
