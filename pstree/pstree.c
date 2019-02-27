@@ -37,7 +37,7 @@ struct process {
   struct process *parent; // parent process
   struct process *child;  // child process
   struct process *next;   // next process (same level)
-} rootProcess = {0, 0, "", "root", 'X', NULL, NULL};
+} rootProcess = {0, 0, "root", 'X', NULL, NULL};
 
 /* 3 functionality option of the program */
 static bool OP_SHOWPID = false;
