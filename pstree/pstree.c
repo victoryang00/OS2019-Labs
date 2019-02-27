@@ -113,7 +113,7 @@ int printPSTree() {
     if (isNumber(dp->d_name)) {
       /* read the process and its children */
       readProcess(dp->d_name);
-
+/*
       char taskFolder[320] = "";
       sprintf(taskFolder, "/proc/%s/task", dp->d_name);
       DIR *taskdr = opendir(taskFolder);
@@ -123,6 +123,7 @@ int printPSTree() {
           if (isNumber(childp->d_name)) readProcess(childp->d_name);
         }
       }
+*/
     }  
   }
   closedir(dr);
