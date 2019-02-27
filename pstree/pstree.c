@@ -138,7 +138,7 @@ void readProcess(char* pidStr) {
     struct process* proc = malloc(sizeof(struct process));
     fscanf(sfp, "%d (%s %c %d", &proc->pid, proc->name, &proc->state, &proc->ppid);
     proc->name[strlen(proc->name) - 1] = '\0';
-    sprintf(proc->pidStr, "(%d)", proc->pid);
+    if (OP_SHOWPID) sprintf(proc->name, "%s(%d)", proc->name, proc->pid);
     proc->parent = proc->child = proc->next = NULL;
     addProcess(proc);
   }  
@@ -191,9 +191,9 @@ void addProcess(struct process* proc) {
 }
 
 void printProcess(struct process* proc) {
-  printf("%s%s%s%s", 
+  printf("%s%s%s", 
       (proc == &rootProcess ? "" : (proc == proc->parent->child ? (proc->next ? "-+-" : "---") : (proc->next ? " +-" : " \\-"))), 
-      proc->name, OP_SHOWPID ? proc->pidStr : "", 
+      proc->name, 
       proc->child ? "" : "\n");
   
   if (proc->child) printProcess(proc->child);
