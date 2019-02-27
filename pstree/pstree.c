@@ -1,13 +1,13 @@
 /**
  * TREE STRUCT OF PROCESSES
  *
- * ROOT -> 1st child -> grandchild 1...
- *             |              |
- *             |        grandchild 2...
- *             |
- *         2nd child -> grandchild...
- *             |
- *         NULL (end)
+ * systemd -> 1st child -> grandchild 1...
+ *                |              |
+ *                |        grandchild 2...
+ *                |
+ *            2nd child -> grandchild...
+ *                |
+ *            NULL (end)
  *
  * died parent      orphan child
  *      X       ->  (disappear)
@@ -57,6 +57,7 @@ int parseOptions(int, char*[]);
 int printPSTree();
 bool isNumber(char*);
 void readProcess(char*, char*);
+void printProcessPID(struct process*);
 struct process* findProcess(pid_t, struct process*);
 void addProcess(struct process*);
 void printProcess(struct process*);
@@ -128,6 +129,7 @@ int printPSTree() {
   }
   closedir(dr);
 
+  if (OP_SHOWPID) printProcessPID(rootProcess);
   printProcess(&rootProcess);
   return 0;
 }
@@ -162,15 +164,17 @@ void readProcess(char* pidStr, char* taskPidStr) {
       sprintf(proc->name, "{%.*s}", 16, name);
       proc->ppid = (pid_t) strtol(pidStr, NULL, 10); // for threads, use Tgid instead of Ppid.
     }
-    if (OP_SHOWPID) {
-      char pidStr[32] = "";
-      sprintf(pidStr, "(%d)", proc->pid);
-      strncat(proc->name, pidStr, 14); // avoid overflow
-    } 
+    if (OP_SHOWPID) printProcessPID(proc); 
     proc->parent = proc->child = proc->next = NULL;
     addProcess(proc);
   }  
 }
+
+void printProcessPID(struct process* proc) {
+  char pidStr[32] = "";
+  sprintf(pidStr, "(%d)", proc->pid);
+  strncat(proc->name, pidStr, 14); // avoid overflow
+} 
 
 struct process* findProcess(pid_t pid, struct process* cur) {
   /* start from root if not given */
