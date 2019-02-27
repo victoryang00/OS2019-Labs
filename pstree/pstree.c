@@ -56,7 +56,6 @@ const int NR_OPTIONS = (int) sizeof(options) / sizeof(struct option);
 int parseOptions(int, char*[]);
 int printPSTree();
 void readProcess(char*, char*);
-void handleChildThread(struct process*, struct process*);
 void printProcessPID(struct process*);
 struct process* findProcess(pid_t, struct process*);
 void addProcess(struct process*);
@@ -150,14 +149,12 @@ void readProcess(char* pidStr, char* taskPidStr) {
     struct process* proc = malloc(sizeof(struct process));
     fscanf(sfp, "%d (%s %c %d", &proc->pid, proc->name, &proc->state, &proc->ppid);
     proc->name[strlen(proc->name) - 1] = '\0';
-    if (taskPidStr) {
-      char name[32] = "";
-      strcpy(name, proc->name);
-      proc->ppid = (pid_t) strtol(pidStr, NULL, 10);
-      sprintf(proc->name, "{%.16s}", name);
-    }
-    if (OP_SHOWPID) printProcessPID(proc); 
     proc->parent = proc->child = proc->next = NULL;
+    if (taskPidStr) {
+      proc->ppid = (pid_t) strtol(pidStr, NULL, 10);
+      struct process* parent = findProcess(proc->ppid, NULL);
+      sprintf(proc->name, "{%.16s}", parent ? parent->name : "UNKNOWN");
+    }
     addProcess(proc);
   }
 }
@@ -223,6 +220,8 @@ void addProcess(struct process* proc) {
 }
 
 void printProcess(struct process* proc) {
+  if (OP_SHOWPID) printProcessPID(proc);
+
   printf("%s%s%s", 
       (proc == &rootProcess ? "" : (proc == proc->parent->child ? (proc->next ? "-+-" : "---") : (proc->next ? " |-" : " `-"))), 
       proc->name, 
