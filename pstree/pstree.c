@@ -253,12 +253,12 @@ void printParentProcesses(struct process* proc) {
 void addOrphan(struct process* proc) { 
   struct processChain* orphanEntry = malloc(sizeof(struct processChain));
   orphanEntry->proc = proc;
-  orphanEntry->next = orphanChainRoot->next;
+  orphanEntry->next = orphanChainRoot.next;
   orphanChainRoot->next = orphanEntry;
 }
 
 void checkOrphans() {
-  struct processChain* orphanEntry = orphanChainRoot->next;
+  struct processChain* orphanEntry = orphanChainRoot.next;
   while (orphanEntry) {
     struct process* orphan = orphanEntry->proc;
     addProcess(orphan);
