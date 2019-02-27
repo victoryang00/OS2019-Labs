@@ -231,9 +231,7 @@ void printProcess(struct process* proc) {
   if (proc->child) printProcess(proc->child);
   if (proc->next) {
     if (proc->next->parent) printParentProcesses(proc->next->parent);
-    printf("OK3!\n");
     printProcess(proc->next);
-    printf("OK4!\n");
   }
 }
 
