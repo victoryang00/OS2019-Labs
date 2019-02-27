@@ -134,8 +134,9 @@ int printPSTree() {
   }
   closedir(dr);
 
-  if (OP_SHOWPID) printProcessPID(&rootProcess);
+  checkOrphans();
   printProcess(&rootProcess);
+  printOrphans();
   return 0;
 }
 
