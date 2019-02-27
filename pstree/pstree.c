@@ -148,7 +148,10 @@ int printPSTree() {
     if (isdigit(*(dp->d_name))) {
       /* read the process */
       struct process* parent = readProcess(dp->d_name, NULL);
-      if (!parent) continue;
+      if (!parent) {
+        printf("no parent!");
+        continue;
+      }
       /* read child threads */
       char taskFolder[64] = "/proc/";
       strncat(taskFolder, dp->d_name, 16);
