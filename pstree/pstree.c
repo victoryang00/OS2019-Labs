@@ -185,7 +185,14 @@ void addProcess(struct process* proc) {
         parent->child = proc;
       } else {
         if (OP_NUMERIC) {
-          // TODO: numeric sort
+          if (proc->pid < child->pid) {
+            proc->next = child;
+            parent->child = proc;
+          } else {
+            while (child->next != NULL && proc->pid > child->pid) child = child->next;
+            proc->next = child->next;
+            child->next = proc;
+          }
         } else {
           proc->next = child;
           parent->child = proc;
