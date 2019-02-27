@@ -143,9 +143,9 @@ void readProcess(char* pidStr, char* taskPidStr) {
     sprintf(statFile, "/proc/%s/task/%s/stat", pidStr, taskPidStr);
   }
 
-  printf("%s\n", statFile);
   FILE* sfp = fopen(statFile, "r");
   if (sfp) { // process may die before this moment 
+    printf("%s\n", statFile);
     struct process* proc = malloc(sizeof(struct process));
     fscanf(sfp, "%d (%s %c %d", &proc->pid, proc->name, &proc->state, &proc->ppid);
     proc->name[strlen(proc->name) - 1] = '\0';
