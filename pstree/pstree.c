@@ -110,6 +110,7 @@ int printPSTree() {
   }
   struct dirent *dp;
   while ((dp = readdir(dr)) != NULL) {
+    printf("%s", dp->d_name);
     if (isdigit(*(dp->d_name))) {
       /* read the process */
       readProcess(dp->d_name, NULL);
