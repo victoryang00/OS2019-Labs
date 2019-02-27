@@ -137,6 +137,7 @@ void readProcess(char* pidStr) {
   if (sfp) { 
     struct process* proc = malloc(sizeof(struct process));
     fscanf(sfp, "%d (%s %c %d", &proc->pid, proc->name, &proc->state, &proc->ppid);
+    if (proc->pid == proc->ppid) return;
     proc->name[strlen(proc->name) - 1] = '\0';
     sprintf(proc->pidStr, "(%d)", proc->pid);
     proc->parent = proc->child = proc->next = NULL;
