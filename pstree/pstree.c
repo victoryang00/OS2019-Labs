@@ -151,12 +151,11 @@ int printPSTree() {
       if (!parent) continue;
       /* read child threads */
       char taskFolder[64] = "/proc/";
-      sprintf(taskFolder, "/proc/%.20s/task", dp->d_name);
+      sprintf(taskFolder, "/proc/%.16s/task", dp->d_name);
       DIR *taskdr = opendir(taskFolder);
       if (taskdr) { // process may die at this moment
         struct dirent *childp;
         while ((childp = readdir(taskdr)) != NULL) {
-          printf("OK\n");
           if (isdigit(*(childp->d_name))) readProcess(childp->d_name, parent);
         }
       }
@@ -173,10 +172,10 @@ struct process* readProcess(char* pidStr, struct process* parent) {
 
   if (!parent) {
     /* read a process */
-    sprintf(statFile, "/proc/%s/stat", pidStr);
+    sprintf(statFile, "/proc/%.12s/stat", pidStr);
   } else {
     /* read a child thread */
-    sprintf(statFile, "/proc/%.12d/task/%s/stat", parent->pid, pidStr);
+    sprintf(statFile, "/proc/%.12d/task/%.12s/stat", parent->pid, pidStr);
   }
 
   FILE* sfp = fopen(statFile, "r");
@@ -186,6 +185,7 @@ struct process* readProcess(char* pidStr, struct process* parent) {
     proc->name[strlen(proc->name) - 1] = '\0';
     proc->parent = proc->child = proc->next = NULL;
     if (parent) {
+      printf("OK!\n");
       proc->ppid = parent->pid; 
       sprintf(proc->name, "{%.16s}", parent->name);
     }
