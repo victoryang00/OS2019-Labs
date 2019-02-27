@@ -134,7 +134,7 @@ int printPSTree() {
 
   checkOrphans();
   printProcess(&rootProcess); // print pstree
-  if (rootOrphan->next) printProcess(&rootOrphan);  // print orphans
+  if (&rootOrphan->next) printProcess(&rootOrphan);  // print orphans
   return 0;
 }
 
