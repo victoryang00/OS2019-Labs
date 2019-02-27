@@ -207,8 +207,8 @@ void printProcess(struct process* proc) {
 void printParentProcesses(struct process* proc) {
   /* Print the vertical lines of parent processes */
   if (proc->parent) printParentProcesses(proc->parent);
-  printf("%s%s",
+  printf("%s%s(%d)",
       (proc == &rootProcess ? "" : "   "),
       //(int) strlen(proc->name), "",
-      proc->name);
+      proc->name, proc->pid);
 }
