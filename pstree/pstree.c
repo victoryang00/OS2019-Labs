@@ -152,8 +152,7 @@ struct process* readProcess(char* pidStr, char* taskPidStr) {
     proc->name[strlen(proc->name) - 1] = '\0';
     if (taskPidStr) {
       proc->ppid = (pid_t) strtol(pidStr, NULL, 10);
-      struct process* parent = findProcess(proc->ppid, NULL);
-      sprintf(proc->name, "{%.16s}", parent->name);
+      sprintf(proc->name, "{%.16s}", findProcess(proc->ppid, NULL)->name);
     }
     if (OP_SHOWPID) printProcessPID(proc); 
     proc->parent = proc->child = proc->next = NULL;
