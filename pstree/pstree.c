@@ -41,7 +41,7 @@ struct process {
 struct processChain {
   struct process* proc;
   struct processChain* next;
-} orphainChianRoot = {NULL, NULL};
+} orphainChainRoot = {NULL, NULL};
 
 /* 3 functionality option of the program */
 static bool OP_SHOWPID = false;
@@ -258,7 +258,7 @@ void addOrphan(struct process* proc) {
 }
 
 void checkOrphans() {
-  struct processChain* orphanEntry = orphanRoot->next;
+  struct processChain* orphanEntry = orphanChainRoot->next;
   while (orphanEntry) {
     struct process* orphan = orphanEntry->proc;
     addProcess(orphan);
