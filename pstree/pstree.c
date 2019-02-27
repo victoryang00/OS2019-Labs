@@ -175,7 +175,7 @@ struct process* readProcess(char* pidStr, struct process* parent) {
     sprintf(statFile, "/proc/%.12s/stat", pidStr);
   } else {
     /* read a child thread */
-    sprintf(statFile, "/proc/%12d/task/%.12s/stat", parent->pid, pidStr);
+    sprintf(statFile, "/proc/%d/task/%.12s/stat", parent->pid, pidStr);
   }
 
   FILE* sfp = fopen(statFile, "r");
