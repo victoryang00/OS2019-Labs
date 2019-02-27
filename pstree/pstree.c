@@ -1,7 +1,9 @@
 /**
  * TREE STRUCT OF PROCESSES
  *
- * ROOT -> 1st child -> grandchild...
+ * ROOT -> 1st child -> grandchild 1...
+ *             |              |
+ *             |        grandchild 2...
  *             |
  *         2nd child -> grandchild...
  *             |
@@ -163,15 +165,20 @@ struct process* findProcess(pid_t pid, struct process* cur) {
 }
 
 void addProcess(struct process* proc) {
-  /* If the process is an orphan (parent is dead),
-   * then it does not appear in the process tree. 
-   * (same as pstree from UNIX. [really???]) */
-  struct process* parent = findProcess(proc->ppid, NULL);
-  if (!parent) return;
+  /* Avoid duplication. */
+  struct process* self = findProcess(proc->pid, NULL);
+  if (self) return;
   else {
-    proc->parent = parent;
-    proc->next = parent->child;
-    parent->child = proc;
+    /* If the process is an orphan (parent is dead),
+     * then it does not appear in the process tree. 
+     * (same as pstree from UNIX. [really???]) */
+    struct process* parent = findProcess(proc->ppid, NULL);
+    if (!parent) return;
+    else {
+      proc->parent = parent;
+      proc->next = parent->child;
+      parent->child = proc;
+    }
   }
 }
 
