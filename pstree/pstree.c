@@ -114,7 +114,7 @@ int printPSTree() {
       /* read the process and its children */
       readProcess(dp->d_name);
 
-      char tasksFolder[64] = "";
+      char taskFolder[64] = "";
       sprintf(taskFolder, "/proc/%s/task", dp->d_name);
       DIR *taskdr = opendir(taskFolder);
       if (taskdr) { // process may die at this moment
