@@ -111,7 +111,6 @@ int printPSTree() {
   struct dirent *dp;
   while ((dp = readdir(dr)) != NULL) {
     if (isdigit(*(dp->d_name))) {
-    printf("%s\n", dp->d_name);
       /* read the process */
       readProcess(dp->d_name, NULL);
       /* read child threads */
@@ -144,6 +143,7 @@ void readProcess(char* pidStr, char* taskPidStr) {
     sprintf(statFile, "/proc/%s/task/%s/stat", pidStr, taskPidStr);
   }
 
+  printf("%s\n", statFile);
   FILE* sfp = fopen(statFile, "r");
   if (sfp) { // process may die before this moment 
     struct process* proc = malloc(sizeof(struct process));
