@@ -252,13 +252,8 @@ void printParentProcesses(struct process* proc) {
 }
 
 void addOrphan(struct process* orphan) { 
-  struct process* op = &rootOrphan;
-  if (op->next == NULL) {
-    op->next = orphan;
-  } else {
-    while (op->next) op = op->next;
-    op->next = orphan;
-  }
+  orphan.next = rootOrphan.next;
+  rootOrphan.next = &orphan;
 }
 
 void checkOrphans() {
