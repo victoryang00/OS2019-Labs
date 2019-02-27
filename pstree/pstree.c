@@ -41,7 +41,7 @@ struct process {
 struct processChain {
   struct process* proc;
   struct processChain* next;
-} orphainChainRoot = {NULL, NULL};
+} orphanChainRoot = {NULL, NULL};
 
 /* 3 functionality option of the program */
 static bool OP_SHOWPID = false;
