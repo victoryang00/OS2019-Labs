@@ -156,6 +156,7 @@ int printPSTree() {
       if (taskdr) { // process may die at this moment
         struct dirent *childp;
         while ((childp = readdir(taskdr)) != NULL) {
+          printf("OK\n");
           if (isdigit(*(childp->d_name))) readProcess(childp->d_name, parent);
         }
       }
