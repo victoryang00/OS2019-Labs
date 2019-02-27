@@ -233,13 +233,13 @@ void printProcess(struct process* proc) {
       ((proc == &rootProcess || proc == &rootOrphan) ? "" : (proc == proc->parent->child ? (proc->next ? "-+-" : "---") : (proc->next ? " |-" : " `-"))), 
       proc->name, 
       proc->child ? "" : "\n");
-  printf("OK1\n");
   
   if (proc->child) printProcess(proc->child);
-  printf("OK2\n");
   if (proc->next) {
     printParentProcesses(proc->next->parent);
+    printf("OK3\n");
     printProcess(proc->next);
+    printf("OK4\n");
   }
 }
 
