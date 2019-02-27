@@ -256,6 +256,7 @@ void addOrphan(struct process* orphan) {
   } else {
     while (op->next) op = op->next;
     op->next = orphan;
+    orphan->parent = op;
   }
 }
 
