@@ -252,7 +252,7 @@ void printParentProcesses(struct process* proc) {
 }
 
 void addOrphan(struct process* orphan) { 
-  orphan.next = rootOrphan.next;
+  orphan->next = rootOrphan.next;
   rootOrphan.next = &orphan;
 }
 
