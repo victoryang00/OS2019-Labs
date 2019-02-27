@@ -133,8 +133,8 @@ int printPSTree() {
   closedir(dr);
 
   checkOrphans();
-  printProcess(&rootProcess);
-  printOrphans();
+  printProcess(&rootProcess); // print pstree
+  printProcess(&rootOrphan);  // print orphans
   return 0;
 }
 
@@ -249,18 +249,15 @@ void printParentProcesses(struct process* proc) {
       (int) strlen(proc->name), "");
 }
 
-void addOrphan(struct process* proc) { 
+void addOrphan(struct process* orphan) { 
   struct process* op = &rootOrphan;
   if (op->next == NULL) {
-    op->next = proc;
+    op->next = orphan;
   } else {
     while (op->next) op = op->next;
-    op->next = proc;
+    op->next = orphan;
   }
 }
 
 void checkOrphans() {
-}
-
-void printOrphans() {
 }
