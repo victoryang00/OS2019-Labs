@@ -104,14 +104,25 @@ int parseOptions(int argc, char *argv[]) {
 
 int printPSTree() {
   DIR *dr = opendir("/proc");
-  if (dr == NULL) {
+  if (!dr) {
     fprintf(stderr, "Error opening /proc folder. Aborted.\n");
     return -1;
   }
   struct dirent *dp;
   while ((dp = readdir(dr)) != NULL) {
     if (isNumber(dp->d_name)) {
+      /* read the process and its children */
       readProcess(dp->d_name);
+
+      char tasksFolder[64] = "";
+      sprintf(taskFolder, "/proc/%s/task", dp->d_name);
+      DIR *taskdr = opendir(taskFolder);
+      if (taskdr) { // process may die at this moment
+        struct dirent *childp;
+        while ((childp = readdir(taskdr)) != NULL) {
+          if (isNumber(childp->d_name)) readProcess(childp->d_name);
+        }
+      }
     }  
   }
   closedir(dr);
@@ -173,8 +184,7 @@ void addProcess(struct process* proc) {
   if (self) return;
   else {
     /* If the process is an orphan (parent is dead),
-     * then it does not appear in the process tree. 
-     * (same as pstree from UNIX. [really???]) */
+     * then it does not appear in the process tree. */
     struct process* parent = findProcess(proc->ppid, NULL);
     if (!parent) return;
     else {
