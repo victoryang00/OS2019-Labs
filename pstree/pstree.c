@@ -57,6 +57,7 @@ int parseOptions(int, char*[]);
 int printPSTree();
 bool isNumber(char*);
 void readProcess(char*, char*);
+void printThreadBraces(struct process*);
 void printProcessPID(struct process*);
 struct process* findProcess(pid_t, struct process*);
 void addProcess(struct process*);
@@ -158,16 +159,18 @@ void readProcess(char* pidStr, char* taskPidStr) {
     struct process* proc = malloc(sizeof(struct process));
     fscanf(sfp, "%d (%s %c %d", &proc->pid, proc->name, &proc->state, &proc->ppid);
     proc->name[strlen(proc->name) - 1] = '\0';
-    if (taskPidStr) {
-      char name[32] = "";
-      strcpy(name, proc->name);
-      sprintf(proc->name, "{%.*s}", 16, name);
-      proc->ppid = (pid_t) strtol(pidStr, NULL, 10); // for threads, use Tgid instead of Ppid.
-    }
+    if (taskPidStr) printThreadBraces(proc); 
     if (OP_SHOWPID) printProcessPID(proc); 
     proc->parent = proc->child = proc->next = NULL;
     addProcess(proc);
   }  
+}
+
+void printThreadBraces(struct process* proc) {
+  char name[32] = "";
+  strcpy(name, proc->name);
+  sprintf(proc->name, "{%.*s}", 16, name);
+  proc->ppid = (pid_t) strtol(pidStr, NULL, 10); // for threads, use Tgid instead of Ppid.
 }
 
 void printProcessPID(struct process* proc) {
