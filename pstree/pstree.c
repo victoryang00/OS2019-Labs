@@ -160,7 +160,7 @@ void readProcess(char* pidStr, char* taskPidStr) {
       char name[32] = "";
       strcpy(name, proc->name);
       sprintf(proc->name, "{%.*s}", 16, name);
-      proc->ppid = (pid_t) strtol(pidStr, pidStr + len(pidStr), 10); // for threads, use Tgid instead of Ppid.
+      proc->ppid = (pid_t) strtol(pidStr, pidStr + strlen(pidStr), 10); // for threads, use Tgid instead of Ppid.
     }
     if (OP_SHOWPID) {
       char pidStr[32] = "";
