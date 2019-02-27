@@ -158,9 +158,6 @@ void readProcess(char* pidStr, char* taskPidStr) {
     if (OP_SHOWPID) printProcessPID(proc); 
     proc->parent = proc->child = proc->next = NULL;
     addProcess(proc);
-    return proc;
-  } else {
-    return NULL;
   }
 }
 
