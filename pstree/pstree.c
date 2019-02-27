@@ -152,9 +152,6 @@ void readProcess(char* pidStr, char* taskPidStr) {
     proc->name[strlen(proc->name) - 1] = '\0';
     if (taskPidStr) {
       proc->ppid = (pid_t) strtol(pidStr, NULL, 10);
-      printf("O\n");
-      sprintf(proc->name, "{%.16s}", findProcess(proc->ppid, NULL)->name);
-      printf("K\n");
     }
     if (OP_SHOWPID) printProcessPID(proc); 
     proc->parent = proc->child = proc->next = NULL;
