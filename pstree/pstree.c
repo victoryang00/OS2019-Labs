@@ -259,9 +259,21 @@ void addOrphan(struct process* proc) {
 
 void checkOrphans() {
   struct processChain* orphanEntry = orphanChainRoot.next;
+  struct processChain* lastOrphanEntry = NULL;
   while (orphanEntry) {
     struct process* orphan = orphanEntry->proc;
     addProcess(orphan);
+    lastOrphanEntry = orphanEntry;
+    orphanEntry = orphanEntry->next;
+    free(lastOrphanEntry);
+  }
+}
+
+void printOrphans() {
+  struct processChain* orphanEntry = orphanChainRoot.next;
+  while (orphanEntry) {
+    struct process* orphan = orphanEntry->proc;
+    printf("- %s(%d)\n", orphan->name, orphan->pid);
     orphanEntry = orphanEntry->next;
   }
 }
