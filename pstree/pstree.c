@@ -143,7 +143,6 @@ void readProcess(char* pidStr, char* taskPidStr) {
     sprintf(statFile, "/proc/%s/task/%s/stat", pidStr, taskPidStr);
   }
 
-  printf("%s\n", statFile);
   FILE* sfp = fopen(statFile, "r");
   if (sfp) { // process may die before this moment 
     struct process* proc = malloc(sizeof(struct process));
