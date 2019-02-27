@@ -63,6 +63,7 @@ void addProcess(struct process*);
 void printProcess(struct process*);
 void printParentProcesses(struct process*);
 void addOrphan(struct process*);
+void printOrphans();
 
 /* main entry of the program */
 int main(int argc, char *argv[]) {
@@ -215,6 +216,8 @@ void addProcess(struct process* proc) {
           parent->child = proc;
         }
       }
+    } else {
+      addOrphan(proc);
     }
   }
 }
@@ -241,4 +244,23 @@ void printParentProcesses(struct process* proc) {
   printf("%s%*s",
       (proc == &rootProcess ? "" : (proc->next ? " | " : "   ")),
       (int) strlen(proc->name), "");
+}
+
+void addOrphan(struct process* orphan) {
+  struct process* op = &rootOrphan;
+  if (op->next == NULL) {
+    op->next = orphan;
+  } else {
+    while (op->next) op = op->next;
+    op->next = orphan;
+  }
+}
+
+void printOrphan() {
+  printf("Orphans:\n");
+  struct process* op = &rootOrphan;
+  while (op->next) {
+    op = op->next;
+    printf("- %s(%d)\n", op->name, op->pid);
+  }
 }
