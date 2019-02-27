@@ -32,8 +32,7 @@ struct option {
 struct process {
   pid_t pid;
   pid_t ppid;
-  char pidStr[16];
-  char name[32]; // man 2 prctl -> maximum 16 bytes
+  char name[64]; // man 2 prctl -> maximum 16 bytes
   char state;    // man 7 proc  -> character type
   struct process *parent; // parent process
   struct process *child;  // child process
