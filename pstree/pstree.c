@@ -55,7 +55,7 @@ const int NR_OPTIONS = (int) sizeof(options) / sizeof(struct option);
 /* definition of functions */
 int parseOptions(int, char*[]);
 int printPSTree();
-struct process* readProcess(char*, char*);
+void readProcess(char*, char*);
 void handleChildThread(struct process*, struct process*);
 void printProcessPID(struct process*);
 struct process* findProcess(pid_t, struct process*);
@@ -113,7 +113,7 @@ int printPSTree() {
   while ((dp = readdir(dr)) != NULL) {
     if (isdigit(*(dp->d_name))) {
       /* read the process */
-      struct process* parent = readProcess(dp->d_name, NULL);
+      readProcess(dp->d_name, NULL);
       /* read child threads */
       char taskFolder[64] = "/proc/";
       strncat(taskFolder, dp->d_name, 16);
@@ -134,7 +134,7 @@ int printPSTree() {
   return 0;
 }
 
-struct process* readProcess(char* pidStr, char* taskPidStr) {
+void readProcess(char* pidStr, char* taskPidStr) {
   char statFile[64] = "";
 
   if (!taskPidStr) {
@@ -152,6 +152,7 @@ struct process* readProcess(char* pidStr, char* taskPidStr) {
     proc->name[strlen(proc->name) - 1] = '\0';
     if (taskPidStr) {
       proc->ppid = (pid_t) strtol(pidStr, NULL, 10);
+     
       sprintf(proc->name, "{%.16s}", findProcess(proc->ppid, NULL)->name);
     }
     if (OP_SHOWPID) printProcessPID(proc); 
