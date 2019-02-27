@@ -38,6 +38,10 @@ struct process {
   struct process *child;  // child process
   struct process *next;   // next process (same level)
 } rootProcess = {1, 0, "systemd", 'X', NULL, NULL};
+struct processChain {
+  struct process* proc;
+  struct processChain* next;
+} orphainChianRoot = {NULL, NULL};
 
 /* 3 functionality option of the program */
 static bool OP_SHOWPID = false;
@@ -61,6 +65,8 @@ struct process* findProcess(pid_t, struct process*);
 void addProcess(struct process*);
 void printProcess(struct process*);
 void printParentProcesses(struct process*);
+void addOrphan(struct process*);
+void checkOrphans();
 
 /* main entry of the program */
 int main(int argc, char *argv[]) {
@@ -193,8 +199,7 @@ void addProcess(struct process* proc) {
     /* If the process is an orphan (parent is dead),
      * then it does not appear in the process tree. */
     struct process* parent = findProcess(proc->ppid, NULL);
-    if (!parent) return;
-    else {
+    if (parent) {
       proc->parent = parent;
       struct process* child = parent->child;
       if (!child) {
@@ -215,11 +220,14 @@ void addProcess(struct process* proc) {
           parent->child = proc;
         }
       }
+    } else {
+      addOrphan(proc);
     }
   }
 }
 
 void printProcess(struct process* proc) {
+  /* print (pid) to name */
   if (OP_SHOWPID) printProcessPID(proc);
 
   printf("%s%s%s", 
@@ -240,4 +248,20 @@ void printParentProcesses(struct process* proc) {
   printf("%s%*s",
       (proc == &rootProcess ? "" : (proc->next ? " | " : "   ")),
       (int) strlen(proc->name), "");
+}
+
+void addOrphan(struct process* proc) { 
+  struct processChain* orphanEntry = malloc(sizeof(struct processChain));
+  orphanEntry->proc = proc;
+  orphanEntry->next = orphanChainRoot->next;
+  orphanChainRoot->next = orphanEntry;
+}
+
+void checkOrphans() {
+  struct processChain* orphanEntry = orphanRoot->next;
+  while (orphanEntry) {
+    struct process* orphan = orphanEntry->proc;
+    addProcess(orphan);
+    orphanEntry = orphanEntry->next;
+  }
 }
