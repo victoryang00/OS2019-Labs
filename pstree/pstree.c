@@ -175,7 +175,7 @@ struct process* readProcess(char* pidStr, struct process* parent) {
     sprintf(statFile, "/proc/%.12s/stat", pidStr);
   } else {
     /* read a child thread */
-    sprintf(statFile, "/proc/%.12d/task/%.12s/stat", parent->pid, pidStr);
+    sprintf(statFile, "/proc/%12d/task/%.12s/stat", parent->pid, pidStr);
   }
 
   FILE* sfp = fopen(statFile, "r");
@@ -185,7 +185,6 @@ struct process* readProcess(char* pidStr, struct process* parent) {
     proc->name[strlen(proc->name) - 1] = '\0';
     proc->parent = proc->child = proc->next = NULL;
     if (parent) {
-      printf("OK!\n");
       proc->ppid = parent->pid; 
       sprintf(proc->name, "{%.16s}", parent->name);
     }
