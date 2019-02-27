@@ -137,11 +137,10 @@ void readProcess(char* pidStr) {
     struct process* proc = malloc(sizeof(struct process));
     fscanf(sfp, "%d (%s %c %d", &proc->pid, proc->name, &proc->state, &proc->ppid);
     proc->name[strlen(proc->name) - 1] = '\0';
-    /* use snprintf to avoid overflow */
     if (OP_SHOWPID) {
       char pidStr[32] = "";
       sprintf(pidStr, "(%d)", proc->pid);
-      strncat(proc->name, pidStr, 16);
+      strncat(proc->name, pidStr, 14); // avoid overflow
     } 
     proc->parent = proc->child = proc->next = NULL;
     addProcess(proc);
@@ -185,10 +184,12 @@ void addProcess(struct process* proc) {
         /* no child now */
         parent->child = proc;
       } else {
-        /* add as the last child in chain */
-        while (child->next) child = child->next;
-        child->next = proc;
-        // TODO: numeric sort
+        if (OP_NUMERIC) {
+          // TODO: numeric sort
+        } else {
+          proc->next = child;
+          parent->child = proc;
+        }
       }
     }
   }
