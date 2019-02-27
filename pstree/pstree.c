@@ -138,7 +138,11 @@ void readProcess(char* pidStr) {
     fscanf(sfp, "%d (%s %c %d", &proc->pid, proc->name, &proc->state, &proc->ppid);
     proc->name[strlen(proc->name) - 1] = '\0';
     /* use snprintf to avoid overflow */
-    if (OP_SHOWPID) snprintf(proc->name, sizeof(proc->name), "%16s(%10d)", proc->name, proc->pid);
+    if (OP_SHOWPID) {
+      char pidStr[32] = "";
+      sprintf(pidStr, "(%d)", proc->pid);
+      strncat(proc->name, pidStr, 16);
+    } 
     proc->parent = proc->child = proc->next = NULL;
     addProcess(proc);
   }  
