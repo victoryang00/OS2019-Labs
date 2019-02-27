@@ -129,7 +129,7 @@ int printPSTree() {
   }
   closedir(dr);
 
-  if (OP_SHOWPID) printProcessPID(rootProcess);
+  if (OP_SHOWPID) printProcessPID(&rootProcess);
   printProcess(&rootProcess);
   return 0;
 }
