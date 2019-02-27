@@ -148,6 +148,7 @@ int printPSTree() {
     if (isdigit(*(dp->d_name))) {
       /* read the process */
       struct process* parent = readProcess(dp->d_name, NULL);
+      if (!parent) continue;
       /* read child threads */
       char taskFolder[64] = "/proc/";
       strncat(taskFolder, dp->d_name, 16);
@@ -190,7 +191,9 @@ struct process* readProcess(char* pidStr, struct process* parent) {
     }
     addProcess(proc);
     fclose(sfp); // I forgot to close the stream and caused bug.
+    return proc;
   }
+  return NULL;
 }
 
 void attachProcessPID(struct process* proc) {
