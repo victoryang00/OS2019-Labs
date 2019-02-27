@@ -205,7 +205,7 @@ void addProcess(struct process* proc) {
             proc->next = child;
             parent->child = proc;
           } else {
-            while (child->next != NULL && proc->pid > child->pid) child = child->next;
+            while (child != NULL && proc->pid > child->pid) child = child->next;
             proc->next = child->next;
             child->next = proc;
           }
