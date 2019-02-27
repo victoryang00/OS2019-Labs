@@ -55,7 +55,6 @@ const int NR_OPTIONS = (int) sizeof(options) / sizeof(struct option);
 /* definition of functions */
 int parseOptions(int, char*[]);
 int printPSTree();
-bool isNumber(char*);
 struct process* readProcess(char*, char*);
 void handleChildThread(struct process*, struct process*);
 void printProcessPID(struct process*);
@@ -112,7 +111,7 @@ int printPSTree() {
   }
   struct dirent *dp;
   while ((dp = readdir(dr)) != NULL) {
-    if (isNumber(dp->d_name)) {
+    if (isdigit(*(dp->d_name))) {
       /* read the process */
       struct process* parent = readProcess(dp->d_name, NULL);
       /* read child threads */
@@ -123,8 +122,7 @@ int printPSTree() {
       if (taskdr) { // process may die at this moment
         struct dirent *childp;
         while ((childp = readdir(taskdr)) != NULL) {
-          struct process* child = readProcess(dp->d_name, childp->d_name);
-          handleChileThread(child, parent);
+          readProcess(dp->d_name, childp->d_name);
         }
       }
     }
@@ -134,14 +132,6 @@ int printPSTree() {
   if (OP_SHOWPID) printProcessPID(&rootProcess);
   printProcess(&rootProcess);
   return 0;
-}
-
-bool isNumber(char *s) {
-  int len = strlen(s);
-  for (int i = 0; i < len; ++i) {
-    if (!isdigit(s[i])) return false;
-  }
-  return true;
 }
 
 struct process* readProcess(char* pidStr, char* taskPidStr) {
@@ -160,6 +150,11 @@ struct process* readProcess(char* pidStr, char* taskPidStr) {
     struct process* proc = malloc(sizeof(struct process));
     fscanf(sfp, "%d (%s %c %d", &proc->pid, proc->name, &proc->state, &proc->ppid);
     proc->name[strlen(proc->name) - 1] = '\0';
+    if (taskPidStr) {
+      proc->ppid = (pid_t) strtol(pidStr, NULL, 10);
+      struct process* parent = findProcess(proc->ppid);
+      sprintf(proc->name, "{%s}", parent->name);
+    }
     if (OP_SHOWPID) printProcessPID(proc); 
     proc->parent = proc->child = proc->next = NULL;
     addProcess(proc);
@@ -167,11 +162,6 @@ struct process* readProcess(char* pidStr, char* taskPidStr) {
   } else {
     return NULL;
   }
-}
-
-void handleChildThread(struct process* child, struct process* parent) {
-  sprintf(child->name, "{%.*s}", 16, parent->name);
-  proc->ppid = (pid_t) strtol(pidStr, NULL, 10); // for threads, use Tgid instead of Ppid.
 }
 
 void printProcessPID(struct process* proc) {
