@@ -1,16 +1,18 @@
 /**
- * TREE STRUCT OF PROCESSES
- *
- * systemd -> 1st child -> grandchild 1...
- *                |              |
- *                |        grandchild 2...
- *                |
- *            2nd child -> grandchild...
- *                |
- *            NULL (end)
- *
- * died parent      orphan child
- *      X       ->  (disappear)
+ * +------------------------------------------+
+ * | TREE STRUCT OF PROCESSES                 |
+ * |                                          |
+ * | systemd -> 1st child -> grandchild 1...  |
+ * |                |              |          |
+ * |                |        grandchild 2...  |
+ * |                |                         |
+ * |            2nd child -> grandchild...    |
+ * |                |                         |
+ * |            NULL (end)                    |
+ * |                                          |
+ * | died parent      orphan child            |
+ * |      X       ->  (disappear)             |
+ * +------------------------------------------+
  */
 
 #include <stdio.h>
