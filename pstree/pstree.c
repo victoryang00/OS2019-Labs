@@ -187,7 +187,7 @@ void readProcess(char* pidStr, char* taskPidStr) {
     if (taskPidStr) {
       proc->ppid = (pid_t) strtol(pidStr, NULL, 10);
       struct process* parent = findProcess(proc->ppid, NULL);
-      sprintf(proc->name, "{%.16s}", parent ? parent->name : "UNKNOWN");
+      sprintf(proc->name, "{%.16s}", parent->name);
     }
     addProcess(proc);
     fclose(sfp); //FUCK
