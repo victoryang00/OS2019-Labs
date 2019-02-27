@@ -115,7 +115,7 @@ int printPSTree() {
       readProcess(dp->d_name);
 
       char taskFolder[64] = "";
-      sprintf(taskFolder, "/proc/%20s/task", dp->d_name);
+      snprintf(taskFolder, "/proc/%s/task", dp->d_name, 60);
       DIR *taskdr = opendir(taskFolder);
       if (taskdr) { // process may die at this moment
         struct dirent *childp;
