@@ -37,11 +37,8 @@ struct process {
   struct process *parent; // parent process
   struct process *child;  // child process
   struct process *next;   // next process (same level)
-} rootProcess = {1, 0, "systemd", 'X', NULL, NULL};
-struct processChain {
-  struct process* proc;
-  struct processChain* next;
-} orphanChainRoot = {NULL, NULL};
+} rootProcess = {1, 0, "systemd", 'X', NULL, NULL},
+  rootOrphan = {0, 0, "pseudoProcess", 'X', NULL, NULL};
 
 /* 3 functionality option of the program */
 static bool OP_SHOWPID = false;
@@ -253,35 +250,17 @@ void printParentProcesses(struct process* proc) {
 }
 
 void addOrphan(struct process* proc) { 
-  struct processChain* orphanEntry = malloc(sizeof(struct processChain));
-  orphanEntry->proc = proc;
-
-  struct processChain* cp = &orphanChainRoot;
-  if (cp->next == NULL) {
-    cp->next = orphanEntry;
+  struct process* op = &rootOrphan;
+  if (op->next == NULL) {
+    op->next = proc;
   } else {
-    while (cp->next) cp = cp->next;
-    cp->next = orphanEntry;
+    while (op->next) op = op->next;
+    op->next = proc;
   }
 }
 
 void checkOrphans() {
-  struct processChain* orphanEntry = orphanChainRoot.next;
-  struct processChain* lastOrphanEntry = NULL;
-  while (orphanEntry) {
-    struct process* orphan = orphanEntry->proc;
-    addProcess(orphan);
-    lastOrphanEntry = orphanEntry;
-    orphanEntry = orphanEntry->next;
-    free(lastOrphanEntry);
-  }
 }
 
 void printOrphans() {
-  struct processChain* orphanEntry = orphanChainRoot.next;
-  while (orphanEntry) {
-    struct process* orphan = orphanEntry->proc;
-    printf("- %s(%d)\n", orphan->name, orphan->pid);
-    orphanEntry = orphanEntry->next;
-  }
 }
