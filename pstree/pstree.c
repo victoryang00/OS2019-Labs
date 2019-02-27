@@ -124,7 +124,7 @@ int printPSTree() {
         struct dirent *childp;
         while ((childp = readdir(taskdr)) != NULL) {
           struct process* child = readProcess(dp->d_name, childp->d_name);
-          handleThreadProcess(child, parent);
+          handleChileThread(child, parent);
         }
       }
     }
