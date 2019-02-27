@@ -132,6 +132,7 @@ int printPSTree() {
   closedir(dr);
 
   printProcess(&rootProcess); // print pstree
+  printOrphans();
   return 0;
 }
 
