@@ -254,7 +254,7 @@ void addOrphan(struct process* proc) {
   struct processChain* orphanEntry = malloc(sizeof(struct processChain));
   orphanEntry->proc = proc;
   orphanEntry->next = orphanChainRoot.next;
-  orphanChainRoot->next = orphanEntry;
+  orphanChainRoot.next = orphanEntry;
 }
 
 void checkOrphans() {
