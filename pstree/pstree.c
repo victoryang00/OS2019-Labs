@@ -163,9 +163,10 @@ struct process* readProcess(char* pidStr, char* taskPidStr) {
     if (OP_SHOWPID) printProcessPID(proc); 
     proc->parent = proc->child = proc->next = NULL;
     addProcess(proc);
+    return proc;
+  } else {
+    return NULL;
   }
-
-  return proc;
 }
 
 void handleChildThread(struct process* child, struct process* parent) {
