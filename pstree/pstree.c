@@ -30,6 +30,7 @@ struct option {
 struct process {
   pid_t pid;
   pid_t ppid;
+  char pidStr[16];
   char name[32]; // man 2 prctl -> maximum 16 bytes
   char state;    // man 7 proc  -> character type
   struct process *parent; // parent process
@@ -135,6 +136,7 @@ void readProcess(char* pidStr) {
     struct process* proc = malloc(sizeof(struct process));
     fscanf(sfp, "%d (%s %c %d", &proc->pid, proc->name, &proc->state, &proc->ppid);
     proc->name[strlen(proc->name) - 1] = '\0';
+    sprintf(proc->pidStr, "(%d)", proc->pid);
     proc->parent = proc->child = proc->next = NULL;
     addProcess(proc);
   }  
@@ -174,12 +176,10 @@ void addProcess(struct process* proc) {
 }
 
 void printProcess(struct process* proc) {
-  char pidStr[32] = "";
-  if (OP_SHOWPID) sprintf(pidStr, "(%d)", proc->pid);
 
   printf("%s%s%s%s", 
       (proc == &rootProcess ? "" : (proc->next ? "-+-" : "---")), 
-      proc->name, pidStr, 
+      proc->name, OP_SHOWPID ? proc->pidStr : "", 
       proc->child ? "" : "\n");
   
   if (proc->child) printProcess(proc->child);
