@@ -90,8 +90,8 @@ const int NR_OPTIONS = (int) sizeof(options) / sizeof(struct option);
 /* definition of functions */
 int parseOptions(int, char*[]);
 int printPSTree();
-void readProcess(char*, char*);
-void printProcessPID(struct process*);
+struct process* readProcess(char*, struct process*);
+void attachProcessPID(struct process*);
 struct process* findProcess(pid_t, struct process*);
 void addProcess(struct process*);
 void printProcess(struct process*);
@@ -147,7 +147,7 @@ int printPSTree() {
   while ((dp = readdir(dr)) != NULL) {
     if (isdigit(*(dp->d_name))) {
       /* read the process */
-      readProcess(dp->d_name, NULL);
+      struct process* parent = readProcess(dp->d_name, NULL);
       /* read child threads */
       char taskFolder[64] = "/proc/";
       strncat(taskFolder, dp->d_name, 16);
@@ -156,7 +156,7 @@ int printPSTree() {
       if (taskdr) { // process may die at this moment
         struct dirent *childp;
         while ((childp = readdir(taskdr)) != NULL) {
-          if (isdigit(*(childp->d_name))) readProcess(dp->d_name, childp->d_name);
+          if (isdigit(*(childp->d_name))) readProcess(childp->d_name, parent);
         }
       }
     }
@@ -167,15 +167,15 @@ int printPSTree() {
   return 0;
 }
 
-void readProcess(char* pidStr, char* taskPidStr) {
+struct process* readProcess(char* pidStr, struct process* parent) {
   char statFile[64] = "";
 
-  if (!taskPidStr) {
+  if (!parent) {
     /* read a process */
     sprintf(statFile, "/proc/%s/stat", pidStr);
   } else {
     /* read a child thread */
-    sprintf(statFile, "/proc/%s/task/%s/stat", pidStr, taskPidStr);
+    sprintf(statFile, "/proc/%.12d/task/%s/stat", parent->pid, pidStr);
   }
 
   FILE* sfp = fopen(statFile, "r");
@@ -186,7 +186,6 @@ void readProcess(char* pidStr, char* taskPidStr) {
     proc->parent = proc->child = proc->next = NULL;
     if (taskPidStr) {
       proc->ppid = (pid_t) strtol(pidStr, NULL, 10);
-      struct process* parent = findProcess(proc->ppid, NULL);
       sprintf(proc->name, "{%.16s}", parent->name);
     }
     addProcess(proc);
@@ -194,7 +193,7 @@ void readProcess(char* pidStr, char* taskPidStr) {
   }
 }
 
-void printProcessPID(struct process* proc) {
+void attachProcessPID(struct process* proc) {
   char pidStr[32] = "";
   sprintf(pidStr, "(%d)", proc->pid);
   strncat(proc->name, pidStr, 14); // avoid overflow
@@ -256,7 +255,7 @@ void addProcess(struct process* proc) {
 
 void printProcess(struct process* proc) {
   /* print (pid) to name */
-  if (OP_SHOWPID) printProcessPID(proc);
+  if (OP_SHOWPID) attachProcessPID(proc);
 
   printf("%s%s%s", 
       (proc == &rootProcess ? "" : (proc == proc->parent->child ? (proc->next ? "-+-" : "---") : (proc->next ? " |-" : " `-"))), 
