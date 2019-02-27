@@ -191,5 +191,7 @@ void printProcess(struct process* proc) {
 void printParentProcesses(struct process* proc) {
   /* Print the vertical lines of parent processes */
   if (proc->parent) printParentProcesses(proc->parent);
-  printf("%*s | ", (int) strlen(proc->name), "");
+  printf("%*s%s",
+      (int) strlen(proc->name), "",
+      proc->next ? " | " : "   ");
 }
