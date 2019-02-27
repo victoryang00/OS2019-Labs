@@ -67,6 +67,7 @@ void printProcess(struct process*);
 void printParentProcesses(struct process*);
 void addOrphan(struct process*);
 void checkOrphans();
+void printOrphans();
 
 /* main entry of the program */
 int main(int argc, char *argv[]) {
