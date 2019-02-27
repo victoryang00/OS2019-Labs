@@ -184,7 +184,7 @@ struct process* readProcess(char* pidStr, struct process* parent) {
     fscanf(sfp, "%d (%s %c %d", &proc->pid, proc->name, &proc->state, &proc->ppid);
     proc->name[strlen(proc->name) - 1] = '\0';
     proc->parent = proc->child = proc->next = NULL;
-    if (taskPidStr) {
+    if (parent) {
       proc->ppid = (pid_t) strtol(pidStr, NULL, 10);
       sprintf(proc->name, "{%.16s}", parent->name);
     }
