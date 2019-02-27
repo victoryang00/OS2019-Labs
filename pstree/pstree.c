@@ -156,7 +156,7 @@ void readProcess(char* pidStr, char* taskPidStr) {
       sprintf(proc->name, "{%.16s}", parent ? parent->name : "UNKNOWN");
     }
     addProcess(proc);
-    fclose(sfp);
+    fclose(sfp); //FUCK
   }
 }
 
