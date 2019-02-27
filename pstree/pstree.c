@@ -157,7 +157,9 @@ void readProcess(char* pidStr, char* taskPidStr) {
     fscanf(sfp, "%d (%s %c %d", &proc->pid, proc->name, &proc->state, &proc->ppid);
     proc->name[strlen(proc->name) - 1] = '\0';
     if (taskPidStr) {
-      sprintf(proc->name, "{%.*s}", 16, proc->name);
+      char name[32] = "";
+      strcpy(name, proc->name);
+      sprintf(proc->name, "{%.*s}", 16, name);
     }
     if (OP_SHOWPID) {
       char pidStr[32] = "";
