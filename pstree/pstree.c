@@ -257,7 +257,7 @@ void addOrphan(struct process* orphan) {
   }
 }
 
-void printOrphan() {
+void printOrphans() {
   printf("Orphans:\n");
   struct process* op = &rootOrphan;
   while (op->next) {
