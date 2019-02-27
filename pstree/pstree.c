@@ -192,7 +192,7 @@ void addProcess(struct process* proc) {
 
 void printProcess(struct process* proc) {
   printf("%s%s%s%s", 
-      (proc == &rootProcess ? "" : "|--"), 
+      (proc == &rootProcess ? "" : "---"), 
       proc->name, OP_SHOWPID ? proc->pidStr : "", 
       proc->child ? "" : "\n");
   
@@ -207,6 +207,6 @@ void printParentProcesses(struct process* proc) {
   /* Print the vertical lines of parent processes */
   if (proc->parent) printParentProcesses(proc->parent);
   printf("%s%*s",
-      (proc == &rootProcess ? "" : (proc->next ? "|  " : "   ")),
+      (proc == &rootProcess ? "" : (proc->next ? " | " : "   ")),
       (int) strlen(proc->name), "");
 }
