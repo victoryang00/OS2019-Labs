@@ -137,6 +137,7 @@ int printPSTree() {
 
   checkOrphans();
   printProcess(&rootProcess);
+  printOrphans();
   return 0;
 }
 
@@ -254,8 +255,14 @@ void printParentProcesses(struct process* proc) {
 void addOrphan(struct process* proc) { 
   struct processChain* orphanEntry = malloc(sizeof(struct processChain));
   orphanEntry->proc = proc;
-  orphanEntry->next = orphanChainRoot.next;
-  orphanChainRoot.next = orphanEntry;
+
+  struct processChain* cp = &orphanChainRoot;
+  if (cp->next == NULL) {
+    cp->next = orphanEntry;
+  } else {
+    while (cp->next) cp = cp->next;
+    cp->next = orphanEntry;
+  }
 }
 
 void checkOrphans() {
