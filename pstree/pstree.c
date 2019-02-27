@@ -237,6 +237,7 @@ void printProcess(struct process* proc) {
   if (proc->child) printProcess(proc->child);
   if (proc->next) {
     if (proc->next->parent) printParentProcesses(proc->next->parent);
+    printf("OK3!\n");
     printProcess(proc->next);
   }
 }
@@ -256,7 +257,6 @@ void addOrphan(struct process* orphan) {
   } else {
     while (op->next) op = op->next;
     op->next = orphan;
-    orphan->parent = op;
   }
 }
 
