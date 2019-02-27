@@ -181,8 +181,7 @@ struct process* readProcess(char* pidStr, struct process* parent) {
   FILE* sfp = fopen(statFile, "r");
   if (sfp) { // process may die before this moment 
     struct process* proc = malloc(sizeof(struct process));
-    fscanf(sfp, "%d (%[^)] %c %d", &proc->pid, proc->name, &proc->state, &proc->ppid);
-    printf("%c\n", proc->state);
+    fscanf(sfp, "%d (%[^)]) %c %d", &proc->pid, proc->name, &proc->state, &proc->ppid);
     proc->parent = proc->child = proc->next = NULL;
     if (parent) {
       proc->ppid = parent->pid; 
