@@ -176,8 +176,14 @@ void addProcess(struct process* proc) {
     if (!parent) return;
     else {
       proc->parent = parent;
-      proc->next = parent->child;
-      parent->child = proc;
+      struct process* child = parent->child;
+      if (!child) {
+        /* no child now */
+        parent->child = proc;
+      } else {
+        while (child->next) child = child->next;
+        child->next = proc;
+      }
     }
   }
 }
