@@ -236,7 +236,7 @@ void printProcess(struct process* proc) {
   
   if (proc->child) printProcess(proc->child);
   if (proc->next) {
-    printParentProcesses(proc->next->parent);
+    //printParentProcesses(proc->next->parent);
     printProcess(proc->next);
   }
 }
