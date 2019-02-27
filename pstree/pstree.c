@@ -195,5 +195,5 @@ void printParentProcesses(struct process* proc) {
   printf("%s%s",
       //(int) strlen(proc->name), "",
       proc->name,
-      proc->next ? " |" : "  ");
+      proc->next ? " | " : "   ");
 }
