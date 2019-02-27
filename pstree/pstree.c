@@ -181,8 +181,10 @@ void addProcess(struct process* proc) {
         /* no child now */
         parent->child = proc;
       } else {
+        /* add as the last child in chain */
         while (child->next) child = child->next;
         child->next = proc;
+        // TODO: numeric sort
       }
     }
   }
