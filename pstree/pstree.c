@@ -133,7 +133,8 @@ void readProcess(char* pidStr) {
   FILE* sfp = fopen(statFile, "r");
   if (sfp) { 
     struct process* proc = malloc(sizeof(struct process));
-    fscanf(sfp, "%d %s %c %d", &proc->pid, proc->name, &proc->state, &proc->ppid);
+    fscanf(sfp, "%d (%s %c %d", &proc->pid, proc->name, &proc->state, &proc->ppid);
+    proc->name[strlen(proc->name) - 1] = '\0';
     proc->parent = proc->child = proc->next = NULL;
     addProcess(proc);
   }  
