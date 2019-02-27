@@ -189,7 +189,7 @@ struct process* readProcess(char* pidStr, struct process* parent) {
       sprintf(proc->name, "{%.16s}", parent->name);
     }
     addProcess(proc);
-    fclose(sfp); //FUCK
+    fclose(sfp); // I forgot to close the stream and caused bug.
   }
 }
 
