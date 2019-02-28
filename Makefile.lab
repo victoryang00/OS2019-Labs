@@ -1,8 +1,6 @@
 # **DO NOT MODIFY**
 
 submit:
-	@export STUID=171860508
-	@export STUNAME=张天昀
 	@cd $(dir $(abspath $(lastword $(MAKEFILE_LIST)))) && \
 	  curl -sS 'http://moon.nju.edu.cn/%7ejyy/teach/submit.sh' | bash
 
