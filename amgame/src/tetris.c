@@ -7,7 +7,7 @@ static struct State state;
 static int screen[SCREEN_H][SCREEN_W];
 
 void initTetris() {
-  memset(blocks, 0, sizeof(blocks));
+  memset(screen, 0, sizeof(screen));
   newTetromino();
 }
 
