@@ -69,13 +69,13 @@ struct Tetromino newTetromino();
 struct Tetromino moveTetromino(struct Tetromino, bool);
 struct Tetromino fallTetromino(struct Tetromino, bool);
 struct Tetromino spinTetromino(struct Tetromino, bool);
-void saveTetromino(struct Point, int);
+void saveTetromino(struct Tetromino);
 void clearTetrominos();
-int isTetrominoValid(struct Point, int);
+int isTetrominoValid(struct Tetromino);
 int isPointValid(struct Point);
 bool isLastRowFull();
 void drawBlock(struct Point, uint32_t);
-void drawTetrominos(struct Tetromino T);
+void drawTetrominos(struct Tetromino);
 
 struct KeyCodeMapping {
   int code;

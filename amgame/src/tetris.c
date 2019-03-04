@@ -43,14 +43,14 @@ struct Tetromino moveTetromino(struct Tetromino oldT, bool movingLeft) {
 struct Tetromino fallTetromino(struct Tetromino originT, bool force) {
   struct Tetromino T = originT;
   if (force) {
-    while (isTetrominoTetromino(T)) T.pos.y++;
+    while (isTetrominoValid(T)) T.pos.y++;
   } else {
     struct Tetromino nextT = T;
     nextT.pos.y++;
-    if (isValidTetromino(nextT)) T = nextT;
+    if (isTetrominoValid(nextT)) T = nextT;
   }
   if (force || T == originT) {
-    if (isValidTetromino(T) == -1) {
+    if (isTetrominoValid(T) == -1) {
       return TT_GAME_OVER; // game over 
     } else {
       saveTetromino(T);
@@ -63,7 +63,7 @@ struct Tetromino fallTetromino(struct Tetromino originT, bool force) {
 
 struct Tetromino spinTetromino(struct Tetromino oldT, bool clockwise) {
   struct Tetromino newT = oldT;
-  newT.type = clockwise ? tetrominoTypes[T.type].prev : etrominoTypes[T.type].next;
+  newT.type = clockwise ? tetrominoTypes[T.type].prev : tetrominoTypes[T.type].next;
   return isTetrominoValid(newT) ? newT : oldT;
 }
 
@@ -108,8 +108,8 @@ bool isLastRowFull() {
     if (!screen[SCREEN_H - 1][j]) return false;
   }
   int tmp[SCREEN_H][SCREEN_W] = {};
-  memcpy(tmp, screen, SZ_SCREEN);
-  memcpy(screen + SZ_ROW, tmp, SZ_SCREEN);
+  memcpy(tmp, screen, SZ_MV_SCREEN);
+  memcpy(screen + SZ_ROW, tmp, SZ_MV_SCREEN);
 }
 
 void drawBlock(struct Point pos, uint32_t color) {
