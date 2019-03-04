@@ -1,3 +1,5 @@
+#include <game.h>
+
 #define SCREEN_X 0
 #define SCREEN_Y 0
 #define SCREEN_H 26
