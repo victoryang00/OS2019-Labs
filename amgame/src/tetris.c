@@ -23,8 +23,8 @@ bool playTetromino(int keyCode) {
   for (int i = 0; i < NR_KEY_MAPPING; ++i) {
     if (keyCode == keyCodeMappings[i].code) {
       struct Tetromino T = keyCodeMappings[i].func(state.tetromino, keyCodeMappings[i].param);
-      if (T == TT_GAME_OVER) return false;
-      if (T == TT_TOUCH_GROUND) {
+      if (memcmp(&T, &TT_GAME_OVER, sizeof(struct Tetromino)) == 0) return false;
+      if (memcmp(&T, &TT_TOUCH_GROUND, sizeof(struct Tetromino)) == 0) {
         state.tetromino = newTetromino();
       } else {
         state.tetromino = T;
