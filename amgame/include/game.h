@@ -1,8 +1,7 @@
 #include <am.h>
 #include <amdev.h>
-#include <stdio.h>
-#include <stdlib.h>
 #include <ctype.h>
+#include <klib.h>
 #include <stdbool.h>
 
 #define SIDE 16
