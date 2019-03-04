@@ -107,6 +107,7 @@ struct Tetromino fallTetromino(struct Tetromino originT, bool force) {
     if (checkTetromino(T) == -1) {
       return TT_GAME_OVER; // game over 
     } else {
+      printf("touch.\n");
       saveTetromino(T);
       return TT_TOUCH_GROUND; // touch ground
     }
