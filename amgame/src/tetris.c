@@ -49,7 +49,7 @@ struct Tetromino fallTetromino(struct Tetromino originT, bool force) {
     nextT.pos.y++;
     if (isTetrominoValid(nextT)) T = nextT;
   }
-  if (force || T == originT) {
+  if (force || memcmp(&T, &originT, sizeof(struct Tetromino)) == 0) {
     if (isTetrominoValid(T) == -1) {
       return TT_GAME_OVER; // game over 
     } else {
@@ -63,7 +63,7 @@ struct Tetromino fallTetromino(struct Tetromino originT, bool force) {
 
 struct Tetromino spinTetromino(struct Tetromino oldT, bool clockwise) {
   struct Tetromino newT = oldT;
-  newT.type = clockwise ? tetrominoTypes[T.type].prev : tetrominoTypes[T.type].next;
+  newT.type = clockwise ? tetrominoTypes[oldT.type].prev : tetrominoTypes[oldT.type].next;
   return isTetrominoValid(newT) ? newT : oldT;
 }
 
