@@ -7,7 +7,7 @@
 #define SCREEN_Y 0
 #define SCREEN_H 26
 #define SCREEN_W 13
-#define SCREEN_BLOCK_SIDE 5
+#define SCREEN_BLOCK_SIDE 10
 
 enum uint32_t {
   //TODO: find out the color codes
