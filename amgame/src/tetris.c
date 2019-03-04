@@ -101,7 +101,6 @@ struct Tetromino fallTetromino(struct Tetromino originT, bool force) {
   } else {
     struct Tetromino nextT = T;
     nextT.pos.y++;
-    printf("moving down!\n");
     T = checkTetromino(nextT) ? nextT : T;
   }
   if (force || memcmp(&T, &originT, sizeof(struct Tetromino)) == 0) {
@@ -144,7 +143,7 @@ int checkTetromino(struct Tetromino T) {
     p.x = T.pos.x + tetrominoTypes[T.type].d[i].x;
     p.y = T.pos.y + tetrominoTypes[T.type].d[i].y;
     int res = checkPoint(p);
-    if (!res) return 0;
+    if (res == 0) return 0;
     if (res == -1) result = -1; // above screen
   }
   return result;
