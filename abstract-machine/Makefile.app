@@ -17,6 +17,7 @@ INC_DIR += $(addsuffix /include/, $(addprefix $(AM_HOME)/libs/, $(LIBS)))
 $(shell mkdir -p $(DST_DIR))
 
 include $(AM_HOME)/Makefile.compile
+include ../Makefile.lab
 
 LINKLIBS = $(LIBS)
 
@@ -29,7 +30,7 @@ LINK_FILES += $(addsuffix -$(ARCH).a, $(join \
 .PHONY: app run image prompt
 
 $(OBJS): $(PREBUILD)
-image: $(OBJS) am $(LIBS) prompt
+image: git $(OBJS) am $(LIBS) prompt
 prompt: $(OBJS) am $(LIBS)
 app: image
 run: app
