@@ -80,7 +80,7 @@ void drawTetrominos(struct Tetromino T);
 struct KeyCodeMapping {
   int code;
   bool param;
-  struct Tetromino (*func) (int, bool);
+  struct Tetromino (*func) (struct Tetromino, bool);
 } const keyCodeMappings[4] = {
   //TODO: FIND OUT THE KEYCODES
   {01, false, &spinTetromino}, 

@@ -38,5 +38,5 @@ void drawSquare(struct Point pos, int size, uint32_t pixel) {
       pixels[i][j] = pixel;
     }
   }
-  draw_rect(pixels, pos.x, pos.y, size, size);
+  draw_rect((uint32_t*) pixels, pos.x, pos.y, size, size);
 }
