@@ -20,23 +20,14 @@ struct Point {
   {  1,  0 }  // right
 };
 
-struct Snake {
-  struct Point pos;
-  struct int next;
-};
+#include <tetris.h>
 
 struct State {
   int width, height;
   int FPS, nextFrame;
-  int keyCode;
+  int score, keyCode;
 
-  struct Point food;
-  struct Snake snake[NR_SNAKE];
-  struct int head;
-  struct int tail;
-
-  int direction;
-  bool insertMode;
+  struct Tetromino tetromino;
 };
 
 void drawSquare(struct Point pos, int size, uint32_t pixel) {

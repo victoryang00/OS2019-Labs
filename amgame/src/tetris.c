@@ -1,7 +1,7 @@
 /**
  * Tetris game
  */
-#include <tetris.h>
+#include <game.h>
 
 static struct State state;
 static int screen[SCREEN_H][SCREEN_W];
@@ -18,16 +18,16 @@ struct Tetromino newTetromino() {
 bool playTetromino(int keyCode) {
   for (int i = 0; i < NR_KEY_MAPPING; ++i) {
     if (keyCode == keyCodeMappings[i].code) {
-      struct Tetromino T = keyCodeMappings[i].func(state.tetris.tetromino, keyCodeMappings[i].param);
+      struct Tetromino T = keyCodeMappings[i].func(state.tetromino, keyCodeMappings[i].param);
       if (T == TT_GAME_OVER) return false;
       if (T == TT_TOUCH_GROUND) {
-        state.tetris.tetromino = newTetromino();
+        state.tetromino = newTetromino();
       } else {
-        state.tetris.tetromino = T;
+        state.tetromino = T;
       }
     }
   } 
-  drawTetrominos(state.tetris.tetromino);
+  drawTetrominos(state.tetromino);
   return true;
 }
 
@@ -115,7 +115,7 @@ void drawBlock(struct Point pos, uint32_t color) {
     SCREEN_X + pos.x * SCREEN_BLOCK_SIDE, 
     SCREEN_Y + pos.y * SCREEN_BLOCK_SIDE
   };
-  drawSquare(realPos, SCREEN_BLOCK_SIZE, color);
+  drawSquare(realPos, SCREEN_BLOCK_SIDE, color);
 }
 
 void drawTetrominos(struct Tetromino T) {
@@ -123,7 +123,7 @@ void drawTetrominos(struct Tetromino T) {
   for (int i = 0; i < SCREEN_H; ++i) {
     for (int j = 0; j < SCREEN_W; ++j) {
       p = { i, j };
-      drawSquare(p, tetrominoTypes[screen[i][j]].color);
+      drawBlock(p, tetrominoTypes[screen[i][j]].color);
     }
   } 
   for (int i = 0; i < 4; ++i) {
@@ -131,6 +131,6 @@ void drawTetrominos(struct Tetromino T) {
       T.pos.x + tetrominoTypes[T.type].d[i].x,
       T.pos.y + tetrominoTypes[T.type].d[i].y
     };
-    drawSquare(p, tetrominoTypes[T.type].color);
+    drawBlock(p, tetrominoTypes[T.type].color);
   }
 }
