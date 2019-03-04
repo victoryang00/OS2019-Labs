@@ -1,8 +1,8 @@
-#define SCREEN_X = 0;
-#define SCREEN_Y = 0;
-#define SCREEN_H = 26;
-#define SCREEN_W = 13;
-#define SCREEN_BLOCK_SIDE = 5;
+#define SCREEN_X 0;
+#define SCREEN_Y 0;
+#define SCREEN_H 26;
+#define SCREEN_W 13;
+#define SCREEN_BLOCK_SIDE 5;
 
 const int scores[5] = {
   0, 100, 200, 400, 800
