@@ -1,7 +1,7 @@
 /**
  * Tetris game
  */
-#include <game.h>
+#include <tetris.h>
 
 extern struct State state;
 static int screen[SCREEN_H][SCREEN_W];
