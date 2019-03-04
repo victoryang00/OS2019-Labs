@@ -15,7 +15,7 @@ const struct Tetromino TT_TOUCH_GROUND = { {-1, -1}, 0 };
 const size_t SZ_ROW = sizeof(struct Tetromino) * SCREEN_W;
 const size_t SZ_MV_SCREEN = sizeof(struct Tetromino) * (SCREEN_H - 1);
 
-const struct TetrominoTypes tetrominoTypes[20] = {
+const struct TetrominoType tetrominoTypes[20] = {
   {{{ 0,  0}, { 0,  0}, { 0,  0}, { 0,  0}},   EMPTY,  0,  0}, //  0-EM
 
   {{{-1,  0}, { 0,  0}, { 1,  0}, { 2,  0}},     RED,  2,  2}, //  1-I1
