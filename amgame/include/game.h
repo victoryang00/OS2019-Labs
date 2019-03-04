@@ -20,7 +20,10 @@ struct Point {
   {  1,  0 }  // right
 };
 
+#ifndef TETRIS
+#define TETRIS
 #include <tetris.h>
+#endif
 
 struct State {
   int width, height;
