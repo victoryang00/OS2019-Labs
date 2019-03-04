@@ -32,6 +32,12 @@ struct TetrominoType {
   int prev, next;
 };
 
+struct KeyCodeMapping {
+  int code;
+  bool param;
+  struct Tetromino (*func) (struct Tetromino, bool);
+};
+
 void initTetris();
 struct Tetromino newTetromino();
 struct Tetromino moveTetromino(struct Tetromino, bool);
@@ -44,11 +50,5 @@ int isPointValid(struct Point);
 bool isLastRowFull();
 void drawBlock(struct Point, uint32_t);
 void drawTetrominos(struct Tetromino);
-
-struct KeyCodeMapping {
-  int code;
-  bool param;
-  struct Tetromino (*func) (struct Tetromino, bool);
-}
 
 #endif
