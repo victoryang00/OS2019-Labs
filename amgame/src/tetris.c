@@ -67,6 +67,7 @@ bool playTetris(int keyCode) {
         return false;
       }
       if (memcmp(&T, &TT_TOUCH_GROUND, sizeof(struct Tetromino)) == 0) {
+        printf("Touch ground.\n");
         state.tetromino = newTetromino();
       } else {
         state.tetromino = T;
