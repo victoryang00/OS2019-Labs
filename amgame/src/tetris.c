@@ -101,10 +101,8 @@ struct Tetromino fallTetromino(struct Tetromino originT, bool force) {
   } else {
     struct Tetromino nextT = T;
     nextT.pos.y++;
-    if (isTetrominoValid(nextT)) {
-      T = nextT;
-      printf("falled.\n");
-    }
+    printf("%d", isTetrominoValid(nextT));
+    T = isTetrominoValid(nextT) ? nextT : T;
   }
   if (force || memcmp(&T, &originT, sizeof(struct Tetromino)) == 0) {
     if (isTetrominoValid(T) == -1) {
