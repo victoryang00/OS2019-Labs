@@ -70,14 +70,14 @@ bool playTetris(int keyCode) {
         printf("Touch ground.\n");
         state.tetromino = newTetromino();
       } else {
-        printf("OK\n");
+        printf("Tetromino moved.\n");
         state.tetromino = T;
       }
       break;
     }
   }
   drawTetrominos(state.tetromino);
-  printf("Tetris: (%d, %d)\n", state.tetromino.pos.x, state.tetromino.pos.y);
+  printf("Tetris OK: (%d, %d)\n", state.tetromino.pos.x, state.tetromino.pos.y);
   return true;
 }
 
@@ -101,7 +101,10 @@ struct Tetromino fallTetromino(struct Tetromino originT, bool force) {
   } else {
     struct Tetromino nextT = T;
     nextT.pos.y++;
-    if (isTetrominoValid(nextT)) T = nextT;
+    if (isTetrominoValid(nextT)) {
+      T = nextT;
+      printf("falled.\n");
+    }
   }
   if (force || memcmp(&T, &originT, sizeof(struct Tetromino)) == 0) {
     if (isTetrominoValid(T) == -1) {
