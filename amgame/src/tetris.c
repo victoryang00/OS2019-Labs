@@ -110,6 +110,7 @@ bool isLastRowFull() {
   int tmp[SCREEN_H][SCREEN_W] = {};
   memcpy(tmp, screen, SZ_MV_SCREEN);
   memcpy(screen + SZ_ROW, tmp, SZ_MV_SCREEN);
+  return true;
 }
 
 void drawBlock(struct Point pos, uint32_t color) {
