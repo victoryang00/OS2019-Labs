@@ -70,6 +70,7 @@ bool playTetris(int keyCode) {
         printf("Touch ground.\n");
         state.tetromino = newTetromino();
       } else {
+        printf("OK\n");
         state.tetromino = T;
       }
       break;
