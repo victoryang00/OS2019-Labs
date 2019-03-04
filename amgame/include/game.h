@@ -32,6 +32,7 @@ struct State {
 
   struct Tetromino tetromino;
 };
+extern struct State state;
 
 void drawSquare(struct Point pos, int size, uint32_t pixel) {
   assert(size < 100); // avoid memory boom
