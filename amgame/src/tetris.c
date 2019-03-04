@@ -1,8 +1,6 @@
 /**
  * Tetris game
  */
-#include <game.h>
-
 extern struct State state;
 static int screen[SCREEN_H][SCREEN_W];
 
