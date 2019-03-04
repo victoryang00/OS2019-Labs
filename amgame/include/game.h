@@ -1,10 +1,15 @@
 #include <am.h>
 #include <amdev.h>
-#include <ctype.h>
 #include <klib.h>
-#include <stdbool.h>
 
-#define SIDE 16
+#ifndef bool
+#define bool int8_t
+#define true 1
+#define false 0
+#endif
+
+#define NR_SNAKE 32
+#define CONST_FPS 2
 
 struct Point {
   int x, y;
@@ -17,13 +22,30 @@ struct Point {
 
 struct Snake {
   struct Point pos;
-  struct Snake* next;
+  struct int next;
 };
 
 struct State {
-  struct Snake* head;
-  struct Snake* tail;
+  int width, height;
+  int FPS, nextFrame;
+  int keyCode;
+
+  struct Point food;
+  struct Snake snake[NR_SNAKE];
+  struct int head;
+  struct int tail;
 
   int direction;
   bool insertMode;
 };
+
+void drawSquare(struct Point pos, int size, uint32_t pixel) {
+  assert(size < 100); // avoid memory boom
+  uint32_t pixels[size][size];
+  for (int i = 0; i < size; ++i) {
+    for (int j = 0; j < size; ++j) {
+      pixels[i][j] = pixel;
+    }
+  }
+  draw_rect(pixels, pos.x, pos.y, size, size);
+}
