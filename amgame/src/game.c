@@ -4,7 +4,7 @@
 
 #include <game.h>
 
-static struct State state;
+struct State state;
 
 void gameInit();
 void drawRect(int, int, int, int, uint32_t);
