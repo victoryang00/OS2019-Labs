@@ -39,6 +39,7 @@ struct KeyCodeMapping {
 };
 
 void initTetris();
+bool playTetris(int);
 struct Tetromino newTetromino();
 struct Tetromino moveTetromino(struct Tetromino, bool);
 struct Tetromino fallTetromino(struct Tetromino, bool);

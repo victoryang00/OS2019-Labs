@@ -45,28 +45,19 @@ const struct TetrominoType tetrominoTypes[20] = {
 const int NR_TETROMINO_TYPES = sizeof(tetrominoTypes) / sizeof(struct TetrominoType);
 
 const struct KeyCodeMapping keyCodeMappings[4] = {
-  //TODO: FIND OUT THE KEYCODES
-  {01, false, &spinTetromino}, 
-  {02,  true, &fallTetromino},
-  {03,  true, &moveTetromino},
-  {04, false, &moveTetromino}
+  {30, false, &spinTetromino}, // W
+  {44,  true, &fallTetromino}, // S
+  {43,  true, &moveTetromino}, // A
+  {45, false, &moveTetromino}  // D
 };
 const int NR_KEY_MAPPING = sizeof(keyCodeMappings) / sizeof(struct KeyCodeMapping);
 
 void initTetris() {
   memset(screen, 0, sizeof(screen));
-  newTetromino();
+  state.tetromino = newTetromino();
 }
 
-struct Tetromino newTetromino() {
-  struct Tetromino T;
-  T.pos.x = rand() % SCREEN_W;
-  T.pos.y = 0;
-  T.type = rand() % NR_TETROMINO_TYPES + 1;
-  return T;
-}
-
-bool playTetromino(int keyCode) {
+bool playTetris(int keyCode) {
   for (int i = 0; i < NR_KEY_MAPPING; ++i) {
     if (keyCode == keyCodeMappings[i].code) {
       struct Tetromino T = keyCodeMappings[i].func(state.tetromino, keyCodeMappings[i].param);
@@ -80,6 +71,14 @@ bool playTetromino(int keyCode) {
   } 
   drawTetrominos(state.tetromino);
   return true;
+}
+
+struct Tetromino newTetromino() {
+  struct Tetromino T;
+  T.pos.x = rand() % SCREEN_W;
+  T.pos.y = 0;
+  T.type = rand() % NR_TETROMINO_TYPES + 1;
+  return T;
 }
 
 struct Tetromino moveTetromino(struct Tetromino oldT, bool movingLeft) {

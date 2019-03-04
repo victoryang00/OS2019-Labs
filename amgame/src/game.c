@@ -24,9 +24,8 @@ int main() {
       //handleKey();
       printf("%d\n", state.keyCode);
     }
-    //gameProcess();
-    //screenUpdate();
-    //state.nextFrame += 1000 / state.FPS;
+    if (!playTetris(state.keyCode)) return 0;
+    state.nextFrame += 1000 / state.FPS;
   }
   return 0;
 }
@@ -38,6 +37,8 @@ void gameInit() {
   state.nextFrame = 0;
   state.score = 0;
   state.keyCode = 0;
+
+  initTetris();
 }
 
 void drawRect(int x, int y, int w, int h, uint32_t color) {
