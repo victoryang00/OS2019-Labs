@@ -7,7 +7,7 @@
 #define SCREEN_Y 0
 #define SCREEN_H 26
 #define SCREEN_W 13
-#define SCREEN_BLOCK_SIDE 10
+#define SCREEN_BLOCK_SIDE 15
 
 enum uint32_t {
   //TODO: find out the color codes
@@ -46,8 +46,8 @@ struct Tetromino fallTetromino(struct Tetromino, bool);
 struct Tetromino spinTetromino(struct Tetromino, bool);
 void saveTetromino(struct Tetromino);
 void clearTetrominos();
-int isTetrominoValid(struct Tetromino);
-int isPointValid(struct Point);
+int checkTetromino(struct Tetromino);
+int checkPoint(struct Point);
 bool isLastRowFull();
 void drawBlock(struct Point, uint32_t);
 void drawTetrominos(struct Tetromino);
