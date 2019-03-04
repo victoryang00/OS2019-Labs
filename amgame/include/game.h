@@ -34,15 +34,6 @@ struct State {
 };
 extern struct State state;
 
-void drawSquare(struct Point pos, int size, uint32_t pixel) {
-  assert(size < 100); // avoid memory boom
-  uint32_t pixels[size][size];
-  for (int i = 0; i < size; ++i) {
-    for (int j = 0; j < size; ++j) {
-      pixels[i][j] = pixel;
-    }
-  }
-  draw_rect((uint32_t*) pixels, pos.x, pos.y, size, size);
-}
+void drawSquare(struct Point, int, uint32_t);
 
 #endif
