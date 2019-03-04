@@ -58,6 +58,7 @@ void initTetris() {
 }
 
 bool playTetris(int keyCode) {
+  fallTetromino(state.tetromino, false);
   for (int i = 0; i < NR_KEY_MAPPING; ++i) {
     if (keyCode == keyCodeMappings[i].code) {
       struct Tetromino T = keyCodeMappings[i].func(state.tetromino, keyCodeMappings[i].param);
