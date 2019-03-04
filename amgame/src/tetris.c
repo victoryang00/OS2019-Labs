@@ -91,20 +91,20 @@ struct Tetromino newTetromino() {
 
 struct Tetromino moveTetromino(struct Tetromino oldT, bool movingLeft) {
   struct Tetromino newT = { {oldT.pos.x + movingLeft ? -1 : 1, oldT.pos.y}, oldT.type };
-  return isTetrominoValid(newT) ? newT : oldT;
+  return checkTetromino(newT) ? newT : oldT;
 }
 
 struct Tetromino fallTetromino(struct Tetromino originT, bool force) {
   struct Tetromino T = originT;
   if (force) {
-    while (isTetrominoValid(T)) T.pos.y++;
+    while (checkTetromino(T)) T.pos.y++;
   } else {
     struct Tetromino nextT = T;
     nextT.pos.y++;
-    T = isTetrominoValid(nextT) ? nextT : T;
+    T = checkTetromino(nextT) ? nextT : T;
   }
   if (force || memcmp(&T, &originT, sizeof(struct Tetromino)) == 0) {
-    if (isTetrominoValid(T) == -1) {
+    if (checkTetromino(T) == -1) {
       return TT_GAME_OVER; // game over 
     } else {
       saveTetromino(T);
@@ -118,7 +118,7 @@ struct Tetromino fallTetromino(struct Tetromino originT, bool force) {
 struct Tetromino spinTetromino(struct Tetromino oldT, bool clockwise) {
   struct Tetromino newT = oldT;
   newT.type = clockwise ? tetrominoTypes[oldT.type].prev : tetrominoTypes[oldT.type].next;
-  return isTetrominoValid(newT) ? newT : oldT;
+  return checkTetromino(newT) ? newT : oldT;
 }
 
 void saveTetromino(struct Tetromino T) {
@@ -136,20 +136,20 @@ void clearTetrominos() {
   state.score += scores[combo];
 }
 
-int isTetrominoValid(struct Tetromino T) {
+int checkTetromino(struct Tetromino T) {
   int result = 1;
   struct Point p;
   for (int i = 0; i < 4; ++i) {
     p.x = T.pos.x + tetrominoTypes[T.type].d[i].x;
     p.y = T.pos.y + tetrominoTypes[T.type].d[i].y;
-    int res = isPointValid(p);
+    int res = checkPoint(p);
     if (!res) return 0;
     if (res == -1) result = -1; // above screen
   }
   return result;
 }
 
-int isPointValid(struct Point p) {
+int checkPoint(struct Point p) {
   if (p.x < 0 || p.x >= SCREEN_W) return 0;
   else {
     if (p.y < 0) return -1; // above screen
@@ -169,7 +169,7 @@ bool isLastRowFull() {
 }
 
 void drawBlock(struct Point pos, uint32_t color) {
-  if (isPointValid(pos) != 1) return;
+  if (checkPoint(pos) != 1) return;
   struct Point realPos = { 
     SCREEN_X + pos.x * SCREEN_BLOCK_SIDE, 
     SCREEN_Y + pos.y * SCREEN_BLOCK_SIDE
