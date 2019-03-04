@@ -71,9 +71,11 @@ bool playTetris(int keyCode) {
       } else {
         state.tetromino = T;
       }
+      break;
     }
-  } 
+  }
   drawTetrominos(state.tetromino);
+  printf("Tetris: (%d, %d)\n", state.tetromino.pos.x, state.tetromino.pos.y);
   return true;
 }
 
