@@ -25,24 +25,12 @@ int main() {
 }
 
 void gameInit() {
-  int width = screen_width();
-  int height = screen_height();
-  state = {
-    .width = width,
-    .height = height,
-    .FPS = CONST_FPS,
-    .nextFrame = 0,
-    .keyCode = 0,
-    .food = { 
-      rand() % width, 
-      rand() % height
-    },
-    .snake = {},
-    .head = 0,
-    .tail = 0,
-    .direction = rand() % 4,
-    .insertMode = false
-  } 
+  state.width = screen_width();
+  state.height = screen_height();
+  state.FPS = CONST_FPS;
+  state.nextFrame = 0;
+  state.score = 0;
+  state.keyCode = 0;
 }
 
 void drawRect(int x, int y, int w, int h, uint32_t color) {

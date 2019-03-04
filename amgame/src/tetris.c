@@ -3,7 +3,7 @@
  */
 #include <game.h>
 
-static struct State state;
+extern struct State state;
 static int screen[SCREEN_H][SCREEN_W];
 
 void initTetris() {
