@@ -1,8 +1,8 @@
-const int SCREEN_X = 0;
-const int SCREEN_Y = 0;
-const int SCREEN_H = 26;
-const int SCREEN_W = 13;
-const int SCREEN_BLOCK_SIDE = 5;
+#define SCREEN_X = 0;
+#define SCREEN_Y = 0;
+#define SCREEN_H = 26;
+#define SCREEN_W = 13;
+#define SCREEN_BLOCK_SIDE = 5;
 
 const int scores[5] = {
   0, 100, 200, 400, 800
@@ -64,19 +64,6 @@ struct TetrominoType {
 };
 const int NR_TETROMINO_TYPES = sizeof(tetrominoTypes) / sizeof(struct TetrominoType);
 
-struct KeyCodeMapping {
-  int code;
-  bool param;
-  struct Tetromino (*func) (int, bool);
-} const keyCodeMappings[4] = {
-  //TODO: FIND OUT THE KEYCODES
-  {01, false, &spinTetromino}, 
-  {02,  true, &fallTetromino},
-  {03,  true, &moveTetromino},
-  {04, false, &moveTetromino}
-};
-const int NR_KEY_MAPPING = sizeof(keyCodeMappings) / sizeof(struct KeyCodeMapping);
-
 void initTetris();
 struct Tetromino newTetromino();
 struct Tetromino moveTetromino(struct Tetromino, bool);
@@ -90,3 +77,15 @@ bool isLastRowFull();
 void drawBlock(struct Point, uint32_t);
 void drawTetrominos(struct Tetromino T);
 
+struct KeyCodeMapping {
+  int code;
+  bool param;
+  struct Tetromino (*func) (int, bool);
+} const keyCodeMappings[4] = {
+  //TODO: FIND OUT THE KEYCODES
+  {01, false, &spinTetromino}, 
+  {02,  true, &fallTetromino},
+  {03,  true, &moveTetromino},
+  {04, false, &moveTetromino}
+};
+const int NR_KEY_MAPPING = sizeof(keyCodeMappings) / sizeof(struct KeyCodeMapping);
