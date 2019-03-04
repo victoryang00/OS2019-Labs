@@ -1,3 +1,6 @@
+#ifndef __TETRIS_H__
+#define __TETRIS_H__
+
 #include <game.h>
 
 #define SCREEN_X 0
@@ -91,3 +94,5 @@ struct KeyCodeMapping {
   {04, false, &moveTetromino}
 };
 const int NR_KEY_MAPPING = sizeof(keyCodeMappings) / sizeof(struct KeyCodeMapping);
+
+#endif

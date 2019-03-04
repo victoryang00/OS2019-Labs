@@ -1,3 +1,6 @@
+#ifndef __GAME_H__
+#define __GAME_H__
+
 #include <am.h>
 #include <amdev.h>
 #include <klib.h>
@@ -20,6 +23,8 @@ struct Point {
   {  1,  0 }  // right
 };
 
+#include <tetris.h>
+
 struct State {
   int width, height;
   int FPS, nextFrame;
@@ -38,3 +43,5 @@ void drawSquare(struct Point pos, int size, uint32_t pixel) {
   }
   draw_rect((uint32_t*) pixels, pos.x, pos.y, size, size);
 }
+
+#endif
