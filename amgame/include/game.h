@@ -1,8 +1,30 @@
 #include <am.h>
 #include <amdev.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+#include <stdbool.h>
 
 #define SIDE 16
 
-static inline void puts(const char *s) {
-  for (; *s; s++) _putc(*s);
-}
+struct Point {
+  int x, y;
+} directions[4] = {
+  {  0, -1 }, // up
+  {  0,  1 }, // down
+  { -1,  0 }, // left
+  {  1,  0 }  // right
+};
+
+struct Snake {
+  struct Point pos;
+  struct Snake* next;
+};
+
+struct State {
+  struct Snake* head;
+  struct Snake* tail;
+
+  int direction;
+  bool insertMode;
+};

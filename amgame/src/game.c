@@ -3,14 +3,8 @@
  */
 
 #include <game.h>
-#include <string.h>
 
-struct snake {
-  int x, y;
-  struct snake* next;
-};
-struct snake* head = NULL;
-struct snake* tail = NULL;
+struct State state = { NULL, NULL, 0, false }; 
 
 void init_screen();
 void splash();
