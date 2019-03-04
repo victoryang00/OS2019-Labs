@@ -4,6 +4,12 @@
 
 #include <game.h>
 
+struct Point directions[4] = {
+  {  0, -1 }, // up
+  {  0,  1 }, // down
+  { -1,  0 }, // left
+  {  1,  0 }  // right
+}
 struct State state;
 
 void gameInit();
@@ -39,4 +45,15 @@ void drawRect(int x, int y, int w, int h, uint32_t color) {
     pixels[i] = color;
   }
   draw_rect(pixels, x, y, w, h);
+}
+
+void drawSquare(struct Point pos, int size, uint32_t pixel) {
+  assert(size < 100); // avoid memory boom
+  uint32_t pixels[size][size];
+  for (int i = 0; i < size; ++i) {
+    for (int j = 0; j < size; ++j) {
+      pixels[i][j] = pixel;
+    }
+  }
+  draw_rect((uint32_t*) pixels, pos.x, pos.y, size, size);
 }
