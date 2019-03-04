@@ -140,6 +140,7 @@ int isTetrominoValid(struct Tetromino T) {
   int result = 1;
   struct Point p;
   for (int i = 0; i < 4; ++i) {
+    printf("%d", i);
     p.x = T.pos.x + tetrominoTypes[T.type].d[i].x;
     p.y = T.pos.y + tetrominoTypes[T.type].d[i].y;
     int res = isPointValid(p);
