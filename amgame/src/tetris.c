@@ -101,13 +101,12 @@ struct Tetromino fallTetromino(struct Tetromino originT, bool force) {
   } else {
     struct Tetromino nextT = T;
     nextT.pos.y++;
-    T = checkTetromino(nextT) ? nextT : T;
+    T = checkTetromino(nextT) == -1 ? nextT : T;
   }
   if (force || memcmp(&T, &originT, sizeof(struct Tetromino)) == 0) {
     if (checkTetromino(T) == -1) {
       return TT_GAME_OVER; // game over 
     } else {
-      printf("touch.\n");
       saveTetromino(T);
       return TT_TOUCH_GROUND; // touch ground
     }
