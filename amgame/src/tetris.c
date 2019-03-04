@@ -113,7 +113,7 @@ bool isLastRowFull() {
 }
 
 void drawBlock(struct Point pos, uint32_t color) {
-  struct Pos realPos = { 
+  struct Point realPos = { 
     SCREEN_X + pos.x * SCREEN_BLOCK_SIDE, 
     SCREEN_Y + pos.y * SCREEN_BLOCK_SIDE
   };
