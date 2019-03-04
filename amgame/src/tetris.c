@@ -12,7 +12,11 @@ void initTetris() {
 }
 
 struct Tetromino newTetromino() {
-  return { {rand() % SCREEN_W, 0}, rand() % NR_TETROMINO_TYPES };
+  struct Tetromino T;
+  T.pos.x = rand() % SCREEN_W;
+  T.pos.y = 0;
+  T.type = rand() % NR_TETROMINO_TYPES;
+  return T;
 }
 
 bool playTetromino(int keyCode) {
@@ -39,9 +43,10 @@ struct Tetromino moveTetromino(struct Tetromino oldT, bool movingLeft) {
 struct Tetromino fallTetromino(struct Tetromino originT, bool force) {
   struct Tetromino T = originT;
   if (force) {
-    while (isValidTetromino(T)) T = { {T.pos.x, T.pos.y + 1}, T.type };
+    while (isTetrominoTetromino(T)) T.pos.y++;
   } else {
-    struct Tetromino nextT = { {T.pos.x, T.pos.y + 1}, T.type };
+    struct Tetromino nextT = T;
+    nextT.pos.y++;
     if (isValidTetromino(nextT)) T = nextT;
   }
   if (force || T == originT) {
@@ -57,17 +62,16 @@ struct Tetromino fallTetromino(struct Tetromino originT, bool force) {
 }
 
 struct Tetromino spinTetromino(struct Tetromino oldT, bool clockwise) {
-  struct Tetromino newT = { {T.pos.x, T.pos.y}, clockwise ? tetrominoTypes[T.type].prev : etrominoTypes[T.type].next };
+  struct Tetromino newT = oldT;
+  newT.type = clockwise ? tetrominoTypes[T.type].prev : etrominoTypes[T.type].next;
   return isTetrominoValid(newT) ? newT : oldT;
 }
 
 void saveTetromino(struct Tetromino T) {
   struct Point p;
   for (int i = 0; i < 4; ++i) {
-    p = {
-      T.pos.x + tetrominoTypes[T.type].d[i].x,
-      T.pos.y + tetrominoTypes[T.type].d[i].y
-    };
+    p.x = T.pos.x + tetrominoTypes[T.type].d[i].x;
+    p.y = T.pos.y + tetrominoTypes[T.type].d[i].y;
     screen[p.y][p.x] = T.type;
   }
 }
@@ -82,10 +86,8 @@ int isTetrominoValid(struct Tetromino T) {
   int result = 1;
   struct Point p;
   for (int i = 0; i < 4; ++i) {
-    p = {
-      T.pos.x + tetrominoTypes[T.type].d[i].x,
-      T.pos.y + tetrominoTypes[T.type].d[i].y
-    };
+    p.x = T.pos.x + tetrominoTypes[T.type].d[i].x;
+    p.y = T.pos.y + tetrominoTypes[T.type].d[i].y;
     int res = isPointValid(p);
     if (res == -1) result = -1; // above screen
   }
@@ -122,15 +124,13 @@ void drawTetrominos(struct Tetromino T) {
   struct Point p;
   for (int i = 0; i < SCREEN_H; ++i) {
     for (int j = 0; j < SCREEN_W; ++j) {
-      p = { i, j };
+      p.x = i, p.y = j;
       drawBlock(p, tetrominoTypes[screen[i][j]].color);
     }
   } 
   for (int i = 0; i < 4; ++i) {
-    p = {
-      T.pos.x + tetrominoTypes[T.type].d[i].x,
-      T.pos.y + tetrominoTypes[T.type].d[i].y
-    };
+    p.x = T.pos.x + tetrominoTypes[T.type].d[i].x;
+    p.y = T.pos.y + tetrominoTypes[T.type].d[i].y;
     drawBlock(p, tetrominoTypes[T.type].color);
   }
 }
