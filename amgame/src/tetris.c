@@ -142,7 +142,6 @@ int isTetrominoValid(struct Tetromino T) {
   for (int i = 0; i < 4; ++i) {
     p.x = T.pos.x + tetrominoTypes[T.type].d[i].x;
     p.y = T.pos.y + tetrominoTypes[T.type].d[i].y;
-    printf("(%d, %d)\n", p.x, p.y);
     int res = isPointValid(p);
     if (!res) return 0;
     if (res == -1) result = -1; // above screen
@@ -155,6 +154,7 @@ int isPointValid(struct Point p) {
   else {
     if (p.y < 0) return -1; // above screen
     if (p.y >= SCREEN_H) return 0;
+    printf("(%d, %d)\n", p.x, p.y);
     return screen[p.y][p.x] != 0;
   }
 }
