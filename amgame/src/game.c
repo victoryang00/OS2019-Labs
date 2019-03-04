@@ -9,7 +9,7 @@ struct Point directions[4] = {
   {  0,  1 }, // down
   { -1,  0 }, // left
   {  1,  0 }  // right
-}
+};
 struct State state;
 
 void gameInit();
