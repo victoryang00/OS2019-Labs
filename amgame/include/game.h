@@ -11,7 +11,6 @@
 #define false 0
 #endif
 
-#define NR_SNAKE 32
 #define CONST_FPS 2
 
 struct Point {
