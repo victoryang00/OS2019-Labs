@@ -101,7 +101,8 @@ struct Tetromino fallTetromino(struct Tetromino originT, bool force) {
   } else {
     struct Tetromino nextT = T;
     nextT.pos.y++;
-    T = checkTetromino(nextT) == -1 ? nextT : T;
+    printf("moving down!\n");
+    T = checkTetromino(nextT) ? nextT : T;
   }
   if (force || memcmp(&T, &originT, sizeof(struct Tetromino)) == 0) {
     if (checkTetromino(T) == -1) {
