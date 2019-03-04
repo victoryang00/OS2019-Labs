@@ -83,7 +83,7 @@ bool playTetris(int keyCode) {
 
 struct Tetromino newTetromino() {
   struct Tetromino T;
-  T.pos.x = rand() % SCREEN_W;
+  T.pos.x = SCREEN_W / 2;
   T.pos.y = 0;
   T.type = rand() % NR_TETROMINO_TYPES + 1;
   return T;
@@ -101,7 +101,6 @@ struct Tetromino fallTetromino(struct Tetromino originT, bool force) {
   } else {
     struct Tetromino nextT = T;
     nextT.pos.y++;
-    printf("%d", isTetrominoValid(nextT));
     T = isTetrominoValid(nextT) ? nextT : T;
   }
   if (force || memcmp(&T, &originT, sizeof(struct Tetromino)) == 0) {
