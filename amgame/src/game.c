@@ -22,7 +22,7 @@ int main() {
     while (uptime() < state.nextFrame) ;
     while ((state.keyCode = read_key()) != _KEY_NONE) {
       //handleKey();
-      printf("%d\n", _KEYS(W));
+      printf("%d\n", _KEYS(_(W)));
     }
     //gameProcess();
     //screenUpdate();
