@@ -23,10 +23,14 @@ struct Point {
 #include <tetris.h>
 
 struct State {
-  int width, height;
-  int FPS, tetrisFPS;
-  int nextFrame, nextTetrisFrame;
-  int score, keyCode;
+  int width;
+  int height;
+  int FPS;
+  int tetrisFPS;
+  int nextFrame;
+  int nextTetrisFrame;
+  int score;
+  int keyCode;
 
   struct Tetromino tetromino;
 };
