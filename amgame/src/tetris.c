@@ -91,7 +91,7 @@ bool playTetris(int keyCode) {
 struct Tetromino newTetromino() {
   struct Tetromino T;
   T.pos.x = SCREEN_W / 2;
-  T.pos.y = 1;
+  T.pos.y = 2;
   T.type = rand() % NR_TETROMINO_TYPES + 1;
   return T;
 }
