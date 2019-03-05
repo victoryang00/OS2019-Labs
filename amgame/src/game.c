@@ -26,13 +26,10 @@ int main() {
     }
     if (uptime() >= state.nextTetrisFrame) {
       if (!playTetris(0)) return 0;
-      Log("1");
+      Log("FPSes are %d %d", state.tetrisFPS, stste.FPS);
       state.nextTetrisFrame += 1000 / state.tetrisFPS;
-      Log("1.1");
     }
-    Log("2");
     state.nextFrame += 1000 / state.FPS;
-    Log("3");
   }
   return 0;
 }
