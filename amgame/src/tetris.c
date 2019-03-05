@@ -238,8 +238,11 @@ void drawTetrominos(struct Tetromino T) {
     drawBlock(p, tetrominoTypes[T.type].color);
   }
   for (int i = 0; i < NR_TETROMINOS; ++i) {
-    p.x = state.tetrominosBias.x;
-    p.y = state.tetrominosBias.y + 5 * i * state.blockSide;
-    drawSquare(p, state.blockSide, tetrominoTypes[state.nextTypes[i]].color);
+    int type = state.nextTypes[i];
+    for (int j = 0; j < 4; ++j) {
+      p.x = state.tetrominosBias.x + tetrominoTypes[type].d[j].x;
+      p.y = state.tetrominosBias.y + 5 * i * state.blockSide + tetrominoTypes[type].d[j].y;
+    }
+    drawSquare(p, state.blockSide, tetrominoTypes[type].color);
   }
 }
