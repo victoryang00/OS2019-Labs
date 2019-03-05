@@ -71,7 +71,7 @@ bool playTetris(int keyCode) {
     T = fallTetromino(T, false);
   }
 
-  if ((const struct Tetromino) T == TT_GAME_OVER) {
+  if (T == (struct Tetromino) TT_GAME_OVER) {
     printf("Game Over!\n");
     return false;
   }
