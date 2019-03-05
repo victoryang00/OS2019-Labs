@@ -100,7 +100,7 @@ struct Tetromino newTetromino() {
 
 struct Tetromino moveTetromino(struct Tetromino oldT, bool movingLeft) {
   struct Tetromino newT = oldT;
-  T.pos.x += movingLeft ? -1 : 1;
+  newT.pos.x += movingLeft ? -1 : 1;
   return checkTetromino(newT) ? newT : oldT;
 }
 
