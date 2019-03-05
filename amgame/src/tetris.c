@@ -38,7 +38,7 @@ const struct TetrominoType tetrominoTypes[] = {
   {{{ 0,  0}, {-1,  0}, { 0,  1}, { 1,  1}},  ORANGE, 19, 19}, // 18-Z1
   {{{ 0,  0}, { 0, -1}, {-1,  0}, {-1,  1}},  ORANGE, 18, 18}  // 19-Z2
 };
-#define NR_TETROMINO_TYPES = sizeof(tetrominoTypes) / sizeof(struct TetrominoType);
+#define NR_TETROMINO_TYPES sizeof(tetrominoTypes) / sizeof(struct TetrominoType);
 
 const struct KeyCodeMapping keyCodeMappings[] = {
   { 0, "AUTO", &fallTetromino, false}, // no key
