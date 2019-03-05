@@ -76,7 +76,7 @@ bool playTetris(int keyCode) {
   }
 
   drawTetrominos(state.tetromino);
-  Log("OK => (%d, %d)", state.tetromino.pos.x, state.tetromino.pos.y);
+  // Log("OK => (%d, %d)", state.tetromino.pos.x, state.tetromino.pos.y);
   return true;
 }
 
@@ -190,7 +190,6 @@ void deleteRows(int row, int combo) {
     memcpy(&screen[i + combo][0], &screen[i][0], SCREEN_W * sizeof(int));
   }
   memset(screen, 0, combo * SCREEN_W * sizeof(int));
-  for (int i = 0; i < SCREEN_W; ++i) Log("(%d, %d)->%d", i, 2, screen[2][i]);
 }
 
 void drawBlock(struct Point pos, uint32_t color) {
