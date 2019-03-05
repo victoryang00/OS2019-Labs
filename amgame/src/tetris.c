@@ -133,7 +133,7 @@ struct Tetromino fallTetromino(struct Tetromino originT, bool force) {
       Log("Touch ground");
       saveTetromino(T);
       clearTetrominos();
-      T.pos = startPos();
+      T.pos = startPos;
       T.type = state.nextTypes[0];
       for (int i = 0; i < NR_TETROMINOS - 1; ++i) state.nextTypes[i] = state.nextTypes[i + 1];
       state.nextTypes[NR_TETROMINOS - 1] = newTetrominosType();
@@ -240,6 +240,6 @@ void drawTetrominos(struct Tetromino T) {
   for (int i = 0; i < NR_TETROMINOS; ++i) {
     p.x = state.tetrominosBias.x;
     p.y = state.tetrominosBias.y + 5 * i * state.blockSide;
-    drawSquare(p, state.blockSide, tetrominosTypes[state.nextTypes[i]].color);
+    drawSquare(p, state.blockSide, tetrominoTypes[state.nextTypes[i]].color);
   }
 }
