@@ -8,7 +8,6 @@ const int scores[5] = {
 };
 
 const struct Tetromino TT_GAME_OVER    = { {-1, -1}, 0 };
-const size_t SZ_ROW = sizeof(struct Tetromino) * SCREEN_W;
 
 const struct TetrominoType tetrominoTypes[] = {
   {{{ 0,  0}, { 0,  0}, { 0,  0}, { 0,  0}},   EMPTY,  0,  0}, //  0-EM
@@ -180,9 +179,9 @@ bool checkRow(int row) {
 
 void deleteRows(int row, int combo) {
   for (int i = row; i >= 0; --i) {
-    memcpy(screen + (i + combo) * SCREEN_W, screen + i * SCREEN_W, SZ_ROW);
+    memcpy(screen[i + combo], screen[i], SCREEN_W * sizeof(struct Tetromino));
   }
-  memset(screen, 0, combo * SZ_ROW);
+  memset(screen, 0, combo * SCREEN_W * sizeof(struct Tetromino));
 }
 
 void drawBlock(struct Point pos, uint32_t color) {
