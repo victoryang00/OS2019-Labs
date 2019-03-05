@@ -154,7 +154,7 @@ int checkPoint(struct Point p) {
   else {
     if (p.y < 0) return -1; // above screen
     if (p.y >= SCREEN_H) return 0;
-    return screen[p.y][p.x] ? 0 : 1;
+    return screen[p.y][p.x] == 0 ? 0 : 1;
   }
 }
 
