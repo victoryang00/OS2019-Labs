@@ -55,7 +55,7 @@ void gameInit() {
 
 void clearScreen(int x, int y, int w, int h) {
   uint32_t black = 0x000000;
-  for (int i = 0, i < h; ++i) {
+  for (int i = 0; i < h; ++i) {
     for (int j = 0; j < w; ++j) {
       draw_rect(&black, x + j, y + i, 1, 1); // CAUTION
     }
