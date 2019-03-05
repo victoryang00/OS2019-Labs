@@ -44,10 +44,10 @@ const struct TetrominoType tetrominoTypes[20] = {
 const int NR_TETROMINO_TYPES = sizeof(tetrominoTypes) / sizeof(struct TetrominoType);
 
 const struct KeyCodeMapping keyCodeMappings[4] = {
-  {30, false, &spinTetromino}, // W
-  {44, false, &fallTetromino}, // S
-  {43,  true, &moveTetromino}, // A
-  {45, false, &moveTetromino}  // D
+  {30, "spin", &spinTetromino, false}, // W
+  {44, "fall", &fallTetromino, false}, // S
+  {43, "movl", &moveTetromino,  true}, // A
+  {45, "movr", &moveTetromino, false}  // D
 };
 const int NR_KEY_MAPPING = sizeof(keyCodeMappings) / sizeof(struct KeyCodeMapping);
 
@@ -63,6 +63,7 @@ bool playTetris(int keyCode) {
   if (keyCode) {
     for (int i = 0; i < NR_KEY_MAPPING; ++i) {
       if (keyCode == keyCodeMappings[i].code) {
+        Log(keyCodeMappings[i].name);
         T = keyCodeMappings[i].func(T, keyCodeMappings[i].param);
         break;
       }
@@ -71,7 +72,6 @@ bool playTetris(int keyCode) {
     T = fallTetromino(T, false);
   }
 
-Log("%d, %d", memcmp(&T, &TT_GAME_OVER, sizeof(struct Tetromino)), memcmp(&T, &TT_TOUCH_GROUND, sizeof(struct Tetromino)));
   if (memcmp(&T, &TT_GAME_OVER, sizeof(struct Tetromino)) == 0) {
     printf("Game Over!\n");
     return false;

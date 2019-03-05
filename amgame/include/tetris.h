@@ -34,8 +34,9 @@ struct TetrominoType {
 
 struct KeyCodeMapping {
   int code;
-  bool param;
+  const char* name;
   struct Tetromino (*func) (struct Tetromino, bool);
+  bool param;
 };
 
 void initTetris();
