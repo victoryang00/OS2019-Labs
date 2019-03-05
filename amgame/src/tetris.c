@@ -71,7 +71,7 @@ bool playTetris(int keyCode) {
     T = fallTetromino(T, false);
   }
 
-Log("(%d,%d)", T.pos.x, T.pos.y);
+Log("%d, %d", memcmp(&T, &TT_GAME_OVER, sizeof(struct Tetromino)), memcmp(&T, &TT_TOUCH_GROUND, sizeof(struct Tetromino)));
   if (memcmp(&T, &TT_GAME_OVER, sizeof(struct Tetromino)) == 0) {
     printf("Game Over!\n");
     return false;
