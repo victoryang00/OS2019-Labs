@@ -79,7 +79,7 @@ bool playTetris(int keyCode) {
     state.tetromino = T;
   }
 
-  drawTetrominos(state.tetromino);
+  drawGameSection(state.tetromino);
   // Log("OK => (%d, %d)", state.tetromino.pos.x, state.tetromino.pos.y);
   return true;
 }
@@ -138,6 +138,7 @@ struct Tetromino fallTetromino(struct Tetromino originT, bool force) {
       for (int i = 0; i < NR_TETROMINOS - 1; ++i) state.nextTypes[i] = state.nextTypes[i + 1];
       state.nextTypes[NR_TETROMINOS - 1] = newTetrominoType();
       if (checkTetromino(T)) {
+        drawRightSection();
         Log("New tetromino: ((%d, %d), %d)", T.pos.x, T.pos.y, T.type);
         return T;
       } else {
@@ -224,7 +225,7 @@ void drawBlock(struct Point pos, uint32_t color) {
   drawSquare(realPos, state.blockSide, color);
 }
 
-void drawTetrominos(struct Tetromino T) {
+void drawGameSection(struct Tetromino T) {
   struct Point p;
   for (int i = 0; i < SCREEN_H; ++i) {
     for (int j = 0; j < SCREEN_W; ++j) {
@@ -238,7 +239,9 @@ void drawTetrominos(struct Tetromino T) {
     p.y = T.pos.y + tetrominoTypes[T.type].d[i].y;
     drawBlock(p, tetrominoTypes[T.type].color);
   }
+}
 
+void drawRightSection() {
   clearScreen(state.tetrominosBias.x - 3 * state.blockSide, 0, 6 * state.blockSide, state.height);
   for (int i = 0; i < NR_TETROMINOS; ++i) {
     int type = state.nextTypes[i];
