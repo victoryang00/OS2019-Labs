@@ -184,13 +184,13 @@ bool checkRow(int row) {
 }
 
 void deleteRows(int row, int combo) {
-  return;
   assert(row >= 0 && combo > 0 && row + combo < SCREEN_H);
   for (int i = row; i >= 0; --i) {
-    memcpy(screen[i + combo], screen[i], SCREEN_W * sizeof(struct Tetromino));
+    for (int j = 0; j < SCREEN_W; ++j) {
+      screen[i + combo][j] = screen[i][j];
+    }
   }
   memset(screen, 0, combo * SCREEN_W * sizeof(struct Tetromino));
-  for (int i = 0; i < SCREEN_W; ++i) Log("(%d, %d)->%d", i, 2, screen[2][i]);
 }
 
 void drawBlock(struct Point pos, uint32_t color) {
