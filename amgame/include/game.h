@@ -1,10 +1,11 @@
-#pragma once
 #ifndef __GAME_H__
 #define __GAME_H__
 
 #include <am.h>
 #include <amdev.h>
 #include <klib.h>
+
+#include <debug.h>
 
 #ifndef bool
 #define bool int8_t
