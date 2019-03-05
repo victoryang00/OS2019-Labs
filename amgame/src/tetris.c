@@ -182,6 +182,7 @@ void deleteRows(int row, int combo) {
     memcpy(screen[i + combo], screen[i], SCREEN_W * sizeof(struct Tetromino));
   }
   memset(screen, 0, combo * SCREEN_W * sizeof(struct Tetromino));
+  Log("OKOKOK");
 }
 
 void drawBlock(struct Point pos, uint32_t color) {
