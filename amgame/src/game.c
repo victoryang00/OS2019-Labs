@@ -37,6 +37,10 @@ void gameInit() {
   state.score = 0;
   state.keyCode = 0;
 
+  printf("Press any key to start!\n");
+  while ((state.keyCode = read_key()) != _KEY_NONE) ;
+  
+  srand(uptime());
   initTetris();
 }
 
