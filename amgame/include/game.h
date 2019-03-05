@@ -33,10 +33,6 @@ struct State {
 };
 extern struct State state;
 
-inline int max(int a, int b) {
-  return a > b ? a : b;
-}
-
 void gameInit();
 void clearScreen(int, int, int, int);
 void drawSquare(struct Point, int, uint32_t);
