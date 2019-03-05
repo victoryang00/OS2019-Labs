@@ -38,7 +38,7 @@ const struct TetrominoType tetrominoTypes[] = {
   {{{ 0,  0}, {-1,  0}, { 0,  1}, { 1,  1}},  ORANGE, 19, 19}, // 18-Z1
   {{{ 0,  0}, { 0, -1}, {-1,  0}, {-1,  1}},  ORANGE, 18, 18}  // 19-Z2
 };
-const int NR_TETROMINO_TYPES = sizeof(tetrominoTypes) / sizeof(struct TetrominoType);
+#define NR_TETROMINO_TYPES = sizeof(tetrominoTypes) / sizeof(struct TetrominoType);
 
 const struct KeyCodeMapping keyCodeMappings[] = {
   { 0, "AUTO", &fallTetromino, false}, // no key
@@ -47,7 +47,7 @@ const struct KeyCodeMapping keyCodeMappings[] = {
   {43, "MOVL", &moveTetromino,  true}, // A
   {45, "MOVR", &moveTetromino, false}  // D
 };
-const int NR_KEY_MAPPING = sizeof(keyCodeMappings) / sizeof(struct KeyCodeMapping);
+#define NR_KEY_MAPPING sizeof(keyCodeMappings) / sizeof(struct KeyCodeMapping);
 
 int screen[SCREEN_H][SCREEN_W];
 
