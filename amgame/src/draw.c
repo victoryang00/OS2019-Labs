@@ -17,10 +17,10 @@ void drawCharacter(char ch, int x, int y) {
   int i, j;
   char *p = font8x8_basic[(int)ch];
   uint32_t black = 0x000000, white = 0xffffff;
-  for (i = 0; i < 8; i ++) {
-    for (j = 0; j < 8; j ++) { 
+  for (i = 0; i < 16; i ++) {
+    for (j = 0; j < 16; j ++) { 
       if (x + j < state.width && y + i < state.height) {
-        draw_rect((p[i] >> j) & 1 ? &white : &black, x + j, y + i, 1, 1);
+        draw_rect((p[i >> 1] >> (j >> 1)) & 1 ? &white : &black, x + j, y + i, 1, 1);
       }
     }
   }
