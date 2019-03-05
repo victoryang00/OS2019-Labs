@@ -1,5 +1,5 @@
 /**
- * TITLE TBD.
+ * Tetris Game
  */
 
 #include <game.h>
@@ -36,6 +36,11 @@ int main() {
 void gameInit() {
   state.width = screen_width();
   state.height = screen_height();
+  state.blockSide = state.height / SCREEN_H;
+
+  state.mainBias.x = (state.width - state.blockSide * SCREEN_W) / 2;
+  state.mainBias.y = (state.height - state.blockSide * SCREEN_H) / 2;
+
   state.nextFrame = 0;
   state.nextTetrisFrame = 0;
   state.score = 0;

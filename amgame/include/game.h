@@ -23,7 +23,8 @@ struct Point {
 #include <tetris.h>
 
 struct State {
-  int width, height;
+  int width, height, blockSide;
+  struct Point mainBias;
   int nextFrame, nextTetrisFrame;
   int score, keyCode;
 

@@ -194,10 +194,9 @@ void deleteRows(int row, int combo) {
 
 void drawBlock(struct Point pos, uint32_t color) {
   if (!checkPointPosition(pos)) return;
-  int blockSide = state.height / SCREEN_H;
   struct Point realPos = { 
-    SCREEN_X + pos.x * blockSide, 
-    SCREEN_Y + pos.y * blockSide
+    state.mainBias.x + pos.x * state.blockSide, 
+    state.mainBias.y + pos.y * state.blockSide
   };
   drawSquare(realPos, blockSide, color);
 }
