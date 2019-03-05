@@ -2,7 +2,6 @@
  * Tetris game
  */
 #include <game.h>
-static int screen[SCREEN_H][SCREEN_W];
 
 const int scores[5] = {
   0, 100, 200, 400, 800
@@ -51,6 +50,8 @@ const struct KeyCodeMapping keyCodeMappings[4] = {
   {45, false, &moveTetromino}  // D
 };
 const int NR_KEY_MAPPING = sizeof(keyCodeMappings) / sizeof(struct KeyCodeMapping);
+
+int screen[SCREEN_H][SCREEN_W];
 
 void initTetris() {
   memset(screen, 0, sizeof(screen));
@@ -145,7 +146,7 @@ int checkTetromino(struct Tetromino T) {
     p.x = T.pos.x + tetrominoTypes[T.type].d[i].x;
     p.y = T.pos.y + tetrominoTypes[T.type].d[i].y;
     int res = checkPoint(p);
-    Log("(%d, %d)->%d", p.x, p.y, res);
+    Log("(%d, %d)->%d->%d", p.x, p.y, screen[p.y][p.x], res);
     if (res == 0) return 0;
     if (res == -1) result = -1; // above screen
   }
@@ -157,7 +158,6 @@ int checkPoint(struct Point p) {
   else {
     if (p.y < 0) return -1; // above screen
     if (p.y >= SCREEN_H) return 0;
-    Log("POS OK");
     return screen[p.y][p.x] == 0 ? 1 : 0;
   }
 }
