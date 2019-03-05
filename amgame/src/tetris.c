@@ -69,6 +69,7 @@ bool playTetris(int keyCode) {
       }
     }
   } else {
+    Log("auto");
     T = fallTetromino(T, false);
   }
 
@@ -85,7 +86,7 @@ bool playTetris(int keyCode) {
   }
 
   drawTetrominos(state.tetromino);
-  printf("Tetris OK: (%d, %d)\n", state.tetromino.pos.x, state.tetromino.pos.y);
+  Log("Tetris OK: (%d, %d)\n", state.tetromino.pos.x, state.tetromino.pos.y);
   return true;
 }
 
@@ -98,7 +99,8 @@ struct Tetromino newTetromino() {
 }
 
 struct Tetromino moveTetromino(struct Tetromino oldT, bool movingLeft) {
-  struct Tetromino newT = { {oldT.pos.x + movingLeft ? -1 : 1, oldT.pos.y}, oldT.type };
+  struct Tetromino newT = T;
+  T.pos.x += movingLeft ? -1 : 1;
   return checkTetromino(newT) ? newT : oldT;
 }
 
@@ -109,9 +111,7 @@ struct Tetromino fallTetromino(struct Tetromino originT, bool force) {
   } else {
     struct Tetromino nextT = T;
     nextT.pos.y++;
-    Log("Checking next pos");
     T = checkTetromino(nextT) != 0 ? nextT : T;
-    Log("Checked next pos, T at (%d, %d)", T.pos.x, T.pos.y);
   }
   if (force || memcmp(&T, &originT, sizeof(struct Tetromino)) == 0) {
     if (checkTetromino(T) == -1) {
