@@ -240,8 +240,8 @@ void drawTetrominos(struct Tetromino T) {
   for (int i = 0; i < NR_TETROMINOS; ++i) {
     int type = state.nextTypes[i];
     for (int j = 0; j < 4; ++j) {
-      p.x = state.tetrominosBias.x + tetrominoTypes[type].d[j].x;
-      p.y = state.tetrominosBias.y + 5 * i * state.blockSide + tetrominoTypes[type].d[j].y;
+      p.x = state.tetrominosBias.x + tetrominoTypes[type].d[j].x * state.blockSide;
+      p.y = state.tetrominosBias.y + (5 * i + tetrominoTypes[type].d[j].y) * state.blockSide;
     }
     drawSquare(p, state.blockSide, tetrominoTypes[type].color);
   }
