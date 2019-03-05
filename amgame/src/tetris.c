@@ -175,10 +175,10 @@ bool checkRow(int row) {
   for (int j = 0; j < SCREEN_W; ++j) {
     if (screen[row][j] == 0) return false;
   }
-  int tmp[SCREEN_H][SCREEN_W] = {};
-  size_t mvSize = row * SZ_ROW;
-  memcpy(tmp, screen, mvSize);
-  memcpy(screen + SZ_ROW, tmp, mvSize);
+  for (int i = row - 1; i >= 0; --i) {
+    memcpy(screen + (i + 1) * SZ_ROW, screen + i * SZ_ROW, SZ_ROW);
+  }
+  memset(screen, 0, SZ_ROW);
   return true;
 }
 
