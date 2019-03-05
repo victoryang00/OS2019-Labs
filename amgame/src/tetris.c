@@ -38,7 +38,7 @@ const struct TetrominoType tetrominoTypes[] = {
   {{{ 0,  0}, {-1,  0}, { 0,  1}, { 1,  1}},  ORANGE, 19, 19}, // 18-Z1
   {{{ 0,  0}, { 0, -1}, {-1,  0}, {-1,  1}},  ORANGE, 18, 18}  // 19-Z2
 };
-#define NR_TETROMINO_TYPES sizeof(tetrominoTypes) / sizeof(struct TetrominoType)
+const int NR_TETROMINO_TYPES = sizeof(tetrominoTypes) / sizeof(struct TetrominoType);
 
 const struct KeyCodeMapping keyCodeMappings[] = {
   { 0, "AUTO", &fallTetromino, false}, // no key
@@ -47,7 +47,7 @@ const struct KeyCodeMapping keyCodeMappings[] = {
   {43, "MOVL", &moveTetromino,  true}, // A
   {45, "MOVR", &moveTetromino, false}  // D
 };
-#define NR_KEY_MAPPING sizeof(keyCodeMappings) / sizeof(struct KeyCodeMapping)
+const int NR_KEY_MAPPING = sizeof(keyCodeMappings) / sizeof(struct KeyCodeMapping);
 
 int screen[SCREEN_H][SCREEN_W];
 
@@ -60,7 +60,7 @@ bool playTetris(int keyCode) {
   struct Tetromino T = state.tetromino;
   for (int i = 0; i < NR_KEY_MAPPING; ++i) {
     if (keyCode == keyCodeMappings[i].code) {
-      Log("[%s]", keyCodeMappings[i].name);
+      Log("[%d => %s]", keyCode, keyCodeMappings[i].name);
       T = keyCodeMappings[i].func(T, keyCodeMappings[i].param);
       break;
     }
@@ -75,7 +75,7 @@ bool playTetris(int keyCode) {
   }
 
   drawTetrominos(state.tetromino);
-  Log("OK -> (%d, %d)", state.tetromino.pos.x, state.tetromino.pos.y);
+  Log("OK => (%d, %d)", state.tetromino.pos.x, state.tetromino.pos.y);
   return true;
 }
 
@@ -113,11 +113,16 @@ struct Tetromino fallTetromino(struct Tetromino originT, bool force) {
       saveTetromino(T);
       clearTetrominos();
       T = newTetromino();
-      if (!checkTetromino(T)) return TT_GAME_OVER;
-      Log("New tetromino: ((%d, %d), %d)", T.pos.x, T.pos.y, T.type);
+      if (checkTetromino(T)) {
+        Log("New tetromino: ((%d, %d), %d)", T.pos.x, T.pos.y, T.type);
+        return T;
+      } else {
+        return TT_GAME_OVER;
+      }
     }
+  } else {
+    return T;
   }
-  return T;
 }
 
 struct Tetromino spinTetromino(struct Tetromino oldT, bool clockwise) {
