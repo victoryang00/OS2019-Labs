@@ -57,6 +57,7 @@ void initTetris() {
 }
 
 bool playTetris(int keyCode) {
+  Log("BUG BUG");
   struct Tetromino T = state.tetromino;
   for (int i = 0; i < NR_KEY_MAPPING; ++i) {
     if (keyCode == keyCodeMappings[i].code) {
@@ -182,7 +183,6 @@ void deleteRows(int row, int combo) {
     memcpy(screen[i + combo], screen[i], SCREEN_W * sizeof(struct Tetromino));
   }
   memset(screen, 0, combo * SCREEN_W * sizeof(struct Tetromino));
-  Log("OKOKOK");
 }
 
 void drawBlock(struct Point pos, uint32_t color) {
