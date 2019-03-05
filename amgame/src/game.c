@@ -65,8 +65,8 @@ void clearScreen(int x, int y, int w, int h) {
   uint32_t black = 0x000000;
   for (int i = 0; i < h; ++i) {
     for (int j = 0; j < w; ++j) {
-      if ((x + j >= 0 && x + j < screen.width)
-          && (y + i >= 0 && y + i < screen.height)) {
+      if ((x + j >= 0 && x + j < state.width)
+          && (y + i >= 0 && y + i < state.height)) {
         draw_rect(&black, x + j, y + i, 1, 1); // CAUTION
       }
     }
