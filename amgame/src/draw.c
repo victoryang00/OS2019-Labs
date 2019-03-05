@@ -13,7 +13,7 @@ char *itoa(int n)  {
   return &s[i];
 }  
 
-inline void drawCharacter(char ch, int x, int y, uint32_t color) {
+inline void drawCharacter(char ch, int x, int y) {
   int i, j;
   char *p = font8x8_basic[(int)ch];
   uint32_t black = 0x000000, white = 0xffffff;
