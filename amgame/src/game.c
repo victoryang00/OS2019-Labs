@@ -23,7 +23,10 @@ int main() {
     while ((state.keyCode = read_key()) != _KEY_NONE) {
       playTetris(state.keyCode);
     }
-    if (!playTetris(0)) return 0;
+    if (uptime() >= state.nextTetrisFrame) {
+      if (!playTetris(0)) return 0;
+      state.nextTetrisFrame += 1000 / state.tetrisFPS;
+    }
     state.nextFrame += 1000 / state.FPS;
   }
   return 0;
@@ -33,7 +36,9 @@ void gameInit() {
   state.width = screen_width();
   state.height = screen_height();
   state.FPS = CONST_FPS;
+  state.tetrisFPS = CONST_TT_FPS;
   state.nextFrame = 0;
+  state.nextTetrisFrame = 0;
   state.score = 0;
   state.keyCode = 0;
 
