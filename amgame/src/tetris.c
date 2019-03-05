@@ -110,12 +110,14 @@ struct Tetromino moveTetromino(struct Tetromino oldT, bool movingLeft) {
 struct Tetromino fallTetromino(struct Tetromino originT, bool force) {
   bool nextIsValid = false;
   struct Tetromino T = originT;
-  do {
+  {
     struct Tetromino nextT = T;
-    nextT.pos.y++;
-    nextIsValid = checkTetromino(nextT);
-    T = nextIsValid ? nextT : T;
-  } while (force && nextIsValid);
+    do {
+      nextT.pos.y++;
+      nextIsValid = checkTetromino(nextT);
+      T = nextIsValid ? nextT : T;
+    } while (force && nextIsValid);
+  }
   if (force || memcmp(&T, &originT, sizeof(struct Tetromino)) == 0) {
     if (!checkTetromino(T)) {
       return TT_GAME_OVER; // game over 
