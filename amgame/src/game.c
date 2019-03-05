@@ -27,8 +27,8 @@ int main() {
     if (uptime() >= state.nextTetrisFrame) {
       if (!playTetris(0)) return 0;
       state.nextTetrisFrame += 1000 / GAME_TETRIS_FPS;
+      Log("next frame at %d", state.nextTetrisFrame);
     }
-    draw_sync();
     state.nextFrame += 1000 / GAME_ALL_FPS;
   }
   return 0;
