@@ -43,8 +43,8 @@ const struct TetrominoType tetrominoTypes[20] = {
 const int NR_TETROMINO_TYPES = sizeof(tetrominoTypes) / sizeof(struct TetrominoType);
 
 const struct KeyCodeMapping keyCodeMappings[4] = {
-  {30, "spin", &spinTetromino, false}, // W
-  {44, "fall", &fallTetromino, false}, // S
+  {30, "spin", &spinTetromino,  true}, // W
+  {44, "fall", &fallTetromino,  true}, // S
   {43, "movl", &moveTetromino,  true}, // A
   {45, "movr", &moveTetromino, false}  // D
 };
