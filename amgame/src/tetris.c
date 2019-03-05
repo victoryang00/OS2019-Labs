@@ -59,24 +59,30 @@ void initTetris() {
 }
 
 bool playTetris(int keyCode) {
-  fallTetromino(state.tetromino, false);
-  for (int i = 0; i < NR_KEY_MAPPING; ++i) {
-    if (keyCode == keyCodeMappings[i].code) {
-      struct Tetromino T = keyCodeMappings[i].func(state.tetromino, keyCodeMappings[i].param);
-      if (memcmp(&T, &TT_GAME_OVER, sizeof(struct Tetromino)) == 0) {
-        printf("Game Over!\n");
-        return false;
+  struct Tetromino T = state.tetromino;
+  if (keyCode) {
+    for (int i = 0; i < NR_KEY_MAPPING; ++i) {
+      if (keyCode == keyCodeMappings[i].code) {
+        T = keyCodeMappings[i].func(T, keyCodeMappings[i].param);
+        break;
       }
-      if (memcmp(&T, &TT_TOUCH_GROUND, sizeof(struct Tetromino)) == 0) {
-        printf("Touch ground.\n");
-        state.tetromino = newTetromino();
-      } else {
-        printf("Tetromino moved.\n");
-        state.tetromino = T;
-      }
-      break;
     }
+  } else {
+    T = fallTetromino(T, false);
   }
+
+  if (memcmp(&T, &TT_GAME_OVER, sizeof(struct Tetromino)) == 0) {
+    printf("Game Over!\n");
+    return false;
+  }
+  if (memcmp(&T, &TT_TOUCH_GROUND, sizeof(struct Tetromino)) == 0) {
+    printf("Touch ground.\n");
+    state.tetromino = newTetromino();
+  } else {
+    printf("Tetromino moved.\n");
+    state.tetromino = T;
+  }
+
   drawTetrominos(state.tetromino);
   printf("Tetris OK: (%d, %d)\n", state.tetromino.pos.x, state.tetromino.pos.y);
   return true;
@@ -104,7 +110,7 @@ struct Tetromino fallTetromino(struct Tetromino originT, bool force) {
     nextT.pos.y++;
     Log("Checking next pos");
     T = checkTetromino(nextT) != 0 ? nextT : T;
-    Log("Checked next pos");
+    Log("Checked next pos, T at (%d, %d)", T.pos.x, T.pos.y);
   }
   if (force || memcmp(&T, &originT, sizeof(struct Tetromino)) == 0) {
     if (checkTetromino(T) == -1) {
