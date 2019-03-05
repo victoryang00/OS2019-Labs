@@ -115,7 +115,7 @@ struct Tetromino fallTetromino(struct Tetromino originT, bool force) {
       clearTetrominos();
       Log("New tetromino type: (%d, %d, %d)",
         state.tetromino.pos.x, state.tetromino.pos.y, state.tetromino.type);
-      return newTetronomino(); // touch ground
+      return newTetromino(); // touch ground
     }
   } else {
     return T;
