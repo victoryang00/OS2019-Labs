@@ -108,9 +108,9 @@ struct Tetromino moveTetromino(struct Tetromino oldT, bool movingLeft) {
 }
 
 struct Tetromino fallTetromino(struct Tetromino originT, bool force) {
-  bool nextIsValid = false;
   struct Tetromino T = originT;
   {
+    bool nextIsValid = false;
     struct Tetromino nextT = T;
     do {
       nextT.pos.y++;
@@ -143,6 +143,7 @@ void saveTetromino(struct Tetromino T) {
     p.y = T.pos.y + tetrominoTypes[T.type].d[i].y;
     screen[p.y][p.x] = T.type;
   }
+  Log("saved!!");
 }
 
 void clearTetrominos() {
