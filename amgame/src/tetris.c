@@ -71,11 +71,12 @@ bool playTetris(int keyCode) {
     T = fallTetromino(T, false);
   }
 
-  if (T == (struct Tetromino) TT_GAME_OVER) {
+Log("(%d,%d)", T.x, T.y);
+  if (memcmp(&T, &TT_GAME_OVER, sizeof(struct Tetromino)) == 0) {
     printf("Game Over!\n");
     return false;
   }
-  if ((const struct Tetromino) T == TT_TOUCH_GROUND) {
+  if (memcmp(&T, &TT_TOUCH_GROUND, sizeof(struct Tetromino)) == 0) {
     printf("Touch ground.\n");
     state.tetromino = newTetromino();
   } else {
