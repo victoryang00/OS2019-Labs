@@ -10,10 +10,8 @@ struct Point directions[4] = {
   { -1,  0 }, // left
   {  1,  0 }  // right
 };
-struct State state;
 
-void gameInit();
-void drawRect(int, int, int, int, uint32_t);
+struct State state;
 
 int main() {
   _ioe_init();
@@ -55,12 +53,10 @@ void gameInit() {
   initTetris();
 }
 
-void drawRect(int x, int y, int w, int h, uint32_t color) {
-  uint32_t pixels[w * h]; // WARNING: allocated on stack
-  for (int i = 0; i < w * h; i++) {
-    pixels[i] = color;
-  }
-  draw_rect(pixels, x, y, w, h);
+void flashScreen() {
+  uint32_t pixels[state.width * state.height];
+  memset(pixels, 0x000000, sizeof(pixels));
+  draw_rect(pixels, 0, 0, state.width, state.height);
 }
 
 void drawSquare(struct Point pos, int size, uint32_t pixel) {
