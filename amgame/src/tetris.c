@@ -77,7 +77,7 @@ bool playTetris(int keyCode) {
   }
 
   drawTetrominos(state.tetromino);
-  Log("Tetris OK: (%d, %d)\n", state.tetromino.pos.x, state.tetromino.pos.y);
+  Log("OK -> (%d, %d)", state.tetromino.pos.x, state.tetromino.pos.y);
   return true;
 }
 
