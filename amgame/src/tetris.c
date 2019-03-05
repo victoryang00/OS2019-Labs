@@ -114,9 +114,9 @@ struct Tetromino fallTetromino(struct Tetromino originT, bool force) {
   }
   if (force || memcmp(&T, &originT, sizeof(struct Tetromino)) == 0) {
     if (checkTetromino(T) == -1) {
-      Log("game over");
       return TT_GAME_OVER; // game over 
     } else {
+      Log("game over");
       saveTetromino(T);
       return TT_TOUCH_GROUND; // touch ground
     }
