@@ -7,11 +7,10 @@ const int scores[5] = {
   0, 100, 200, 400, 800
 };
 
-const struct Tetromino TT_GAME_OVER    = { {-2, -2}, 0 };
-const struct Tetromino TT_TOUCH_GROUND = { {-1, -1}, 0 };
+const struct Tetromino TT_GAME_OVER    = { {-1, -1}, 0 };
 const size_t SZ_ROW = sizeof(struct Tetromino) * SCREEN_W;
 
-const struct TetrominoType tetrominoTypes[20] = {
+const struct TetrominoType tetrominoTypes[] = {
   {{{ 0,  0}, { 0,  0}, { 0,  0}, { 0,  0}},   EMPTY,  0,  0}, //  0-EM
 
   {{{-1,  0}, { 0,  0}, { 1,  0}, { 2,  0}},     RED,  2,  2}, //  1-I1
@@ -42,7 +41,8 @@ const struct TetrominoType tetrominoTypes[20] = {
 };
 const int NR_TETROMINO_TYPES = sizeof(tetrominoTypes) / sizeof(struct TetrominoType);
 
-const struct KeyCodeMapping keyCodeMappings[4] = {
+const struct KeyCodeMapping keyCodeMappings[] = {
+  { 0, "auto", &fallTetromino, false}, // no key
   {30, "spin", &spinTetromino,  true}, // W
   {44, "fall", &fallTetromino,  true}, // S
   {43, "movl", &moveTetromino,  true}, // A
@@ -59,17 +59,12 @@ void initTetris() {
 
 bool playTetris(int keyCode) {
   struct Tetromino T = state.tetromino;
-  if (keyCode) {
-    for (int i = 0; i < NR_KEY_MAPPING; ++i) {
-      if (keyCode == keyCodeMappings[i].code) {
-        Log("[%s]", keyCodeMappings[i].name);
-        T = keyCodeMappings[i].func(T, keyCodeMappings[i].param);
-        break;
-      }
+  for (int i = 0; i < NR_KEY_MAPPING; ++i) {
+    if (keyCode == keyCodeMappings[i].code) {
+      Log("[%s]", keyCodeMappings[i].name);
+      T = keyCodeMappings[i].func(T, keyCodeMappings[i].param);
+      break;
     }
-  } else {
-    Log("[auto]");
-    T = fallTetromino(T, false);
   }
 
   if (memcmp(&T, &TT_GAME_OVER, sizeof(struct Tetromino)) == 0) {
@@ -77,12 +72,6 @@ bool playTetris(int keyCode) {
     printf("Game Over!\n");
     printf("Your score: %d\n", state.score);
     return false;
-  } else if (memcmp(&T, &TT_TOUCH_GROUND, sizeof(struct Tetromino)) == 0) {
-    Log("Touch ground.");
-    clearTetrominos();
-    state.tetromino = newTetromino();
-    Log("New tetromino type: (%d, %d, %d)",
-      state.tetromino.pos.x, state.tetromino.pos.y, state.tetromino.type);
   } else {
     state.tetromino = T;
   }
@@ -121,8 +110,12 @@ struct Tetromino fallTetromino(struct Tetromino originT, bool force) {
     if (!checkTetromino(T)) {
       return TT_GAME_OVER; // game over 
     } else {
+      Log("Touch ground.");
       saveTetromino(T);
-      return TT_TOUCH_GROUND; // touch ground
+      clearTetrominos();
+      Log("New tetromino type: (%d, %d, %d)",
+        state.tetromino.pos.x, state.tetromino.pos.y, state.tetromino.type);
+      return newTetronomino(); // touch ground
     }
   } else {
     return T;
