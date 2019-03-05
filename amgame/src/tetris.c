@@ -68,7 +68,6 @@ bool playTetris(int keyCode) {
   }
 
   if (memcmp(&T, &TT_GAME_OVER, sizeof(struct Tetromino)) == 0) {
-    Log("Game over.");
     printf("Game Over!\n");
     printf("Your score: %d\n", state.score);
     return false;
@@ -108,17 +107,17 @@ struct Tetromino fallTetromino(struct Tetromino originT, bool force) {
   }
   if (force || memcmp(&T, &originT, sizeof(struct Tetromino)) == 0) {
     if (!checkTetromino(T)) {
-      return TT_GAME_OVER; // game over 
+      Log("Game over");
+      return TT_GAME_OVER; 
     } else {
       Log("Touch ground");
       saveTetromino(T);
       clearTetrominos();
+      T = newTetronomino();
       Log("New tetromino: ((%d, %d), %d)", T.pos.x, T.pos.y, T.type);
-      return newTetromino(); // touch ground
     }
-  } else {
-    return T;
   }
+  return T;
 }
 
 struct Tetromino spinTetromino(struct Tetromino oldT, bool clockwise) {
