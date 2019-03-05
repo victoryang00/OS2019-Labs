@@ -104,6 +104,7 @@ struct Tetromino swapTetromino(struct Tetromino oldT, bool uselessBool) {
   newT.type = state.nextTypes[0];
   if (checkTetromino(newT)) {
     state.nextTypes[0] = oldT.type;
+    drawRightSection();
     return newT;
   } else {
     return oldT;
@@ -245,12 +246,12 @@ void drawGameSection(struct Tetromino T) {
 
 void drawRightSection() {
   struct Point p;
-  clearScreen(state.tetrominosBias.x - 3 * state.blockSide, state.tetrominosBias.y - 3 * state.blockSide, (3 + 5 * NR_TETROMINOS) * state.blockSide, (3 + 5 * NR_TETROMINOS) * state.blockSide);
+  clearScreen(state.tetrominosBias.x - 3 * state.blockSide, state.tetrominosBias.y - 3 * state.blockSide, (3 + 6 * NR_TETROMINOS) * state.blockSide, (3 + 6 * NR_TETROMINOS) * state.blockSide);
   for (int i = 0; i < NR_TETROMINOS; ++i) {
     int type = state.nextTypes[i];
     for (int j = 0; j < 4; ++j) {
       p.x = state.tetrominosBias.x + tetrominoTypes[type].d[j].x * state.blockSide;
-      p.y = state.tetrominosBias.y + (5 * i + tetrominoTypes[type].d[j].y) * state.blockSide;
+      p.y = state.tetrominosBias.y + (6 * i + tetrominoTypes[type].d[j].y) * state.blockSide;
       drawSquare(p, state.blockSide, tetrominoTypes[type].color);
     }
   }
