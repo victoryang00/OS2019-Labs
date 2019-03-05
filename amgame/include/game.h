@@ -24,7 +24,8 @@ struct Point {
 
 struct State {
   int width, height;
-  int FPS, nextFrame;
+  int FPS, tetrisFPS;
+  int nextFrame, nextTetrisFrame;
   int score, keyCode;
 
   struct Tetromino tetromino;
