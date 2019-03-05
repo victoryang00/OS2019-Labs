@@ -251,7 +251,7 @@ void drawRightSection() {
   sprintf(scoreStr, "%d", state.score);
 
   clearScreen(state.tetrominosBias.x - 3 * state.blockSide, state.tetrominosBias.y - 3 * state.blockSide, (3 + 6 * NR_TETROMINOS) * state.blockSide, (6 + 6 * NR_TETROMINOS) * state.blockSide);
-  drawString("NEXT", state.tetrominosBias.x - state.blockSide, state.tetrominosBias.y - 3 * state.blockSide);
+  drawString("NEXT", state.tetrominosBias.x - state.blockSide, state.tetrominosBias.y - 2 * state.blockSide - 16);
   for (int i = 0; i < NR_TETROMINOS; ++i) {
     int type = state.nextTypes[i];
     for (int j = 0; j < 4; ++j) {
