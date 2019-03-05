@@ -101,7 +101,7 @@ struct Tetromino swapTetromino(struct Tetromino oldT, bool uselessBool) {
   newT.pos = startPos;
   newT.type = state.nextTypes[0];
   if (checkTetromino(newT)) {
-    nextTypes[0] = oldT.type;
+    state.nextTypes[0] = oldT.type;
     return newT;
   } else {
     return oldT;
@@ -136,7 +136,7 @@ struct Tetromino fallTetromino(struct Tetromino originT, bool force) {
       T.pos = startPos;
       T.type = state.nextTypes[0];
       for (int i = 0; i < NR_TETROMINOS - 1; ++i) state.nextTypes[i] = state.nextTypes[i + 1];
-      state.nextTypes[NR_TETROMINOS - 1] = newTetrominosType();
+      state.nextTypes[NR_TETROMINOS - 1] = newTetrominoType();
       if (checkTetromino(T)) {
         Log("New tetromino: ((%d, %d), %d)", T.pos.x, T.pos.y, T.type);
         return T;
