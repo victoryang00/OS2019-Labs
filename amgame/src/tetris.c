@@ -101,7 +101,9 @@ struct Tetromino fallTetromino(struct Tetromino originT, bool force) {
   } else {
     struct Tetromino nextT = T;
     nextT.pos.y++;
+    Log("Checking next pos");
     T = checkTetromino(nextT) != 0 ? nextT : T;
+    Log("Checked next pos");
   }
   if (force || memcmp(&T, &originT, sizeof(struct Tetromino)) == 0) {
     if (checkTetromino(T) == -1) {
@@ -150,6 +152,7 @@ int checkTetromino(struct Tetromino T) {
 }
 
 int checkPoint(struct Point p) {
+  Log("%d %d", p.x, p.y);
   if (p.x < 0 || p.x >= SCREEN_W) return 0;
   else {
     if (p.y < 0) return -1; // above screen
