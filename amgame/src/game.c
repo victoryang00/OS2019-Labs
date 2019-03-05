@@ -23,12 +23,16 @@ int main() {
     while ((state.keyCode = read_key()) != _KEY_NONE) {
       if (state.keyCode & 0x8000) continue; // ignore key down
       playTetris(state.keyCode);
+      Log("0");
     }
     if (uptime() >= state.nextTetrisFrame) {
       if (!playTetris(0)) return 0;
+      Log("1");
       state.nextTetrisFrame += 1000 / state.tetrisFPS;
     }
+    Log("2");
     state.nextFrame += 1000 / state.FPS;
+    Log("3");
   }
   return 0;
 }
