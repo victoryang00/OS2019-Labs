@@ -7,7 +7,7 @@ const int scores[5] = {
   0, 100, 200, 400, 800
 };
 
-const struct Tetromino TT_GAME_OVER    = { {-1, -1}, 0 };
+const struct Tetromino TT_GAME_OVER = { {-1, -1}, 0 };
 
 const struct TetrominoType tetrominoTypes[] = {
   {{{ 0,  0}, { 0,  0}, { 0,  0}, { 0,  0}},   EMPTY,  0,  0}, //  0-EM
@@ -42,7 +42,7 @@ const int NR_TETROMINO_TYPES = sizeof(tetrominoTypes) / sizeof(struct TetrominoT
 
 const struct KeyCodeMapping keyCodeMappings[] = {
   { 0, "AUTO", &fallTetromino, false}, // no key
-  {30, "SPIN", &spinTetromino,  true}, // W
+  {_KEY_W, "SPIN", &spinTetromino,  true}, // W
   {44, "FALL", &fallTetromino,  true}, // S
   {43, "MOVL", &moveTetromino,  true}, // A
   {45, "MOVR", &moveTetromino, false}  // D
@@ -54,6 +54,7 @@ int screen[SCREEN_H][SCREEN_W];
 void initTetris() {
   memset(screen, 0, sizeof(screen));
   state.tetromino = newTetromino();
+  state.nextTetromino = newTetromino(); 
 }
 
 bool playTetris(int keyCode) {

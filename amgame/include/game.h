@@ -14,7 +14,7 @@
 #endif
 
 #define GAME_ALL_FPS 24
-#define GAME_TETRIS_FPS 4
+#define GAME_TETRIS_FPS 2
 
 struct Point {
   int x, y;
@@ -28,6 +28,7 @@ struct State {
   int score, keyCode;
 
   struct Tetromino tetromino;
+  struct Tetromino nextTetromino;
 };
 extern struct State state;
 
