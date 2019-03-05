@@ -63,7 +63,7 @@ bool playTetris(int keyCode) {
   if (keyCode) {
     for (int i = 0; i < NR_KEY_MAPPING; ++i) {
       if (keyCode == keyCodeMappings[i].code) {
-        Log(keyCodeMappings[i].name);
+        Log("%s", keyCodeMappings[i].name);
         T = keyCodeMappings[i].func(T, keyCodeMappings[i].param);
         break;
       }
