@@ -198,7 +198,7 @@ void drawBlock(struct Point pos, uint32_t color) {
     state.mainBias.x + pos.x * state.blockSide, 
     state.mainBias.y + pos.y * state.blockSide
   };
-  drawSquare(realPos, blockSide, color);
+  drawSquare(realPos, state.blockSide, color);
 }
 
 void drawTetrominos(struct Tetromino T) {
