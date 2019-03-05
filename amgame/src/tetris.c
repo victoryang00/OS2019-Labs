@@ -132,6 +132,7 @@ struct Tetromino spinTetromino(struct Tetromino oldT, bool clockwise) {
 }
 
 void saveTetromino(struct Tetromino T) {
+  Log("touch ground, tetromino saved");
   struct Point p;
   for (int i = 0; i < 4; ++i) {
     p.x = T.pos.x + tetrominoTypes[T.type].d[i].x;
