@@ -21,10 +21,9 @@ int main() {
   while (1) {
     while (uptime() < state.nextFrame) ;
     while ((state.keyCode = read_key()) != _KEY_NONE) {
-      //handleKey();
-      printf("%d\n", state.keyCode);
+      playTetris(keyCode);
     }
-    if (!playTetris(state.keyCode)) return 0;
+    if (!playTetris(0)) return 0;
     state.nextFrame += 1000 / state.FPS;
   }
   return 0;
