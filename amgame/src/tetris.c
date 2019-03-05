@@ -110,11 +110,10 @@ struct Tetromino fallTetromino(struct Tetromino originT, bool force) {
     if (!checkTetromino(T)) {
       return TT_GAME_OVER; // game over 
     } else {
-      Log("Touch ground.");
+      Log("Touch ground")
       saveTetromino(T);
       clearTetrominos();
-      Log("New tetromino type: (%d, %d, %d)",
-        state.tetromino.pos.x, state.tetromino.pos.y, state.tetromino.type);
+      Log("New tetromino: ((%d, %d), %d)", T.pos.x, T.pos.y, T.type);
       return newTetromino(); // touch ground
     }
   } else {
@@ -182,6 +181,7 @@ bool checkRow(int row) {
 
 void deleteRows(int row, int combo) {
   for (int i = row; i >= 0; --i) {
+    Log("deleting row %d", i + combo);
     memcpy(screen + (i + combo) * SZ_ROW, screen + i * SZ_ROW, SZ_ROW);
   }
   memset(screen, 0, combo * SZ_ROW);
