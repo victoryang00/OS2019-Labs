@@ -111,6 +111,7 @@ struct Tetromino fallTetromino(struct Tetromino originT, bool force) {
   struct Tetromino T = originT;
   if (force) {
     while (checkTetromino(T)) T.pos.y++;
+    T.pos.y--;
   } else {
     struct Tetromino nextT = T;
     nextT.pos.y++;
