@@ -10,7 +10,6 @@ const int scores[5] = {
 const struct Tetromino TT_GAME_OVER    = { {-2, -2}, 0 };
 const struct Tetromino TT_TOUCH_GROUND = { {-1, -1}, 0 };
 const size_t SZ_ROW = sizeof(struct Tetromino) * SCREEN_W;
-const size_t SZ_MV_SCREEN = sizeof(struct Tetromino) * (SCREEN_H - 1);
 
 const struct TetrominoType tetrominoTypes[20] = {
   {{{ 0,  0}, { 0,  0}, { 0,  0}, { 0,  0}},   EMPTY,  0,  0}, //  0-EM
@@ -75,13 +74,12 @@ bool playTetris(int keyCode) {
 
   if (memcmp(&T, &TT_GAME_OVER, sizeof(struct Tetromino)) == 0) {
     printf("Game Over!\n");
+    printf("Your score: %d\n", state.score);
     return false;
   }
   if (memcmp(&T, &TT_TOUCH_GROUND, sizeof(struct Tetromino)) == 0) {
-    printf("Touch ground.\n");
     state.tetromino = newTetromino();
   } else {
-    printf("Tetromino moved.\n");
     state.tetromino = T;
   }
 
@@ -141,9 +139,13 @@ void saveTetromino(struct Tetromino T) {
 }
 
 void clearTetrominos() {
-  int combo = 0;
-  while (isLastRowFull()) combo++;
-  state.score += scores[combo];
+  for (int i = 0; i < SCREEN_H; ++i) {
+    if (isRowFull(i)) {
+      int combo = 1;
+      while (isRowFull(i)) combo++;
+      state.score += scores[combo];
+    }
+  }
 }
 
 int checkTetromino(struct Tetromino T) {
@@ -169,13 +171,14 @@ int checkPoint(struct Point p) {
   }
 }
 
-bool isLastRowFull() {
+bool isRowFull(int row) {
   for (int j = 0; j < SCREEN_W; ++j) {
-    if (!screen[SCREEN_H - 1][j]) return false;
+    if (!screen[row][j]) return false;
   }
   int tmp[SCREEN_H][SCREEN_W] = {};
-  memcpy(tmp, screen, SZ_MV_SCREEN);
-  memcpy(screen + SZ_ROW, tmp, SZ_MV_SCREEN);
+  size_t mvSize = row * SZ_ROW;
+  memcpy(tmp, screen, mvSize);
+  memcpy(screen + SZ_ROW, tmp, mvSize);
   return true;
 }
 
