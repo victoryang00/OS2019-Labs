@@ -37,8 +37,13 @@ void gameInit() {
   state.height = screen_height();
   state.blockSide = state.height / SCREEN_H;
 
-  state.mainBias.x = (state.width - state.blockSide * SCREEN_W) / 4;
-  state.mainBias.y = (state.height - state.blockSide * SCREEN_H) / 2;
+  if (state.width / state.blockSide > 2 * SCREEN_W) {
+    state.mainBias.x = (state.width - state.blockSide * SCREEN_W) / 4;
+    state.mainBias.y = (state.height - state.blockSide * SCREEN_H) / 2;
+  } else {
+    state.mainBias.x = 0;
+    state.mainBias.y = (state.height - state.blockSide * SCREEN_H) / 2;
+  }
   state.tetrominosBias.x = state.mainBias.x + state.blockSide * (SCREEN_W + 3);
   state.tetrominosBias.y = 5 * state.blockSide;
 
