@@ -71,7 +71,7 @@ bool playTetris(int keyCode) {
     T = fallTetromino(T, false);
   }
 
-  if (memcmp(&T, &TT_GAME_OVER, sizeof(struct Tetromino)) == 0) {
+  if (T.pos == TT_GAME_OVER.pos) {
     printf("Game Over!\n");
     return false;
   }
@@ -116,7 +116,6 @@ struct Tetromino fallTetromino(struct Tetromino originT, bool force) {
     if (checkTetromino(T) == -1) {
       return TT_GAME_OVER; // game over 
     } else {
-      Log("game over");
       saveTetromino(T);
       return TT_TOUCH_GROUND; // touch ground
     }
