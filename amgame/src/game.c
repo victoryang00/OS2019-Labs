@@ -54,14 +54,16 @@ void gameInit() {
 }
 
 void clearScreen(int x, int y, int w, int h) {
-  uint32_t pixels[w][h]; // CAUTION!
-  memset(pixels, 0x00, sizeof(int) * w * h);
-  draw_rect((uint32_t*) pixels, x, y, w, h);
-  Log("END");
+  uint32_t black = 0x000000;
+  for (int i = 0, i < h; ++i) {
+    for (int j = 0; j < w; ++j) {
+      draw_rect(&black, x + j, y + i, 1, 1); // CAUTION
+    }
+  }
 }
 
 void drawSquare(struct Point pos, int size, uint32_t pixel) {
-  assert(size < 100); // avoid memory boom
+  assert(size < 20); // avoid memory boom
   uint32_t pixels[size][size];
   for (int i = 0; i < size; ++i) {
     for (int j = 0; j < size; ++j) {
