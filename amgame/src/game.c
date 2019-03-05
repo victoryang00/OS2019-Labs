@@ -54,9 +54,9 @@ void gameInit() {
 }
 
 void clearScreen(int x, int y, int w, int h) {
-  Log("START, (%d, %d), size=%d*%d", x, y, w, h);
   uint32_t pixels[w][h]; // CAUTION!
   memset(pixels, 0x00, sizeof(pixels));
+  Log("START, (%d, %d), size=%d*%d", x, y, w, h);
   draw_rect((uint32_t*) pixels, x, y, w, h);
   Log("END");
 }
