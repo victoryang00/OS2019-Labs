@@ -183,6 +183,7 @@ void deleteRows(int row, int combo) {
     memcpy(screen[i + combo], screen[i], SCREEN_W * sizeof(struct Tetromino));
   }
   memset(screen, 0, combo * SCREEN_W * sizeof(struct Tetromino));
+  for (int i = 0; i < SCREEN_W; ++i) Log("(%d, %d)->%d", i, 2, screen[2][i]);
 }
 
 void drawBlock(struct Point pos, uint32_t color) {
