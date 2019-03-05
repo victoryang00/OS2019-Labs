@@ -188,7 +188,7 @@ void deleteRows(int row, int combo) {
   for (int i = row; i >= 0; --i) {
     memcpy(&screen[i + combo][0], &screen[i][0], SCREEN_W * sizeof(int));
   }
-  memset(screen, 0, combo * SCREEN_W * sizeof(struct int));
+  memset(screen, 0, combo * SCREEN_W * sizeof(int));
   for (int i = 0; i < SCREEN_W; ++i) Log("(%d, %d)->%d", i, 2, screen[2][i]);
 }
 
