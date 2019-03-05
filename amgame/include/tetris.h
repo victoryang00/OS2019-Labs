@@ -49,7 +49,7 @@ void saveTetromino(struct Tetromino);
 void clearTetrominos();
 int checkTetromino(struct Tetromino);
 int checkPoint(struct Point);
-bool isLastRowFull();
+bool isRowFull(int);
 void drawBlock(struct Point, uint32_t);
 void drawTetrominos(struct Tetromino);
 
