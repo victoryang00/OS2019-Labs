@@ -102,7 +102,7 @@ struct Tetromino fallTetromino(struct Tetromino originT, bool force) {
     struct Tetromino nextT = T;
     nextT.pos.y++;
     Log("Checking next pos");
-    T = nextT;
+    T = checkTetromino(nextT) != 0 ? nextT : T;
     Log("Checked next pos");
   }
   if (force || memcmp(&T, &originT, sizeof(struct Tetromino)) == 0) {
