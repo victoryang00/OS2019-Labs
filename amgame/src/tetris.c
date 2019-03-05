@@ -88,6 +88,7 @@ bool playTetris(int keyCode) {
   }
 
   drawTetrominos(state.tetromino);
+  Log("at (12, 25) -> %d", screen[25][12]);
   Log("Tetris OK: (%d, %d)\n", state.tetromino.pos.x, state.tetromino.pos.y);
   return true;
 }
@@ -121,7 +122,6 @@ struct Tetromino fallTetromino(struct Tetromino originT, bool force) {
     if (!checkTetromino(T)) {
       return TT_GAME_OVER; // game over 
     } else {
-      Log("touch at (%d, %d)", T.pos.x, T.pos.y);
       saveTetromino(T);
       return TT_TOUCH_GROUND; // touch ground
     }
