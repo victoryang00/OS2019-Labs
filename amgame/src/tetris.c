@@ -113,7 +113,7 @@ struct Tetromino fallTetromino(struct Tetromino originT, bool force) {
       Log("Touch ground");
       saveTetromino(T);
       clearTetrominos();
-      T = newTetronomino();
+      T = newTetromino();
       Log("New tetromino: ((%d, %d), %d)", T.pos.x, T.pos.y, T.type);
     }
   }
