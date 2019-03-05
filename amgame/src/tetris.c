@@ -213,6 +213,7 @@ void drawTetrominos(struct Tetromino T) {
   for (int i = 0; i < 4; ++i) {
     p.x = T.pos.x + tetrominoTypes[T.type].d[i].x;
     p.y = T.pos.y + tetrominoTypes[T.type].d[i].y;
+    Log("Tetromino: [%d] => (%d, %d)", i, p.x, p.y);
     drawBlock(p, tetrominoTypes[T.type].color);
   }
 }
