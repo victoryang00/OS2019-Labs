@@ -191,7 +191,7 @@ void drawBlock(struct Point pos, uint32_t color) {
     SCREEN_X + pos.x * blockSide, 
     SCREEN_Y + pos.y * blockSide
   };
-  drawSquare(realPos, SCREEN_BLOCK_SIDE, color);
+  drawSquare(realPos, blockSide, color);
 }
 
 void drawTetrominos(struct Tetromino T) {
