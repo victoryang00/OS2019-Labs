@@ -44,11 +44,11 @@ void gameInit() {
   state.tetrisFPS = CONST_TT_FPS;
   state.nextFrame = 0;
   state.nextTetrisFrame = 0;
-  state.score = 0;
+  state.score = 20;
   state.keyCode = 0;
 
   printf("Press any key to start!\n");
-  while ((state.keyCode = read_key()) != _KEY_NONE) ;
+  while ((state.keyCode = read_key()) == _KEY_NONE) ;
   
   srand(uptime());
   initTetris();
