@@ -143,11 +143,13 @@ void saveTetromino(struct Tetromino T) {
 }
 
 void clearTetrominos() {
-  for (int i = 0; i < SCREEN_H; ++i) {
+  for (int i = SCREEN_H - 1; i >= 0; --i) {
     if (checkRow(i)) {
       int combo = 1;
       while (checkRow(i)) combo++;
       state.score += scores[combo];
+      Log("Scored: %d", scores[combo]);
+      return;
     }
   }
 }
@@ -170,7 +172,7 @@ bool checkPoint(struct Point p) {
 
 bool checkRow(int row) {
   for (int j = 0; j < SCREEN_W; ++j) {
-    if (!screen[row][j]) return false;
+    if (screen[row][j] == 0) return false;
   }
   int tmp[SCREEN_H][SCREEN_W] = {};
   size_t mvSize = row * SZ_ROW;
