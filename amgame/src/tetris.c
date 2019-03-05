@@ -88,7 +88,6 @@ bool playTetris(int keyCode) {
   }
 
   drawTetrominos(state.tetromino);
-  Log("at (12, 25) -> %d", screen[25][12]);
   Log("Tetris OK: (%d, %d)\n", state.tetromino.pos.x, state.tetromino.pos.y);
   return true;
 }
@@ -172,9 +171,13 @@ bool checkTetromino(struct Tetromino T) {
 }
 
 bool checkPoint(struct Point p) {
-  return (p.x >= 0 && p.x < SCREEN_W)
-    && (p.y >= 0 && p.y < SCREEN_H)
+  return checkPointPosition(p)
     && (screen[p.y][p.x] == 0); // CAUTION
+}
+
+bool checkPointPosition(struct Point p) {
+  return (p.x >= 0 && p.x < SCREEN_W)
+    && (p.y >= 0 && p.y < SCREEN_H);
 }
 
 bool checkRow(int row) {
@@ -192,7 +195,7 @@ void deleteRows(int row, int combo) {
 }
 
 void drawBlock(struct Point pos, uint32_t color) {
-  if (!checkPoint(pos)) return;
+  if (!checkPointPosition(pos)) return;
   struct Point realPos = { 
     SCREEN_X + pos.x * SCREEN_BLOCK_SIDE, 
     SCREEN_Y + pos.y * SCREEN_BLOCK_SIDE
