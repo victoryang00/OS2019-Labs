@@ -113,10 +113,10 @@ struct Tetromino fallTetromino(struct Tetromino originT, bool force) {
   } else {
     struct Tetromino nextT = T;
     nextT.pos.y++;
-    T = checkTetromino(nextT) != 0 ? nextT : T;
+    T = checkTetromino(nextT) ? nextT : T;
   }
   if (force || memcmp(&T, &originT, sizeof(struct Tetromino)) == 0) {
-    if (checkTetromino(T) == -1) {
+    if (!checkTetromino(T)) {
       return TT_GAME_OVER; // game over 
     } else {
       saveTetromino(T);
@@ -144,38 +144,31 @@ void saveTetromino(struct Tetromino T) {
 
 void clearTetrominos() {
   for (int i = 0; i < SCREEN_H; ++i) {
-    if (isRowFull(i)) {
+    if (checkRow(i)) {
       int combo = 1;
-      while (isRowFull(i)) combo++;
+      while (checkRow(i)) combo++;
       state.score += scores[combo];
     }
   }
 }
 
-int checkTetromino(struct Tetromino T) {
-  int result = 1;
+bool checkTetromino(struct Tetromino T) {
   struct Point p;
   for (int i = 0; i < 4; ++i) {
     p.x = T.pos.x + tetrominoTypes[T.type].d[i].x;
     p.y = T.pos.y + tetrominoTypes[T.type].d[i].y;
-    int res = checkPoint(p);
-    Log("(%d, %d)->%d->%d", p.x, p.y, screen[p.y][p.x], res);
-    if (res == 0) return 0;
-    if (res == -1) result = -1; // above screen
+    if (!checkPoint(p)) return false;
   }
-  return result;
+  return true;
 }
 
-int checkPoint(struct Point p) {
-  if (p.x < 0 || p.x >= SCREEN_W) return 0;
-  else {
-    if (p.y < 0) return -1; // above screen
-    if (p.y >= SCREEN_H) return 0;
-    return screen[p.y][p.x] == 0 ? 1 : 0;
-  }
+bool checkPoint(struct Point p) {
+  return (p.x >= 0 && p.x < SCREEN_W)
+    && (p.y >= 0 && p.y < SCREEN_H)
+    && (screen[p.y][p.x] != 0); // CAUTION
 }
 
-bool isRowFull(int row) {
+bool checkRow(int row) {
   for (int j = 0; j < SCREEN_W; ++j) {
     if (!screen[row][j]) return false;
   }
@@ -187,7 +180,7 @@ bool isRowFull(int row) {
 }
 
 void drawBlock(struct Point pos, uint32_t color) {
-  if (checkPoint(pos) <= 0) return;
+  if (!checkPoint(pos)) return;
   struct Point realPos = { 
     SCREEN_X + pos.x * SCREEN_BLOCK_SIDE, 
     SCREEN_Y + pos.y * SCREEN_BLOCK_SIDE

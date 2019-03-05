@@ -13,7 +13,7 @@
 #define false 0
 #endif
 
-#define CONST_FPS 5
+#define CONST_FPS 4
 
 struct Point {
   int x, y;

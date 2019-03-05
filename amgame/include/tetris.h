@@ -6,7 +6,7 @@
 #define SCREEN_X 0
 #define SCREEN_Y 0
 #define SCREEN_H 26
-#define SCREEN_W 13
+#define SCREEN_W 15
 #define SCREEN_BLOCK_SIDE 15
 
 enum uint32_t {
@@ -47,9 +47,9 @@ struct Tetromino fallTetromino(struct Tetromino, bool);
 struct Tetromino spinTetromino(struct Tetromino, bool);
 void saveTetromino(struct Tetromino);
 void clearTetrominos();
-int checkTetromino(struct Tetromino);
-int checkPoint(struct Point);
-bool isRowFull(int);
+bool checkTetromino(struct Tetromino);
+bool checkPoint(struct Point);
+bool checkRow(int);
 void drawBlock(struct Point, uint32_t);
 void drawTetrominos(struct Tetromino);
 
