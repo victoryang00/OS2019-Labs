@@ -7,7 +7,6 @@
 #define SCREEN_Y 0
 #define SCREEN_H 26
 #define SCREEN_W 15
-#define SCREEN_BLOCK_SIDE 15
 
 enum uint32_t {
   //using material design colors
