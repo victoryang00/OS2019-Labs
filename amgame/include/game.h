@@ -33,6 +33,8 @@ struct State {
 };
 extern struct State state;
 
+void gameInit();
+void clearScreen();
 void drawSquare(struct Point, int, uint32_t);
 
 #endif

@@ -79,7 +79,7 @@ bool playTetris(int keyCode) {
     state.tetromino = T;
   }
 
-  flashScreen();
+  clearScreen();
   drawTetrominos(state.tetromino);
   // Log("OK => (%d, %d)", state.tetromino.pos.x, state.tetromino.pos.y);
   return true;

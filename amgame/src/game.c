@@ -53,7 +53,7 @@ void gameInit() {
   initTetris();
 }
 
-void flashScreen() {
+void clearScreen() {
   uint32_t pixels[state.width * state.height];
   memset(pixels, 0x000000, sizeof(pixels));
   draw_rect(pixels, 0, 0, state.width, state.height);
