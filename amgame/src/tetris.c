@@ -165,7 +165,7 @@ bool checkTetromino(struct Tetromino T) {
 bool checkPoint(struct Point p) {
   return (p.x >= 0 && p.x < SCREEN_W)
     && (p.y >= 0 && p.y < SCREEN_H)
-    && (screen[p.y][p.x] != 0); // CAUTION
+    && (screen[p.y][p.x] == 0); // CAUTION
 }
 
 bool checkRow(int row) {
