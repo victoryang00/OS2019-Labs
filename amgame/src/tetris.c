@@ -79,7 +79,6 @@ bool playTetris(int keyCode) {
     state.tetromino = T;
   }
 
-  clearScreen();
   drawTetrominos(state.tetromino);
   // Log("OK => (%d, %d)", state.tetromino.pos.x, state.tetromino.pos.y);
   return true;
@@ -233,11 +232,14 @@ void drawTetrominos(struct Tetromino T) {
       drawBlock(p, tetrominoTypes[screen[i][j]].color);
     }
   } 
+
   for (int i = 0; i < 4; ++i) {
     p.x = T.pos.x + tetrominoTypes[T.type].d[i].x;
     p.y = T.pos.y + tetrominoTypes[T.type].d[i].y;
     drawBlock(p, tetrominoTypes[T.type].color);
   }
+
+  clearScreen(state.tetrominos.Bias.x - 3 * state.blockSide, 0, 6 * state.blockSide, state.height);
   for (int i = 0; i < NR_TETROMINOS; ++i) {
     int type = state.nextTypes[i];
     for (int j = 0; j < 4; ++j) {

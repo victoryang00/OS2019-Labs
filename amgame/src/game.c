@@ -38,7 +38,7 @@ void gameInit() {
 
   state.mainBias.x = (state.width - state.blockSide * SCREEN_W) / 3;
   state.mainBias.y = (state.height - state.blockSide * SCREEN_H) / 2;
-  state.tetrominosBias.x = 2 * state.mainBias.x + state.blockSide * SCREEN_W;
+  state.tetrominosBias.x = state.mainBias.x + state.blockSide * (SCREEN_W + 3);
   state.tetrominosBias.y = 4 * state.blockSide;
 
   state.nextFrame = 0;
@@ -53,10 +53,10 @@ void gameInit() {
   initTetris();
 }
 
-void clearScreen() {
-  uint32_t pixels[state.width * state.height];
-  memset(pixels, 0xff, sizeof(pixels));
-  draw_rect(pixels, 0, 0, state.width, state.height);
+void clearScreen(int x, int y, int w, int h) {
+  uint32_t pixels[w * h]; // CAUTION!
+  memset(pixels, 0x00, sizeof(pixels));
+  draw_rect(pixels, x, y, w, h);
 }
 
 void drawSquare(struct Point pos, int size, uint32_t pixel) {
