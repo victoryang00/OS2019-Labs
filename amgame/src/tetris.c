@@ -61,7 +61,7 @@ bool playTetris(int keyCode) {
   struct Tetromino T = state.tetromino;
   for (int i = 0; i < NR_KEY_MAPPING; ++i) {
     if (keyCode == keyCodeMappings[i].code) {
-      if (keyCode != _KEY_NONE) Log("[%d => %s]", keyCode, keyCodeMappings[i].name);
+      if (keyCode != _KEY_NONE) Log("[%s]", keyCodeMappings[i].name);
       T = keyCodeMappings[i].func(T, keyCodeMappings[i].param);
       break;
     }
