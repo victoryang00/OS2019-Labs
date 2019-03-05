@@ -110,7 +110,7 @@ struct Tetromino fallTetromino(struct Tetromino originT, bool force) {
     if (!checkTetromino(T)) {
       return TT_GAME_OVER; // game over 
     } else {
-      Log("Touch ground")
+      Log("Touch ground");
       saveTetromino(T);
       clearTetrominos();
       Log("New tetromino: ((%d, %d), %d)", T.pos.x, T.pos.y, T.type);
