@@ -239,7 +239,7 @@ void drawTetrominos(struct Tetromino T) {
     drawBlock(p, tetrominoTypes[T.type].color);
   }
 
-  clearScreen(state.tetrominos.Bias.x - 3 * state.blockSide, 0, 6 * state.blockSide, state.height);
+  clearScreen(state.tetrominosBias.x - 3 * state.blockSide, 0, 6 * state.blockSide, state.height);
   for (int i = 0; i < NR_TETROMINOS; ++i) {
     int type = state.nextTypes[i];
     for (int j = 0; j < 4; ++j) {
