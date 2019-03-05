@@ -145,6 +145,7 @@ int checkTetromino(struct Tetromino T) {
     p.x = T.pos.x + tetrominoTypes[T.type].d[i].x;
     p.y = T.pos.y + tetrominoTypes[T.type].d[i].y;
     int res = checkPoint(p);
+    Log("(%d, %d)->%d", p.x, p.y, res);
     if (res == 0) return 0;
     if (res == -1) result = -1; // above screen
   }
@@ -152,7 +153,6 @@ int checkTetromino(struct Tetromino T) {
 }
 
 int checkPoint(struct Point p) {
-  Log("%d %d", p.x, p.y);
   if (p.x < 0 || p.x >= SCREEN_W) return 0;
   else {
     if (p.y < 0) return -1; // above screen
