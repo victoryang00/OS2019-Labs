@@ -50,6 +50,7 @@ void clearTetrominos();
 bool checkTetromino(struct Tetromino);
 bool checkPoint(struct Point);
 bool checkRow(int);
+void deleteRows(int, int);
 void drawBlock(struct Point, uint32_t);
 void drawTetrominos(struct Tetromino);
 

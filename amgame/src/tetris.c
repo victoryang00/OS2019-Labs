@@ -146,8 +146,11 @@ void saveTetromino(struct Tetromino T) {
 void clearTetrominos() {
   for (int i = SCREEN_H - 1; i >= 0; --i) {
     if (checkRow(i)) {
-      int combo = 1;
-      while (checkRow(i)) combo++;
+      int combo = 0;
+      do {
+        --i, ++combo;
+      } while (checkRow(i));
+      deleteRows(i, combo);
       state.score += scores[combo];
       Log("Scored: %d", scores[combo]);
       return;
@@ -175,11 +178,14 @@ bool checkRow(int row) {
   for (int j = 0; j < SCREEN_W; ++j) {
     if (screen[row][j] == 0) return false;
   }
-  for (int i = row - 1; i >= 0; --i) {
-    memcpy(screen + (i + 1) * SZ_ROW, screen + i * SZ_ROW, SZ_ROW);
-  }
-  memset(screen, 0, SZ_ROW);
   return true;
+}
+
+void deleteRows(int row, int combo) {
+  for (int i = row; i >= 0; --i) {
+    memcpy(screen + (i + combo) * SZ_ROW, screen + i * SZ_ROW, SZ_ROW);
+  }
+  memset(screen, 0, combo * SZ_ROW);
 }
 
 void drawBlock(struct Point pos, uint32_t color) {
