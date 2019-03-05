@@ -62,23 +62,27 @@ bool playTetris(int keyCode) {
   if (keyCode) {
     for (int i = 0; i < NR_KEY_MAPPING; ++i) {
       if (keyCode == keyCodeMappings[i].code) {
-        Log("%s", keyCodeMappings[i].name);
+        Log("[%s]", keyCodeMappings[i].name);
         T = keyCodeMappings[i].func(T, keyCodeMappings[i].param);
         break;
       }
     }
   } else {
-    Log("auto");
+    Log("[auto]");
     T = fallTetromino(T, false);
   }
 
   if (memcmp(&T, &TT_GAME_OVER, sizeof(struct Tetromino)) == 0) {
+    Log("Game over.");
     printf("Game Over!\n");
     printf("Your score: %d\n", state.score);
     return false;
   }
   if (memcmp(&T, &TT_TOUCH_GROUND, sizeof(struct Tetromino)) == 0) {
+    Log("Touch ground.");
     state.tetromino = newTetromino();
+    Log("New tetromino type: (%d, %d, %d)",
+      state.tetromino.pos.x, state.tetromino.pos.y, state.tetromino.type);
   } else {
     state.tetromino = T;
   }
