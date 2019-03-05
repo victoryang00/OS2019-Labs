@@ -80,6 +80,7 @@ bool playTetris(int keyCode) {
   }
   if (memcmp(&T, &TT_TOUCH_GROUND, sizeof(struct Tetromino)) == 0) {
     Log("Touch ground.");
+    clearTetrominos();
     state.tetromino = newTetromino();
     Log("New tetromino type: (%d, %d, %d)",
       state.tetromino.pos.x, state.tetromino.pos.y, state.tetromino.type);
