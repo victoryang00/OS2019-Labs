@@ -24,12 +24,12 @@ struct Point {
 
 struct State {
   int width, height, blockSide;
-  struct Point mainBias;
+  struct Point mainBias, tetrominosBias;
   int nextFrame, nextTetrisFrame;
   int score, keyCode;
 
   struct Tetromino tetromino;
-  struct Tetromino nextTetromino;
+  int nextTypes[NR_TETROMINOS];
 };
 extern struct State state;
 

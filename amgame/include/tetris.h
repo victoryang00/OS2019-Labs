@@ -5,8 +5,9 @@
 
 #define SCREEN_X 0
 #define SCREEN_Y 0
-#define SCREEN_H 26
-#define SCREEN_W 15
+#define SCREEN_H 28
+#define SCREEN_W 13
+#define NR_TETROMINOS 5
 
 enum uint32_t {
   //using material design colors
@@ -40,6 +41,7 @@ struct KeyCodeMapping {
 
 void initTetris();
 bool playTetris(int);
+int newTetrominoType();
 struct Tetromino newTetromino();
 struct Tetromino moveTetromino(struct Tetromino, bool);
 struct Tetromino fallTetromino(struct Tetromino, bool);

@@ -38,8 +38,10 @@ void gameInit() {
   state.height = screen_height();
   state.blockSide = state.height / SCREEN_H;
 
-  state.mainBias.x = (state.width - state.blockSide * SCREEN_W) / 2;
+  state.mainBias.x = (state.width - state.blockSide * SCREEN_W) / 3;
   state.mainBias.y = (state.height - state.blockSide * SCREEN_H) / 2;
+  state.tetrominosBias.x = 2 * state.mainBias.x + state.blockSide * SCREEN_W;
+  state.tetrominosBias.y = state.blockSide;
 
   state.nextFrame = 0;
   state.nextTetrisFrame = 0;
