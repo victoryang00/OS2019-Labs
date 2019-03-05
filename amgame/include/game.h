@@ -34,7 +34,7 @@ struct State {
 extern struct State state;
 
 void gameInit();
-void clearScreen();
+void clearScreen(int, int, int, int);
 void drawSquare(struct Point, int, uint32_t);
 
 #endif
