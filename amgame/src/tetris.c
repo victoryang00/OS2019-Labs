@@ -113,6 +113,7 @@ struct Tetromino fallTetromino(struct Tetromino originT, bool force) {
       saveTetromino(T);
       clearTetrominos();
       T = newTetromino();
+      if (!checkTetromino(T)) return TT_GAME_OVER;
       Log("New tetromino: ((%d, %d), %d)", T.pos.x, T.pos.y, T.type);
     }
   }
