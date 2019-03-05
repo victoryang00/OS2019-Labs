@@ -26,10 +26,9 @@ int main() {
     }
     if (uptime() >= state.nextTetrisFrame) {
       if (!playTetris(0)) return 0;
-      Log("FPSes are %d %d", state.tetrisFPS, state.FPS);
-      state.nextTetrisFrame += 1000 / state.tetrisFPS;
+      state.nextTetrisFrame += 1000 / 2;
     }
-    state.nextFrame += 1000 / state.FPS;
+    state.nextFrame += 1000 / 24;
   }
   return 0;
 }
@@ -37,8 +36,6 @@ int main() {
 void gameInit() {
   state.width = screen_width();
   state.height = screen_height();
-  state.FPS = CONST_FPS;
-  state.tetrisFPS = CONST_TT_FPS;
   state.nextFrame = 0;
   state.nextTetrisFrame = 0;
   state.score = 0;
