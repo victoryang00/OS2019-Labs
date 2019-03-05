@@ -10,15 +10,15 @@
 #define SCREEN_BLOCK_SIDE 15
 
 enum uint32_t {
-  //TODO: find out the color codes
-  EMPTY   = 0x000000,
-  RED     = 0xff0000,
-  YELLOW  = 2345,
-  MAGENTA = 3456,
-  BLUE    = 4567,
-  CYAN    = 5678,
-  GREEN   = 6789,
-  ORANGE  = 7890
+  //using material design colors
+  EMPTY   = 0xffffff,
+  RED     = 0xf44336,
+  YELLOW  = 0xffeb3b,
+  MAGENTA = 0x9c27b0,
+  BLUE    = 0x2196f3,
+  CYAN    = 0x00bcd4,
+  GREEN   = 0x4caf50,
+  ORANGE  = 0xff9800
 };
 
 struct Tetromino {
