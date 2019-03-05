@@ -13,8 +13,8 @@
 #define false 0
 #endif
 
-#define CONST_FPS 24
-#define CONST_TT_FPS 4
+#define GAME_ALL_FPS 24
+#define GAME_TETRIS_FPS 4
 
 struct Point {
   int x, y;
@@ -24,7 +24,6 @@ struct Point {
 
 struct State {
   int width, height;
-  int FPS, tetrisFPS;
   int nextFrame, nextTetrisFrame;
   int score, keyCode;
 

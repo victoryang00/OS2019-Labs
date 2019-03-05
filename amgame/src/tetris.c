@@ -178,6 +178,7 @@ bool checkRow(int row) {
 }
 
 void deleteRows(int row, int combo) {
+  assert(row >= 0 && combo > 0 && row + combo < SCREEN_H);
   for (int i = row; i >= 0; --i) {
     memcpy(screen[i + combo], screen[i], SCREEN_W * sizeof(struct Tetromino));
   }
