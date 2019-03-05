@@ -59,6 +59,8 @@ void initTetris() {
   for (int i = 0; i < NR_TETROMINOS; ++i) {
     state.nextTypes[i] = rand() % (NR_TETROMINO_TYPES - 1) + 1;
   }
+  drawGameSection(state.tetromino);
+  drawRightSection();
 }
 
 bool playTetris(int keyCode) {
