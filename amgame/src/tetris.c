@@ -243,7 +243,7 @@ void drawGameSection(struct Tetromino T) {
 
 void drawRightSection() {
   struct Point p;
-  clearScreen(state.tetrominosBias.x - 3 * state.blockSide, state.tetrominosBias.y - 3 * state.blockSide, 5 * state.blockSide, 5 * state.blockSide);
+  clearScreen(state.tetrominosBias.x - 3 * state.blockSide, state.tetrominosBias.y - 3 * state.blockSide, (3 + 5 * NR_TETROMINOS) state.blockSide, (3 + 5 * NR_TETROMINOS) * state.blockSide);
   for (int i = 0; i < NR_TETROMINOS; ++i) {
     int type = state.nextTypes[i];
     for (int j = 0; j < 4; ++j) {
