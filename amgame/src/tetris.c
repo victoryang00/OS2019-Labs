@@ -41,11 +41,11 @@ const struct TetrominoType tetrominoTypes[] = {
 const int NR_TETROMINO_TYPES = sizeof(tetrominoTypes) / sizeof(struct TetrominoType);
 
 const struct KeyCodeMapping keyCodeMappings[] = {
-  { 0, "AUTO", &fallTetromino, false}, // no key
-  {_KEY_W, "SPIN", &spinTetromino,  true}, // W
-  {44, "FALL", &fallTetromino,  true}, // S
-  {43, "MOVL", &moveTetromino,  true}, // A
-  {45, "MOVR", &moveTetromino, false}  // D
+  {_KEY_NONE, "AUTO", &fallTetromino, false},
+  {   _KEY_W, "SPIN", &spinTetromino,  true},
+  {   _KEY_S, "FALL", &fallTetromino,  true},
+  {   _KEY_A, "MOVL", &moveTetromino,  true},
+  {   _KEY_D, "MOVR", &moveTetromino, false} 
 };
 const int NR_KEY_MAPPING = sizeof(keyCodeMappings) / sizeof(struct KeyCodeMapping);
 
