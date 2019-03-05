@@ -29,10 +29,10 @@ void drawCharacter(char ch, int x, int y) {
 void drawString(const char *str, int x, int y) {
   while (*str) {
     drawCharacter(*str ++, x, y);
-    if (x + 8 >= state.width) {
-      y += 8; x = 0;
+    if (x + 16 >= state.width) {
+      y += 16; x = 0;
     } else {
-      x += 8;
+      x += 16;
     }
   }
 }
