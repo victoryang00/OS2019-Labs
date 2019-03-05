@@ -21,7 +21,7 @@ int main() {
   while (1) {
     while (uptime() < state.nextFrame) ;
     while ((state.keyCode = read_key()) != _KEY_NONE) {
-      playTetris(keyCode);
+      playTetris(state.keyCode);
     }
     if (!playTetris(0)) return 0;
     state.nextFrame += 1000 / state.FPS;
