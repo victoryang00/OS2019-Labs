@@ -14,7 +14,7 @@
 #endif
 
 #define CONST_FPS 24
-#define CONST_TT_FPS 2
+#define CONST_TT_FPS 4
 
 struct Point {
   int x, y;
