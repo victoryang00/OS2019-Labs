@@ -42,11 +42,11 @@ const struct TetrominoType tetrominoTypes[] = {
 const int NR_TETROMINO_TYPES = sizeof(tetrominoTypes) / sizeof(struct TetrominoType);
 
 const struct KeyCodeMapping keyCodeMappings[] = {
-  { 0, "auto", &fallTetromino, false}, // no key
-  {30, "spin", &spinTetromino,  true}, // W
-  {44, "fall", &fallTetromino,  true}, // S
-  {43, "movl", &moveTetromino,  true}, // A
-  {45, "movr", &moveTetromino, false}  // D
+  { 0, "AUTO", &fallTetromino, false}, // no key
+  {30, "SPIN", &spinTetromino,  true}, // W
+  {44, "FALL", &fallTetromino,  true}, // S
+  {43, "MOVL", &moveTetromino,  true}, // A
+  {45, "MOVR", &moveTetromino, false}  // D
 };
 const int NR_KEY_MAPPING = sizeof(keyCodeMappings) / sizeof(struct KeyCodeMapping);
 
@@ -181,8 +181,7 @@ bool checkRow(int row) {
 
 void deleteRows(int row, int combo) {
   for (int i = row; i >= 0; --i) {
-    Log("deleting row %d", i + combo);
-    memcpy(screen + (i + combo) * SZ_ROW, screen + i * SZ_ROW, SZ_ROW);
+    memcpy(screen + (i + combo) * SCREEN_W, screen + i * SCREEN_W, SZ_ROW);
   }
   memset(screen, 0, combo * SZ_ROW);
 }
