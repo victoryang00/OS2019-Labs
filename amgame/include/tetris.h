@@ -46,6 +46,7 @@ struct Tetromino newTetromino();
 struct Tetromino moveTetromino(struct Tetromino, bool);
 struct Tetromino fallTetromino(struct Tetromino, bool);
 struct Tetromino spinTetromino(struct Tetromino, bool);
+struct Tetromino swapTetromino(struct Tetromino, bool);
 void saveTetromino(struct Tetromino);
 void clearTetrominos();
 bool checkTetromino(struct Tetromino);
