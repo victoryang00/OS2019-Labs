@@ -19,7 +19,7 @@ int main() {
   _ioe_init();
   gameInit();
   while (1) {
-    while (uptime() < state.nextFrame) ;
+    if (uptime() < state.nextFrame) {
     while ((state.keyCode = read_key()) != _KEY_NONE) {
       if (state.keyCode & 0x8000) continue; // ignore key down
       playTetris(state.keyCode);
@@ -29,7 +29,7 @@ int main() {
       state.nextTetrisFrame += 1000 / GAME_TETRIS_FPS;
     }
     state.nextFrame += 1000 / GAME_ALL_FPS;
-  }
+  }}
   return 0;
 }
 
