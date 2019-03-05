@@ -76,6 +76,7 @@ bool playTetris(int keyCode) {
   if (memcmp(&T, &TT_GAME_OVER, sizeof(struct Tetromino)) == 0) {
     printf("Game Over!\n");
     printf("Your score: %d\n", state.score);
+    printGameOver();
     return false;
   } else {
     state.tetromino = T;
@@ -261,4 +262,8 @@ void drawRightSection() {
   }
   drawString("S C O R E", state.tetrominosBias.x - state.blockSide, state.tetrominosBias.y + 6 * NR_TETROMINOS * state.blockSide);
   drawString(scoreStr, state.tetrominosBias.x - state.blockSide, state.tetrominosBias.y + (6 * NR_TETROMINOS + 1) * state.blockSide);
+}
+
+void printGameOver() {
+  drawString("Game Over", state.tetrominosBias.x - state.blockSide, state.tetrominosBias.y + (6 * NR_TETROMINOS + 2) * state.blockSide);
 }

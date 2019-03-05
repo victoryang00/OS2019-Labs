@@ -23,11 +23,12 @@ int main() {
       playTetris(state.keyCode);
     }
     if (uptime() >= state.nextTetrisFrame) {
-      if (!playTetris(_KEY_NONE)) return 0;
+      if (!playTetris(_KEY_NONE)) break;
       state.nextTetrisFrame += 1000 / GAME_TETRIS_FPS;
     }
     state.nextFrame += 1000 / GAME_ALL_FPS;
   }
+  while ((state.keyCode = read_key()) == _KEY_NONE) ;
   return 0;
 }
 
@@ -47,6 +48,7 @@ void gameInit() {
   state.keyCode = 0;
 
   printf("Press any key to start!\n");
+  drawString("Press any key to start!", 0, 0);
   while ((state.keyCode = read_key()) == _KEY_NONE) ;
   
   srand((int) uptime());

@@ -5,8 +5,8 @@
 
 #define SCREEN_X 0
 #define SCREEN_Y 0
-#define SCREEN_H 28
-#define SCREEN_W 13
+#define SCREEN_H 30
+#define SCREEN_W 15
 #define NR_TETROMINOS 3
 
 enum uint32_t {
@@ -57,5 +57,6 @@ void deleteRows(int, int);
 void drawBlock(struct Point, uint32_t);
 void drawGameSection(struct Tetromino);
 void drawRightSection();
+void printGameOver();
 
 #endif
