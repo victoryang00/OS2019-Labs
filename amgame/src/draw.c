@@ -28,8 +28,8 @@ static inline void drawCharacter(char ch, int x, int y, uint32_t color) {
 
 static inline void drawString(const char *str, int x, int y) {
   while (*str) {
-    draw_character(*str ++, x, y);
-    if (x + 8 >= W) {
+    drawCharacter(*str ++, x, y);
+    if (x + 8 >= state.width) {
       y += 8; x = 0;
     } else {
       x += 8;
