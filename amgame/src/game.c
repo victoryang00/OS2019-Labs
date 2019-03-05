@@ -54,9 +54,11 @@ void gameInit() {
 }
 
 void clearScreen(int x, int y, int w, int h) {
+  Log("START");
   uint32_t pixels[w * h]; // CAUTION!
   memset(pixels, 0x00, sizeof(pixels));
   draw_rect(pixels, x, y, w, h);
+  LOG("END");
 }
 
 void drawSquare(struct Point pos, int size, uint32_t pixel) {
