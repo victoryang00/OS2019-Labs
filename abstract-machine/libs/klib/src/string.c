@@ -98,13 +98,13 @@ void* memcpy(void* out, const void* in, size_t n) {
   return NULL;
 }
 
-int memcmp(const void* s1, const void* s2, size_t n){
+int memcmp(const void* s1, const void* s2, size_t n) {
   int8_t *p1 = (int8_t *) s1;
   int8_t *p2 = (int8_t *) s2;
 
   int i = 0, loops = (n / sizeof(int32_t));
   for (i = 0; i < loops; ++i) {
-    if (*((int32_t *) p1) < *((int32_t *) p2)) {
+    if (*((int32_t *) p1) != *((int32_t *) p2)) {
       return *((int32_t *) p1) < *((int32_t *) p2) ? -1 : 1;
     } 
     p1 += sizeof(int32_t);
