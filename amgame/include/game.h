@@ -37,7 +37,4 @@ void gameInit();
 void clearScreen(int, int, int, int);
 void drawSquare(struct Point, int, uint32_t);
 
-extern inline void drawCharacter(char, int, int);
-extern inline void drawString(const char*, int, int);
-
 #endif

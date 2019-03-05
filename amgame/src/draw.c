@@ -13,7 +13,7 @@ char *itoa(int n)  {
   return &s[i];
 }  
 
-inline void drawCharacter(char ch, int x, int y) {
+static inline void drawCharacter(char ch, int x, int y) {
   int i, j;
   char *p = font8x8_basic[(int)ch];
   uint32_t black = 0x000000, white = 0xffffff;
@@ -26,7 +26,7 @@ inline void drawCharacter(char ch, int x, int y) {
   }
 }
 
-inline void drawString(const char *str, int x, int y) {
+static inline void drawString(const char *str, int x, int y) {
   while (*str) {
     drawCharacter(*str ++, x, y);
     if (x + 8 >= state.width) {
