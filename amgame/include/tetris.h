@@ -11,8 +11,8 @@
 
 enum uint32_t {
   //TODO: find out the color codes
-  EMPTY   = 0,
-  RED     = 1234,
+  EMPTY   = 0x000000,
+  RED     = 0xff0000,
   YELLOW  = 2345,
   MAGENTA = 3456,
   BLUE    = 4567,
