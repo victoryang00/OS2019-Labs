@@ -21,6 +21,7 @@ int main() {
   while (1) {
     while (uptime() < state.nextFrame) ;
     while ((state.keyCode = read_key()) != _KEY_NONE) {
+      if (state.keyCode & 0x8000) continue; // ignore key down
       playTetris(state.keyCode);
     }
     if (uptime() >= state.nextTetrisFrame) {
