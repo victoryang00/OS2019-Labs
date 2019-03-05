@@ -142,8 +142,11 @@ void clearTetrominos() {
       do {
         --i, ++combo;
       } while (checkRow(i));
+      Assert(state.FPS != 0);
       deleteRows(i, combo);
+      Assert(state.FPS != 0);
       state.score += scores[combo];
+      Assert(state.FPS != 0);
       Log("Scored: %d", scores[combo]);
       return;
     }

@@ -13,7 +13,7 @@
 #define false 0
 #endif
 
-#define CONST_FPS 25
+#define CONST_FPS 24
 #define CONST_TT_FPS 4
 
 struct Point {
@@ -23,14 +23,10 @@ struct Point {
 #include <tetris.h>
 
 struct State {
-  int width;
-  int height;
-  int FPS;
-  int tetrisFPS;
-  int nextFrame;
-  int nextTetrisFrame;
-  int score;
-  int keyCode;
+  int width, height;
+  int FPS, tetrisFPS;
+  int nextFrame, nextTetrisFrame;
+  int score, keyCode;
 
   struct Tetromino tetromino;
 };
