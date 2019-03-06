@@ -81,6 +81,8 @@ void clearScreen(int x, int y, int w, int h) {
 
 void drawSquare(struct Point pos, int size, uint32_t pixel) {
   assert(size < 20); // avoid memory boom
+  assert(pos.x >= 0 && pos.x + size < state.width);
+  assert(pos.y >= 0 && pos.y + size < state.height);
   uint32_t pixels[size][size];
   for (int i = 0; i < size; ++i) {
     for (int j = 0; j < size; ++j) {
