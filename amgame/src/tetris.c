@@ -10,7 +10,7 @@ const int scores[5] = {
 const struct Point startPos = { SCREEN_W / 2, 2 };
 const struct Tetromino TT_GAME_OVER = { {-1, -1}, 0 };
 
-const struct TetrominoType tetrominoTypes[] = {
+const struct TetrominoType tetrominoTypes[20] = {
   {{{ 0,  0}, { 0,  0}, { 0,  0}, { 0,  0}},   EMPTY,  0,  0}, //  0-EM
 
   {{{-1,  0}, { 0,  0}, { 1,  0}, { 2,  0}},     RED,  2,  2}, //  1-I1
@@ -39,7 +39,11 @@ const struct TetrominoType tetrominoTypes[] = {
   {{{ 0,  0}, {-1,  0}, { 0,  1}, { 1,  1}},  ORANGE, 19, 19}, // 18-Z1
   {{{ 0,  0}, { 0, -1}, {-1,  0}, {-1,  1}},  ORANGE, 18, 18}  // 19-Z2
 };
-const int NR_TETROMINO_TYPES = sizeof(tetrominoTypes) / sizeof(struct TetrominoType);
+const int tetrominoGenres[8] = {
+  1, 2, 4, 4, 1, 2, 4, 2
+}
+const int NR_TETROMINO_GENRES = 7;
+const int NR_TETROMINO_TYPES = 20;
 
 const struct KeyCodeMapping keyCodeMappings[] = {
   { _KEY_NONE, "AUTO", &fallTetromino, false},
@@ -61,7 +65,7 @@ void initTetris() {
   memset(screen, 0, sizeof(screen));
   state.tetromino = newTetromino();
   for (int i = 0; i < NR_TETROMINOS; ++i) {
-    state.nextTypes[i] = rand() % (NR_TETROMINO_TYPES - 1) + 1;
+    state.nextTypes[i] = newTetrominoType();
   }
   drawGameSection(state.tetromino);
   drawRightSection();
@@ -93,7 +97,13 @@ bool playTetris(int keyCode) {
 }
 
 int newTetrominoType() { 
-  return rand() % (NR_TETROMINO_TYPES - 1) + 1; 
+  int sum = 0;
+  int genre = rand() % (NR_TETROMINO_GENRES - 1) + 1;
+  int type = rand() % tetrominoGenres[genre];
+  for (int i = 0; i < genre; ++i) {
+    sum += tetrominoGenres[i];
+  }
+  return sum + type;
 }
 
 struct Tetromino newTetromino() {
