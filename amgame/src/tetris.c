@@ -276,18 +276,18 @@ void drawRightSection() {
   char scoreStr[16] = "";
   sprintf(scoreStr, "%d", state.score);
 
-  clearScreen(state.tetrominosBias.x - 3 * state.blockSide, state.tetrominosBias.y - 3 * state.blockSide, (3 + 6 * NR_TETROMINOS) * state.blockSide, (6 + 6 * NR_TETROMINOS) * state.blockSide);
-  drawString("NEXT", state.tetrominosBias.x - state.blockSide, state.tetrominosBias.y - 2 * state.blockSide - 16);
+  clearScreen(state.tetrominosBias.x - 3 * state.blockSide, state.tetrominosBias.y, (3 + 6 * NR_TETROMINOS) * state.blockSide, (3 + 6 * NR_TETROMINOS) * state.blockSide);
+  drawString("NEXT", state.tetrominosBias.x - state.blockSide, state.tetrominosBias.y);
   for (int i = 0; i < NR_TETROMINOS; ++i) {
     int type = state.nextTypes[i];
     for (int j = 0; j < 4; ++j) {
       p.x = state.tetrominosBias.x + tetrominoTypes[type].d[j].x * state.blockSide;
-      p.y = state.tetrominosBias.y + (6 * i + tetrominoTypes[type].d[j].y) * state.blockSide;
+      p.y = state.tetrominosBias.y + 16 + (6 * i + tetrominoTypes[type].d[j].y) * state.blockSide;
       drawSquare(p, state.blockSide, tetrominoTypes[type].color);
     }
   }
-  drawString("SCORE", state.tetrominosBias.x - state.blockSide, state.tetrominosBias.y + 6 * NR_TETROMINOS * state.blockSide);
-  drawString(scoreStr, state.tetrominosBias.x - state.blockSide, state.tetrominosBias.y + 6 * NR_TETROMINOS * state.blockSide + 16);
+  drawString("SCORE", state.tetrominosBias.x - state.blockSide, state.tetrominosBias.y + 16 + 6 * NR_TETROMINOS * state.blockSide);
+  drawString(scoreStr, state.tetrominosBias.x - state.blockSide, state.tetrominosBias.y + 16 + 6 * NR_TETROMINOS * state.blockSide + 16);
 }
 
 void printGameOver() {
