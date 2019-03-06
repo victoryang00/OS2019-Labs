@@ -55,6 +55,7 @@ bool checkPointPosition(struct Point);
 bool checkRow(int);
 void deleteRows(int, int);
 void drawBlock(struct Point, uint32_t);
+void drawLine();
 void drawGameSection(struct Tetromino);
 void drawRightSection();
 void printGameOver();

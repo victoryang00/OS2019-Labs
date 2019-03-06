@@ -4,7 +4,7 @@
 #include <game.h>
 
 const int scores[5] = {
-  0, 100, 200, 400, 800
+  0, 500, 1000, 2000, 4000
 };
 
 const struct Point startPos = { SCREEN_W / 2, 2 };
@@ -230,6 +230,15 @@ void drawBlock(struct Point pos, uint32_t color) {
   drawSquare(realPos, state.blockSide, color);
 }
 
+void drawLine() {
+  struct Point p;
+  p.y = state.mainBias.y + 2 * state.blockSide;
+  for (int i = 0; i < SCREEN_W * state.blockSide; ++i) {
+    p.x = state.mainBias.x + i;
+    drawSquare(p, 1, 0xff0000); // red
+  }
+}
+
 void drawGameSection(struct Tetromino T) {
   struct Point p;
   for (int i = 0; i < SCREEN_H; ++i) {
@@ -238,6 +247,8 @@ void drawGameSection(struct Tetromino T) {
       drawBlock(p, tetrominoTypes[screen[i][j]].color);
     }
   } 
+
+  drawLine();
 
   for (int i = 0; i < 4; ++i) {
     p.x = T.pos.x + tetrominoTypes[T.type].d[i].x;
