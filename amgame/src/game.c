@@ -54,6 +54,7 @@ void gameInit() {
   state.score = 0;
   state.keyCode = 0;
 
+  clearScreen(0, 0, state.width, state.height);
   printf("Welcome to TETRIS!\n");
   printf("Press SPACEBAR to start!\n");
   drawString("Welcome to TETRIS!", 0, 0);
@@ -81,8 +82,8 @@ void clearScreen(int x, int y, int w, int h) {
 
 void drawSquare(struct Point pos, int size, uint32_t pixel) {
   assert(size < 20); // avoid memory boom
-  assert(pos.x >= 0 && pos.x + size < screen_width());
-  assert(pos.y >= 0 && pos.y + size < screen_height());
+  if (!((pos.x >= 0 && pos.x + size < state.width)
+        && (pos.y >= 0 && pos.y + size < state.height))) return;
   uint32_t pixels[size][size];
   for (int i = 0; i < size; ++i) {
     for (int j = 0; j < size; ++j) {
