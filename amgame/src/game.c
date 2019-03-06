@@ -61,7 +61,9 @@ void gameInit() {
   while ((state.keyCode = read_key()) != _KEY_SPACE) ;
   clearScreen(0, 0, state.width, state.height);
   
-  srand((int) uptime());
+  srand(uptime());
+  state.nextFrame = uptime();
+  state.nextTetrisFrame = uptime();
   initTetris();
 }
 
