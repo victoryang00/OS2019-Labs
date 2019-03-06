@@ -232,10 +232,12 @@ void drawBlock(struct Point pos, uint32_t color) {
 
 void drawLine() {
   struct Point p;
-  p.y = state.mainBias.y + 2 * state.blockSide;
-  for (int i = 0; i < SCREEN_W * state.blockSide; ++i) {
-    p.x = state.mainBias.x + i;
-    drawSquare(p, 1, 0xff0000); // red
+  for (int i = 0; i < 2; ++i) {
+    p.y = state.mainBias.y + 2 * state.blockSide - i;
+    for (int j = 0; j < SCREEN_W * state.blockSide; ++j) {
+      p.x = state.mainBias.x + j;
+      drawSquare(p, 1, 0xff0000); // red
+    }
   }
 }
 
