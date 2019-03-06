@@ -37,7 +37,7 @@ int main() {
 void gameInit() {
   state.width = screen_width();
   state.height = screen_height();
-  state.blockSide = state.height / SCREEN_H;
+  state.blockSide = (state.height - 2) / SCREEN_H; // avoid overflow
 
   if (state.width / state.blockSide > 2 * SCREEN_W) {
     state.mainBias.x = (state.width - state.blockSide * SCREEN_W) / 4;
@@ -82,8 +82,8 @@ void clearScreen(int x, int y, int w, int h) {
 
 void drawSquare(struct Point pos, int size, uint32_t pixel) {
   assert(size < 20); // avoid memory boom
-  if (!((pos.x >= 0 && pos.x + size < state.width)
-        && (pos.y >= 0 && pos.y + size < state.height))) return;
+  assert(pos.x >= 0 && pos.x + size < screen_width());
+  assert(pos.y >= 0 && pos.y + size < screen_height());
   uint32_t pixels[size][size];
   for (int i = 0; i < size; ++i) {
     for (int j = 0; j < size; ++j) {
