@@ -15,20 +15,22 @@ struct State state;
 
 int main() {
   _ioe_init();
-  gameInit();
   while (1) {
-    while (uptime() < state.nextFrame) ;
-    while ((state.keyCode = read_key()) != _KEY_NONE) {
-      if (state.keyCode & 0x8000) continue; // ignore key down
-      playTetris(state.keyCode);
+    gameInit();
+    while (1) {
+      while (uptime() < state.nextFrame) ;
+      while ((state.keyCode = read_key()) != _KEY_NONE) {
+        if (state.keyCode & 0x8000) continue; // ignore key down
+        playTetris(state.keyCode);
+      }
+      if (uptime() >= state.nextTetrisFrame) {
+        if (!playTetris(_KEY_NONE)) break;
+        state.nextTetrisFrame += 1000 / GAME_TETRIS_FPS;
+      }
+      state.nextFrame += 1000 / GAME_ALL_FPS;
     }
-    if (uptime() >= state.nextTetrisFrame) {
-      if (!playTetris(_KEY_NONE)) break;
-      state.nextTetrisFrame += 1000 / GAME_TETRIS_FPS;
-    }
-    state.nextFrame += 1000 / GAME_ALL_FPS;
+    while ((state.keyCode = read_key()) != _KEY_SPACE) ;
   }
-  while ((state.keyCode = read_key()) == _KEY_NONE) ;
   return 0;
 }
 
@@ -52,9 +54,11 @@ void gameInit() {
   state.score = 0;
   state.keyCode = 0;
 
-  printf("Press any key to start!\n");
-  drawString("Press any key to start!", 0, 0);
-  while ((state.keyCode = read_key()) == _KEY_NONE) ;
+  printf("Welcome to TETRIS!\n");
+  printf("Press SPACEBAR to start!\n");
+  drawString("Welcome to TETRIS!", 0, 0);
+  drawString("Press SPACEBAR to start!", 0, 16);
+  while ((state.keyCode = read_key()) != _KEY_SPACE) ;
   clearScreen(0, 0, state.width, state.height);
   
   srand((int) uptime());
