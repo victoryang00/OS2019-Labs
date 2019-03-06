@@ -47,8 +47,8 @@ const struct KeyCodeMapping keyCodeMappings[] = {
   {    _KEY_S, "FALL", &fallTetromino,  true},
   {    _KEY_A, "MOVL", &moveTetromino,  true},
   {    _KEY_D, "MOVR", &moveTetromino, false},
-  {    _KEY_ARROW_UP, "SPIN", &spinTetromino,  true},
-  {    _KEY_ARROW_DOWN, "FALL", &fallTetromino,  true},
+  {    _KEY_UP, "SPIN", &spinTetromino,  true},
+  {    _KEY_DOWN, "FALL", &fallTetromino,  true},
   {    _KEY_ARROW_LEFT, "MOVL", &moveTetromino,  true},
   {    _KEY_ARROW_RIGHT, "MOVR", &moveTetromino, false},
   {_KEY_SPACE, "SWAP", &swapTetromino, false}
