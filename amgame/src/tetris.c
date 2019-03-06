@@ -291,5 +291,5 @@ void drawRightSection() {
 }
 
 void printGameOver() {
-  drawString("Game Over", state.tetrominosBias.x - state.blockSide, state.tetrominosBias.y + 6 * NR_TETROMINOS * state.blockSide + 2 * 16);
+  drawString("Game Over", state.tetrominosBias.x - state.blockSide, state.tetrominosBias.y + 6 * NR_TETROMINOS * state.blockSide + 3 * 16);
 }
