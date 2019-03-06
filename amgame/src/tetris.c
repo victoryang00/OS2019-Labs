@@ -47,10 +47,10 @@ const struct KeyCodeMapping keyCodeMappings[] = {
   {    _KEY_S, "FALL", &fallTetromino,  true},
   {    _KEY_A, "MOVL", &moveTetromino,  true},
   {    _KEY_D, "MOVR", &moveTetromino, false},
-  {    _KEY_UP, "SPIN", &spinTetromino,  true},
-  {    _KEY_DOWN, "FALL", &fallTetromino,  true},
-  {    _KEY_ARROW_LEFT, "MOVL", &moveTetromino,  true},
-  {    _KEY_ARROW_RIGHT, "MOVR", &moveTetromino, false},
+  {   _KEY_UP, "SPIN", &spinTetromino,  true},
+  { _KEY_DOWN, "FALL", &fallTetromino,  true},
+  { _KEY_LEFT, "MOVL", &moveTetromino,  true},
+  {_KEY_RIGHT, "MOVR", &moveTetromino, false},
   {_KEY_SPACE, "SWAP", &swapTetromino, false}
 };
 const int NR_KEY_MAPPING = sizeof(keyCodeMappings) / sizeof(struct KeyCodeMapping);
