@@ -9,7 +9,7 @@ static int co_cnt = 0;
 struct co {
   int pid;
   char name[32];
-  uint8_t stack[SZ_STACK];
+  jmp_buf buf;
   struct co* next;
 };
 struct co* head = NULL;
@@ -24,13 +24,15 @@ struct co* co_start(const char *name, func_t func, void *arg) {
   struct co* cur = (struct co*) malloc(sizeof(struct co));
   cur->pid = co_cnt++;
   strncpy(cur->name, name, strlen(cur->name));
-  memset(stack, 0, sizeof(stack));
   cur->next = NULL;
-  } else {
+  if (head) {
     head = cur;
-    current = cur;
+  } else {
+    struct co* cp = head;
+    while (cp->next != NULL) cp = cp->next;
+    cp->next = cur;
   }
-  return cur;
+  return current = cur;
 }
 
 void co_yield() {
