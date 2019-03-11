@@ -29,11 +29,11 @@ struct co* co_start(const char *name, func_t func, void *arg) {
   strncpy(cur->name, name, strlen(cur->name));
   cur->next = NULL;
   if (head) {
-    head = cur;
-  } else {
     struct co* cp = head;
     while (cp->next != NULL) cp = cp->next;
     cp->next = cur;
+  } else {
+    head = cur;
   }
   return current = cur;
 }
