@@ -36,13 +36,15 @@ struct co* co_start(const char *name, func_t func, void *arg) {
 }
 
 void co_yield() {
-  int val = setjmp(current->stack);
+  struct co* cur = current;
+  int val = setjmp(current->buf);
   if (!val) {
     /* ready to jump */
-    longjmp(current->next->stack);
+    struct co* next = current->next ? current->next : head;
+    longjmp(next->buf, val);
   } else {
     /* back from jump */
-    longjmp(current->next);
+    longjmp(cur->buf, val);
   }
 }
 
