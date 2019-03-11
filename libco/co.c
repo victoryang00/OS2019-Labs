@@ -22,7 +22,7 @@ void co_init() {
   current = NULL;
 }
 
-struct co* co_start(const char *name, func_t func, void *arg) {
+struct co* co_start(const char *name, func_t func, void *args) {
   Log("CO [%s] START!", name);
   struct co* cur = (struct co*) malloc(sizeof(struct co));
   cur->pid = co_cnt++;
@@ -35,6 +35,7 @@ struct co* co_start(const char *name, func_t func, void *arg) {
   } else {
     head = cur;
   }
+  func(args);
   return current = cur;
 }
 
