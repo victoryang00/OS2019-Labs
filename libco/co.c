@@ -1,7 +1,8 @@
 #include <stdio.h>
 #include <assert.h>
-#include <stdlib.h>
 #include <setjmp.h>
+#include <stdlib.h>
+#include <string.h>
 #include "co.h"
 
 static int co_cnt = 0;
