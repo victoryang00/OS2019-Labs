@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "co.h"
+#include "debug.h"
 
 static int co_cnt = 0;
 
@@ -22,6 +23,7 @@ void co_init() {
 }
 
 struct co* co_start(const char *name, func_t func, void *arg) {
+  Log("CO [%s] START!", name);
   struct co* cur = (struct co*) malloc(sizeof(struct co));
   cur->pid = co_cnt++;
   strncpy(cur->name, name, strlen(cur->name));
