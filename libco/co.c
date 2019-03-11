@@ -35,6 +35,7 @@ struct co* co_start(const char *name, func_t func, void *args) {
   } else {
     head = cur;
   }
+  Log("ALLOCATE OK");
   func(args);
   return current = cur;
 }
