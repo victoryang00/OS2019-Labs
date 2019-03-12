@@ -1,9 +1,9 @@
 #include "co.h"
 
-void* stack_backup;
-int co_cnt = 0;
-jmp_buf start_buf;
-jmp_buf wait_buf;
+static void* stack_backup;
+static int co_cnt = 0;
+static jmp_buf start_buf;
+static jmp_buf wait_buf;
 
 struct co* head = NULL;
 struct co* current = NULL;
