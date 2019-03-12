@@ -1,9 +1,10 @@
 #ifndef __CO_H__
 #define __CO_H__
 
+#include <assert.h>
+#include <setjmp.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <setjmp.h>
 #include <string.h>
 
 #define DEBUG
@@ -42,6 +43,7 @@ void co_print();
 #endif
 
 inline void stackON(struct co* cp, void* backup) {
+  assert(cp->stack & 0x1 == 0);
   asm volatile("mov " SP ", %0" : "=g"(backup) :);
   asm volatile("mov %0, " SP : : "g"(cp->stack));
   Log("STACK ON!");
