@@ -55,7 +55,7 @@ struct co* co_start(const char* name, func_t func, void* arg) {
   Log("CO [%s] START!", name);
   current = co_create(name, func, arg);
   if (!setjmp(start_buf)) {
-    stackON(current, stack_backup);
+    stack_backup = stackON(current);
     current->func(current->arg);
     /* continue from co_wait */
     Log("FINISHEDDDD");
