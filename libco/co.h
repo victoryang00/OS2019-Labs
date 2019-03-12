@@ -33,8 +33,8 @@ struct co {
 
 void co_init();
 void co_gc();
-struct co* co_create(const char *name);
-struct co* co_start(const char *name, func_t func, void *arg);
+struct co* co_create(const char* name, func_t func, void* arg);
+struct co* co_start(const char* name, func_t func, void* arg);
 void co_yield();
 void co_wait(struct co *thd);
 void co_print();
@@ -54,13 +54,6 @@ inline void stackON(struct co* cp, void* backup) {
 inline void stackOFF(void *backup) {
   asm volatile("mov %0, " SP : : "g"(backup));
   Log("STACK OFF!");
-}
-
-inline void pushParams(const char* a, func_t b, void* c) {
-  /* push them in reverse order! */
-  asm volatile("push %0" : : "g"((void*) c));
-  asm volatile("push %0" : : "g"((void*) b));
-  asm volatile("push %0" : : "g"((void*) a));
 }
 
 #endif
