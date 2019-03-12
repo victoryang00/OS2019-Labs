@@ -67,6 +67,7 @@ struct co* co_start(const char *name, func_t func, void *arg) {
 
 void co_yield() {
   Log("co_yield called by CO [%s]!", current->name);
+  struct co* thisCO = current;
   int val = setjmp(current->buf);
   if (val == 0) {
     if (current->state == ST_I) {
@@ -79,8 +80,9 @@ void co_yield() {
       longjmp(current->buf, 1);
     }
   } else {
-    Log("Going back to CO [%s]", current->name);
+    current = thisCO;
     current->state = ST_R;
+    Log("Going back to CO [%s]", current->name);
   }
 }
 
