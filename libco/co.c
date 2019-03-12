@@ -56,6 +56,7 @@ struct co* co_start(const char* name, func_t func, void* arg) {
     stackON(current, stack_backup);
     pushParams(name, func, arg);
     Log("func=>%p", func);
+    Log("arg=>%p", arg);
     func(arg);
     /* continue from co_wait */
     Log("FINISHEDDDD");
