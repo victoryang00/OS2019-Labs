@@ -4,6 +4,9 @@
 #define SZ_STACK 4096
 #define NR_CO 16
 
+#define ST_S 0 // sleeping
+#define ST_R 1 // running
+
 typedef void (*func_t)(void *arg);
 
 void co_init();
