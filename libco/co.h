@@ -8,7 +8,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define DEBUG
 #include "debug.h"
 
 #define SZ_STACK 4096
