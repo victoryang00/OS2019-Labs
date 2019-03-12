@@ -60,10 +60,17 @@ struct co* co_start(const char *name, func_t func, void *arg) {
   
   int val = setjmp(start_buf);
   if (val == 0) {
+    /* init the process */
     func(arg);
-    Log("HOLY $HIT!!!");
+    /* end of process */
+    Log("CO [%s] finished!", name);
+    co_gc();
+    Log("Garbage collected.");
+    return NULL;
+  } else {
+    /* first call after init */
+    return cur;
   }
-  return cur;
 }
 
 void co_yield() {
@@ -89,8 +96,5 @@ void co_wait(struct co *thd) {
   Log("co_wait for CO [%s]!", thd->name);
   current = thd;
   while (thd->state != ST_R) longjmp(thd->buf, 1);
-  Log("co_wait finished");
-  co_gc();
-  Log("co_gc garbage collected");
 }
 
