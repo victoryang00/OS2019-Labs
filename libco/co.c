@@ -67,7 +67,6 @@ struct co* co_start(const char* name, func_t func, void* arg) {
 }
 
 void co_yield() {
-  Log("co_yield called by %s!", current->name);
   current->stack_ptr = stackEX(stack_backup);
   Log("[off] stack saved as %p", current->stack_ptr);
   if (!setjmp(current->buf)) {
