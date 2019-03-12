@@ -69,15 +69,13 @@ struct co* co_start(const char* name, func_t func, void* arg) {
 void co_yield() {
   Log("co_yield called by CO [%s]!", current->name);
   if (!setjmp(current->buf)) {
+    current->stack_ptr = stackEX(stack_backup);
+    Log("stack saved as %p", current->stack_ptr);
+    current->state = ST_S;
     if (current->state == ST_I) {
-      current->stack_ptr = stackEX(stack_backup);
-      Log("stack saved as %p", current->stack_ptr);
-      current->state = ST_S;
       longjmp(start_buf, 1);
       /* go back to co_start */
     } else {
-      current->stack_ptr = stackEX(stack_backup);
-      current->state = ST_S;
       current = current->next ? current->next : head;
       longjmp(current->buf, 1);
     }
