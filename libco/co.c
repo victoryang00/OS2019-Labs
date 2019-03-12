@@ -56,7 +56,7 @@ struct co* co_start(const char* name, func_t func, void* arg) {
   Log("CO [%s] START!", name);
   current = co_create(name, func, arg);
   if (!setjmp(start_buf)) {
-    stack_backup = stackON(current);
+    stack_backup = stackEX(current->stack_ptr);
     current->func(current->arg);
     /* continue from co_wait */
     Log("FINISHEDDDD");
@@ -70,19 +70,19 @@ void co_yield() {
   Log("co_yield called by CO [%s]!", current->name);
   if (!setjmp(current->buf)) {
     if (current->state == ST_I) {
-      stackOFF(stack_backup);
+      current->stack_ptr = stackEX(stack_backup);
       current->state = ST_S;
       longjmp(start_buf, 1);
       /* go back to co_start */
     } else {
-      stackOFF(stack_backup);
+      current->stack_ptr = stackEX(stack_backup);
       current->state = ST_S;
       current = current->next ? current->next : head;
       longjmp(current->buf, 1);
     }
   } else {
     current->state = ST_R;
-    stack_backup = stackON(current);
+    stack_backup = stackEX(current->stack_ptr);
     Log("switched back to CO [%s]", current->name);
   }
 }

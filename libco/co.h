@@ -47,17 +47,12 @@ void co_print();
   #define SP "%%rsp"
 #endif
 
-static inline void* stackON(struct co* cp) {
-  void* backup = NULL;
-  asm volatile("mov " SP ", %0" : "=g"(backup) :);
-  asm volatile("mov %0, " SP : : "g"(cp->stack_ptr));
-  Log("STACK ON!");
-  return backup;
-}
-
-static inline void stackOFF(void* backup) {
-  asm volatile("mov %0, " SP : : "g"(backup));
-  Log("STACK OFF!");
+static inline void* stackEX(void* newSP) {
+  void* oldSP = NULL;
+  asm volatile("mov " SP ", %0" : "=g"(oldSP) :);
+  asm volatile("mov %0, " SP : : "g"(newSP));
+  Log("STACK EXCHANGE!");
+  return oldSP;
 }
 
 #endif
