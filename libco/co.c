@@ -48,7 +48,7 @@ struct co* co_start(const char *name, func_t func, void *arg) {
   current = cur;
   
   if (!setjmp(start_buf)) {
-    assert(((intptr_t) cur->stack) & 0xf == 0);
+    assert((((intptr_t) cur->stack) & 0xf) == 0);
     stackON(cur, stack_backup);
     func(arg);
     /* continue from co_wait */
