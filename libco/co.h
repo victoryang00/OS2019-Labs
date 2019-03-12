@@ -6,6 +6,7 @@
 
 #define ST_S 0 // sleeping
 #define ST_R 1 // running
+#define ST_I 2 // init
 
 typedef void (*func_t)(void *arg);
 

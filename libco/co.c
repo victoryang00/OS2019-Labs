@@ -45,7 +45,7 @@ struct co* co_start(const char *name, func_t func, void *arg) {
   Log("CO [%s] START!", name);
   struct co* cur = (struct co*) malloc(sizeof(struct co));
   cur->pid = ++co_cnt;
-  cur->state = ST_S;
+  cur->state = ST_I; // init state
   strncpy(cur->name, name, strlen(cur->name));
   cur->next = NULL;
   if (head) {
@@ -55,21 +55,29 @@ struct co* co_start(const char *name, func_t func, void *arg) {
   } else {
     head = cur;
   }
-  return current = cur;
+  current = cur;
+  func(arg);
+  return cur;
 }
 
 void co_yield() {
   int val = setjmp(current->buf);
-  if (!val) {
-    current->state = ST_S;
-    current = current->next ? current->next : head;
-    longjmp(current->buf, 1);
+  if (val == 0) {
+    if (current->state == ST_I) {
+      current->state = ST_S;
+      return;
+    } else {
+      current->state = ST_S;
+      current = current->next ? current->next : head;
+      longjmp(current->buf, 1);
+    }
   } else {
     current->state = ST_R;
   }
 }
 
 void co_wait(struct co *thd) {
+  current = thd;
   while (thd->state != ST_R) co_yield();
   co_gc();
 }
