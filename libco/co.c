@@ -98,11 +98,15 @@ void co_wait(struct co *thd) {
       longjmp(current->buf, 1);
       /* will continue in co_start */
     }
-    /* one thread finished, but not thd */
-    co_gc();
-    Log("One thread is finished!!");
+    if (current == thd) break;
+    else {
+      /* one thread finished, but not thd */
+      co_gc();
+      Log("One thread is finished!!");
+    }
   }
   /* thd is finished */
+  co_gc();
   return;
 }
 
