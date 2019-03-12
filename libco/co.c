@@ -39,7 +39,7 @@ struct co* co_create(const char *name, func_t func, void* arg) {
   ret->func = func;
   ret->arg = arg;
   ret->next = NULL;
-  ret->stack_ptr = (void*) ret->stack + 128;
+  ret->stack_ptr = (void*) ret->stack + SZ_STACK;
   if (head) {
     struct co* cp = head;
     while (cp->next) {
