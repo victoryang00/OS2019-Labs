@@ -66,7 +66,7 @@ struct co* co_start(const char *name, func_t func, void *arg) {
 }
 
 void co_yield() {
-  Log("co_yield called by CO [%s]", current->buf);
+  Log("co_yield called by CO [%s]!", current->name);
   int val = setjmp(current->buf);
   if (val == 0) {
     if (current->state == ST_I) {
