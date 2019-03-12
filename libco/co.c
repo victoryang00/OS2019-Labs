@@ -63,8 +63,8 @@ struct co* co_start(const char *name, func_t func, void *arg) {
     /* init the process */
     func(arg);
     /* end of process */
-    Log("CO [%s] finished!", name);
-    co_gc();
+    Log("CO [%s] finished!", cur->name);
+    //co_gc();
     Log("Garbage collected.");
     return NULL;
   } else {
