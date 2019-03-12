@@ -83,6 +83,7 @@ void co_yield() {
       longjmp(current->buf, 1);
     }
   } else {
+    stackEX(current->stack_ptr, stack_backup);
     current->state = ST_R;
   }
 }
@@ -92,8 +93,7 @@ void co_wait(struct co *thd) {
   while (thd->state != ST_R) {
     if (!setjmp(wait_buf)) {
       current = thd;
-      stackEX(current->stack_ptr, stack_backup);
-      longjmp(thd->buf, 1);
+      longjmp(current->buf, 1);
       /* will continue in co_start */
     }
     /* one thread finished, but not thd */
