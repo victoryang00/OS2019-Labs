@@ -8,6 +8,7 @@
 
 static int co_cnt = 0;
 static jmp_buf start_buf;
+static jmp_buf wait_buf;
 
 struct co {
   int pid;
@@ -60,17 +61,12 @@ struct co* co_start(const char *name, func_t func, void *arg) {
   
   int val = setjmp(start_buf);
   if (val == 0) {
-    /* init the process */
     func(arg);
-    /* end of process */
-    Log("CO [%s] finished!", cur->name);
-    //co_gc();
-    Log("Garbage collected.");
-    return NULL;
-  } else {
-    /* first call after init */
-    return cur;
+    /* continue from co_wait */
+    longjmp(wait_buf, 1);
   }
+  /* continue from co_yield */
+  return cur;
 }
 
 void co_yield() {
@@ -78,9 +74,9 @@ void co_yield() {
   int val = setjmp(current->buf);
   if (val == 0) {
     if (current->state == ST_I) {
-      Log("First run finished, back to co_start");
       current->state = ST_S;
       longjmp(start_buf, 1);
+      /* go back to co_start */
     } else {
       current->state = ST_S;
       current = current->next ? current->next : head;
@@ -94,7 +90,12 @@ void co_yield() {
 
 void co_wait(struct co *thd) {
   Log("co_wait for CO [%s]!", thd->name);
-  current = thd;
-  while (thd->state != ST_R) longjmp(thd->buf, 1);
+  int val = setjmp(wait_buf);
+  if (val == 0) {
+    current = thd;
+    while (thd->state != ST_R) longjmp(thd->buf, 1);
+    /* will continue in co_start!!! */
+  }
+  return;
 }
 
