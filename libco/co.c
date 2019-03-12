@@ -59,8 +59,7 @@ struct co* co_start(const char *name, func_t func, void *arg) {
   }
   current = cur;
   
-  int val = setjmp(start_buf);
-  if (val == 0) {
+  if (!setjmp(start_buf)) {
     func(arg);
     /* continue from co_wait */
     Log("FINISHEDDDD");
@@ -72,8 +71,7 @@ struct co* co_start(const char *name, func_t func, void *arg) {
 
 void co_yield() {
   Log("co_yield called by CO [%s]!", current->name);
-  int val = setjmp(current->buf);
-  if (val == 0) {
+  if (!setjmp(current->buf)) {
     if (current->state == ST_I) {
       current->state = ST_S;
       longjmp(start_buf, 1);
@@ -93,8 +91,7 @@ void co_yield() {
 void co_wait(struct co *thd) {
   Log("co_wait for CO [%s]!", thd->name);
   while (thd->state != ST_R) {
-    int val = setjmp(wait_buf);
-    if (val == 0) {
+    if (!setjmp(wait_buf)) {
       current = thd;
       longjmp(thd->buf, 1);
       /* will continue in co_start */
