@@ -60,8 +60,6 @@ struct co* co_start(const char* name, func_t func, void* arg) {
     /* continue from co_wait */
     Log("FINISHEDDDD");
     longjmp(wait_buf, 1);
-  } else {
-    stackOFF(stack_backup);
   }
   /* continue from co_yield */
   return current;
@@ -71,6 +69,7 @@ void co_yield() {
   Log("co_yield called by CO [%s]!", current->name);
   if (!setjmp(current->buf)) {
     if (current->state == ST_I) {
+      stackOFF(stack_backup);
       current->state = ST_S;
       longjmp(start_buf, 1);
       /* go back to co_start */
