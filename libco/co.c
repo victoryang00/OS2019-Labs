@@ -76,15 +76,13 @@ void co_yield() {
       longjmp(start_buf, 1);
       /* go back to co_start */
     } else {
-      Log("BOOM");
       current = current->next ? current->next : head;
       longjmp(current->buf, 1);
     }
   } else {
     current->state = ST_R;
-    Log("switch stack to %p", current->stack_ptr);
+    Log("set stack to %p", current->stack_ptr);
     stack_backup = stackEX(current->stack_ptr);
-    Log("switched back to CO [%s]", current->name);
   }
 }
 
