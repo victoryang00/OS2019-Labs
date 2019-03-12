@@ -61,6 +61,7 @@ struct co* co_start(const char *name, func_t func, void *arg) {
   int val = setjmp(start_buf);
   if (val == 0) {
     func(arg);
+    Log("HOLY $HIT!!!");
   }
   return cur;
 }
