@@ -78,6 +78,7 @@ void co_yield() {
       longjmp(current->buf, 1);
     }
   } else {
+    Log("Going back to CO [%s]", current->name);
     current->state = ST_R;
   }
 }
