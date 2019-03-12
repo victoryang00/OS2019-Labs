@@ -59,6 +59,7 @@ struct co* co_start(const char* name, func_t func, void* arg) {
     Log("func=>%p", func);
     Log("arg=>%p", arg);
     stackON(current, stack_backup);
+    pushParams(name, func, arg);
     asm volatile("mov " SP ", %0" : "=g"(esp) :);
     Log("ESP=>%p", esp);
     Log("func=>%p", func);
