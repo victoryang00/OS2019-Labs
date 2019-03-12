@@ -82,6 +82,7 @@ void co_yield() {
     }
   } else {
     current->state = ST_R;
+    Log("switch stack to %p", current->stack_ptr);
     stack_backup = stackEX(current->stack_ptr);
     Log("switched back to CO [%s]", current->name);
   }
