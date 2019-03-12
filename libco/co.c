@@ -83,6 +83,7 @@ void co_yield() {
 }
 
 void co_wait(struct co *thd) {
+  Log("co_wait for CO [%s]!", thd->name);
   current = thd;
   while (thd->state != ST_R) co_yield();
   co_gc();
