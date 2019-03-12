@@ -31,19 +31,14 @@ void co_gc() {
   }
 }
 
-struct co* co_create(const char *name, func_t func, void* arg) {
+struct co* co_create(const char *name) {
   struct co* ret = (struct co*) malloc(sizeof(struct co));
   ret->pid = ++co_cnt;
   ret->state = ST_I; // init state
   strncpy(ret->name, name, sizeof(ret->name));
   ret->next = NULL;
   memset(ret->buf, 0, sizeof(ret->buf));
-  {
-    ret->stack_ptr = ret->stack + sizeof(ret->stack) - 3 * sizeof(void*);
-    *(ret->stack_ptr + 0 * sizeof(void*)) = (intptr_t) name;
-    *(ret->stack_ptr + 1 * sizeof(void*)) = (intptr_t) func;
-    *(ret->stack_ptr + 2 * sizeof(void*)) = (intptr_t) arg;
-  }
+  ret->stack_ptr = ret->stack + sizeof(ret->stack);
   if (head) {
     struct co* cp = head;
     while (cp->next != NULL) cp = cp->next;
@@ -56,7 +51,7 @@ struct co* co_create(const char *name, func_t func, void* arg) {
 
 struct co* co_start(const char* name, func_t func, void* arg) {
   Log("CO [%s] START!", name);
-  current = co_create(name, func, arg);
+  current = co_create(name);
   if (!setjmp(start_buf)) {
     void* esp = NULL;
     asm volatile("mov " SP ", %0" : "=g"(esp) :);
