@@ -39,8 +39,7 @@ struct co* co_create(const char *name, func_t func, void* arg) {
   ret->func = func;
   ret->arg = arg;
   ret->next = NULL;
-  memset(ret->buf, 0, sizeof(ret->buf));
-  ret->stack_ptr = (void*) ret->stack + sizeof(ret->stack);
+  ret->stack_ptr = (void*) ret->stack + 128;
   if (head) {
     struct co* cp = head;
     while (cp->next) {
