@@ -101,6 +101,7 @@ void co_wait(struct co *thd) {
     Log("One thread is finished!!");
     if (current == thd) break;
     else {
+      Log("bad luck!");
       /* one thread finished, but not thd */
       co_gc();
     }
