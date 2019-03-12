@@ -22,7 +22,7 @@ void co_init() {
   current = NULL;
 }
 
-struct co* co_start(const char *name, func_t func, void *args) {
+struct co* co_start(const char *name, func_t func, void *arg) {
   Log("CO [%s] START!", name);
   struct co* cur = (struct co*) malloc(sizeof(struct co));
   cur->pid = co_cnt++;
@@ -35,9 +35,7 @@ struct co* co_start(const char *name, func_t func, void *args) {
   } else {
     head = cur;
   }
-  Log("ALLOCATE OK");
-  func(args);
-  Log("RUN OK");
+  func(arg);
   return current = cur;
 }
 
@@ -47,10 +45,10 @@ void co_yield() {
   if (!val) {
     /* ready to jump */
     struct co* next = current->next ? current->next : head;
-    longjmp(next->buf, val);
+    longjmp(next->buf, 1);
   } else {
     /* back from jump */
-    longjmp(cur->buf, val);
+    continue;
   }
 }
 
