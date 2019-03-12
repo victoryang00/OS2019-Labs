@@ -48,7 +48,6 @@ void co_yield() {
     longjmp(next->buf, 1);
   } else {
     /* back from jump */
-    continue;
   }
 }
 
