@@ -69,6 +69,7 @@ void co_yield() {
   int val = setjmp(current->buf);
   if (val == 0) {
     if (current->state == ST_I) {
+      Log("First run finished, back to co_start");
       current->state = ST_S;
       longjmp(start_buf, 1);
     } else {
