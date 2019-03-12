@@ -106,6 +106,7 @@ void co_wait(struct co *thd) {
       co_gc();
     }
   }
+  Log("good luck!");
   /* thd is finished */
   co_gc();
   return;
