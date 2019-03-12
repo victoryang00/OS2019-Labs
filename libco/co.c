@@ -68,6 +68,7 @@ struct co* co_start(const char* name, func_t func, void* arg) {
 void co_yield() {
   Log("co_yield called by CO [%s]!", current->name);
   if (!setjmp(current->buf)) {
+    Log("set jump!");
     if (current->state == ST_I) {
       stackOFF(stack_backup);
       current->state = ST_S;
