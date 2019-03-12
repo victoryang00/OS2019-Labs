@@ -57,9 +57,10 @@ inline void stackOFF(void *backup) {
 }
 
 inline void pushParams(const char* a, func_t b, void* c) {
-  asm volatile("push %0" : : "g"((void*) a));
-  asm volatile("push %0" : : "g"((void*) b));
+  /* push them in reverse order! */
   asm volatile("push %0" : : "g"((void*) c));
+  asm volatile("push %0" : : "g"((void*) b));
+  asm volatile("push %0" : : "g"((void*) a));
 }
 
 #endif
