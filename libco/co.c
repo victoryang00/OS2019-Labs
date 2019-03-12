@@ -7,6 +7,7 @@
 #include "debug.h"
 
 static int co_cnt = 0;
+static jmp_buf start_buf;
 
 struct co {
   int pid;
@@ -56,7 +57,11 @@ struct co* co_start(const char *name, func_t func, void *arg) {
     head = cur;
   }
   current = cur;
-  func(arg);
+  
+  int val = setjmp(start_buf);
+  if (val == 0) {
+    func(arg);
+  }
   return cur;
 }
 
@@ -65,7 +70,7 @@ void co_yield() {
   if (val == 0) {
     if (current->state == ST_I) {
       current->state = ST_S;
-      return;
+      longjmp(start_buf, 1);
     } else {
       current->state = ST_S;
       current = current->next ? current->next : head;
