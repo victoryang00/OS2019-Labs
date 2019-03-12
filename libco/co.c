@@ -41,12 +41,12 @@ struct co* co_start(const char *name, func_t func, void *arg) {
 
 void co_yield() {
   Log("Yield!");
+  assert(current);
   //struct co* cur = current;
   int val = setjmp(current->buf);
   if (!val) {
     /* ready to jump */
     struct co* next = current->next ? current->next : head;
-    Log("JUMP TO %p", next);
     longjmp(next->buf, 1);
   } else {
     /* back from jump */
