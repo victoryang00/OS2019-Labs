@@ -48,7 +48,7 @@ void co_print();
   #define BP "%%rbp"
 #endif
 
-inline void stackON(struct co* cp, void* sp_ptr) {
+static inline void stackON(struct co* cp, void* sp_ptr) {
   void* bp_ptr = NULL;
   asm volatile("mov " BP ", %0" : "=g"(bp_ptr) :);
   asm volatile("mov " SP ", %0" : "=g"(sp_ptr) :);
@@ -60,7 +60,7 @@ inline void stackON(struct co* cp, void* sp_ptr) {
   Log("STACK ON!");
 }
 
-inline void stackOFF(void *sp_ptr) {
+static inline void stackOFF(void *sp_ptr) {
   asm volatile("mov %0, " SP : : "g"(sp_ptr));
   Log("STACK OFF!");
 }
