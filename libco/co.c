@@ -48,6 +48,7 @@ struct co* co_create(const char *name, func_t func, void* arg) {
   } else {
     head = ret;
   }
+  co_print();
   return ret;
 }
 
