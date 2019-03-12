@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <type.h>
+#include <ctype.h>
 
 #define DEBUG
 #ifdef DEBUG
