@@ -26,6 +26,8 @@ struct co {
   int pid;
   int state;
   char name[32];
+  func_t func;
+  void* arg;
   struct co* next;
   jmp_buf buf;
   char stack[SZ_STACK];
@@ -42,27 +44,18 @@ void co_print();
 
 #if defined (__i386__)
   #define SP "%%esp"
-  #define BP "%%ebp"
 #elif defined (__x86_64__)
   #define SP "%%rsp"
-  #define BP "%%rbp"
 #endif
 
-static inline void stackON(struct co* cp, void* sp_ptr) {
-  void* bp_ptr = NULL;
-  asm volatile("mov " BP ", %0" : "=g"(bp_ptr) :);
-  asm volatile("mov " SP ", %0" : "=g"(sp_ptr) :);
-  Log("BP=>%p", bp_ptr);
-  Log("SP=>%p", sp_ptr);
-  size_t sz_delta = bp_ptr - sp_ptr;
-  cp->stack_ptr -= sz_delta;
-  memcpy(cp->stack_ptr, sp_ptr, sz_delta);
+static inline void stackON(struct co* cp, void* backup) {
+  asm volatile("mov " SP ", %0" : "=g"(backup) :);
   asm volatile("mov %0, " SP : : "g"(cp->stack_ptr));
   Log("STACK ON!");
 }
 
-static inline void stackOFF(void *sp_ptr) {
-  asm volatile("mov %0, " SP : : "g"(sp_ptr));
+static inline void stackOFF(void *backup) {
+  asm volatile("mov %0, " SP : : "g"(backup));
   Log("STACK OFF!");
 }
 

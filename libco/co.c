@@ -36,6 +36,8 @@ struct co* co_create(const char *name, func_t func, void* arg) {
   ret->pid = ++co_cnt;
   ret->state = ST_I; // init state
   strncpy(ret->name, name, sizeof(ret->name));
+  ret->func = func;
+  ret->arg = arg;
   ret->next = NULL;
   memset(ret->buf, 0, sizeof(ret->buf));
   ret->stack_ptr = ret->stack + sizeof(ret->stack) - sizeof(char) * SZ_COPY;
@@ -53,12 +55,8 @@ struct co* co_start(const char* name, func_t func, void* arg) {
   Log("CO [%s] START!", name);
   current = co_create(name, func, arg);
   if (!setjmp(start_buf)) {
-    Log("func=>%p", func);
-    Log("arg=>%p", arg);
     stackON(current, stack_backup);
-    Log("func=>%p", func);
-    Log("arg=>%p", arg);
-    func(arg);
+    current->func(current->arg);
     /* continue from co_wait */
     Log("FINISHEDDDD");
     longjmp(wait_buf, 1);
