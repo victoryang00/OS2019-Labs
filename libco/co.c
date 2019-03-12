@@ -105,7 +105,7 @@ void co_wait(struct co *thd) {
 void co_print() {
   Log("=====THREADS=====");
   for (struct co* cp = head; cp != NULL; cp = cp->next) {
-    Log("%d: [%s] %d", cp->pid, cp->name, cp->state);
+    Log("%p => %d: [%s] %d", cp, cp->pid, cp->name, cp->state);
   }
   Log("=================");
 }
