@@ -46,6 +46,8 @@ struct co* co_create(const char *name, func_t func, void* arg) {
     while (cp->next != NULL) cp = cp->next;
     cp->next = ret;
   } else {
+    Log("head: %p", head);
+    Log("ret:  %p", ret);
     head = ret;
   }
   co_print();
