@@ -71,12 +71,12 @@ void co_yield() {
   if (!setjmp(current->buf)) {
     current->stack_ptr = stackEX(stack_backup);
     Log("stack saved as %p", current->stack_ptr);
-    current->state = ST_S;
     if (current->state == ST_I) {
+      current->state = ST_S;
       longjmp(start_buf, 1);
       /* go back to co_start */
     } else {
-      co_print();
+      current->state = ST_S;
       current = current->next ? current->next : head;
       longjmp(current->buf, 1);
     }
