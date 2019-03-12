@@ -6,6 +6,11 @@
 #include <setjmp.h>
 #include <string.h>
 
+#define DEBUG
+#ifdef DEBUG
+#include "debug.h"
+#endif
+
 #define SZ_STACK 1024
 #define NR_CO 16
 
