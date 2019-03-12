@@ -13,7 +13,7 @@
 #include "debug.h"
 #endif
 
-#define SZ_STACK 1024
+#define SZ_STACK 4096
 #define NR_CO 16
 
 #define ST_S 0 // sleeping
