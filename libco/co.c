@@ -55,6 +55,9 @@ struct co* co_start(const char *name, func_t func, void *arg) {
   current = co_create(name);
   if (!setjmp(start_buf)) {
     stackON(current, stack_backup);
+    void* esp = NULL;
+    asm volatile("mov " SP ", %0" : : "=g"(esp));
+    Log("ESP=>%p", esp);
     func(arg);
     /* continue from co_wait */
     Log("FINISHEDDDD");
