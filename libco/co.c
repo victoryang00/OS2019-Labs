@@ -29,6 +29,7 @@ void co_gc() {
     }
     cp = cp->next;
   }
+  co_print();
 }
 
 struct co* co_create(const char *name, func_t func, void* arg) {
@@ -87,7 +88,6 @@ void co_yield() {
     stackEX(current->stack_ptr, stack_backup);
     current->state = ST_R;
   }
-
 }
 
 void co_wait(struct co *thd) {
