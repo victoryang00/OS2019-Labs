@@ -55,16 +55,16 @@ struct co* co_create(const char *name, func_t func, void* arg) {
 struct co* co_start(const char* name, func_t func, void* arg) {
   Log("%s START!", name);
   current = co_create(name, func, arg);
+  stackEX(current->stack_ptr, stack_backup);
   if (!setjmp(start_buf)) {
-    stackEX(current->stack_ptr, stack_backup);
     current->func(current->arg);
     /* continue from co_wait */
     Log("FINISHEDDDD");
     longjmp(wait_buf, 1);
   } else {
     Log("init finished");
-    stackEX(stack_backup, current->stack_ptr);
   }
+  stackEX(stack_backup, current->stack_ptr);
   /* continue from co_yield */
   return current;
 }
