@@ -39,10 +39,12 @@ void co_print();
 inline void stackON(struct co* cp, void* backup) {
   asm volatile("mov " SP ", %0" : "=g"(backup) :);
   asm volatile("mov %0, " SP : : "g"(cp->stack));
+  Log("STACK ON!");
 }
 
 inline void stackOFF(void *backup) {
   asm volatile("mov %0, " SP : : "g"(backup));
+  Log("STACK OFF!");
 }
 
 #endif
