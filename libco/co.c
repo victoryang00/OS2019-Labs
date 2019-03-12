@@ -90,11 +90,13 @@ void co_yield() {
 
 void co_wait(struct co *thd) {
   Log("co_wait for CO [%s]!", thd->name);
-  int val = setjmp(wait_buf);
-  if (val == 0) {
-    current = thd;
-    while (thd->state != ST_R) longjmp(thd->buf, 1);
-    /* will continue in co_start!!! */
+  while (thd->state != ST_R) {
+    int val = setjmp(wait_buf);
+    if (val == 0) {
+      current = thd;
+      longjmp(thd->buf, 1);
+      /* if finished, will continue in co_start */
+    }
   }
   return;
 }
