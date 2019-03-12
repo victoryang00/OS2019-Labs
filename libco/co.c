@@ -57,9 +57,12 @@ struct co* co_start(const char *name, func_t func, void *arg) {
     void* esp = NULL;
     asm volatile("mov " SP ", %0" : "=g"(esp) :);
     Log("ESP=>%p", esp);
+    Log("func=>%p", func);
     stackON(current, stack_backup);
+    pushParams(name, func, arg);
     asm volatile("mov " SP ", %0" : "=g"(esp) :);
     Log("ESP=>%p", esp);
+    Log("func=>%p", func);
     func(arg);
     /* continue from co_wait */
     Log("FINISHEDDDD");

@@ -56,4 +56,10 @@ inline void stackOFF(void *backup) {
   Log("STACK OFF!");
 }
 
+inline void pushParams(void* a, void* b, void* c) {
+  asm volatile("push %0" : : "g"(a));
+  asm volatile("push %0" : : "g"(b));
+  asm volatile("push %0" : : "g"(c));
+}
+
 #endif
