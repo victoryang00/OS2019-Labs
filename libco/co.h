@@ -32,7 +32,7 @@ void co_print();
 #endif
 
 inline void stackON(struct co* cp, void* backup) {
-  asm volatile("mov" SP ", %0" : "=g"(backup) :);
+  asm volatile("mov " SP ", %0" : "=g"(backup) :);
   asm volatile("mov %0, " SP : : "g"(cp->stack));
 }
 
