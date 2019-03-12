@@ -54,8 +54,10 @@ struct co* co_start(const char *name, func_t func, void *arg) {
   Log("CO [%s] START!", name);
   current = co_create(name);
   if (!setjmp(start_buf)) {
-    stackON(current, stack_backup);
     void* esp = NULL;
+    asm volatile("mov " SP ", %0" : "=g"(esp) :);
+    Log("ESP=>%p", esp);
+    stackON(current, stack_backup);
     asm volatile("mov " SP ", %0" : "=g"(esp) :);
     Log("ESP=>%p", esp);
     func(arg);
