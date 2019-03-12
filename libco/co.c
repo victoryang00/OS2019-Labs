@@ -80,6 +80,7 @@ void co_yield() {
       longjmp(current->buf, 1);
     }
   } else {
+    Log("PID %d", current->pid);
     current->state = ST_R;
     Log("set stack to %p", current->stack_ptr);
     stack_backup = stackEX(current->stack_ptr);
