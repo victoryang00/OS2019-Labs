@@ -72,6 +72,9 @@ struct co* co_start(const char* name, func_t func, void* arg) {
 }
 
 void co_yield() {
+  void* sp = NULL;
+  getSP(sp);
+  Log("SP=>%p", sp);
   if (!setjmp(current->buf)) {
     if (current->state == ST_I) {
       stackEX(stack_backup, current->stack_ptr);
@@ -87,6 +90,8 @@ void co_yield() {
       longjmp(current->buf, 1);
     }
   } else {
+    stackEX(current->stack_ptr, stack_backup);
+    Log("recoveredSP=>%p", current->stack_ptr);
     current->state = ST_R;
   }
 

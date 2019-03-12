@@ -49,5 +49,7 @@ void co_print();
 
 #define stackEX(newsp, backup) \
   asm volatile("mov " SP ", %0; mov %1, " SP : "=g"(backup) : "g"(newsp))
+#define getSP(sp) \
+  asm volatile("mov " SP ", %0" : "=g"(sp) : )
 
 #endif
