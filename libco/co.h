@@ -14,6 +14,7 @@
 #endif
 
 #define SZ_STACK 1024
+#define SZ_COPY 128
 #define NR_CO 16
 
 #define ST_S 0 // sleeping
@@ -41,18 +42,26 @@ void co_print();
 
 #if defined (__i386__)
   #define SP "%%esp"
+  #define BP "%%ebp"
 #elif defined (__x86_64__)
   #define SP "%%rsp"
+  #define BP "%%rbp"
 #endif
 
-inline void stackON(struct co* cp, void* backup) {
-  asm volatile("mov " SP ", %0" : "=g"(backup) :);
+inline void stackON(struct co* cp, void* sp_ptr) {
+  void* bp_ptr = NULL;
+  asm volatile("mov " BP ", %0" : "=g"(bp_ptr) :);
+  asm volatile("mov " SP ", %0" : "=g"(sp_ptr) :);
+  Log("BP=>%p", bp_ptr);
+  Log("SP=>%p", sp_ptr);
+  size_t sz_delta = sp_ptr - bp_ptr;
+  memcpy(cp->stack_ptr, bp_ptr, sz_delta);
   asm volatile("mov %0, " SP : : "g"(cp->stack_ptr));
   Log("STACK ON!");
 }
 
-inline void stackOFF(void *backup) {
-  asm volatile("mov %0, " SP : : "g"(backup));
+inline void stackOFF(void *sp_ptr) {
+  asm volatile("mov %0, " SP : : "g"(sp_ptr));
   Log("STACK OFF!");
 }
 

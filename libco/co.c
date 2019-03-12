@@ -38,7 +38,7 @@ struct co* co_create(const char *name, func_t func, void* arg) {
   strncpy(ret->name, name, sizeof(ret->name));
   ret->next = NULL;
   memset(ret->buf, 0, sizeof(ret->buf));
-  ret->stack_ptr = ret->stack + sizeof(ret->stack);
+  ret->stack_ptr = ret->stack + sizeof(ret->stack) - sizeof(char) * SZ_COPY;
   if (head) {
     struct co* cp = head;
     while (cp->next != NULL) cp = cp->next;
