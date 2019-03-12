@@ -76,6 +76,7 @@ void co_yield() {
       longjmp(start_buf, 1);
       /* go back to co_start */
     } else {
+      Log("BOOM");
       current = current->next ? current->next : head;
       longjmp(current->buf, 1);
     }
