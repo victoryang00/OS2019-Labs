@@ -1,10 +1,4 @@
-#include <stdio.h>
-#include <assert.h>
-#include <setjmp.h>
-#include <stdlib.h>
-#include <string.h>
 #include "co.h"
-#include "debug.h"
 
 static void* stack_backup;
 static int co_cnt = 0;
@@ -54,6 +48,7 @@ struct co* co_start(const char *name, func_t func, void *arg) {
   current = cur;
   
   if (!setjmp(start_buf)) {
+    assert(((intptr_t) cur->stack) & 0xf == 0);
     stackON(cur, stack_backup);
     func(arg);
     /* continue from co_wait */
