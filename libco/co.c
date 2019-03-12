@@ -32,6 +32,7 @@ void co_gc() {
 }
 
 struct co* co_create(const char *name, func_t func, void* arg) {
+  co_print();
   struct co* ret = (struct co*) malloc(sizeof(struct co));
   ret->pid = ++co_cnt;
   ret->state = ST_I; // init state
