@@ -31,7 +31,7 @@ void co_gc() {
   }
 }
 
-struct co* co_create(const char *name) {
+struct co* co_create(const char *name, func_t func, void* arg) {
   struct co* ret = (struct co*) malloc(sizeof(struct co));
   ret->pid = ++co_cnt;
   ret->state = ST_I; // init state
@@ -51,10 +51,15 @@ struct co* co_create(const char *name) {
 
 struct co* co_start(const char* name, func_t func, void* arg) {
   Log("CO [%s] START!", name);
-  current = co_create(name);
+  asm volatile("nop");
+  Log("%p", name);
+  asm volatile("nop");
+  Log("%p", func);
+  asm volatile("nop");
+  Log("%p", arg);
+  current = co_create(name, func, arg);
   if (!setjmp(start_buf)) {
     stackON(current, stack_backup);
-    pushParams(name, func, arg);
     Log("func=>%p", func);
     Log("arg=>%p", arg);
     func(arg);
