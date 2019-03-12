@@ -52,11 +52,11 @@ struct co* co_create(const char *name, func_t func, void* arg) {
 struct co* co_start(const char* name, func_t func, void* arg) {
   Log("CO [%s] START!", name);
   asm volatile("nop");
-  Log("%p", name);
+  Log("%p", &name);
   asm volatile("nop");
-  Log("%p", func);
+  Log("%p", &func);
   asm volatile("nop");
-  Log("%p", arg);
+  Log("%p", &arg);
   current = co_create(name, func, arg);
   if (!setjmp(start_buf)) {
     stackON(current, stack_backup);
