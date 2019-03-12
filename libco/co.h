@@ -47,13 +47,7 @@ void co_print();
   #define SP "%%rsp"
 #endif
 
-static inline void* stackEX(void* newSP) {
-  void* oldSP = NULL;
-  asm volatile("mov " SP ", %0; mov %1, " SP 
-      : "=g"(oldSP) 
-      : "g"(newSP));
-  Log("STACK EXCHANGE %p => %p", oldSP, newSP);
-  return oldSP;
-}
+#define stackEX(newsp, backup) \
+  asm volatile("mov " SP ", %0; mov %1, " SP : "=g"(backup) : "g"(newsp))
 
 #endif
