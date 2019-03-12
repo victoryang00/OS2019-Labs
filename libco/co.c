@@ -40,7 +40,7 @@ struct co* co_start(const char *name, func_t func, void *arg) {
 }
 
 void co_yield() {
-  struct co* cur = current;
+  //struct co* cur = current;
   int val = setjmp(current->buf);
   if (!val) {
     /* ready to jump */
@@ -48,6 +48,7 @@ void co_yield() {
     longjmp(next->buf, 1);
   } else {
     /* back from jump */
+    //longjmp(cur->buf, 0);
   }
 }
 
