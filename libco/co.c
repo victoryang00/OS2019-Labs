@@ -35,19 +35,17 @@ struct co* co_start(const char *name, func_t func, void *arg) {
   } else {
     head = cur;
   }
-  func(arg);
   return current = cur;
 }
 
 void co_yield() {
   Log("Yield!");
-  assert(current);
   //struct co* cur = current;
   int val = setjmp(current->buf);
   if (!val) {
     /* ready to jump */
-    struct co* next = current->next ? current->next : head;
-    longjmp(next->buf, 1);
+    current = current->next ? current->next : head;
+    longjmp(current->buf, 1);
   } else {
     /* back from jump */
     //longjmp(cur->buf, 0);
