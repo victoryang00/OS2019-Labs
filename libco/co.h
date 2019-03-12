@@ -54,7 +54,8 @@ static inline void stackON(struct co* cp, void* sp_ptr) {
   asm volatile("mov " SP ", %0" : "=g"(sp_ptr) :);
   Log("BP=>%p", bp_ptr);
   Log("SP=>%p", sp_ptr);
-  size_t sz_delta = sp_ptr - bp_ptr;
+  size_t sz_delta = bp_ptr - sp_ptr;
+  cp->stack_ptr -= sz_delta;
   memcpy(cp->stack_ptr, bp_ptr, sz_delta);
   asm volatile("mov %0, " SP : : "g"(cp->stack_ptr));
   Log("STACK ON!");
