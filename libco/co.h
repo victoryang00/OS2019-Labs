@@ -8,7 +8,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define DEBUG
+//#define DEBUG
 #ifdef DEBUG
 #include "debug.h"
 #endif
