@@ -20,14 +20,16 @@ void co_gc() {
     free(head);
     head = next;
   }
-  struct co* cp = head;
-  while (cp->next) {
-    if (cp->next->state == ST_R) {
-      struct co* next = cp->next->next;
-      free(cp->next);
-      cp->next = next;
+  if (head) {
+    struct co* cp = head;
+    while (cp->next) {
+      if (cp->next->state == ST_R) {
+        struct co* next = cp->next->next;
+        free(cp->next);
+        cp->next = next;
+      }
+      cp = cp->next;
     }
-    cp = cp->next;
   }
   co_print();
 }
@@ -101,12 +103,10 @@ void co_wait(struct co *thd) {
     Log("One thread is finished!!");
     if (current == thd) break;
     else {
-      Log("bad luck!");
       /* one thread finished, but not thd */
       co_gc();
     }
   }
-  Log("good luck!");
   /* thd is finished */
   co_gc();
   return;
