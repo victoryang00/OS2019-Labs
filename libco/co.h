@@ -1,6 +1,11 @@
 #ifndef __CO_H__
 #define __CO_H__
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <setjmp.h>
+#include <string.h>
+
 #define SZ_STACK 1024
 #define NR_CO 16
 
