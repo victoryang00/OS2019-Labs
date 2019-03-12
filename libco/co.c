@@ -81,10 +81,9 @@ void co_yield() {
       longjmp(current->buf, 1);
     }
   } else {
-    stackON(current);
     current->state = ST_R;
+    stackON(current);
     Log("switched back to CO [%s]", current->name);
-    co_print();
   }
 }
 
