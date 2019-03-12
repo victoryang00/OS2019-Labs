@@ -61,29 +61,29 @@ struct co* co_start(const char* name, func_t func, void* arg) {
     /* continue from co_wait */
     Log("FINISHEDDDD");
     longjmp(wait_buf, 1);
+  } else {
+    current->stack_ptr = stackEX(stack_backup);
   }
   /* continue from co_yield */
   return current;
 }
 
 void co_yield() {
-  current->stack_ptr = stackEX(stack_backup);
-  Log("[off] stack saved as %p", current->stack_ptr);
   if (!setjmp(current->buf)) {
     if (current->state == ST_I) {
       current->state = ST_S;
       longjmp(start_buf, 1);
       /* go back to co_start */
     } else {
+      struct co* next = current->next ? current->next : head;
       current->state = ST_S;
-      current = current->next ? current->next : head;
+      current->stack_ptr = stackEX(next->stack_ptr);
+      current = next;
       longjmp(current->buf, 1);
     }
   } else {
     current->state = ST_R;
   }
-  Log("[on] set stack to %p", current->stack_ptr);
-  stack_backup = stackEX(current->stack_ptr);
 }
 
 void co_wait(struct co *thd) {
@@ -91,6 +91,7 @@ void co_wait(struct co *thd) {
   while (thd->state != ST_R) {
     if (!setjmp(wait_buf)) {
       current = thd;
+      stack_backup = stackEX(current->stack_ptr);
       longjmp(thd->buf, 1);
       /* will continue in co_start */
     }
