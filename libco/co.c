@@ -1,3 +1,63 @@
+/**
+ * FOR TEACHERS/TAs/CODE REVIERS:
+ * HOW THIS PIECE OF CODE WORKS
+ *
+ * 1. Three States of Coroutines
+ *    
+ *    +- ST_S => 0 => Sleeping (unfinished)
+ *    |- ST_R => 1 => Running (finished)
+ *    `- ST_I => 2 => New CO, to be inited
+ *    
+ *    Please note that a running coroutine is
+ *    actually a finished coroutine because it
+ *    did not call co_yield() when the function
+ *    returned. If the function will continue, 
+ *    then it must call co_yield() to switch co-
+ *    routines and thus it will be set sleeping.
+ *
+ * 2. The Workflow(Life) of a Coroutine
+ *  1) In co_start(), create a new CO instance
+ *     and add it to the end of linked list.
+ *  2) Init CO by running it ONCE until the first 
+ *     call of co_yield().
+ *  3) In co_yield(), jump back to co_start() 
+ *     and return the instance to the caller.
+ *  4) When co_wait() is called, keep calling
+ *     co_yield() until the target coroutine ends.
+ *  5) When a coroutine ends, the program will
+ *     continue in co_start() after where the
+ *     first call was made. (MAGIC!) The use a 
+ *     longjmp() to go back to co_wait() and then
+ *     collect garbage of finished coroutines.
+ *  6) When collecting garbage, any coroutine
+ *     with running (ST_R => 1) state indicates
+ *     that the function has finished, because
+ *     an unfinished coroutine will call co_yield()
+ *     to set its state as sleeping (ST_S => 0).
+ *
+ * 3. The STACK EXCHANGE (BAD PUN)
+ *  1) Only switch to the original stack when the 
+ *     program will leave functions in this file.
+ *  2) When switching from one coroutine to another, 
+ *     just exchange their Stack Pointers and call 
+ *     longjmp().
+ *
+ * 4. Graph description:
+ *    
+ *      A => switch to an individual stack
+ *      B => switch to the original stack
+ *
+ *     +-->+--------'external caller'-----------+
+ *     |   |                               ^    |
+ *     4   1              +-7-+            9    5
+ *     |   v       A      v   ^      B     |    |
+ *    co_start() --2--> co_yield() --8--> co_wait()
+ *     ^                  |   ^                 |
+ *     |           B      |   |      A          |
+ *     ------------3------+   +------6----------+
+ */
+
+
 #include "co.h"
 
 static void* stack_backup;
