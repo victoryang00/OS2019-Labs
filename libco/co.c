@@ -90,7 +90,6 @@ void co_yield() {
     current->state = ST_R;
   }
 
-    stackEX(current->stack_ptr, stack_backup);
 }
 
 void co_wait(struct co *thd) {
