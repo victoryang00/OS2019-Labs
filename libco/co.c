@@ -47,7 +47,7 @@ struct co* co_start(const char *name, func_t func, void *arg) {
   struct co* cur = (struct co*) malloc(sizeof(struct co));
   cur->pid = ++co_cnt;
   cur->state = ST_I; // init state
-  strncpy(cur->name, name, strlen(cur->name));
+  strncpy(cur->name, name, sizeof(cur->name));
   cur->next = NULL;
   if (head) {
     struct co* cp = head;
