@@ -82,6 +82,7 @@ void co_yield() {
     }
   } else {
     current->state = ST_R;
+    stack_backup = stackON(current);
     Log("switched back to CO [%s]", current->name);
   }
 }
@@ -91,7 +92,6 @@ void co_wait(struct co *thd) {
   while (thd->state != ST_R) {
     if (!setjmp(wait_buf)) {
       current = thd;
-      stack_backup = stackON(current);
       longjmp(thd->buf, 1);
       /* will continue in co_start */
     }
