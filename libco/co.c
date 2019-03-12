@@ -85,7 +85,7 @@ void co_yield() {
     }
   } else {
     current->state = ST_R;
-    Log("Going back to CO [%s]", current->name);
+    Log("switched back to CO [%s]", current->name);
   }
 }
 
@@ -96,9 +96,11 @@ void co_wait(struct co *thd) {
     if (val == 0) {
       current = thd;
       longjmp(thd->buf, 1);
-      /* if finished, will continue in co_start */
+      /* will continue in co_start */
     }
+    /* one thread finished, but not thd */
   }
+  /* thd is finished */
   return;
 }
 
