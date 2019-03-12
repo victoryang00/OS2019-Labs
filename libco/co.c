@@ -42,13 +42,15 @@ struct co* co_create(const char *name, func_t func, void* arg) {
   memset(ret->buf, 0, sizeof(ret->buf));
   ret->stack_ptr = (void*) ret->stack + sizeof(ret->stack) - sizeof(char) * 16;
   if (head) {
+    Log("OKOK");
     struct co* cp = head;
     while (cp->next != NULL) cp = cp->next;
+    Log("OKOKOKOK");
     cp->next = ret;
+    Log("WTF");
   } else {
     head = ret;
   }
-  Log("insert OK");
   co_print();
   return ret;
 }
