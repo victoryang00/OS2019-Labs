@@ -31,24 +31,29 @@ void co_gc() {
   }
 }
 
-struct co* co_start(const char *name, func_t func, void *arg) {
-  Log("CO [%s] START!", name);
-  struct co* cur = (struct co*) malloc(sizeof(struct co));
-  cur->pid = ++co_cnt;
-  cur->state = ST_I; // init state
-  strncpy(cur->name, name, sizeof(cur->name));
-  cur->next = NULL;
+struct co* co_create(const char *name) {
+  struct co* ret = (struct co*) malloc(sizeof(struct co));
+  ret->pid = ++co_cnt;
+  ret->state = ST_I; // init state
+  strncpy(ret->name, name, sizeof(ret->name));
+  ret->next = NULL;
+  memset(ret->buf, 0, sizeof(ret->buf));
+  memset(ret->stack, 0, sizeof(ret->stack));
+  ret->stack_ptr = (void *) ((((intptr_t) ret->stack + sizeof(ret->stack)) >> 4) << 4); // must align to 16 bits
   if (head) {
     struct co* cp = head;
     while (cp->next != NULL) cp = cp->next;
-    cp->next = cur;
+    cp->next = ret;
   } else {
-    head = cur;
+    head = ret;
   }
-  current = cur;
-  
+  return ret;
+}
+
+struct co* co_start(const char *name, func_t func, void *arg) {
+  Log("CO [%s] START!", name);
+  current = co_create(name);
   if (!setjmp(start_buf)) {
-    assert((((intptr_t) cur->stack) & 0xf) == 0);
     stackON(cur, stack_backup);
     func(arg);
     /* continue from co_wait */
