@@ -33,6 +33,7 @@ void co_gc() {
 
 struct co* co_create(const char *name, func_t func, void* arg) {
   struct co* ret = (struct co*) malloc(sizeof(struct co));
+  Log("malloc OK");
   ret->pid = ++co_cnt;
   ret->state = ST_I; // init state
   strncpy(ret->name, name, sizeof(ret->name));
@@ -41,13 +42,12 @@ struct co* co_create(const char *name, func_t func, void* arg) {
   ret->next = NULL;
   memset(ret->buf, 0, sizeof(ret->buf));
   ret->stack_ptr = (void*) ret->stack + sizeof(ret->stack) - sizeof(char) * 16;
+  Log("set OK");
   if (head) {
     struct co* cp = head;
     while (cp->next != NULL) cp = cp->next;
     cp->next = ret;
   } else {
-    Log("head: %p", head);
-    Log("ret:  %p", ret);
     head = ret;
   }
   co_print();
