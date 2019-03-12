@@ -42,7 +42,7 @@ struct co* co_create(const char *name, func_t func, void* arg) {
   ret->func = func;
   ret->arg = arg;
   ret->next = NULL;
-  ret->stack_ptr = (void*) ret->stack + SZ_STACK;
+  ret->stack_ptr = (void *) ((((intptr_t) ret->stack + sizeof(ret->stack)) >> 4) << 4);
   if (head) {
     struct co* cp = head;
     while (cp->next) {
