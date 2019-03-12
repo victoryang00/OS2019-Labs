@@ -46,6 +46,7 @@ void co_yield() {
   if (!val) {
     /* ready to jump */
     struct co* next = current->next ? current->next : head;
+    Log("JUMP TO %p", next);
     longjmp(next->buf, 1);
   } else {
     /* back from jump */
