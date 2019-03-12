@@ -32,7 +32,6 @@ void co_gc() {
 }
 
 struct co* co_create(const char *name, func_t func, void* arg) {
-  co_print();
   struct co* ret = (struct co*) malloc(sizeof(struct co));
   ret->pid = ++co_cnt;
   ret->state = ST_I; // init state
@@ -65,7 +64,9 @@ struct co* co_start(const char* name, func_t func, void* arg) {
     stackEX(stack_backup, current->stack_ptr);
     longjmp(wait_buf, 1);
   } else {
+    co_print();
     stackEX(stack_backup, current->stack_ptr);
+    co_print();
     Log("init finished");
   }
   /* continue from co_yield */
