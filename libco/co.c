@@ -58,8 +58,7 @@ struct co* co_start(const char* name, func_t func, void* arg) {
   if (!setjmp(start_buf)) {
     stackEX(current->stack_ptr, stack_backup);
     current->func(current->arg);
-    /* continue from co_wait */
-    Log("FINISHEDDDD");
+    stackEX(stack_backup, current->stack_ptr);
     longjmp(wait_buf, 1);
   } else {
     Log("init finished");
@@ -70,8 +69,8 @@ struct co* co_start(const char* name, func_t func, void* arg) {
 
 void co_yield() {
   if (!setjmp(current->buf)) {
-    stackEX(stack_backup, current->stack_ptr);
     if (current->state == ST_I) {
+      stackEX(stack_backup, current->stack_ptr);
       current->state = ST_S;
       longjmp(start_buf, 1);
       /* go back to co_start */
