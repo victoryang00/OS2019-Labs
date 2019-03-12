@@ -78,7 +78,7 @@ void co_yield() {
     } else {
       struct co* next = current->next ? current->next : head;
       current->state = ST_S;
-      current->stack_ptr = stackEX(next->stack_ptr);
+      stackEX(next->stack_ptr, current->stack_ptr);
       current = next;
       longjmp(current->buf, 1);
     }
@@ -92,7 +92,7 @@ void co_wait(struct co *thd) {
   while (thd->state != ST_R) {
     if (!setjmp(wait_buf)) {
       current = thd;
-      stack_backup = stackEX(current->stack_ptr);
+      stackEX(current->stack_ptr, stack_backup);
       longjmp(thd->buf, 1);
       /* will continue in co_start */
     }
