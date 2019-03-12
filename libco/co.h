@@ -15,7 +15,7 @@ struct co {
   char name[32];
   struct co* next;
   jmp_buf buf;
-  uint8_t stack[SZ_STACK];
+  char stack[SZ_STACK];
 };
 
 void co_init();
@@ -32,12 +32,12 @@ void co_print();
 #endif
 
 inline void stackON(struct co* cp, void* backup) {
-  asm volatile("mov" SP ", %0" : "=g"(backup));
-  asm volatile("mov %0, " SP : "g"(cp->stack));
+  asm volatile("mov" SP ", %0" : "=g"(backup) :);
+  asm volatile("mov %0, " SP : : "g"(cp->stack));
 }
 
 inline void stackOFF(void *backup) {
-  asm volatile("mov %0, " SP : "g"(backup));
+  asm volatile("mov %0, " SP : : "g"(backup));
 }
 
 #endif
