@@ -6,17 +6,11 @@
 #include "co.h"
 #include "debug.h"
 
+static void* stack_backup;
 static int co_cnt = 0;
 static jmp_buf start_buf;
 static jmp_buf wait_buf;
 
-struct co {
-  int pid;
-  int state;
-  char name[32];
-  jmp_buf buf;
-  struct co* next;
-};
 struct co* head = NULL;
 struct co* current = NULL;
 
@@ -60,6 +54,7 @@ struct co* co_start(const char *name, func_t func, void *arg) {
   current = cur;
   
   if (!setjmp(start_buf)) {
+    stackON(cur, stack_backup);
     func(arg);
     /* continue from co_wait */
     Log("FINISHEDDDD");
@@ -73,15 +68,18 @@ void co_yield() {
   Log("co_yield called by CO [%s]!", current->name);
   if (!setjmp(current->buf)) {
     if (current->state == ST_I) {
+      stackOFF(stack_backup);
       current->state = ST_S;
       longjmp(start_buf, 1);
       /* go back to co_start */
     } else {
+      stackOFF(stack_backup);
       current->state = ST_S;
       current = current->next ? current->next : head;
       longjmp(current->buf, 1);
     }
   } else {
+    stackON(current, stack_backup);
     current->state = ST_R;
     Log("switched back to CO [%s]", current->name);
     co_print();
@@ -93,17 +91,21 @@ void co_wait(struct co *thd) {
   while (thd->state != ST_R) {
     if (!setjmp(wait_buf)) {
       current = thd;
+      stackON(current, stack_backup);
       longjmp(thd->buf, 1);
       /* will continue in co_start */
     }
     /* one thread finished, but not thd */
+    Log("One thread is finished!!");
   }
   /* thd is finished */
   return;
 }
 
 void co_print() {
+  Log("=====THREADS=====");
   for (struct co* cp = head; cp != NULL; cp = cp->next) {
     Log("%d: [%s] %d", cp->pid, cp->name, cp->state);
   }
+  Log("=================");
 }
