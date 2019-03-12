@@ -43,7 +43,7 @@ void co_print();
 #endif
 
 inline void stackON(struct co* cp, void* backup) {
-  assert((int) cp->stack & 0x1 == 0);
+  assert((intptr_t) cp->stack & 0x1 == 0);
   asm volatile("mov " SP ", %0" : "=g"(backup) :);
   asm volatile("mov %0, " SP : : "g"(cp->stack));
   Log("STACK ON!");
