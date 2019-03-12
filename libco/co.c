@@ -6,10 +6,7 @@
 #include "co.h"
 #include "debug.h"
 
-static int co_cnt = 0;
-
 struct co {
-  int pid;
   char name[32];
   jmp_buf buf;
   struct co* next;
