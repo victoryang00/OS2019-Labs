@@ -92,7 +92,6 @@ void co_wait(struct co *thd) {
   while (thd->state != ST_R) {
     if (!setjmp(wait_buf)) {
       current = thd;
-      stackON(current);
       longjmp(thd->buf, 1);
       /* will continue in co_start */
     }
