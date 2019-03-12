@@ -86,6 +86,7 @@ void co_yield() {
   } else {
     current->state = ST_R;
     Log("switched back to CO [%s]", current->name);
+    co_print();
   }
 }
 
@@ -104,3 +105,8 @@ void co_wait(struct co *thd) {
   return;
 }
 
+void co_print() {
+  for (struct co* cp = head; cp != NULL; cp = cp->next) {
+    Log("%d: [%s] %d", cp->pid, cp->name, cp->state);
+  }
+}
