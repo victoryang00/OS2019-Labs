@@ -82,7 +82,7 @@ void co_yield() {
     }
   } else {
     current->state = ST_R;
-    stackON(current);
+    stack_backup = stackON(current);
     Log("switched back to CO [%s]", current->name);
   }
 }
