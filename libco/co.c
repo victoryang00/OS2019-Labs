@@ -63,7 +63,6 @@ struct co* co_start(const char* name, func_t func, void* arg) {
     stackEX(stack_backup, current->stack_ptr);
     longjmp(wait_buf, 1);
   } else {
-    co_print();
     Log("init finished");
   }
   /* continue from co_yield */
@@ -71,14 +70,10 @@ struct co* co_start(const char* name, func_t func, void* arg) {
 }
 
 void co_yield() {
-  void* sp = NULL;
-  getSP(sp);
-  Log("SP=>%p", sp);
   if (!setjmp(current->buf)) {
     if (current->state == ST_I) {
       stackEX(stack_backup, current->stack_ptr);
       current->state = ST_S;
-      co_print();
       longjmp(start_buf, 1);
       /* go back to co_start */
     } else {
@@ -90,7 +85,6 @@ void co_yield() {
     }
   } else {
     stackEX(current->stack_ptr, stack_backup);
-    Log("recoveredSP=>%p", current->stack_ptr);
     current->state = ST_R;
   }
 
@@ -105,6 +99,7 @@ void co_wait(struct co *thd) {
       /* will continue in co_start */
     }
     /* one thread finished, but not thd */
+    co_gc();
     Log("One thread is finished!!");
   }
   /* thd is finished */
