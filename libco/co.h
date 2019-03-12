@@ -56,7 +56,6 @@ static inline void stackON(struct co* cp, void* backup) {
 
 static inline void stackOFF(void *backup) {
   asm volatile("mov %0, " SP : : "g"(backup));
-  Log("STACK OFF!");
 }
 
 #endif
