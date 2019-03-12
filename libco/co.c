@@ -24,18 +24,8 @@ void co_init() {
 
 struct co* co_start(const char *name, func_t func, void *arg) {
   Log("CO [%s] START!", name);
-  struct co* cur = (struct co*) malloc(sizeof(struct co));
-  cur->pid = co_cnt++;
-  strncpy(cur->name, name, strlen(cur->name));
-  cur->next = NULL;
-  if (head) {
-    struct co* cp = head;
-    while (cp->next != NULL) cp = cp->next;
-    cp->next = cur;
-  } else {
-    head = cur;
-  }
-  return current = cur;
+  func(arg);
+  return NULL;
 }
 
 void co_yield() {
