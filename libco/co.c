@@ -54,14 +54,14 @@ struct co* co_start(const char *name, func_t func, void *arg) {
   Log("CO [%s] START!", name);
   current = co_create(name);
   if (!setjmp(start_buf)) {
-    stackON(cur, stack_backup);
+    stackON(current, stack_backup);
     func(arg);
     /* continue from co_wait */
     Log("FINISHEDDDD");
     longjmp(wait_buf, 1);
   }
   /* continue from co_yield */
-  return cur;
+  return current;
 }
 
 void co_yield() {
