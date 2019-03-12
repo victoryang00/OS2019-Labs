@@ -40,7 +40,7 @@ struct co* co_create(const char *name, func_t func, void* arg) {
   ret->arg = arg;
   ret->next = NULL;
   memset(ret->buf, 0, sizeof(ret->buf));
-  ret->stack_ptr = ret->stack + sizeof(ret->stack);
+  ret->stack_ptr = (void*) ret->stack + sizeof(ret->stack);
   if (head) {
     struct co* cp = head;
     while (cp->next != NULL) cp = cp->next;
@@ -53,7 +53,7 @@ struct co* co_create(const char *name, func_t func, void* arg) {
 }
 
 struct co* co_start(const char* name, func_t func, void* arg) {
-  Log("CO [%s] START!", name);
+  Log("%s START!", name);
   current = co_create(name, func, arg);
   if (!setjmp(start_buf)) {
     stack_backup = stackEX(current->stack_ptr);
@@ -67,7 +67,7 @@ struct co* co_start(const char* name, func_t func, void* arg) {
 }
 
 void co_yield() {
-  Log("co_yield called by CO [%s]!", current->name);
+  Log("co_yield called by %s!", current->name);
   if (!setjmp(current->buf)) {
     current->stack_ptr = stackEX(stack_backup);
     Log("[off] stack saved as %p", current->stack_ptr);
@@ -88,10 +88,11 @@ void co_yield() {
 }
 
 void co_wait(struct co *thd) {
-  Log("co_wait for CO [%s]!", thd->name);
+  Log("co_wait for %s!", thd->name);
   while (thd->state != ST_R) {
     if (!setjmp(wait_buf)) {
-      longjmp(current->buf, 1);
+      current = thd;
+      longjmp(thd->buf, 1);
       /* will continue in co_start */
     }
     /* one thread finished, but not thd */
