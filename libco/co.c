@@ -85,6 +85,7 @@ void co_yield() {
   } else {
     stackEX(current->stack_ptr, stack_backup);
     current->state = ST_R;
+    Log("stack exchanged!");
   }
 }
 
