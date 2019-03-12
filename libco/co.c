@@ -62,6 +62,7 @@ struct co* co_start(const char* name, func_t func, void* arg) {
     Log("FINISHEDDDD");
     longjmp(wait_buf, 1);
   } else {
+    Log("init finished");
     current->stack_ptr = stackEX(stack_backup);
   }
   /* continue from co_yield */
