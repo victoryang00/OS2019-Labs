@@ -60,7 +60,7 @@ inline void stackON(struct co* cp, void* sp_ptr) {
 }
 
 inline void stackOFF(void *sp_ptr) {
-  asm volatile("mov %0, " SP : : "g"(sp_ptr);
+  asm volatile("mov %0, " SP : : "g"(sp_ptr));
   Log("STACK OFF!");
 }
 
