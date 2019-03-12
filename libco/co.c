@@ -91,8 +91,7 @@ void co_wait(struct co *thd) {
   Log("co_wait for CO [%s]!", thd->name);
   while (thd->state != ST_R) {
     if (!setjmp(wait_buf)) {
-      current = thd;
-      longjmp(thd->buf, 1);
+      longjmp(current->buf, 1);
       /* will continue in co_start */
     }
     /* one thread finished, but not thd */
