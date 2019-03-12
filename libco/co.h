@@ -39,9 +39,9 @@ void co_yield();
 void co_wait(struct co *thd);
 void co_print();
 
-#ifdef __i386__
+#if defined (__i386__)
   #define SP "%%esp"
-#else
+#elif defined (__x86_64__)
   #define SP "%%rsp"
 #endif
 
