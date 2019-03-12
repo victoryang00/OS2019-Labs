@@ -8,10 +8,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-//#define DEBUG
-#ifdef DEBUG
+#define DEBUG
 #include "debug.h"
-#endif
 
 #define SZ_STACK 4096
 #define NR_CO 16
