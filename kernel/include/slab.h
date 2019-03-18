@@ -1,9 +1,9 @@
 #ifndef __SLAB_H__
 #define __SLAB_H__
 
-#include <stdlib.h>
-
-#define SZ_PAGE (size_t)sysconf(_SC_PAGESIZE)
+#define Byte sizeof(uint8_t)
+#define KB 1024 * Byte
+#define SZ_PAGE 4 * KB
 #define NR_ITEMS_MAX 64
 
 struct _slab_chain;
