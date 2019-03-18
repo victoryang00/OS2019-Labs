@@ -20,7 +20,7 @@ struct slab_cache *slab_cache_create(size_t size) {
 }
 
 void *slab_cache_alloc(struct slab_cache *scp) {
-
+  return NULL;
 }
 
 void slab_cache_grow(struct slab_cache *scp) {
