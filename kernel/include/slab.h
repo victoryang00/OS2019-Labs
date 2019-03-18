@@ -23,10 +23,8 @@ struct slab_cache {
   size_t item_size;
   int items_per_chain;
   int pages_per_chain;
-  struct slab_chain* free_prev;
-  struct slab_chain* free_next;
-  struct slab_chain* full_prev;
-  struct slab_chain* full_next;
+  struct slab_chain free_head;
+  struct slab_chain full_head;
 };
 
 struct slab_cache_head {
