@@ -3,6 +3,7 @@
 
 #include <kernel.h>
 #include <nanos.h>
+#include <assert.h>
 
 #define DEBUG
 #ifdef DEBUG
