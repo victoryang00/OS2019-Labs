@@ -1,14 +1,13 @@
 #ifndef __COMMON_H__
 #define __COMMON_H__
 
+#include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
 #include <assert.h>
 
 #include <kernel.h>
 #include <nanos.h>
-#include <am.h>
-#include <amdev.h>
 
 #define DEBUG
 #ifdef DEBUG
