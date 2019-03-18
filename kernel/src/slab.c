@@ -9,29 +9,29 @@ void slab_init(void *heap_end) {
 
 struct slab_cache *slab_cache_create(size_t size) {
   slab_cache_ptr -= sizeof(struct slab_cache);
-  struct slab_cache *cp = (struct slab_cache *)(slab_cache_ptr);
-  cp->size = size;
-  cp->prev = NULL;
-  cp->next = NULL;
-  cp->slab_full = NULL;
-  cp->slab_part = NULL;
-  cp->slab_free = NULL;
-  return cp;
+  struct slab_cache *scp = (struct slab_cache *)(slab_cache_ptr);
+  scp->size = size;
+  scp->prev = NULL;
+  scp->next = NULL;
+  scp->slab_full = NULL;
+  scp->slab_part = NULL;
+  scp->slab_free = NULL;
+  return scp;
 }
 
-void *slab_cache_alloc(struct slab_cache *) {
-
-}
-
-void slab_cache_grow() {
+void *slab_cache_alloc(struct slab_cache *scp) {
 
 }
 
-void slab_cache_free() {
+void slab_cache_grow(struct slab_cache *scp) {
 
 }
 
-void slab_cache_destroy() {
+void slab_cache_free(struct slab_cache *scp) {
+
+}
+
+void slab_cache_destroy(struct slab_cache *scp) {
 
 }
 
