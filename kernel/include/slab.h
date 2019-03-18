@@ -19,7 +19,7 @@ struct slab_page {
   struct slab_buf *prev;
   struct slab_buf *next;
   struct slab_chain *slab;
-}
+};
 
 struct slab_chain {
   int bufcount;
@@ -27,7 +27,7 @@ struct slab_chain {
   struct slab_buf *start;
   struct slab_chain *prev;
   struct slab_chain *next;
-}
+};
 
 struct slab_cache {
   size_t size;
@@ -36,7 +36,7 @@ struct slab_cache {
   struct slab_chain *slab_full;
   struct slab_chain *slab_part;
   struct slab_chain *slab_free;
-}
+};
 
 void slab_init();
 struct slab_cache *slab_cache_create(size_t);
