@@ -40,5 +40,4 @@ void slab_cache_grow(struct slab_cache *p_cache) {
   p_cache->free_prev->next = p_chain;
   p_cache->free_prev = p_chain;
   p_chain->parent = p_cache;
-  return p_chain;
 }
