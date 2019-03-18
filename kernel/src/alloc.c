@@ -9,6 +9,7 @@ static void pmm_init() {
   pm_end   = (uintptr_t)_heap.end;
   slab_init((void *) pm_end);
   slab_cache_create(sizeof(int));
+  Log("INIT OK!!");
 }
 
 static void *kalloc(size_t size) {
