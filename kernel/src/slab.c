@@ -17,7 +17,7 @@ void slab_init(void *heap_start, void *heap_end) {
 struct slab_cache *slab_cache_create(size_t size) {
   struct slab_cache *p_cache = slab_master->cache_memory++;
   assert((void *) slab_master->cache_memory < (void *) slab_master->page_indicators);
-  p_cache->size = size;
+  p_cache->item_size = size;
   if (size <= SZ_SMALL_OBJ) {
     p_cache->items_per_chain = (SZ_PAGE - sizeof(struct slab_chain)) / size;
   } else {
@@ -35,10 +35,10 @@ void slab_cache_grow(struct slab_cache *p_cache) {
   p_chain = (struct slab_chain *) (page + p_cache->pages_per_chain * SZ_PAGE - sizeof(struct slab_chain));
   assert(p_chain); // NOT NULL
   p_chain->page = page;
-  p_chain->next = p_cache->slab_free;
-  p_chain->prev = p_cache->slab_free->prev;
-  p_cache->slab_free->prev->next = p_chain;
-  p_cache->slab_free->prev = p_chain;
+  p_chain->next = p_cache;
+  p_chain->prev = p_cache->free_prev;
+  p_cache->free_prev->next = p_chain;
+  p_cache->free_prev = p_chain;
   p_chain->parent = p_cache;
   return p_chain;
 }
