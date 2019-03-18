@@ -31,8 +31,8 @@ struct _slab_cache *slab_cache_create(size_t size) {
 void slab_cache_grow(struct _slab_cache *p_cache) {
   void *page = NULL;
   struct _slab_chain *p_chain;
-  page = get_free_page(p_cache->pages_per_allocate);
-  p_chain = page + p_cache->pages_per_allocate * SZ_PAGE - sizeof(struct _slab_chain);
+  page = get_free_page(p_cache->pages_per_chain);
+  p_chain = page + p_cache->pages_per_chain * SZ_PAGE - sizeof(struct _slab_chain);
   assert(p_chain); // NOT NULL
   p_chain->page = page;
   p_chain->next = p_cache;
