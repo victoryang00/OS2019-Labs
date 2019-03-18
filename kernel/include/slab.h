@@ -1,9 +1,6 @@
 #ifndef __SLAB_H__
 #define __SLAB_H__
 
-#include <stdint.h>
-#include <unistd.h>
-
 #define SZ_PAGE       ((size_t) sysconf(_SC_PAGESIZE))
 #define SZ_SMALL_OBJ  (SZ_PAGE / 8)
 #define SZ_CACHE_LINE 0x40
