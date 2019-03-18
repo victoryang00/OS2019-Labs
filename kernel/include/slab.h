@@ -10,11 +10,11 @@
 #define SZ_CACHE_LINE 0x40
 #define SLAB_ALIGN    0x8
 
-struct slab_buf;
+struct slab_page;
 struct slab_chain;
 struct slab_cache;
 
-struct slab_buf {
+struct slab_page {
   void *buf;
   struct slab_buf *prev;
   struct slab_buf *next;
@@ -31,16 +31,19 @@ struct slab_chain {
 
 struct slab_cache {
   size_t size;
-  size_t effsize;
-  int slab_maxbuf;
-  struct slab_chain *prev;
-  struct slab_chain *next;
+  struct slab_cache *prev;
+  struct slab_cache *next;
+  struct slab_chain *slab_full;
+  struct slab_chain *slab_part;
+  struct slab_chain *slab_free;
 }
 
-struct slab_cache *slab_cache_create(char *, size_t, int);
+void slab_init();
+struct slab_cache *slab_cache_create(size_t);
 void *slab_cache_alloc(struct slab_cache *);
 void slab_cache_grow(struct slab_cache *);
 void slab_cache_free(struct slab_cache *);
 void slab_cache_destroy(struct slab_cache *);
+void slab_cache_reap();
 
 #endif
