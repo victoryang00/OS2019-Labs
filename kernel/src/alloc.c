@@ -8,7 +8,7 @@ static void pmm_init() {
   pm_start = (uintptr_t)_heap.start;
   pm_end   = (uintptr_t)_heap.end;
   slab_init((void *) pm_end);
-  struct slab_cache *scp = slab_cache_create(sizeof(int)) __attribute((used));
+  slab_cache_create(sizeof(int));
 }
 
 static void *kalloc(size_t size) {
