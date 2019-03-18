@@ -2,6 +2,7 @@
 #define __COMMON_H__
 
 #include <klib.h>
+#include <stdbool.h>
 
 #include <kernel.h>
 #include <nanos.h>
