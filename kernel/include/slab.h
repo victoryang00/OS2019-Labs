@@ -1,45 +1,52 @@
 #ifndef __SLAB_H__
 #define __SLAB_H__
 
-#define SZ_PAGE       ((size_t) sysconf(_SC_PAGESIZE))
-#define SZ_SMALL_OBJ  (SZ_PAGE / 8)
-#define SZ_CACHE_LINE 0x40
-#define SLAB_ALIGN    0x8
+#define SZ_PAGE (size_t)sysconf(_SC_PAGESIZE)
+#define NR_ITEMS_MAX 64
 
-struct slab_page;
-struct slab_chain;
-struct slab_cache;
+struct _slab_chain;
+struct _slab_chain_head;
+struct _slab_cache;
+struct _slab_cache_head;
 
-struct slab_page {
-  void *buf;
-  struct slab_buf *prev;
-  struct slab_buf *next;
-  struct slab_chain *slab;
+struct _slab_chain {
+  void *page;
+  struct _slab_chain *prev;
+  struct _slab_chain *next;
+  struct _slab_cache *parent;
 };
 
-struct slab_chain {
-  int bufcount;
-  void *free_list;
-  struct slab_buf *start;
-  struct slab_chain *prev;
-  struct slab_chain *next;
+struct _slab_chain_head {
+  struct _slab_chain *prev;
+  struct _slab_chain *next;
 };
 
-struct slab_cache {
-  size_t size;
-  struct slab_cache *prev;
-  struct slab_cache *next;
-  struct slab_chain *slab_full;
-  struct slab_chain *slab_part;
-  struct slab_chain *slab_free;
+struct _slab_cache {
+  size_t item_size;
+  uint32_t items_per_page;
+  struct _slab_chain_head slab_free;
+  struct _slab_chain_head slab_full;
 };
 
-void slab_init();
-struct slab_cache *slab_cache_create(size_t);
-void *slab_cache_alloc(struct slab_cache *);
-void slab_cache_grow(struct slab_cache *);
-void slab_cache_free(struct slab_cache *);
-void slab_cache_destroy(struct slab_cache *);
-void slab_cache_reap();
+struct _slab_cache_head {
+  int nr_pages;
+  void *page_memory;
+  bool *page_indicators;
+  struct _slab_cache* prev;
+  struct _slab_cache* next;
+};
+extern struct _slab_cache_head *slab_master;
+
+void slab_init(void *, void *);
+void *get_free_page();
+void free_used_page(void *);
+
+static inline void *page_translate(int n) {
+  return slab_master->page_memory + n * SZ_PAGE;
+}
+
+static inline bool *page_indicator(int n) {
+  return slab_master->page_indicators + n;
+}
 
 #endif

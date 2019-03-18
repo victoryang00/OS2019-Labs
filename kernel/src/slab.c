@@ -1,40 +1,28 @@
 #include <common.h>
 #include <slab.h>
 
-void *slab_cache_ptr = NULL;
+struct _slab_cache_head _master;
+struct _slab_cache_head *slab_master = &_master;
 
-void slab_init(void *heap_end) {
-  slab_cache_ptr = heap_end;
+void slab_init(void *heap_start, void *heap_end) {
+  assert(heap_end > heap_start);
+  slab_master->nr_pages = (heap_end - heap_start) / (SZ_PAGE + sizeof(bool));
+  slab_master->page_memory = heap_start;
+  slab_master->page_indicators = heap_start + nr_pages * SZ_PAGE;
+  memset(slab_master->page_indicators, 0, nr_pages * sizeof(bool));
 }
 
-struct slab_cache *slab_cache_create(size_t size) {
-  slab_cache_ptr -= sizeof(struct slab_cache);
-  struct slab_cache *scp = (struct slab_cache *)(slab_cache_ptr);
-  scp->size = size;
-  scp->prev = NULL;
-  scp->next = NULL;
-  scp->slab_full = NULL;
-  scp->slab_part = NULL;
-  scp->slab_free = NULL;
-  return scp;
+void* get_free_page() {
+  for (int i = 0; i < slab_master->nr_pages; ++i) {
+    if (*page_indicator(i)) {
+      return page_translate(i);
+    }
+  }
+  Log("NO FREE PAGES!");
+  assert(0);
 }
 
-void *slab_cache_alloc(struct slab_cache *scp) {
-  return NULL;
-}
-
-void slab_cache_grow(struct slab_cache *scp) {
-
-}
-
-void slab_cache_free(struct slab_cache *scp) {
-
-}
-
-void slab_cache_destroy(struct slab_cache *scp) {
-
-}
-
-void slab_cache_reap() {
-
+void free_used_page(void *pg_base) {
+  int nr_pg = (pg_base - slab_master->page_memory) / SZ_PAGE;
+  *page_indicator(nr_pg) = false;
 }
