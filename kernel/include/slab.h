@@ -2,7 +2,6 @@
 #define __SLAB_H__
 
 #include <stdint.h>
-#include <stdlib.h>
 #include <unistd.h>
 
 #define SZ_PAGE       ((size_t) sysconf(_SC_PAGESIZE))
