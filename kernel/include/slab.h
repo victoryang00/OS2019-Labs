@@ -9,7 +9,6 @@
 #define NR_LARGE_ITEMS 4
 
 struct slab_chain;
-struct slab_chain_head;
 struct slab_cache;
 struct slab_cache_head;
 
@@ -20,20 +19,17 @@ struct slab_chain {
   struct slab_cache *parent;
 };
 
-struct slab_chain_head {
-  struct slab_chain *prev;
-  struct slab_chain *next;
-};
-
 struct slab_cache {
   size_t item_size;
   int items_per_chain;
   int pages_per_chain;
-  struct slab_chain_head slab_free;
-  struct slab_chain_head slab_full;
+  struct slab_chain* free_prev;
+  struct slab_chain* free_next;
+  struct slab_chain* full_prev;
+  struct slab_chain* full_next;
 };
 
-struct _slab_cache_head {
+struct slab_cache_head {
   int nr_pages;
   void *page_memory;
   bool *page_indicators;
@@ -42,8 +38,6 @@ struct _slab_cache_head {
   struct slab_cache* next;
 };
 extern struct slab_cache_head *slab_master;
-
-
 
 void slab_init(void *, void *);
 struct slab_cache *slab_cache_create(size_t);
