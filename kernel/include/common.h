@@ -4,6 +4,7 @@
 #include <kernel.h>
 #include <nanos.h>
 #include <stdbool.h>
+#include <string.h>
 #include <assert.h>
 
 #define DEBUG
