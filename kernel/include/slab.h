@@ -1,6 +1,8 @@
 #ifndef __SLAB_H__
 #define __SLAB_H__
 
+#include <stdlib.h>
+
 #define SZ_PAGE (size_t)sysconf(_SC_PAGESIZE)
 #define NR_ITEMS_MAX 64
 
