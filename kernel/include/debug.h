@@ -10,7 +10,7 @@
   do { \
     if (!(cond)) { \
       fflush(stdout); \
-      Log(...)
+      Log(...); \
       assert(cond); \
     } \
   } while (0)
