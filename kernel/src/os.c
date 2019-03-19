@@ -1,5 +1,6 @@
 #include <common.h>
 #include <klib.h>
+#include <debug.h>
 
 static void os_init() {
   pmm->init();
@@ -14,10 +15,20 @@ static void hello() {
 
 static void os_run() {
   hello();
+  test_kmem();
   _intr_write(1);
   while (1) {
     _yield();
   }
+}
+
+static void test_kmem() {
+  Log("TEST START!");
+  int *a = malloc(sizeof(int));
+  Log("Address of a is %p", a);
+  *a = 1;
+  Log("Value of a is %d", *a);
+  Log("TEST PASS!");
 }
 
 static _Context *os_trap(_Event ev, _Context *context) {
