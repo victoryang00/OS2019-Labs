@@ -63,7 +63,7 @@ void kmem_cache_grow(struct kmem_cache *cp) {
     ip->used = false;
     ip->slab = sp;
     kmem_slab_add_item(sp, ip);
-    ip++;
+    ip = (struct kmem_item *) ((void *) ip + sp->item_size);
   }
 
   kmem_cache_add_slab(cp, sp);
