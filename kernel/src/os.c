@@ -32,13 +32,14 @@ static void kmem_test() {
     d[i] = i * 1.14514;
   }
   pmm->free(b);
-  int *a[10];
+  int **e = pmm->alloc(sizeof(int *) * 10);
   for (int i = 0; i < 10; ++i) {
-    a[i] = pmm->alloc(sizeof(int) * 100);
+    e[i] = pmm->alloc(sizeof(int) * 100);
   }
   pmm->free(d);
-  for (int i = 0; i < 10; ++i) pmm->free(a[i]);
+  for (int i = 0; i < 10; ++i) pmm->free(e[i]);
   pmm->free(a);
+  pmm->free(e);
 }
 
 static void os_run() {
