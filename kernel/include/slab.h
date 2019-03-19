@@ -74,8 +74,8 @@ static inline void kmem_slab_chain_remove(struct kmem_slab *head, struct kmem_sl
 }
 
 static inline void kmem_cache_move_slab_to_full(struct kmem_cache *cp, struct kmem_slab *sp) {
-  slab_chain_remove(cp->slabs_free, sp);
-  slab_chain_add(cp->slabs_full, sp);
+  kmem_slab_chain_remove(cp->slabs_free, sp);
+  kmem_slab_chain_add(cp->slabs_full, sp);
 }
 
 static inline void kmem_cache_move_slab_to_free(struct kmem_cache *cp, struct kmem_slab *sp) {
@@ -94,7 +94,7 @@ static inline void kmem_slab_add_item(struct kmem_slab *sp, struct kmem_item *it
   }
   sp->nr_items++;
   if (sp->nr_items >= sp->nr_items_max) {
-    move_slab_to_full(sp);
+    kmem_cache_move_slab_to_full(sp);
   }
 }
 
@@ -115,7 +115,7 @@ static inline void kmem_slab_remove_item(struct kmem_slab *sp, struct kmem_item 
   }
   item->next = NULL;
   if (sp->nr_items >= sp->nr_items_max) {
-    move_slab_to_free(sp);
+    kmem_cache_move_slab_to_free(sp);
   }
   sp->nr_items--;
 }
