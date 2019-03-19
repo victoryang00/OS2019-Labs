@@ -25,6 +25,7 @@ struct kmem_slab {
   void *pg_start;
   int nr_pages;
   struct kmem_item *items;
+  struct kmem_slab *next;
   struct kmem_cache *cache;
 };
 
