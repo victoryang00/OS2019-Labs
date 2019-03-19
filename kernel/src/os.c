@@ -35,7 +35,7 @@ static void kmem_test() {
   }
   Assert(memcmp(c, C, sizeof(c)) == 0, "C1 CHECK FAILED");
   pmm->free(c);
-  int *d = pmm->alloc(sizeof(double) * 2000);
+  double *d = pmm->alloc(sizeof(double) * 2000);
   for (int i = 0; i < 2000; ++i) {
     d[i] = D[i];
   }
