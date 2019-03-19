@@ -76,7 +76,7 @@ void *kmem_cache_alloc(struct kmem_cache *cp) {
   }
   struct kmem_slab *sp = cp->slabs_free;
   struct kmem_item *ip = sp->items;
-  while (likely(ip != NULL && ip->used)) ip = ip->next;
+  while (likely(ip != NULL && ip->used)) Log("%p", ip), ip = ip->next;
   Assert(ip, "Item pointer is null.");
   ip->used = true;
   sp->nr_items++;
