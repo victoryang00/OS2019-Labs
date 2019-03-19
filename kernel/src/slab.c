@@ -19,17 +19,19 @@ void kmem_init(void *heap_start, void *heap_end) {
 
 struct kmem_cache* kmem_cache_create(size_t size) {
   struct kmem_cache *cp = kc;
-  Log("finding for size %d + %d", size, sizeof(struct kmem_item));
-  while (cp->item_size > 0 && cp->item_size != size + sizeof(struct kmem_item)) {
+
+  size += sizeof(struct kmem_item);
+  Log("finding for size %d (actually %d)", size, size - sizeof(struct kmem_item));
+  while (cp->item_size > 0 && cp->item_size != size) {
     Log("cp: %d", cp->item_size);
     cp++;
   }
   if (cp->item_size > 0 && cp->item_size == size) {
-    Log("Cache of size %d exists.", size);
+    Log("Cache of size %d exists at %p", size, cp);
   } else {
-    Log("Cache does not exist, create a new one.");
+    Log("Cache does not exist, create a new one at %p", cp);
     Assert((void *) kc < (void *) pi, "Kcache zone is full.");
-    cp->item_size = sizeof(struct kmem_item) + size;
+    cp->item_size = size;
     if (cp->item_size <= SZ_SMALL_OBJ) {
       cp->nr_items_slab = (SZ_PAGE - sizeof(struct kmem_slab)) / cp->item_size;
       cp->nr_pages_alloc = 1;
