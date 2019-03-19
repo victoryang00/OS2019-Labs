@@ -45,9 +45,39 @@ void kmem_cache_grow(struct kmem_cache *cp) {
   sp->items = NULL;
   sp->cache = cp;
 
+  struct kmem_item *ip = pg_start;
   for (int i = 0; i < sp->nr_items_max; ++i) {
-    
+    ip->used = false;
+    ip->slab = sp;
+    kmem_slab_add_item(sp, ip);
+    ip++;
   }
+}
+
+void *kmem_cache_allow(struct kmem_cache *cp) {
+  if (unlikely(cp->slabs_free)) {
+    kmem_cache_grow(cp);
+  }
+  struct kmem_slab *sp = cp->slabs_free;
+  struct kmem_item *ip = sp->items;
+  while (ip && ip->used) ip = ip->next;
+  assert(ip != NULL);
+  ip->used = true;
+  sp->nr_items++;
+  if (sp->nr_items >= sp->nr_items_max) {
+    kmem_cache_move_slab_to_full(sp->cache, sp);
+  }
+  return ((void *) ip) + sizeof(struct kmem_item);
+}
+
+void kmem_cache_free(void *ptr) {
+  struct kmem_item *ip = (struct kmem_item *) (ptr - sizeof(struct kmem_item));
+  struct kmem_slab *sp = ip->slab;
+  ip->used = false;
+  if (sp->nr_items >= sp->nr_items_max) {
+    kmem_cache_move_slab_to_free(sp->cache, sp);
+  }
+  sp->nr_items--;
 }
 
 void* get_free_pages(int nr) {

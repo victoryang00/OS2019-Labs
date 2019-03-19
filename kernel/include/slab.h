@@ -40,6 +40,8 @@ struct kmem_cache {
 void kmem_init(void *, void *);
 struct kmem_cache* kmem_cache_create(size_t);
 void kmem_cache_grow(struct kmem_cache *cp);
+void *kmem_cache_alloc(struct kmem_cache *cp);
+void kmem_cache_free(void *);
 
 void *get_free_pages(int);
 void free_used_pages(void *, int);
@@ -92,32 +94,9 @@ static inline void kmem_slab_add_item(struct kmem_slab *sp, struct kmem_item *it
   } else {
     sp->items = item;
   }
-  sp->nr_items++;
   if (sp->nr_items >= sp->nr_items_max) {
     kmem_cache_move_slab_to_full(sp->cache, sp);
   }
-}
-
-static inline void kmem_slab_remove_item(struct kmem_slab *sp, struct kmem_item *item) {
-  if (sp->items == item) {
-    sp->items = sp->items->next;
-  } else {
-    struct kmem_item *ip = sp->items;
-    bool success = false;
-    for ( ; ip && ip->next; ip = ip->next) {
-      if (ip->next == item) {
-        ip->next= item->next;
-        success = true;
-        break;
-      }
-    }
-    assert(likely(success));
-  }
-  item->next = NULL;
-  if (sp->nr_items >= sp->nr_items_max) {
-    kmem_cache_move_slab_to_free(sp->cache, sp);
-  }
-  sp->nr_items--;
 }
 
 #endif
