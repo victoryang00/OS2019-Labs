@@ -1,6 +1,9 @@
 #include <common.h>
 #include <slab.h>
 
+#define _BREAKPOINT \
+  Assert(((struct kmem_item *)0x201070)->used == false, "201070 is used!")
+
 int nr_pages = 0;
 void *pm = NULL; // paging memory
 bool *pi = NULL; // paging indicators
@@ -74,7 +77,7 @@ void kmem_cache_grow(struct kmem_cache *cp) {
 }
 
 void *kmem_cache_alloc(struct kmem_cache *cp) {
-  Assert(((struct kmem_item *)0x201070)->used == false, "201070 is used!");
+  _BREAKPOINT;
   if (likely(cp->slabs_free == NULL)) {
     Log("No free slabs, allocating a new slab of %d items.", cp->nr_items_slab);
     kmem_cache_grow(cp);
@@ -82,15 +85,18 @@ void *kmem_cache_alloc(struct kmem_cache *cp) {
   } else {
     Log("The first free slab at %p has %d free items left.", cp->slabs_free, cp->nr_items_slab - cp->slabs_free->nr_items);
   }
+  _BREAKPOINT;
   struct kmem_slab *sp = cp->slabs_free;
   struct kmem_item *ip = sp->items;
   while (likely(ip->used)) Log("%p [%s] -> %p", ip, ip->used ? "used" : "free", ip->next), ip = ip->next;
   Assert((void *) ip >= pm && (void *) ip < (void *) kc, "Item %p is not in pm area!", ip);
+  _BREAKPOINT;
   ip->used = true;
   sp->nr_items++;
   if (sp->nr_items >= sp->nr_items_max) {
     kmem_cache_move_slab_to_full(sp->cache, sp);
   }
+  _BREAKPOINT;
   CLog(BG_GREEN, "Memory allocated at %p, slab at %p has %d items free now.", (void *)ip + sizeof(struct kmem_item), sp, sp->nr_items_max - sp->nr_items);
   return ((void *) ip) + sizeof(struct kmem_item);
 }
