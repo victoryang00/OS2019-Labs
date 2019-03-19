@@ -6,7 +6,7 @@
 volatile int exclusion = 0;
 
 static void pmm_init() {
-  Log("HEAP AREA: [$p, $p)", _heap.start, _heap.end);
+  Log("HEAP AREA: [%p, %p)", _heap.start, _heap.end);
   kmem_init(_heap.start, _heap.end);
   Log("INIT PASSED.");
 }
