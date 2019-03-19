@@ -63,7 +63,7 @@ void kmem_cache_grow(struct kmem_cache *cp) {
 
   struct kmem_item *ip = pg_start;
   for (int i = 0; i < sp->nr_items_max; ++i) {
-    Assert((void *) ip >= heap_start && (void *) ip <= heap_end, "Item outside of heap area!");
+    Assert((void *) ip >= pm && (void *) ip < kc, "Item is outside of pm area!");
     ip->used = false;
     ip->slab = sp;
     kmem_slab_add_item(sp, ip);
