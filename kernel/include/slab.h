@@ -48,12 +48,13 @@ void free_used_pages(void *, int);
 static inline void kmem_slab_chain_add(struct kmem_slab *head, struct kmem_slab *slab) {
   slab->next = NULL;
   if (head) {
-    head = slab;
-  } else {
     struct kmem_slab *sp = head;
     while (sp->next) sp = sp->next;
     sp->next = slab;
+  } else {
+    head = slab;
   }
+  Assert(head, "Chain head is null even after adding a slab.");
 };
 
 static inline void kmem_slab_chain_remove(struct kmem_slab *head, struct kmem_slab *slab) {
