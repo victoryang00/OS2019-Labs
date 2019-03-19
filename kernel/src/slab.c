@@ -95,7 +95,7 @@ void kmem_cache_free(void *ptr) {
     kmem_cache_move_slab_to_free(sp->cache, sp);
   }
   sp->nr_items--;
-  Log("Item at %p freed. Slab has %d items free now.", ptr, sp->nr_items_max - sp->nr_items);
+  CLog(BG_GREEN, "Item at %p freed. Slab has %d items free now.", ptr, sp->nr_items_max - sp->nr_items);
 }
 
 void* get_free_pages(int nr) {
