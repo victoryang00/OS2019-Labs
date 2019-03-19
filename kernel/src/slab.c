@@ -19,27 +19,30 @@ void kmem_init(void *heap_start, void *heap_end) {
 struct kmem_cache* kmem_cache_create(size_t size) {
   struct kmem_cache *cp = kc;
   while (cp->item_size > 0 && cp->item_size != size) cp++;
-  if (cp->item_size > 0 && cp->item_size == size) return cp;
-
-  if ((void *) kc >= (void *) pi) return NULL;
-  cp = (struct kmem_cache *) (kc++);
-  
-  cp->item_size = sizeof(struct kmem_item) + size;
-  if (cp->item_size <= SZ_SMALL_OBJ) {
-    cp->nr_items_slab = (SZ_PAGE - sizeof(struct kmem_slab)) / cp->item_size;
-    cp->nr_pages_alloc = 1;
+  if (cp->item_size > 0 && cp->item_size == size) {
+    Log("Cache of size %d exists.", size);
   } else {
-    cp->nr_items_slab = NR_LARGE_ITEMS;
-    cp->nr_pages_alloc = (cp->item_size * NR_LARGE_ITEMS + sizeof(struct kmem_slab) - 1) / SZ_PAGE;
+    Log("Cache does not exist, create a new one.");
+    Assert((void *) kc < (void *) pi, "Kcache zone is full.");
+    cp = (struct kmem_cache *) (kc++);
+  
+    cp->item_size = sizeof(struct kmem_item) + size;
+    if (cp->item_size <= SZ_SMALL_OBJ) {
+      cp->nr_items_slab = (SZ_PAGE - sizeof(struct kmem_slab)) / cp->item_size;
+      cp->nr_pages_alloc = 1;
+    } else {
+      cp->nr_items_slab = NR_LARGE_ITEMS;
+      cp->nr_pages_alloc = (cp->item_size * NR_LARGE_ITEMS + sizeof(struct kmem_slab) - 1) / SZ_PAGE;
+    }
+    cp->slabs_free = NULL;
+    cp->slabs_full = NULL;
   }
-  cp->slabs_free = NULL;
-  cp->slabs_full = NULL;
   return cp;
 }
 
 void kmem_cache_grow(struct kmem_cache *cp) {
   void *pg_start = get_free_pages(cp->nr_pages_alloc);
-  assert(pg_start != NULL);
+  Assert(pg_start != NULL, "No free pages of length %d in memory", cp->nr_pages_alloc);
   struct kmem_slab *sp = pg_start + cp->nr_pages_alloc * SZ_PAGE - sizeof(struct kmem_slab);
   
   sp->item_size = cp->item_size;
@@ -61,17 +64,19 @@ void kmem_cache_grow(struct kmem_cache *cp) {
 
 void *kmem_cache_alloc(struct kmem_cache *cp) {
   if (unlikely(cp->slabs_free)) {
+    Log("No free slabs, allocating a new slab.");
     kmem_cache_grow(cp);
   }
   struct kmem_slab *sp = cp->slabs_free;
   struct kmem_item *ip = sp->items;
   while (ip && ip->used) ip = ip->next;
-  assert(ip != NULL);
+  Assert(ip, "Item pointer is null.");
   ip->used = true;
   sp->nr_items++;
   if (sp->nr_items >= sp->nr_items_max) {
     kmem_cache_move_slab_to_full(sp->cache, sp);
   }
+  Log("item address %p, real address %p", ip, (void *)ip + sizeof(struct kmem_item));
   return ((void *) ip) + sizeof(struct kmem_item);
 }
 
