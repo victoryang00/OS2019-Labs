@@ -3,7 +3,7 @@
 #include <slab.h>
 
 static void pmm_init() {
-  slab_init(_heap.start, _heap.end);
+  kmem_init(_heap.start, _heap.end);
   Log("INIT PASSED.");
 }
 
