@@ -64,15 +64,13 @@ void kmem_cache_grow(struct kmem_cache *cp) {
 }
 
 void *kmem_cache_alloc(struct kmem_cache *cp) {
-  if (likely(cp->slabs_free == NULL)) {
+  while (likely(cp->slabs_free == NULL)) {
     Log("No free slabs, allocating a new slab.");
     kmem_cache_grow(cp);
   }
   struct kmem_slab *sp = cp->slabs_free;
   struct kmem_item *ip = sp->items;
-  Log("ip=%p", ip);
   while (likely(ip != NULL && ip->used)) ip = ip->next;
-  Log("ip=%p", ip);
   Assert(ip, "Item pointer is null.");
   ip->used = true;
   sp->nr_items++;
