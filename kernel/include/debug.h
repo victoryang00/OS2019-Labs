@@ -29,6 +29,7 @@
 
 #else
 #define Log(format, ...) ;
+#define CLog(color, format, ...) ;
 #endif
 
 #define Assert(cond, format, ...) \
