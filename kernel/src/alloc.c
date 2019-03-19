@@ -21,6 +21,7 @@ static void *kalloc(size_t size) {
   Assert(((struct kmem_item *)0x201070)->used == false, "201070 is used!");
   Assert(ret >= _heap.start && ret <= _heap.end, "MALLOC NOT IN HEAP AREA");
   unlock(&exclusion);
+  Assert(((struct kmem_item *)0x201070)->used == false, "201070 is used!");
   return ret;
 }
 
