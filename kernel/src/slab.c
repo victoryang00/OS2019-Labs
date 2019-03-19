@@ -92,6 +92,7 @@ void kmem_cache_free(void *ptr) {
 }
 
 void* get_free_pages(int nr) {
+  Log("Getting %d free memory pages.", nr);
   bool success = true;
   for (int i = 0; i < nr_pages - nr; ++i) {
     success = true;
@@ -112,6 +113,7 @@ void* get_free_pages(int nr) {
 }
 
 void free_used_pages(void *base, int nr) {
+  Log("Freeing %d memory pages from %p", nr, base);
   int b = (base - pm) / SZ_PAGE;
   for (int i = 0; i < nr; ++i) {
     *(pi + b + i) = false;
