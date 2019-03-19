@@ -94,7 +94,7 @@ static inline void kmem_slab_add_item(struct kmem_slab *sp, struct kmem_item *it
   }
   sp->nr_items++;
   if (sp->nr_items >= sp->nr_items_max) {
-    kmem_cache_move_slab_to_full(sp);
+    kmem_cache_move_slab_to_full(sp->cache, sp);
   }
 }
 
@@ -115,7 +115,7 @@ static inline void kmem_slab_remove_item(struct kmem_slab *sp, struct kmem_item 
   }
   item->next = NULL;
   if (sp->nr_items >= sp->nr_items_max) {
-    kmem_cache_move_slab_to_free(sp);
+    kmem_cache_move_slab_to_free(sp->cache, sp);
   }
   sp->nr_items--;
 }
