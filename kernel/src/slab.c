@@ -11,11 +11,11 @@ void kmem_init(void *heap_start, void *heap_end) {
   nr_pages = (heap_end - heap_start) / (SZ_PAGE + sizeof(bool)) - NR_CACHE_PAGES;
   pm = heap_start;
   kc = (struct kmem_cache *) (heap_start + nr_pages * SZ_PAGE);
-  pi = (bool *) (kc + NR_CACHE_PAGES * SZ_PAGE);
+  pi = (bool *) (heap_start + (nr_pages + NR_CACHE_PAGES) * SZ_PAGE);
   Log("pm=%p, kc=%p, pi=%p.", pm, kc, pi);
-  Assert(pm >= heap_start && pm + nr_pages * SZ_PAGE <= heap_end,       "pm is invalid!");
-  Assert(kc >= heap_start && kc + NR_CACHE_PAGES * SZ_PAGE <= heap_end, "kc is invalid!");
-  Assert(pi >= heap_start && pi + nr_pages * sizeof(bool) <= heap_end,  "pi is invalid!");
+  Assert((void *) pm >= heap_start && (void *) pm + nr_pages * SZ_PAGE <= heap_end,       "pm is invalid!");
+  Assert((void *) kc >= heap_start && (void *) kc + NR_CACHE_PAGES * SZ_PAGE <= heap_end, "kc is invalid!");
+  Assert((void *) pi >= heap_start && (void *) pi + nr_pages * sizeof(bool) <= heap_end,  "pi is invalid!");
   memset(kc, 0, NR_CACHE_PAGES * SZ_PAGE);
   memset(pi, 0, nr_pages * sizeof(bool));
 }
