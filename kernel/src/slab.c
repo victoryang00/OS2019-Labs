@@ -23,7 +23,7 @@ struct kmem_cache* kmem_cache_create(size_t size) {
   size += sizeof(struct kmem_item);
   Log("Looking for cache of size %d (actually %d).", size, size - sizeof(struct kmem_item));
   while (cp->item_size > 0 && cp->item_size != size) {
-    Log("cp: %d.", cp->item_size);
+    Log("However, cache at %p has item size %d.", cp, cp->item_size);
     cp++;
   }
   if (cp->item_size > 0 && cp->item_size == size) {
