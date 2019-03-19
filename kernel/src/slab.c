@@ -101,21 +101,23 @@ void kmem_cache_free(void *ptr) {
 
 void* get_free_pages(int nr) {
   Log("Getting %d free memory pages.", nr);
-  bool success = true;
-  for (int i = 0; i < nr_pages - nr; ++i) {
-    success = true;
-    for (int j = 0; j < nr; ++j) {
+  for (int i = 0; i < nr_pages - nr; ) {
+    int j = 0;
+    bool success = true;
+    for (j = 0; j < nr; ++j) {
       if (likely(*(pi + i + j))) {
         success = false;
         break;
       }
     }
-    if (success) {
+    if (likely(success)) {
       for (int j = 0; j < nr; ++j) {
         *(pi + i + j) = true;
       }
       Log("Memory pages start at %p.", pm + i * SZ_PAGE);
       return pm + i * SZ_PAGE;
+    } else {
+      i += j + 1;
     }
   }
   return NULL;
