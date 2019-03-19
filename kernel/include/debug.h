@@ -10,7 +10,7 @@
   do { \
     if (!(cond)) { \
       fflush(stdout); \
-      Log("\033[31m[ASSERT]\033[0m" format, ...); \
+      Log("\033[31m[ASSERT]\033[0m" format, __VA_ARGS__); \
       assert(cond); \
     } \
   } while (0)
