@@ -15,7 +15,7 @@ struct kmem_cache;
 struct kmem_item {
   bool used;
   struct kmem_slab *slab;
-}
+};
 
 struct kmem_slab {
   size_t item_size;
@@ -25,7 +25,7 @@ struct kmem_slab {
   int nr_pages;
   struct kmem_item *items;
   struct kmem_cache *cache;
-}
+};
 
 struct kmem_cache {
   size_t item_size;
@@ -33,7 +33,7 @@ struct kmem_cache {
   int nr_pages_alloc;
   struct kmem_slab *slabs_free;
   struct kmem_slab *slabs_full;
-}
+};
 
 void kmem_init(void *, void *);
 struct kmem_cache* kmem_cache_create(size_t);
@@ -42,7 +42,7 @@ void kmem_cache_grow(struct kmem_cache *cp);
 void *get_free_pages(int);
 void free_used_pages(void *, int);
 
-struct inline void kmem_slab_chain_add(struct kmem_slab *head, struct kmem_slab *slab) {
+static inline void kmem_slab_chain_add(struct kmem_slab *head, struct kmem_slab *slab) {
   slab->next = NULL;
   if (head) {
     struct kmem_slab *sp = head;
@@ -51,9 +51,9 @@ struct inline void kmem_slab_chain_add(struct kmem_slab *head, struct kmem_slab 
   } else {
     head = slab;
   }
-}
+};
 
-struct inline void kmem_slab_chain_remove(struct kmem_slab *head, struct kmem_slab *slab) {
+static inline void kmem_slab_chain_remove(struct kmem_slab *head, struct kmem_slab *slab) {
   if (head == slab) {
     head = slab->next;
   } else {
