@@ -75,13 +75,11 @@ static inline void kmem_cache_remove_slab(struct kmem_cache *cp, struct kmem_sla
 }
 
 static inline void kmem_cache_move_slab_to_full(struct kmem_cache *cp, struct kmem_slab *sp) {
-  kmem_slab_chain_remove(cp->slabs_free, sp);
-  kmem_slab_chain_add(cp->slabs_full, sp);
+  Panic("not implemented!");
 }
 
 static inline void kmem_cache_move_slab_to_free(struct kmem_cache *cp, struct kmem_slab *sp) {
-  kmem_slab_chain_remove(cp->slabs_full, sp);
-  kmem_slab_chain_add(cp->slabs_free, sp);
+  Panic("not implemented!");
 }
 
 static inline void kmem_slab_add_item(struct kmem_slab *sp, struct kmem_item *item) {
