@@ -10,7 +10,7 @@
   do { \
     if (!(cond)) { \
       fflush(stdout); \
-      Log("ASSERT" fotmat, ...); \
+      Log("\033[31m[ASSERT]\033[0m" format, ...); \
       assert(cond); \
     } \
   } while (0)
