@@ -9,11 +9,16 @@
 #define Assert(cond, format, ...) \
   do { \
     if (!(cond)) { \
-      fflush(stdout); \
-      Log("\033[31m[ASSERT]\033[0m" format, __VA_ARGS__); \
+      Log("\033[31m[ASSERT]\033[0m" format, ## __VA_ARGS__); \
       assert(cond); \
     } \
   } while (0)
+
+#else
+
+#define Log(format, ...)
+#define Assert(cond, format, ...)
+
 #endif
 
 #endif
