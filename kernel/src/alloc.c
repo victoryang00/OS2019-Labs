@@ -12,7 +12,9 @@ static void pmm_init() {
 }
 
 static void *kalloc(size_t size) {
+  Assert(((struct kmem_item *)0x201070)->used == false, "201070 is used!");
   lock(&exclusion);
+  Assert(((struct kmem_item *)0x201070)->used == false, "201070 is used!");
   struct kmem_cache *cp = kmem_cache_create(size);
   void *ret = kmem_cache_alloc(cp);
   Assert(ret, "MALLOC RETURNED NULL");
