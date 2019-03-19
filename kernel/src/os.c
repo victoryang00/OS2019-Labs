@@ -14,7 +14,7 @@ static void hello() {
 }
 
 static int A[100] = {1, 2, 3, 4, 5, 1, 1, 4, 5, 1, 4, 2, 3, 3, 3, 3, 3, 3, 9, 1, 0, 2};
-static int B[100] = {true, false, true, false, true, false};
+static bool B[100] = {true, false, true, false, true, false};
 static char C[100] = "FUCKFUCKFUCKFUCKFUCKFUCKFUCKAJDHSFJHJKEWHJLHDSJKHFKJHSKJDHJEHWUHYROEHD";
 static double D[2000] = {0.121343287482374, 28343294, 329748238, 032103212, 820.121, 219382914.4324};
 
