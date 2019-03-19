@@ -15,19 +15,24 @@ static void hello() {
 
 static void kmem_test() {
   int *a = pmm->alloc(sizeof(int) * 100);
-  for (int i = 0; i < 4; ++i) {
+  for (int i = 0; i < 100; ++i) {
     a[i] = i;
   }
-  int *b = pmm->alloc(sizeof(int) * 100);
-  for (int i = 0; i < 4; ++i) {
+  int *b = pmm->alloc(sizeof(bool) * 100);
+  for (int i = 0; i < 100; ++i) {
     b[i] = i;
   }
-  int *c = pmm->alloc(sizeof(int) * 100);
-  for (int i = 0; i < 4; ++i) {
+  int *c = pmm->alloc(sizeof(char) * 100);
+  for (int i = 0; i < 100; ++i) {
     c[i] = i;
   }
   pmm->free(a);
   pmm->free(c);
+  int *d = pmm->alloc(sizeof(double) * 2000);
+  for (int i = 0; i < 2000; ++i) {
+    d[i] = i * 1.14514;
+  }
+  pmm->free(d);
   pmm->free(b);
 }
 
