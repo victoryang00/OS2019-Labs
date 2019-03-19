@@ -32,7 +32,7 @@ struct kmem_cache* kmem_cache_create(size_t size) {
   if (cp->item_size > 0 && cp->item_size == size) {
     Log("Cache of size %d exists at %p.", size, cp);
   } else {
-    Log("Cache does not exist, create a new one at %p.", cp);
+    Log("Cache of size %d does not exist, create a new one at %p.", cp->item_size, cp);
     Assert((void *) kc < (void *) pi, "Kcache zone is full.");
     cp->item_size = size;
     if (cp->item_size <= SZ_SMALL_OBJ) {
@@ -79,7 +79,8 @@ void *kmem_cache_alloc(struct kmem_cache *cp) {
   }
   struct kmem_slab *sp = cp->slabs_free;
   struct kmem_item *ip = sp->items;
-  while (likely(ip != NULL && ip->used)) ip = ip->next;
+  while (likely(ip != NULL && ip->used)) Log("%p", ip), ip = ip->next;
+  Log("%p", ip);
   Assert(ip, "Item pointer is null.");
   ip->used = true;
   sp->nr_items++;
