@@ -3,22 +3,21 @@
 
 int nr_pages = 0;
 void *pm = NULL; // paging memory
-void *pi = NULL; // paging indicators
-void *kc = NULL; // kmem caches
+bool *pi = NULL; // paging indicators
+struct kmem_cache *kc = NULL; // kmem caches
 
 void kmem_init(void *heap_start, void *heap_end) {
   assert(heap_end > heap_start);
   nr_pages = (heap_end - heap_start) / (SZ_PAGE + sizeof(bool)) - NR_CACHE_PAGES;
   pm = heap_start;
-  kc = heap_start + nr_pages * SZ_PAGE;
-  pi = kc + NR_CACHE_PAGES * SZ_PAGE;
+  kc = (struct kmem_cahe *) (heap_start + nr_pages * SZ_PAGE);
+  pi = (bool *) (kc + NR_CACHE_PAGES * SZ_PAGE);
   memset(pi, 0, nr_pages * sizeof(bool));
 }
 
 struct kmem_cache* kmem_cache_create(size_t size) {
   if (kc >= pi) return NULL;
-  struct kmem_cache* cp = (struct kmem_cache *)kc;
-  kc += sizeof(kmem_cache);
+  struct kmem_cache* cp = (struct kmem_cache *)(kc++);
   
   cp->item_size = sizeof(struct kmem_item) + size;
   if (cp->item_size <= SZ_SMALL_OBJ) {
@@ -72,7 +71,7 @@ void* get_free_pages(int nr) {
 }
 
 void free_used_pages(void *base, int nr) {
-  int b = (base - pm_start) / SZ_PAGE;
+  int b = (base - pm) / SZ_PAGE;
   for (int i = 0; i < nr; ++i) {
     *(pi + b + i) = false;
   }
