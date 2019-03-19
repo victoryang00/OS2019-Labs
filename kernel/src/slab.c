@@ -19,7 +19,11 @@ void kmem_init(void *heap_start, void *heap_end) {
 
 struct kmem_cache* kmem_cache_create(size_t size) {
   struct kmem_cache *cp = kc;
-  while (cp->item_size > 0 && cp->item_size != size) cp++;
+  Log("finding for size %d", size);
+  while (cp->item_size > 0 && cp->item_size != size) {
+    Log("cp: %d", cp->item_size);
+    cp++;
+  }
   if (cp->item_size > 0 && cp->item_size == size) {
     Log("Cache of size %d exists.", size);
   } else {
