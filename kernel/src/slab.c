@@ -74,7 +74,7 @@ void kmem_cache_grow(struct kmem_cache *cp) {
 }
 
 void *kmem_cache_alloc(struct kmem_cache *cp) {
-  Assert(*((struct kmem_item)0x201070)->used == false, "201070 is used!");
+  Assert(*((struct kmem_item *)0x201070)->used == false, "201070 is used!");
   if (likely(cp->slabs_free == NULL)) {
     Log("No free slabs, allocating a new slab of %d items.", cp->nr_items_slab);
     kmem_cache_grow(cp);
