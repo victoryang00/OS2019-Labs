@@ -7,12 +7,15 @@ bool *pi = NULL; // paging indicators
 struct kmem_cache *kc = NULL; // kmem caches
 
 void kmem_init(void *heap_start, void *heap_end) {
-  assert(heap_end > heap_start);
+  Assert(heap_end > heap_start, "INVALID HEAP SIZE!");
   nr_pages = (heap_end - heap_start) / (SZ_PAGE + sizeof(bool)) - NR_CACHE_PAGES;
   pm = heap_start;
   kc = (struct kmem_cache *) (heap_start + nr_pages * SZ_PAGE);
   pi = (bool *) (kc + NR_CACHE_PAGES * SZ_PAGE);
   Log("pm=%p, kc=%p, pi=%p.", pm, kc, pi);
+  Assert(pm >= heap_start && pm + nr_pages * SZ_PAGE <= heap_end,       "pm is invalid!");
+  Assert(kc >= heap_start && kc + NR_CACHE_PAGES * SZ_PAGE <= heap_end, "kc is invalid!");
+  Assert(pi >= heap_start && pi + nr_pages * sizeof(bool) <= heap_end,  "pi is invalid!");
   memset(kc, 0, NR_CACHE_PAGES * SZ_PAGE);
   memset(pi, 0, nr_pages * sizeof(bool));
 }
@@ -105,7 +108,7 @@ void* get_free_pages(int nr) {
     int j = 0;
     bool success = true;
     for (j = 0; j < nr; ++j) {
-      if (likely(pi[i + j])) {
+      if (likely(*(pi + i + j))) {
         success = false;
         break;
       }
@@ -113,7 +116,6 @@ void* get_free_pages(int nr) {
     if (likely(success)) {
       for (int j = 0; j < nr; ++j) {
         *(pi + i + j) = true;
-        Log("pi %p => %s", pi, *(pi) ? "true" : "false");
       }
       Log("Memory pages start at %p.", pm + i * SZ_PAGE);
       return pm + i * SZ_PAGE;
@@ -128,6 +130,6 @@ void free_used_pages(void *base, int nr) {
   Log("Freeing %d memory pages from %p.", nr, base);
   int b = (base - pm) / SZ_PAGE;
   for (int i = 0; i < nr; ++i) {
-    pi[b + i] = false;
+    *(pi + b + i) = false;
   }
 }
