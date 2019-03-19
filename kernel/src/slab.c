@@ -106,6 +106,7 @@ void* get_free_pages(int nr) {
       for (int j = 0; j < nr; ++j) {
         *(pi + i + j) = true;
       }
+      Log("Memory pages start at %p", pm + i * SZ_PAGE);
       return pm + i * SZ_PAGE;
     }
   }
