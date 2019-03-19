@@ -52,7 +52,7 @@ static inline void kmem_cache_add_slab(struct kmem_cache *cp, struct kmem_slab *
     while (sp->next) sp = sp->next;
     sp->next = slab;
   } else {
-    cp->slans_free = slab;
+    cp->slabs_free = slab;
   }
 };
 
