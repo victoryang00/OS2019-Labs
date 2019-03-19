@@ -1,9 +1,6 @@
 #include <common.h>
 #include <slab.h>
 
-#define _BREAKPOINT \
-  Assert(((struct kmem_item *)0x201070)->used == false, "201070 is used!")
-
 int nr_pages = 0;
 void *pm = NULL; // paging memory
 bool *pi = NULL; // paging indicators
@@ -27,16 +24,13 @@ struct kmem_cache* kmem_cache_create(size_t size) {
   struct kmem_cache *cp = kc;
 
   size += sizeof(struct kmem_item);
-  _BREAKPOINT;
   Log("Looking for cache of size %d (actually %d).", size, size - sizeof(struct kmem_item));
   while (cp->item_size > 0 && cp->item_size != size) {
     Log("However, cache at %p has item size %d.", cp, cp->item_size);
     cp++;
-    _BREAKPOINT;
   }
   if (cp->item_size > 0 && cp->item_size == size) {
     Log("Cache of size %d exists at %p.", size, cp);
-    _BREAKPOINT;
   } else {
     Log("Cache of size %d does not exist, create a new one at %p.", cp->item_size, cp);
     Assert((void *) kc < (void *) pi, "Kcache zone is full.");
@@ -80,7 +74,6 @@ void kmem_cache_grow(struct kmem_cache *cp) {
 }
 
 void *kmem_cache_alloc(struct kmem_cache *cp) {
-  _BREAKPOINT;
   if (likely(cp->slabs_free == NULL)) {
     Log("No free slabs, allocating a new slab of %d items.", cp->nr_items_slab);
     kmem_cache_grow(cp);
@@ -88,18 +81,15 @@ void *kmem_cache_alloc(struct kmem_cache *cp) {
   } else {
     Log("The first free slab at %p has %d free items left.", cp->slabs_free, cp->nr_items_slab - cp->slabs_free->nr_items);
   }
-  _BREAKPOINT;
   struct kmem_slab *sp = cp->slabs_free;
   struct kmem_item *ip = sp->items;
   while (likely(ip->used)) Log("%p [%s] -> %p", ip, ip->used ? "used" : "free", ip->next), ip = ip->next;
   Assert((void *) ip >= pm && (void *) ip < (void *) kc, "Item %p is not in pm area!", ip);
-  _BREAKPOINT;
   ip->used = true;
   sp->nr_items++;
   if (sp->nr_items >= sp->nr_items_max) {
     kmem_cache_move_slab_to_full(sp->cache, sp);
   }
-  _BREAKPOINT;
   CLog(BG_GREEN, "Memory allocated at %p, slab at %p has %d items free now.", (void *)ip + sizeof(struct kmem_item), sp, sp->nr_items_max - sp->nr_items);
   return ((void *) ip) + sizeof(struct kmem_item);
 }
