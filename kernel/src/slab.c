@@ -47,7 +47,7 @@ struct kmem_cache* kmem_cache_create(size_t size) {
 
 void kmem_cache_grow(struct kmem_cache *cp) {
   void *pg_start = get_free_pages(cp->nr_pages_alloc);
-  Log("%s", *pi ? "true" : "false")
+  Log("%s", *pi ? "true" : "false");
   Assert(pg_start != NULL, "No free pages of length %d in memory", cp->nr_pages_alloc);
   struct kmem_slab *sp = pg_start + cp->nr_pages_alloc * SZ_PAGE - sizeof(struct kmem_slab);
   
