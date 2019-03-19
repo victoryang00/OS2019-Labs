@@ -27,13 +27,16 @@ struct kmem_cache* kmem_cache_create(size_t size) {
   struct kmem_cache *cp = kc;
 
   size += sizeof(struct kmem_item);
+  _BREAKPOINT;
   Log("Looking for cache of size %d (actually %d).", size, size - sizeof(struct kmem_item));
   while (cp->item_size > 0 && cp->item_size != size) {
     Log("However, cache at %p has item size %d.", cp, cp->item_size);
     cp++;
+    _BREAKPOINT;
   }
   if (cp->item_size > 0 && cp->item_size == size) {
     Log("Cache of size %d exists at %p.", size, cp);
+    _BREAKPOINT;
   } else {
     Log("Cache of size %d does not exist, create a new one at %p.", cp->item_size, cp);
     Assert((void *) kc < (void *) pi, "Kcache zone is full.");
