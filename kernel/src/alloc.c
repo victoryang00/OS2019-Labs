@@ -12,8 +12,8 @@ static void pmm_init() {
 
 static void *kalloc(size_t size) {
   lock(&exclusion);
-  struct kmem_cache *cp = kmem_cache_get(size);
-  void *ret = kmem_cache_allow(cp);
+  struct kmem_cache *cp = kmem_cache_create(size);
+  void *ret = kmem_cache_alloc(cp);
   unlock(&exclusion);
   return ret;
 }

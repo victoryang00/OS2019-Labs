@@ -12,12 +12,17 @@ void kmem_init(void *heap_start, void *heap_end) {
   pm = heap_start;
   kc = (struct kmem_cache *) (heap_start + nr_pages * SZ_PAGE);
   pi = (bool *) (kc + NR_CACHE_PAGES * SZ_PAGE);
+  memset(kc, 0, NR_CACHE_PAGES * SZ_PAGE);
   memset(pi, 0, nr_pages * sizeof(bool));
 }
 
 struct kmem_cache* kmem_cache_create(size_t size) {
+  struct kmem_cache *cp = kc;
+  while (cp->item_size > 0 && cp->item_size != size) cp++;
+  if (cp->item_size > 0 && cp->item_size == size) return cp;
+
   if ((void *) kc >= (void *) pi) return NULL;
-  struct kmem_cache* cp = (struct kmem_cache *) (kc++);
+  cp = (struct kmem_cache *) (kc++);
   
   cp->item_size = sizeof(struct kmem_item) + size;
   if (cp->item_size <= SZ_SMALL_OBJ) {
