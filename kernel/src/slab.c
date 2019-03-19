@@ -61,6 +61,8 @@ void kmem_cache_grow(struct kmem_cache *cp) {
     kmem_slab_add_item(sp, ip);
     ip++;
   }
+
+  kmem_slab_chain_add(cp->slabs_free, sp);
 }
 
 void *kmem_cache_alloc(struct kmem_cache *cp) {
