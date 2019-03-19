@@ -12,7 +12,7 @@ void kmem_init(void *heap_start, void *heap_end) {
   pm = heap_start;
   kc = (struct kmem_cache *) (heap_start + nr_pages * SZ_PAGE);
   pi = (bool *) (kc + NR_CACHE_PAGES * SZ_PAGE);
-  Log("pm=%p, kc=%p, pi=%p", pm, kc, pi);
+  Log("pm=%p, kc=%p, pi=%p.", pm, kc, pi);
   memset(kc, 0, NR_CACHE_PAGES * SZ_PAGE);
   memset(pi, 0, nr_pages * sizeof(bool));
 }
@@ -21,15 +21,15 @@ struct kmem_cache* kmem_cache_create(size_t size) {
   struct kmem_cache *cp = kc;
 
   size += sizeof(struct kmem_item);
-  Log("finding for size %d (actually %d)", size, size - sizeof(struct kmem_item));
+  Log("Looking for cache of size %d (actually %d).", size, size - sizeof(struct kmem_item));
   while (cp->item_size > 0 && cp->item_size != size) {
-    Log("cp: %d", cp->item_size);
+    Log("cp: %d.", cp->item_size);
     cp++;
   }
   if (cp->item_size > 0 && cp->item_size == size) {
-    Log("Cache of size %d exists at %p", size, cp);
+    Log("Cache of size %d exists at %p.", size, cp);
   } else {
-    Log("Cache does not exist, create a new one at %p", cp);
+    Log("Cache does not exist, create a new one at %p.", cp);
     Assert((void *) kc < (void *) pi, "Kcache zone is full.");
     cp->item_size = size;
     if (cp->item_size <= SZ_SMALL_OBJ) {
@@ -83,7 +83,7 @@ void *kmem_cache_alloc(struct kmem_cache *cp) {
   if (sp->nr_items >= sp->nr_items_max) {
     kmem_cache_move_slab_to_full(sp->cache, sp);
   }
-  CLog(BG_GREEN, "item allocated at %p (ret-addr=%p), slab has %d items free now", ip, (void *)ip + sizeof(struct kmem_item), sp->nr_items_max - sp->nr_items);
+  CLog(BG_GREEN, "item allocated at %p (ret-addr=%p), slab has %d items free now.", ip, (void *)ip + sizeof(struct kmem_item), sp->nr_items_max - sp->nr_items);
   return ((void *) ip) + sizeof(struct kmem_item);
 }
 
@@ -113,7 +113,7 @@ void* get_free_pages(int nr) {
       for (int j = 0; j < nr; ++j) {
         *(pi + i + j) = true;
       }
-      Log("Memory pages start at %p", pm + i * SZ_PAGE);
+      Log("Memory pages start at %p.", pm + i * SZ_PAGE);
       return pm + i * SZ_PAGE;
     }
   }
@@ -121,7 +121,7 @@ void* get_free_pages(int nr) {
 }
 
 void free_used_pages(void *base, int nr) {
-  Log("Freeing %d memory pages from %p", nr, base);
+  Log("Freeing %d memory pages from %p.", nr, base);
   int b = (base - pm) / SZ_PAGE;
   for (int i = 0; i < nr; ++i) {
     *(pi + b + i) = false;
