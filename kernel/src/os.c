@@ -18,11 +18,11 @@ static void kmem_test() {
   for (int i = 0; i < 100; ++i) {
     a[i] = i;
   }
-  int *b = pmm->alloc(sizeof(bool) * 100);
+  bool *b = pmm->alloc(sizeof(bool) * 100);
   for (int i = 0; i < 100; ++i) {
     b[i] = i;
   }
-  int *c = pmm->alloc(sizeof(char) * 100);
+  char *c = pmm->alloc(sizeof(char) * 100);
   for (int i = 0; i < 100; ++i) {
     c[i] = i;
   }
