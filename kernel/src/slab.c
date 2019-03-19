@@ -40,7 +40,7 @@ struct kmem_cache* kmem_cache_create(size_t size) {
       cp->nr_pages_alloc = 1;
     } else {
       cp->nr_items_slab = NR_LARGE_ITEMS;
-      cp->nr_pages_alloc = ((cp->item_size * NR_LARGE_ITEMS) + sizeof(struct kmem_slab) - 1) / SZ_PAGE + 1;
+      cp->nr_pages_alloc = (cp->item_size * NR_LARGE_ITEMS + sizeof(struct kmem_slab) - 1) / (SZ_PAGE) + 1;
     }
     cp->slabs_free = NULL;
     cp->slabs_full = NULL;
