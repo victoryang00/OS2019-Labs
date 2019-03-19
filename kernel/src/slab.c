@@ -16,8 +16,8 @@ void kmem_init(void *heap_start, void *heap_end) {
 }
 
 struct kmem_cache* kmem_cache_create(size_t size) {
-  if (kc >= pi) return NULL;
-  struct kmem_cache* cp = (struct kmem_cache *)(kc++);
+  if ((void *) kc >= pi) return NULL;
+  struct kmem_cache* cp = (struct kmem_cache *) (kc++);
   
   cp->item_size = sizeof(struct kmem_item) + size;
   if (cp->item_size <= SZ_SMALL_OBJ) {

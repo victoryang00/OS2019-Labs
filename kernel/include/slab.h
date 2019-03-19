@@ -14,6 +14,7 @@ struct kmem_cache;
 
 struct kmem_item {
   bool used;
+  struct kmem_item *next;
   struct kmem_slab *slab;
 };
 
