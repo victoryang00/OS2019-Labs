@@ -59,7 +59,6 @@ void kmem_cache_grow(struct kmem_cache *cp) {
     ip->used = false;
     ip->slab = sp;
     kmem_slab_add_item(sp, ip);
-    Log("add an item at %p", ip);
     ip++;
   }
 }
@@ -71,7 +70,7 @@ void *kmem_cache_alloc(struct kmem_cache *cp) {
   }
   struct kmem_slab *sp = cp->slabs_free;
   struct kmem_item *ip = sp->items;
-  while (ip && ip->used) ip = ip->next;
+  while (likely(ip != NULL && ip->used)) ip = ip->next;
   Assert(ip, "Item pointer is null.");
   ip->used = true;
   sp->nr_items++;
