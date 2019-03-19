@@ -3,8 +3,8 @@
 
 #ifdef DEBUG
 #define Log(format, ...) \
-  printf("\33[0m\33[1;44m[%s,%d,%s] " format "\33[0m\n", \
-    __FILE__, __LINE__, __func__, ## __VA_ARGS__)
+  printf("\33[0m\33[1;44m[%d][%s,%d,%s] " format "\33[0m\n", \
+    _cpu(), __FILE__, __LINE__, __func__, ## __VA_ARGS__)
 #else
 #define Log(format, ...) ;
 #endif
