@@ -8,7 +8,8 @@
 #define Assert(cond, format, ...) \
   do { \
     if (!(cond)) { \
-      printf("\33[0m[\33[1;31mAssert\33[0m]\33[1;34m[%s,%d,%s] " format "\33[0m\n", __FILE__, __LINE__, __func__, ## __VA_ARGS__) \
+      printf("\33[0m[\33[1;31mAssert\33[0m]\33[1;34m[%s,%d,%s] " format "\33[0m\n", \
+          __FILE__, __LINE__, __func__, ## __VA_ARGS__); \
       assert(cond); \
     } \
   } while (0)
