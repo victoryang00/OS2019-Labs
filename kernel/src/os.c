@@ -14,7 +14,7 @@ static void hello() {
 }
 
 static void kmem_test() {
-  int *a = pmm->alloc(sizeof(int) * 4);
+  int *a = pmm->alloc(sizeof(int) * 1000);
   //printf("a[] is an 4-int array at %p\n", a);
   for (int i = 0; i < 4; ++i) {
     a[i] = i;
