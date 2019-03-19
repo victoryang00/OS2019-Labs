@@ -26,11 +26,11 @@ static void os_run() {
 
 static void test_kmem() {
   Log("TEST START!");
-  int *a = kalloc(sizeof(int));
+  int *a = pmm->alloc(sizeof(int));
   Log("Address of a is %p", a);
   *a = 1;
   Log("Value of a is %d", *a);
-  kfree(a);
+  pmm->free(a);
   Log("TEST PASS!");
 }
 
