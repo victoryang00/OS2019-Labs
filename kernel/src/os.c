@@ -23,30 +23,33 @@ static void kmem_test() {
   for (int i = 0; i < 100; ++i) {
     a[i] = A[i];
   }
+  Assert(memcmp(a, A, sizeof(a)) == 0, "A1 CHECK FAILED");
   bool *b = pmm->alloc(sizeof(bool) * 100);
   for (int i = 0; i < 100; ++i) {
     b[i] = B[i];
   }
+  Assert(memcmp(a, A, sizeof(a)) == 0, "A2 CHECK FAILED");
   char *c = pmm->alloc(sizeof(char) * 100);
   for (int i = 0; i < 100; ++i) {
     c[i] = C[i];
   }
-  Assert(memcmp(c, C, sizeof(c)) == 0, "C FAILED");
+  Assert(memcmp(c, C, sizeof(c)) == 0, "C1 CHECK FAILED");
   pmm->free(c);
   int *d = pmm->alloc(sizeof(double) * 2000);
   for (int i = 0; i < 2000; ++i) {
     d[i] = D[i];
   }
-  Assert(memcmp(b, B, sizeof(b)) == 0, "B FAILED");
+  Assert(memcmp(d, D, sizeof(d)) == 0, "D1 CHECK FAILED");
+  Assert(memcmp(b, B, sizeof(b)) == 0, "B1 CHECK FAILED");
   pmm->free(b);
   int **e = pmm->alloc(sizeof(int *) * 10);
   for (int i = 0; i < 10; ++i) {
     e[i] = pmm->alloc(sizeof(int) * 100);
   }
-  Assert(memcmp(d, D, sizeof(d)) == 0, "D FAILED");
+  Assert(memcmp(d, D, sizeof(d)) == 0, "D2 CHECK FAILED");
   pmm->free(d);
   for (int i = 0; i < 10; ++i) pmm->free(e[i]);
-  Assert(memcmp(a, A, sizeof(c)) == 0, "A FAILED");
+  Assert(memcmp(a, A, sizeof(a)) == 0, "A3 CHECK FAILED");
   pmm->free(a);
   pmm->free(e);
 }
