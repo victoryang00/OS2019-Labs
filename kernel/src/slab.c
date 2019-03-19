@@ -59,6 +59,7 @@ void kmem_cache_grow(struct kmem_cache *cp) {
     ip->used = false;
     ip->slab = sp;
     kmem_slab_add_item(sp, ip);
+    Log("add an item at %p", ip);
     ip++;
   }
 }
