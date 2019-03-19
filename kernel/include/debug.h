@@ -10,7 +10,7 @@ enum BG_COLOR {
   purple = 45,
   cyan   = 46,
   white  = 47
-}
+};
 
 #ifdef DEBUG
 #define Log(format, ...) \
