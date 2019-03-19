@@ -83,7 +83,7 @@ void *kmem_cache_alloc(struct kmem_cache *cp) {
   if (sp->nr_items >= sp->nr_items_max) {
     kmem_cache_move_slab_to_full(sp->cache, sp);
   }
-  Log("item address %p, real address %p", ip, (void *)ip + sizeof(struct kmem_item));
+  CLog(BG_GREEN, "item allocated at %p (ret-addr=%p), slab has %d items free now", ip, (void *)ip + sizeof(struct kmem_item), sp->nr_items_max - sp->nr_items);
   return ((void *) ip) + sizeof(struct kmem_item);
 }
 
@@ -95,6 +95,7 @@ void kmem_cache_free(void *ptr) {
     kmem_cache_move_slab_to_free(sp->cache, sp);
   }
   sp->nr_items--;
+  Log("Item at %p freed. Slab has %d items free now.", ptr, sp->nr_items_max - sp->nr_items);
 }
 
 void* get_free_pages(int nr) {
