@@ -69,17 +69,41 @@ static inline void kmem_cache_remove_slab(struct kmem_cache *cp, struct kmem_sla
         break;
       }
     }
-    assert(likely(success));
+    Assert(likely(success), "Slab does not exist in chain!!");
   }
   slab->next = NULL;
 }
 
-static inline void kmem_cache_move_slab_to_full(struct kmem_cache *cp, struct kmem_slab *sp) {
-  Panic("not implemented!");
+static inline void kmem_cache_move_slab_to_full(struct kmem_cache *cp, struct kmem_slab *slab) {
+  kmem_cache_remove_slab(cp, slab);
+  slab->next = NULL;
+  if (cp->slabs_full) {
+    struct kmem_slab *sp = cp->slabs_full;
+    while (sp->next) sp = sp->next;
+    sp->next = slab;
+  } else {
+    cp->slabs_full = slab;
+  }
+  Log("Slab of size %d at %p moved to full list.", slab->item_size, slab);
 }
 
-static inline void kmem_cache_move_slab_to_free(struct kmem_cache *cp, struct kmem_slab *sp) {
-  Panic("not implemented!");
+static inline void kmem_cache_move_slab_to_free(struct kmem_cache *cp, struct kmem_slab *slab) {
+  if (cp->slabs_full == slab) {
+    cp->slabs_full = slab->next;
+  } else {
+    struct kmem_slab *sp = cp->slabs_full;
+    bool success = false;
+    for ( ; sp && sp->next; sp = sp->next) {
+      if (sp->next == slab) {
+        sp->next = slab->next;
+        success = true;
+        break;
+      }
+    }
+    Assert(likely(success), "Slab does not exist in chain!!");
+  }
+  kmem_cache_add_slab(cp, slab);
+  Log("Slab of size %d at %p moved to free list.", slab->item_size, slab);
 }
 
 static inline void kmem_slab_add_item(struct kmem_slab *sp, struct kmem_item *item) {
