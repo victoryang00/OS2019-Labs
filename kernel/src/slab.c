@@ -73,9 +73,12 @@ void kmem_cache_grow(struct kmem_cache *cp) {
 }
 
 void *kmem_cache_alloc(struct kmem_cache *cp) {
-  while (likely(cp->slabs_free == NULL)) {
+  if (likely(cp->slabs_free == NULL)) {
     Log("No free slabs, allocating a new slab of %d items.", cp->nr_items_slab);
     kmem_cache_grow(cp);
+    Assert(likely(cp->slabs_free != NULL), "Still no slab after growth.");
+  } else {
+    Log("This slab has %d free items left.", cp->nr_items_slab - cp->slabs_free->nr_items);
   }
   struct kmem_slab *sp = cp->slabs_free;
   struct kmem_item *ip = sp->items;
