@@ -105,12 +105,12 @@ void* get_free_pages(int nr) {
   for (int i = 0; i < nr_pages - nr; ++i) {
     success = true;
     for (int j = 0; j < nr; ++j) {
-      if (likely(*(pi + i + j) == true)) {
+      if (likely(*(pi + i + j))) {
         success = false;
         break;
       }
     }
-    if (likely(success)) {
+    if (success) {
       for (int j = 0; j < nr; ++j) {
         *(pi + i + j) = true;
       }
