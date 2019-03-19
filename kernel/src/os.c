@@ -13,7 +13,16 @@ static void hello() {
   _putc("012345678"[_cpu()]); _putc('\n');
 }
 
-static void test_kmem();
+static void kmem_test() {
+  int *a = pmm->alloc(sizeof(int) * 4);
+  printf("a[] is an 4-int array at %p", a);
+  for (int i = 0; i < 4; ++i) {
+    a[i] = i;
+    printf("a[%d] is %d", i, a[i]);
+  }
+  pmm->free(a);
+  printf("a is freed now!");
+}
 
 static void os_run() {
   hello();
@@ -22,16 +31,6 @@ static void os_run() {
   while (1) {
     _yield();
   }
-}
-
-static void test_kmem() {
-  Log("TEST START!");
-  int *a = pmm->alloc(sizeof(int));
-  Log("Address of a is %p", a);
-  *a = 1;
-  Log("Value of a is %d", *a);
-  pmm->free(a);
-  Log("TEST PASS!");
 }
 
 static _Context *os_trap(_Event ev, _Context *context) {
