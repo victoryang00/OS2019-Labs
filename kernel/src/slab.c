@@ -105,6 +105,7 @@ void* get_free_pages(int nr) {
     int j = 0;
     bool success = true;
     for (j = 0; j < nr; ++j) {
+      Log("pi[%d]=%s", i+j, pi[i+j] ? "true" : "false");
       if (likely(pi[i + j])) {
         success = false;
         break;
@@ -127,6 +128,6 @@ void free_used_pages(void *base, int nr) {
   Log("Freeing %d memory pages from %p.", nr, base);
   int b = (base - pm) / SZ_PAGE;
   for (int i = 0; i < nr; ++i) {
-    *(pi + b + i) = false;
+    pi[b + i] = false;
   }
 }
