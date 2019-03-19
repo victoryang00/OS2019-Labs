@@ -12,6 +12,7 @@ void kmem_init(void *heap_start, void *heap_end) {
   pm = heap_start;
   kc = (struct kmem_cache *) (heap_start + nr_pages * SZ_PAGE);
   pi = (bool *) (kc + NR_CACHE_PAGES * SZ_PAGE);
+  Log("pm=%p, kc=%p, pi=%p", pm, kc, pi);
   memset(kc, 0, NR_CACHE_PAGES * SZ_PAGE);
   memset(pi, 0, nr_pages * sizeof(bool));
 }
