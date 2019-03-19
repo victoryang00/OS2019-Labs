@@ -45,23 +45,22 @@ void kmem_cache_free(void *);
 void *get_free_pages(int);
 void free_used_pages(void *, int);
 
-static inline void kmem_slab_chain_add(struct kmem_slab *head, struct kmem_slab *slab) {
+static inline void kmem_cache_add_slab(struct kmem_cache *cp, struct kmem_slab *slab) {
   slab->next = NULL;
-  if (head) {
-    struct kmem_slab *sp = head;
+  if (cp->slabs_free) {
+    struct kmem_slab *sp = cp->slabs_free;
     while (sp->next) sp = sp->next;
     sp->next = slab;
   } else {
-    head = slab;
+    cp->slans_free = slab;
   }
-  Assert(head, "Chain head is null even after adding a slab.");
 };
 
-static inline void kmem_slab_chain_remove(struct kmem_slab *head, struct kmem_slab *slab) {
-  if (head == slab) {
-    head = slab->next;
+static inline void kmem_cache_remove_slab(struct kmem_cache *cp, struct kmem_slab *slab) {
+  if (cp->slabs_free == slab) {
+    cp->slabs_free = slab->next;
   } else {
-    struct kmem_slab *sp = head;
+    struct kmem_slab *sp = cp->slabs_free;
     bool success = false;
     for ( ; sp && sp->next; sp = sp->next) {
       if (sp->next == slab) {
