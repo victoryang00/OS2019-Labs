@@ -49,6 +49,7 @@ void kmem_cache_grow(struct kmem_cache *cp) {
   void *pg_start = get_free_pages(cp->nr_pages_alloc);
   Assert(pg_start != NULL, "No free pages of length %d in memory", cp->nr_pages_alloc);
   struct kmem_slab *sp = pg_start + cp->nr_pages_alloc * SZ_PAGE - sizeof(struct kmem_slab);
+  Log("%s", *pi ? "true" : "false");
   
   sp->item_size = cp->item_size;
   sp->nr_items = 0;
@@ -57,6 +58,7 @@ void kmem_cache_grow(struct kmem_cache *cp) {
   sp->nr_pages = cp->nr_pages_alloc;
   sp->items = NULL;
   sp->cache = cp;
+  Log("%s", *pi ? "true" : "false");
 
   struct kmem_item *ip = pg_start;
   for (int i = 0; i < sp->nr_items_max; ++i) {
@@ -65,25 +67,34 @@ void kmem_cache_grow(struct kmem_cache *cp) {
     kmem_slab_add_item(sp, ip);
     ip = (struct kmem_item *) ((void *) ip + sp->item_size);
   }
+  Log("%s", *pi ? "true" : "false");
 
   kmem_cache_add_slab(cp, sp);
+  Log("%s", *pi ? "true" : "false");
 }
 
 void *kmem_cache_alloc(struct kmem_cache *cp) {
   while (likely(cp->slabs_free == NULL)) {
     Log("No free slabs, allocating a new slab of %d items.", cp->nr_items_slab);
     kmem_cache_grow(cp);
+  Log("%s", *pi ? "true" : "false");
   }
   struct kmem_slab *sp = cp->slabs_free;
   struct kmem_item *ip = sp->items;
+  Log("%s", *pi ? "true" : "false");
   while (likely(ip != NULL && ip->used)) ip = ip->next;
+  Log("%s", *pi ? "true" : "false");
   Assert(ip, "Item pointer is null.");
   ip->used = true;
+  Log("%s", *pi ? "true" : "false");
   sp->nr_items++;
   if (sp->nr_items >= sp->nr_items_max) {
+  Log("%s", *pi ? "true" : "false");
     kmem_cache_move_slab_to_full(sp->cache, sp);
   }
+  Log("%s", *pi ? "true" : "false");
   CLog(BG_GREEN, "Memory allocated at %p, slab at %p has %d items free now.", (void *)ip + sizeof(struct kmem_item), sp, sp->nr_items_max - sp->nr_items);
+  Log("%s", *pi ? "true" : "false");
   return ((void *) ip) + sizeof(struct kmem_item);
 }
 
@@ -105,7 +116,6 @@ void* get_free_pages(int nr) {
     int j = 0;
     bool success = true;
     for (j = 0; j < nr; ++j) {
-      Log("pi[%d]=%s", i+j, pi[i+j] ? "true" : "false");
       if (likely(pi[i + j])) {
         success = false;
         break;
@@ -114,7 +124,6 @@ void* get_free_pages(int nr) {
     if (likely(success)) {
       for (int j = 0; j < nr; ++j) {
         pi[i + j] = true;
-      Log("pi[%d]=%s", i+j, pi[i+j] ? "true" : "false");
       }
       Log("Memory pages start at %p.", pm + i * SZ_PAGE);
       return pm + i * SZ_PAGE;
