@@ -110,10 +110,15 @@ static inline void kmem_slab_add_item(struct kmem_slab *sp, struct kmem_item *it
   item->next = NULL;
   if (sp->items) {
     struct kmem_item *ip = sp->items;
-    while (ip->next != NULL) ip = ip->next;
+    while (ip->next) ip = ip->next;
     ip->next = item;
   } else {
     sp->items = item;
+  }
+  struct kmem_item *ip = sp->items;
+  while (ip) {
+    Log("%p", ip);
+    ip = ip->next;
   }
 }
 
