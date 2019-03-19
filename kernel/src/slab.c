@@ -19,8 +19,8 @@ void kmem_init(void *heap_start, void *heap_end) {
 
 struct kmem_cache* kmem_cache_create(size_t size) {
   struct kmem_cache *cp = kc;
-  Log("finding for size %d", size);
-  while (cp->item_size > 0 && cp->item_size != size) {
+  Log("finding for size %d + %d", size, sizeof(struct kmem_item));
+  while (cp->item_size > 0 && cp->item_size != size + sizeof(struct kmem_item)) {
     Log("cp: %d", cp->item_size);
     cp++;
   }
