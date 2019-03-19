@@ -26,7 +26,7 @@ static void kmem_test() {
 
 static void os_run() {
   hello();
-  test_kmem();
+  kmem_test();
   _intr_write(1);
   while (1) {
     _yield();
