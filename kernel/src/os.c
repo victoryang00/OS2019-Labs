@@ -26,14 +26,19 @@ static void kmem_test() {
   for (int i = 0; i < 100; ++i) {
     c[i] = i;
   }
-  pmm->free(a);
   pmm->free(c);
   int *d = pmm->alloc(sizeof(double) * 2000);
   for (int i = 0; i < 2000; ++i) {
     d[i] = i * 1.14514;
   }
-  pmm->free(d);
   pmm->free(b);
+  int *a[10];
+  for (int i = 0; i < 10; ++i) {
+    a[i] = pmm->alloc(sizeof(int) * 100);
+  }
+  pmm->free(d);
+  for (int i = 0; i < 10; ++i) pmm->free(a[i]);
+  pmm->free(a);
 }
 
 static void os_run() {
