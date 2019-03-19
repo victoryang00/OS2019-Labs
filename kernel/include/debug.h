@@ -1,6 +1,17 @@
 #ifndef __DEBUG_H__
 #define __DEBUG_H__
 
+enum BG_COLOR {
+  black  = 40,
+  red    = 41,
+  green  = 42,
+  yellow = 43,
+  blue   = 44,
+  purple = 45,
+  cyan   = 46,
+  white  = 47
+}
+
 #ifdef DEBUG
 #define Log(format, ...) \
   printf("\33[0m\33[1;44m[%d][%s,%d,%s] " format "\33[0m\n", \
