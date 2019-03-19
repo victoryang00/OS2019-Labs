@@ -3,8 +3,8 @@
 
 #ifdef DEBUG
 #define Log(format, ...) \
-    printf("\33[0m[\33[1;32mLog\33[0m]\33[1;34m[%s,%d,%s]\n%*.s" format "\33[0m\n", \
-       5, "", __FILE__, __LINE__, __func__, ## __VA_ARGS__)
+    printf("\33[0m[\33[1;32mLog\33[0m]\33[1;34m[%s,%d,%s]\n     " format "\33[0m\n", \
+       __FILE__, __LINE__, __func__, ## __VA_ARGS__)
 #define Assert(cond, format, ...) \
   do { \
     if (!(cond)) { \
