@@ -15,13 +15,13 @@ static void hello() {
 
 static void kmem_test() {
   int *a = pmm->alloc(sizeof(int) * 4);
-  printf("a[] is an 4-int array at %p", a);
+  printf("a[] is an 4-int array at %p\n", a);
   for (int i = 0; i < 4; ++i) {
     a[i] = i;
-    printf("a[%d] is %d", i, a[i]);
+    printf("a[%d] is %d\n", i, a[i]);
   }
   pmm->free(a);
-  printf("a is freed now!");
+  printf("a is freed now!\n");
 }
 
 static void os_run() {
