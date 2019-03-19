@@ -13,31 +13,40 @@ static void hello() {
   _putc("012345678"[_cpu()]); _putc('\n');
 }
 
+static int A[100] = {1, 2, 3, 4, 5, 1, 1, 4, 5, 1, 4, 2, 3, 3, 3, 3, 3, 3, 9, 1, 0, 2};
+static int B[100] = {true, false, true, false, true, false};
+static char C[100] = "FUCKFUCKFUCKFUCKFUCKFUCKFUCKAJDHSFJHJKEWHJLHDSJKHFKJHSKJDHJEHWUHYROEHD";
+static double D[2000] = {0.121343287482374, 28343294, 329748238, 032103212, 820.121, 219382914.4324};
+
 static void kmem_test() {
   int *a = pmm->alloc(sizeof(int) * 100);
   for (int i = 0; i < 100; ++i) {
-    a[i] = i;
+    a[i] = A[i];
   }
   bool *b = pmm->alloc(sizeof(bool) * 100);
   for (int i = 0; i < 100; ++i) {
-    b[i] = i;
+    b[i] = B[i];
   }
   char *c = pmm->alloc(sizeof(char) * 100);
   for (int i = 0; i < 100; ++i) {
-    c[i] = i;
+    c[i] = C[i];
   }
+  Assert(memcmp(c, C, sizeof(c)) == 0, "C FAILED");
   pmm->free(c);
   int *d = pmm->alloc(sizeof(double) * 2000);
   for (int i = 0; i < 2000; ++i) {
-    d[i] = i * 1.14514;
+    d[i] = D[i];
   }
+  Assert(memcmp(b, B, sizeof(b)) == 0, "B FAILED");
   pmm->free(b);
   int **e = pmm->alloc(sizeof(int *) * 10);
   for (int i = 0; i < 10; ++i) {
     e[i] = pmm->alloc(sizeof(int) * 100);
   }
+  Assert(memcmp(d, D, sizeof(d)) == 0, "D FAILED");
   pmm->free(d);
   for (int i = 0; i < 10; ++i) pmm->free(e[i]);
+  Assert(memcmp(a, A, sizeof(c)) == 0, "A FAILED");
   pmm->free(a);
   pmm->free(e);
 }
