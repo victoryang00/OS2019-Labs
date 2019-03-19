@@ -4,12 +4,12 @@
 #include <debug.h>
 
 void lock(volatile int *exclusion) {
-  CLog(BG_YELLOW, "LOCK ON");
   while (__sync_lock_test_and_set(exclusion, 1)) {
     while (*exclusion) {
       ;
     }
   }
+  CLog(BG_YELLOW, "LOCK ON");
 }
 
 void unlock(volatile int *exclusion) {
