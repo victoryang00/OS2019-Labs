@@ -59,7 +59,7 @@ void kmem_cache_grow(struct kmem_cache *cp) {
   }
 }
 
-void *kmem_cache_allow(struct kmem_cache *cp) {
+void *kmem_cache_alloc(struct kmem_cache *cp) {
   if (unlikely(cp->slabs_free)) {
     kmem_cache_grow(cp);
   }
