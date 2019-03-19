@@ -53,9 +53,9 @@ static void kmem_test() {
   pmm->free(a);
   pmm->free(e);
 
-  CLog(BG_RED,    "===================================================");
-  CLog(BG_YELLOW, "CONGRATULATIONS. ALL STUPID TESTS HAVE BEEN PASSED!");
-  CLog(BG_RED,    "===================================================");
+  CLog(BG_RED,    "============================================================");
+  CLog(BG_YELLOW, "CONGRATULATIONS. ALL STUPID TESTS HAVE BEEN PASSED on CPU %d!", _cpu());
+  CLog(BG_RED,    "============================================================");
 }
 
 static void os_run() {
