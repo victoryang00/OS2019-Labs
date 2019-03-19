@@ -64,7 +64,7 @@ void kmem_cache_grow(struct kmem_cache *cp) {
 }
 
 void *kmem_cache_alloc(struct kmem_cache *cp) {
-  if (unlikely(cp->slabs_free)) {
+  if (likely(cp->slabs_free == NULL)) {
     Log("No free slabs, allocating a new slab.");
     kmem_cache_grow(cp);
   }
