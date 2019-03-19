@@ -52,6 +52,10 @@ static void kmem_test() {
   Assert(memcmp(a, A, sizeof(a)) == 0, "A3 CHECK FAILED");
   pmm->free(a);
   pmm->free(e);
+
+  CLog(BG_RED,    "===================================================");
+  CLog(BG_YELLOW, "CONGRATULATIONS. ALL STUPID TESTS HAVE BEEN PASSED!");
+  CLog(BG_RED,    "===================================================");
 }
 
 static void os_run() {
