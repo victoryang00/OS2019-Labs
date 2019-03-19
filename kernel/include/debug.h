@@ -34,7 +34,7 @@
 #define Assert(cond, format, ...) \
   do { \
     if (!(cond)) { \
-      printf("\33[0m" BG_BLUE "[%d][%s,%d,%s] " format "\33[0m\n", \
+      printf("\33[0m" BG_RED "[%d][%s,%d,%s] " format "\33[0m\n", \
           _cpu(), __FILE__, __LINE__, __func__, ## __VA_ARGS__); \
       assert(cond); \
     } \
