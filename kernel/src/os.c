@@ -22,7 +22,12 @@ static void kmem_test() {
   for (int i = 0; i < 4; ++i) {
     b[i] = i;
   }
+  int *c = pmm->alloc(sizeof(int) * 100);
+  for (int i = 0; i < 4; ++i) {
+    c[i] = i;
+  }
   pmm->free(a);
+  pmm->free(c);
   pmm->free(b);
 }
 
