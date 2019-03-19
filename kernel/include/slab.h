@@ -48,11 +48,11 @@ void free_used_pages(void *, int);
 static inline void kmem_slab_chain_add(struct kmem_slab *head, struct kmem_slab *slab) {
   slab->next = NULL;
   if (head) {
+    head = slab;
+  } else {
     struct kmem_slab *sp = head;
     while (sp->next) sp = sp->next;
     sp->next = slab;
-  } else {
-    head = slab;
   }
 };
 
