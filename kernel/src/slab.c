@@ -114,6 +114,7 @@ void* get_free_pages(int nr) {
     if (likely(success)) {
       for (int j = 0; j < nr; ++j) {
         pi[i + j] = true;
+      Log("pi[%d]=%s", i+j, pi[i+j] ? "true" : "false");
       }
       Log("Memory pages start at %p.", pm + i * SZ_PAGE);
       return pm + i * SZ_PAGE;
