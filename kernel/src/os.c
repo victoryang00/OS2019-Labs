@@ -13,6 +13,8 @@ static void hello() {
   _putc("12345678"[_cpu()]); _putc('\n');
 }
 
+static void test_kmem();
+
 static void os_run() {
   hello();
   test_kmem();
