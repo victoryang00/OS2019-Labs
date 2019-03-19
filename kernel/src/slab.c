@@ -29,8 +29,6 @@ struct kmem_cache* kmem_cache_create(size_t size) {
   } else {
     Log("Cache does not exist, create a new one.");
     Assert((void *) kc < (void *) pi, "Kcache zone is full.");
-    cp = (struct kmem_cache *) (kc++);
-  
     cp->item_size = sizeof(struct kmem_item) + size;
     if (cp->item_size <= SZ_SMALL_OBJ) {
       cp->nr_items_slab = (SZ_PAGE - sizeof(struct kmem_slab)) / cp->item_size;
