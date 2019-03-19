@@ -10,13 +10,13 @@ void kmem_init(void *heap_start, void *heap_end) {
   assert(heap_end > heap_start);
   nr_pages = (heap_end - heap_start) / (SZ_PAGE + sizeof(bool)) - NR_CACHE_PAGES;
   pm = heap_start;
-  kc = (struct kmem_cahe *) (heap_start + nr_pages * SZ_PAGE);
+  kc = (struct kmem_cache *) (heap_start + nr_pages * SZ_PAGE);
   pi = (bool *) (kc + NR_CACHE_PAGES * SZ_PAGE);
   memset(pi, 0, nr_pages * sizeof(bool));
 }
 
 struct kmem_cache* kmem_cache_create(size_t size) {
-  if ((void *) kc >= pi) return NULL;
+  if ((void *) kc >= (void *) pi) return NULL;
   struct kmem_cache* cp = (struct kmem_cache *) (kc++);
   
   cp->item_size = sizeof(struct kmem_item) + size;
