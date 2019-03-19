@@ -16,6 +16,7 @@ static void *kalloc(size_t size) {
   struct kmem_cache *cp = kmem_cache_create(size);
   void *ret = kmem_cache_alloc(cp);
   Assert(ret, "MALLOC RETURNED NULL");
+  Assert(((struct kmem_item *)0x201070)->used == false, "201070 is used!");
   Assert(ret >= _heap.start && ret <= _heap.end, "MALLOC NOT IN HEAP AREA");
   unlock(&exclusion);
   return ret;
