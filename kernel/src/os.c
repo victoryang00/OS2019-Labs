@@ -65,15 +65,17 @@ static void yls_test(){
   for(i=0;i<100;++i){
     space[i]=pmm->alloc(rand()%((1<<10)-1));
   }
+  CLog(BG_GREEN, "yls-OK(0) on cpu %d", _cpu());
   for(i=0;i<1000;++i){
     int temp=rand()%10;
     pmm->free(space[temp]);
     space[temp]=pmm->alloc(rand()&((1<<10)-1));
   }
+  CLog(BG_GREEN, "yls-OK(1) on cpu %d", _cpu());
   for(i=0;i<100;++i){
     pmm->free(space[i]);
   }
-  CLog(BG_GREEN, "OKOK on cpu %d", _cpu());
+  CLog(BG_GREEN, "yls-OK(2) on cpu %d", _cpu());
 }
 
 static void os_run() {
