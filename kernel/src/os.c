@@ -80,8 +80,8 @@ static void yls_test(){
 
 static void os_run() {
   hello();
-  kmem_test();
-  yls_test();
+  //kmem_test();
+  //yls_test();
   _intr_write(1);
   while (1) {
     _yield();
