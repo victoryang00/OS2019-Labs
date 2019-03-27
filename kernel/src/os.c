@@ -15,7 +15,7 @@ static void hello() {
 
 static int A[100] = {1, 2, 3, 4, 5, 1, 1, 4, 5, 1, 4, 2, 3, 3, 3, 3, 3, 3, 9, 1, 0, 2};
 static bool B[100] = {true, false, true, false, true, false};
-static char C[100] = "FUCKFUCKFUCKFUCKFUCKFUCKFUCKAJDHSFJHJKEWHJLHDSJKHFKJHSKJDHJEHWUHYROEHD";
+static char C[100] = "AKJDjsfajfdioaoxhKJDHSJxckjzbKAJDHSFJHJKEWHJLHDSJKHFKJHSKJDHJEHWUHYROEHD";
 static double D[2000] = {0.121343287482374, 28343294, 329748238, 032103212, 820.121, 219382914.4324};
 
 static void kmem_test() {
@@ -59,9 +59,27 @@ static void kmem_test() {
   printf("CONGRATULATIONS. ALL STUPID TESTS HAVE BEEN PASSED ON CPU %d!", _cpu());
 }
 
+static void yls_test(){
+  void *space[100];
+  int i;
+  for(i=0;i<100;++i){
+    space[i]=pmm->alloc(rand()%((1<<10)-1));
+  }
+  for(i=0;i<1000;++i){
+    int temp=rand()%10;
+    pmm->free(space[temp]);
+    space[temp]=pmm->alloc(rand()&((1<<10)-1));
+  }
+  for(i=0;i<100;++i){
+    pmm->free(space[i]);
+  }
+  CLog(BG_GREEN, "OKOK on cpu %d", _cpu());
+}
+
 static void os_run() {
   hello();
   kmem_test();
+  yls_test();
   _intr_write(1);
   while (1) {
     _yield();
