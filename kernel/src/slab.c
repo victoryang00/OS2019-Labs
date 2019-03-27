@@ -23,7 +23,7 @@ void kmem_init(void *heap_start, void *heap_end) {
 struct kmem_cache* kmem_cache_create(size_t size) {
   struct kmem_cache *cp = kc;
 
-  size += sizeof(struct kmem_item);
+  size = power2ify(size + sizeof(struct kmem_item)); // use power of 2 as size
   Log("Looking for cache of size %d (actually %d).", size, size - sizeof(struct kmem_item));
   while (cp->item_size > 0 && cp->item_size != size) {
     //Log("However, cache at %p has item size %d.", cp, cp->item_size);
