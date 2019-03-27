@@ -13,7 +13,7 @@
 #define likely(x)   __builtin_expect(!!(x), 1)
 #define unlikely(x) __builtin_expect(!!(x), 0)
 
-inline size_t power2ify(size_t x) {
+static inline size_t power2ify(size_t x) {
   assert((int) x > 0);
   size_t ret = 0;
   while (ret < x) ret <<= 1;
