@@ -15,7 +15,7 @@
 
 static inline size_t power2ify(size_t x) {
   assert((int) x > 0);
-  size_t ret = 0;
+  size_t ret = 1;
   while (ret < x) ret <<= 1;
   return ret;
 }
