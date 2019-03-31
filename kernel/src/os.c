@@ -30,6 +30,7 @@ static void yls_test(){
     pmm->free(space[i]);
   }
   CLog(BG_GREEN, "yls-OK(2) on cpu %d", _cpu());
+  printf("Success on cpu %d". _cpu());
 }
 
 static void os_run() {
