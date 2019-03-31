@@ -1,5 +1,6 @@
 #include <common.h>
 #include <klib.h>
+#include <debug.h>
 
 static void os_init() {
   pmm->init();
@@ -9,7 +10,7 @@ static void hello() {
   for (const char *ptr = "Hello from CPU #"; *ptr; ptr++) {
     _putc(*ptr);
   }
-  _putc("12345678"[_cpu()]); _putc('\n');
+  _putc("012345678"[_cpu()]); _putc('\n');
 }
 
 static void os_run() {
