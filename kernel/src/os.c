@@ -13,11 +13,6 @@ static void hello() {
   _putc("012345678"[_cpu()]); _putc('\n');
 }
 
-static int A[100] = {1, 2, 3, 4, 5, 1, 1, 4, 5, 1, 4, 2, 3, 3, 3, 3, 3, 3, 9, 1, 0, 2};
-static bool B[100] = {true, false, true, false, true, false};
-static char C[100] = "AKJDjsfajfdioaoxhKJDHSJxckjzbKAJDHSFJHJKEWHJLHDSJKHFKJHSKJDHJEHWUHYROEHD";
-static double D[2000] = {0.121343287482374, 28343294, 329748238, 032103212, 820.121, 219382914.4324};
-
 static void yls_test(){
   void *space[100];
   int i;
