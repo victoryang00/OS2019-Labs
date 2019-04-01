@@ -40,7 +40,7 @@
 #define Assert(cond, format, ...) \
   do { \
     if (!(cond)) { \
-      CLog (BG_RED, format, ##); \
+      CLog(BG_RED, format, ## __VA_ARGS__); \
       assert(cond); \
     } \
   } while (0)
