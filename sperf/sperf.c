@@ -50,6 +50,7 @@ void child(int fd, char *argv[], char *envp[]) {
   argv[0] = "strace";
   while ((current = strsep(&path, ":")) != NULL) {
     execve(strcat(current, "/strace"), argv, envp);
+    Log("%s is not executable.", current);
   }
   Panic("strace is not executable. (NO PATH HITS.)");
 }
