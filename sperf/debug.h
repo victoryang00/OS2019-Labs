@@ -1,6 +1,7 @@
 #ifndef __DEBUG_H__
 #define __DEBUG_H__
 
+#include <stdio.h>
 #include <assert.h>
 
 #define FG_BLACK  "\033[1;30m"
