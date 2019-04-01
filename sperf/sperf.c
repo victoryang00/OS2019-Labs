@@ -29,7 +29,9 @@ void sperf(int argc, char *argv[], char *envp[]) {
     close(pipefd[0]);
     dup2(pipefd[1], 1); // stdout
     dup2(pipefd[1], 2); // stderr
+    Log("Child point A");
     execve(argv[0], argv + 1, envp);
+    Log("Child point B");
     Panic("Should not return from execve!");
   } else {
     /* parent process */
