@@ -18,7 +18,7 @@ int main(int argc, char *argv[], char *envp[]) {
 void sperf(int argc, char *argv[], char *envp[]) {
   int cpid = 0;
   int pipefd[2] = {};
-  char buf[1024] = "";
+  char buf = 0;
 
   Assert(pipe(pipefd) != -1, "Pipe failed.");
   cpid = fork();
@@ -35,7 +35,7 @@ void sperf(int argc, char *argv[], char *envp[]) {
     /* parent process */
     close(pipefd[1]);
     while (read(pipefd[0], &buf, 1) > 0) {
-      Log("%s\n", buf);
+      put(buf);
       // TODO
     }
     close(pipefd[0]);
