@@ -47,7 +47,7 @@ void child(int fd, char *argv[], char *envp[]) {
   char *path = strdup(getenv("PATH"));
   char *current = NULL;
   while ((current = strsep(&path, ":")) != NULL) {
-    execve(strcat(current, argv[1]), &argv[1], envp);
+    execve(strcat(current "/", argv[1]), &argv[1], envp);
     Log("%s is not executable.", current);
   }
   Panic("%s is not executable. (ERR in execve.)", argv[1]);
