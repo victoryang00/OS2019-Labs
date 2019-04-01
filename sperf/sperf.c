@@ -10,7 +10,7 @@
 void sperf(int, char *[], char *[]);
 
 int main(int argc, char *argv[], char *envp[]) {
-  Assert(argc > 0, "Usage: sperf-32/64 cmd -arg1 -arg2 ...");
+  Assert(argc > 1, "Usage: sperf-32/64 cmd -arg1 -arg2 ...");
   sperf(argc, argv, envp);
   return 0;
 }
@@ -29,9 +29,7 @@ void sperf(int argc, char *argv[], char *envp[]) {
     close(pipefd[0]);
     dup2(pipefd[1], 1); // stdout
     dup2(pipefd[1], 2); // stderr
-    Log("Child point A");
-    int ret = execve(argv[0], argv, envp);
-    Log("Child point B, ret = %d", ret);
+    int ret = execve(argv[1], &argv[1], envp);
     Panic("Should not return from execve!");
   } else {
     /* parent process */
