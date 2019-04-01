@@ -17,6 +17,7 @@ void sperf(int argc, char *argv[], char *envp[]) {
   int cpid = 0;
   int pipefd[2] = {};
   char buf[1024] = "";
+  Log("sperf!");
 
   Assert(pipe(pipefd) != -1, "Pipe failed.");
   cpid = fork();
