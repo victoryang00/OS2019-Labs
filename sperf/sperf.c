@@ -45,9 +45,8 @@ void child(int fd, char *argv[], char *envp[]) {
   dup2(fd, 1); // stdout
   dup2(fd, 2); // stderr
   argv[0] = "strace";
-  execve(strcat("strace ", argv[1]), &argv[1], envp);
-  Log("%s is not executable.", program);
-  Panic("%s is not executable. (ERR in execve.)", argv[1]);
+  execve(argv[0], argv, envp);
+  Log("strace is not executable.");
 }
 
 void parent(int fd) {
