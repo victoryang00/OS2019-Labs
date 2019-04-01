@@ -29,7 +29,7 @@ void sperf(int argc, char *argv[], char *envp[]) {
     close(pipefd[0]);
     dup2(pipefd[1], 1); // stdout
     dup2(pipefd[1], 2); // stderr
-    int ret = execve(argv[1], &argv[1], envp);
+    execve(argv[1], &argv[1], envp);
     Panic("Should not return from execve!");
   } else {
     /* parent process */
