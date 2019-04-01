@@ -46,8 +46,7 @@
   } while (0)
 
 #define Panic(format, ...) \
-  printf("\33[0m" BG_RED "[%s,%d,%s] " format " \33[0m\n", \
-    __FILE__, __LINE__, __func__, ## __VA_ARGS__); \
+  CLog(BG_RED, format, ## __VA_ARGS__); \
   assert(0)
 
 #endif
