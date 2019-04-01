@@ -1,6 +1,7 @@
 #include <stdio.h>
-#include <unistd.h>
+#include <stdlib.h>
 #include <stdbool.h>
+#include <unistd.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 
@@ -8,6 +9,8 @@
 #include "debug.h"
 
 void sperf(int, char *[], char *[]);
+void child(int, char *[], char *[]);
+void parent(int);
 
 int main(int argc, char *argv[], char *envp[]) {
   Assert(argc > 1, "Usage: sperf-32/64 cmd -arg1 -arg2 ...");
@@ -18,7 +21,6 @@ int main(int argc, char *argv[], char *envp[]) {
 void sperf(int argc, char *argv[], char *envp[]) {
   int cpid = 0;
   int pipefd[2] = {};
-  char buf = 0;
 
   Assert(pipe(pipefd) != -1, "Pipe failed.");
   cpid = fork();
@@ -27,18 +29,34 @@ void sperf(int argc, char *argv[], char *envp[]) {
   if (cpid == 0) {
     /* child process */
     close(pipefd[0]);
-    dup2(pipefd[1], 1); // stdout
-    dup2(pipefd[1], 2); // stderr
-    execve(argv[1], &argv[1], envp);
-    Panic("%s is not executable. (ERR in execve.)", argv[1]);
+    child(fd, argv, envp);
+    Panic("Should not return from child!");
   } else {
     /* parent process */
-    close(pipefd[1]);
-    while (read(pipefd[0], &buf, 1) > 0) {
-      printf("%c", buf);
-      // TODO
-    }
+    parent(pipefd[0]);
     close(pipefd[0]);
+    close(pipefd[1]);
     wait(NULL);
+  }
+}
+
+void child(int fd, char *argv[], char *envp[]) {
+  dup2(fd, 1); // stdout
+  dup2(fd, 2); // stderr
+  char *path = getenv("PATH");
+  char *current = NULL;
+  while ((current = strtok(path, ':')) != NULL) {
+    if (execve(strcat(current, argv[1]), &argv[1], envp)) {
+      Log("%s is not executable.", current);
+    }
+  }
+  Panic("%s is not executable. (ERR in execve.)", argv[1]);
+}
+
+void parent(int fd) {
+  char buf = 0;
+  while (read(fd, &buf, 1) > 0) {
+    printf("%c", buf);
+    // TODO
   }
 }
