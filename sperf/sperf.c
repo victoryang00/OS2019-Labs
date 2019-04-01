@@ -35,7 +35,7 @@ void sperf(int argc, char *argv[], char *envp[]) {
     /* parent process */
     close(pipefd[1]);
     while (read(pipefd[0], &buf, 1) > 0) {
-      puts(buf);
+      puts(&buf);
       // TODO
     }
     close(pipefd[0]);
