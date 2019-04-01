@@ -37,21 +37,16 @@ void sperf(int argc, char *argv[], char *envp[]) {
     parent(pipefd[0]);
     close(pipefd[0]);
     close(pipefd[1]);
-    wait(NULL);
+    //wait(NULL);
   }
 }
 
 void child(int fd, char *argv[], char *envp[]) {
   dup2(fd, 1); // stdout
   dup2(fd, 2); // stderr
-  char *path = strdup(getenv("PATH"));
-  char *current = NULL;
-  char program[256] = "";
-  while ((current = strsep(&path, ":")) != NULL) {
-    sprintf(program, "%s/%s", current, argv[1]);
-    execve(program, &argv[1], envp);
-    Log("%s is not executable.", current);
-  }
+  argv[0] = "strace";
+  execve(strcat("strace ", argv[1]), &argv[1], envp);
+  Log("%s is not executable.", program);
   Panic("%s is not executable. (ERR in execve.)", argv[1]);
 }
 
