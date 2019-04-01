@@ -40,8 +40,7 @@
 #define Assert(cond, format, ...) \
   do { \
     if (!(cond)) { \
-      printf("\33[0m" BG_RED "[%s,%d,%s] " format " \33[0m\n", \
-          __FILE__, __LINE__, __func__, ## __VA_ARGS__); \
+      CLog (BG_RED, format, ##); \
       assert(cond); \
     } \
   } while (0)
