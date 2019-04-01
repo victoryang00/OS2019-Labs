@@ -44,12 +44,11 @@ void sperf(int argc, char *argv[], char *envp[]) {
 void child(int fd, char *argv[], char *envp[]) {
   dup2(fd, 1); // stdout
   dup2(fd, 2); // stderr
-  char *path = getenv("PATH");
-  char *current = strtok(path, ":");
-  while (current) {
+  char *path = strdup(getenv("PATH"));
+  char *current = NULL;
+  while ((current = strsep(&path, ":")) != NULL) {
     execve(strcat(current, argv[1]), &argv[1], envp);
     Log("%s is not executable.", current);
-    current = strtok(0, ":");
   }
   Panic("%s is not executable. (ERR in execve.)", argv[1]);
 }
