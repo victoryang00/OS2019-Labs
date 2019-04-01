@@ -30,7 +30,7 @@ void sperf(int argc, char *argv[], char *envp[]) {
     dup2(pipefd[1], 1); // stdout
     dup2(pipefd[1], 2); // stderr
     execve(argv[1], &argv[1], envp);
-    Panic("Should not return from execve!");
+    Panic("%s is not executable. (ERR in execve.)");
   } else {
     /* parent process */
     close(pipefd[1]);
