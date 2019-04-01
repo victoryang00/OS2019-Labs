@@ -1,6 +1,8 @@
 #ifndef __DEBUG_H__
 #define __DEBUG_H__
 
+#include <assert.h>
+
 #define FG_BLACK  "\033[1;30m"
 #define FG_RED    "\033[1;31m"
 #define FG_GREEN  "\033[1;32m"
