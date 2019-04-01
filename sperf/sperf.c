@@ -15,7 +15,7 @@ void sperf(int argc, char *argv[], char *envp[]) {
 
   Assert(pipe(pipefd) != -1, "Pipe failed.");
   cpid = fork();
-  Assert(cpid != -1, "Fork failed.")
+  Assert(cpid != -1, "Fork failed.");
 
   if (cpid == 0) {
     /* child process */
