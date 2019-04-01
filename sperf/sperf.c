@@ -46,7 +46,7 @@ void child(int fd, char *argv[], char *envp[]) {
   dup2(fd, 2); // stderr
   char *path = getenv("PATH");
   char *current = NULL;
-  while ((current = strtok(path, ':')) != NULL) {
+  while ((current = strtok(path, ":")) != NULL) {
     if (execve(strcat(current, argv[1]), &argv[1], envp)) {
       Log("%s is not executable.", current);
     }
