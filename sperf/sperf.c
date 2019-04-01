@@ -27,11 +27,13 @@ void sperf(int argc, char *argv[], char *envp[]) {
     close(pipefd[0]);
     dup2(pipefd[1], 1); // stdout
     dup2(pipefd[1], 2); // stderr
+    Log("Child!");
     execve(argv[0], argv + 1, envp);
     Panic("Should not return from execve!");
   } else {
     /* parent process */
     close(pipefd[1]);
+    Log("Parent!");
     while (read(pipefd[0], &buf, 1) > 0) {
       Log("%s\n", buf);
       // TODO
