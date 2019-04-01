@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <string.h>
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/wait.h>
@@ -29,7 +30,7 @@ void sperf(int argc, char *argv[], char *envp[]) {
   if (cpid == 0) {
     /* child process */
     close(pipefd[0]);
-    child(fd, argv, envp);
+    child(pipefd[1], argv, envp);
     Panic("Should not return from child!");
   } else {
     /* parent process */
