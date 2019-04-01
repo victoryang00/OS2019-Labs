@@ -9,17 +9,17 @@
 #define DEBUG
 #include "debug.h"
 
-void sperf(int, char *[], char *[]);
-void child(int, char *[], char *[]);
+void sperf(int, char *[]);
+void child(int, char *[]);
 void parent(int);
 
-int main(int argc, char *argv[], char *envp[]) {
+int main(int argc, char *argv[]) {
   Assert(argc > 1, "Usage: sperf-32/64 cmd -arg1 -arg2 ...");
-  sperf(argc, argv, envp);
+  sperf(argc, argv);
   return 0;
 }
 
-void sperf(int argc, char *argv[], char *envp[]) {
+void sperf(int argc, char *argv[]) {
   int cpid = 0;
   int pipefd[2] = {};
 
@@ -30,7 +30,7 @@ void sperf(int argc, char *argv[], char *envp[]) {
   if (cpid == 0) {
     /* child process */
     close(pipefd[0]);
-    child(pipefd[1], argv, envp);
+    child(pipefd[1], argv);
     Panic("Should not return from child!");
   } else {
     /* parent process */
@@ -41,7 +41,7 @@ void sperf(int argc, char *argv[], char *envp[]) {
   }
 }
 
-void child(int fd, char *argv[], char *envp[]) {
+void child(int fd, char *argv[]) {
   dup2(fd, 1); // stdout
   dup2(fd, 2); // stderr
 
@@ -49,7 +49,7 @@ void child(int fd, char *argv[], char *envp[]) {
   char *current = NULL;
   while ((current = strsep(&path, ":")) != NULL) {
     sprintf(argv[0], "%s/strace", current);
-    execve(argv[0], argv, envp);
+    execvp(argv[0], argv);
     Log("%s is not executable.", argv[0]);
   }
   Panic("strace is not executable. (NO PATH HITS.)");
