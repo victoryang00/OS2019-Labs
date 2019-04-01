@@ -44,12 +44,12 @@ void sperf(int argc, char *argv[]) {
 void child(int fd, char *argv[]) {
   dup2(fd, 1); // stdout
   dup2(fd, 2); // stderr
+    sprintf(argv[0], "strace");
+    execvp(argv[0], argv);
 
   char *path = strdup(getenv("PATH"));
   char *current = NULL;
   while ((current = strsep(&path, ":")) != NULL) {
-    sprintf(argv[0], "%s/strace", current);
-    execvp(argv[0], argv);
     Log("%s is not executable.", argv[0]);
   }
   Panic("strace is not executable. (NO PATH HITS.)");
