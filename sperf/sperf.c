@@ -2,7 +2,7 @@
 #include <stdbool.h>
 #include "debug.h"
 
-void sperf(char *);
+void sperf(int, char *[], char *[]);
 
 int main(int argc, char *argv[], char *envp[]) {
   sperf(argc, argv, envp);
