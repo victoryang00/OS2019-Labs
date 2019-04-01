@@ -25,10 +25,12 @@
 #ifdef DEBUG
 #define Log(format, ...) \
   printf("\33[0m" BG_BLUE "[%s,%d,%s] " format " \33[0m\n", \
-    __FILE__, __LINE__, __func__, ## __VA_ARGS__)
+    __FILE__, __LINE__, __func__, ## __VA_ARGS__); \
+  fflush(stdout) 
 #define CLog(color, format, ...) \
   printf("\33[0m" color "[%s,%d,%s] " format " \33[0m\n", \
-    __FILE__, __LINE__, __func__, ## __VA_ARGS__)
+    __FILE__, __LINE__, __func__, ## __VA_ARGS__); \
+  fflush(stdout)
 
 #else
 #define Log(format, ...) ;
