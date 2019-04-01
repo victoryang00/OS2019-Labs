@@ -3,6 +3,8 @@
 #include <stdbool.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+
+#define DEBUG
 #include "debug.h"
 
 void sperf(int, char *[], char *[]);
