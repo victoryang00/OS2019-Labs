@@ -24,7 +24,7 @@ void sperf(int argc, char *argv[], char *envp[]) {
     dup2(pipefd[1], 1); // stdout
     dup2(pipefd[1], 2); // stderr
     execve(argv[0], argv + 1, envp);
-    Assert(false, "Should not return from execve!");
+    Panic("Should not return from execve!");
   } else {
     /* parent process */
     close(pipefd[1]);

@@ -23,11 +23,11 @@
 
 #ifdef DEBUG
 #define Log(format, ...) \
-  printf("\33[0m" BG_BLUE "[%d][%s,%d,%s] " format " \33[0m\n", \
-    _cpu(), __FILE__, __LINE__, __func__, ## __VA_ARGS__)
+  printf("\33[0m" BG_BLUE "[%s,%d,%s] " format " \33[0m\n", \
+    __FILE__, __LINE__, __func__, ## __VA_ARGS__)
 #define CLog(color, format, ...) \
-  printf("\33[0m" color "[%d][%s,%d,%s] " format " \33[0m\n", \
-    _cpu(), __FILE__, __LINE__, __func__, ## __VA_ARGS__)
+  printf("\33[0m" color "[%s,%d,%s] " format " \33[0m\n", \
+    __FILE__, __LINE__, __func__, ## __VA_ARGS__)
 
 #else
 #define Log(format, ...) ;
@@ -37,15 +37,15 @@
 #define Assert(cond, format, ...) \
   do { \
     if (!(cond)) { \
-      printf("\33[0m" BG_RED "[%d][%s,%d,%s] " format " \33[0m\n", \
-          _cpu(), __FILE__, __LINE__, __func__, ## __VA_ARGS__); \
+      printf("\33[0m" BG_RED "[%s,%d,%s] " format " \33[0m\n", \
+          __FILE__, __LINE__, __func__, ## __VA_ARGS__); \
       assert(cond); \
     } \
   } while (0)
 
 #define Panic(format, ...) \
-  printf("\33[0m" BG_RED "[%d][%s,%d,%s] " format " \33[0m\n", \
-    _cpu(), __FILE__, __LINE__, __func__, ## __VA_ARGS__); \
+  printf("\33[0m" BG_RED "[%s,%d,%s] " format " \33[0m\n", \
+    __FILE__, __LINE__, __func__, ## __VA_ARGS__); \
   assert(0)
 
 #endif
