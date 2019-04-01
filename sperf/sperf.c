@@ -8,6 +8,7 @@
 void sperf(int, char *[], char *[]);
 
 int main(int argc, char *argv[], char *envp[]) {
+  Assert(argc > 0, "Usage: sperf-32/64 cmd -arg1 -arg2 ...");
   sperf(argc, argv, envp);
   return 0;
 }
