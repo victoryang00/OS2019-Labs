@@ -42,7 +42,7 @@ void sperf(int argc, char *argv[]) {
 }
 
 void child(int fd, char *argv[]) {
-  dup2(fd, 1); // stdout
+  // dup2(fd, 1); // stdout
   dup2(fd, 2); // stderr
   sprintf(argv[0], "strace");
   // not execve because we need environmental variables
@@ -52,8 +52,8 @@ void child(int fd, char *argv[]) {
 
 void parent(int fd) {
   char buf = 0;
+  char line[1024] = "";
   while (read(fd, &buf, 1) > 0) {
     printf("%c", buf);
-    // TODO
   }
 }
