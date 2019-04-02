@@ -9,9 +9,9 @@
 #define DEBUG
 #include "debug.h"
 
-const char arg0 = "strace";
-const char arg1 = "-T";
-const char arg2 = "ls";
+const char arg0[8] = "strace";
+const char arg1[4] = "-T";
+const char arg2[4] = "ls";
 
 void sperf(int, char *[]);
 void child(int, char *[]);
