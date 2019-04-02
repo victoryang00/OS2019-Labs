@@ -17,8 +17,8 @@ static void yls_test(){
   static void *space[999];
   int i;
   for(i=0;i<200;++i){
-    space[i]=pmm->alloc(rand()%((1<<10)-1));
     printf("%d - yls0 %d addr=%d\n, heap=[%p, %p)\n", _cpu(), i, space + i, _heap.start, _heap.end);
+    space[i]=pmm->alloc(rand()%((1<<10)-1));
   }
   for(i=0;i<100;++i){
     printf("%d - yls2 %d addr=%p, heap=[%p, %p)\n", _cpu(), i, space[i], _heap.start, _heap.end);
