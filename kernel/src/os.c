@@ -13,7 +13,7 @@ static void hello() {
   _putc("012345678"[_cpu()]); _putc('\n');
 }
 
-void yls_test(){
+static void yls_test(){
   void *space[999];
   int i;
   for(i=0;i<200;++i){
