@@ -90,6 +90,7 @@ void *kmem_cache_alloc(struct kmem_cache *cp) {
   if (sp->nr_items >= sp->nr_items_max) {
     kmem_cache_move_slab_to_full(sp->cache, sp);
   }
+  Assert(likely(ip->used), "Item is not marked as used after allocation!!");
   CLog(BG_GREEN, "Memory allocated at %p, slab at %p has %d items free now.", (void *)ip + sizeof(struct kmem_item), sp, sp->nr_items_max - sp->nr_items);
   return ((void *) ip) + sizeof(struct kmem_item);
 }
