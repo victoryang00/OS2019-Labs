@@ -9,6 +9,10 @@
 #define DEBUG
 #include "debug.h"
 
+const char arg0 = "strace";
+const char arg1 = "-T";
+const char arg2 = "ls";
+
 void sperf(int, char *[]);
 void child(int, char *[]);
 void parent(int);
@@ -44,9 +48,12 @@ void sperf(int argc, char *argv[]) {
 void child(int fd, char *argv[]) {
   // dup2(fd, 1); // stdout
   dup2(fd, 2); // stderr
-  sprintf(argv[0], "strace -t");
+  char **real_argv = malloc(sizeof(argv) + sizeof(char *));
+  real_argv[0] = &arg0;
+  real_argv[1] = &arg1;
+  real_argv[2] = &arg2;
   // not execve because we need environmental variables
-  execvp(argv[0], argv); 
+  execvp(argv[0], real_argv); 
   Panic("strace is not executable. (NO PATH HITS.)");
 }
 
