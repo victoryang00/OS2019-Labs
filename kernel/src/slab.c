@@ -97,6 +97,7 @@ void *kmem_cache_alloc(struct kmem_cache *cp) {
 void kmem_cache_free(void *ptr) {
   struct kmem_item *ip = (struct kmem_item *) (ptr - sizeof(struct kmem_item));
   struct kmem_slab *sp = ip->slab;
+  Assert(ip != (kmem_item *) 0x206000, "first freeing");
   Assert(likely(ip->used), "Access Violation: Double freeing address kmem_item %p.", ip);
   ip->used = false;
   if (sp->nr_items >= sp->nr_items_max) {
