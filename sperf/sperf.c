@@ -52,7 +52,7 @@ void child(int fd, char *argv[]) {
 
 void parent(int fd) {
   char buf = 0;
-  char line[1024] = "";
+  //char line[1024] = "";
   while (read(fd, &buf, 1) > 0) {
     printf("%c", buf);
   }
