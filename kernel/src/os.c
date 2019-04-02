@@ -18,7 +18,7 @@ static void yls_test(){
   int i;
   for(i=0;i<200;++i){
     space[i]=pmm->alloc(rand()%((1<<10)-1));
-    printf("%d - yls0 %d addr=%d\n", _cpu(), i, space + i);
+    printf("%d - yls0 %d addr=%d\n, heap=[%p, %p)\n", _cpu(), i, space + i, _heap.start, _heap.end);
   }
   for(i=0;i<1000;++i){
     int temp=rand()%10;
@@ -27,7 +27,7 @@ static void yls_test(){
     printf("%d - yls1 %d\n", _cpu(), i);
   }
   for(i=0;i<100;++i){
-    printf("%d - yls2 %d addr=%p\n", _cpu(), i, space[i]);
+    printf("%d - yls2 %d addr=%p, heap=[%p, %p)\n", _cpu(), i, space[i], _heap.start, _heap.end);
     pmm->free(space[i]);
   }
   CLog(BG_GREEN, "OKOK on cpu %d", _cpu());
