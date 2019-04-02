@@ -1,10 +1,10 @@
 #include <common.h>
 #include <slab.h>
 
-int nr_pages = 0;
-void *pm = NULL; // paging memory
-bool *pi = NULL; // paging indicators
-struct kmem_cache *kc = NULL; // kmem caches
+static int nr_pages = 0;
+static void *pm = NULL; // paging memory
+static bool *pi = NULL; // paging indicators
+static struct kmem_cache *kc = NULL; // kmem caches
 
 void kmem_init(void *heap_start, void *heap_end) {
   Assert(heap_end > heap_start, "INVALID HEAP SIZE!");
