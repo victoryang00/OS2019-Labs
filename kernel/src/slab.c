@@ -100,6 +100,7 @@ void kmem_cache_free(void *ptr) {
   struct kmem_slab *sp = ip->slab;
   if(unlikely(ip->used)) {
       CLog(BG_RED, "Access Violation: Double freeing address kmem_item %p.", ip);
+      Panic();
   }
   ip->used = false;
   if (sp->nr_items >= sp->nr_items_max) {
