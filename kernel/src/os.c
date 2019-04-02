@@ -13,17 +13,17 @@ static void hello() {
   _putc("012345678"[_cpu()]); _putc('\n');
 }
 
-void *space[4][1000];
+void *space[4][200];
 static void yls_test(){
   int i;
-  for(i=0;i<1000;++i){
+  for(i=0;i<200;++i){
     printf("%d - yls0 %d addr=%d\n, heap=[%p, %p)\n", _cpu(), i, space + i, _heap.start, _heap.end);
     size_t size = sizeof(int);
     //size_t size = rand() % ((1 << 10) - 1) + 1;
     //Assert(size != 0, "size is 0 on round %d", i);
     space[_cpu()][i]=pmm->alloc(size);
   }
-  for(i=0;i<1000;++i){
+  for(i=0;i<200;++i){
     printf("%d - yls2 %d addr=%p, heap=[%p, %p)\n", _cpu(), i, space[i], _heap.start, _heap.end);
     pmm->free(space[_cpu()][i]);
   }
