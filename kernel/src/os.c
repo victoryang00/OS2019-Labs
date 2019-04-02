@@ -18,6 +18,7 @@ static void yls_test(){
   static int i;
   for(i=0;i<200;++i){
     space[i]=pmm->alloc(rand()%((1<<10)-1));
+    printf("%d - yls0 %d\n", _cpu(), i);
   }
   for(i=0;i<1000;++i){
     int temp=rand()%10;
