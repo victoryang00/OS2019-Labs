@@ -13,10 +13,9 @@ static void hello() {
   _putc("012345678"[_cpu()]); _putc('\n');
 }
 
-
 static void yls_test(){
-  void *space[2000];
-  int i;
+  static void *space[2000];
+  static int i;
   for(i=0;i<2000;++i){
     space[i]=pmm->alloc(rand()%((1<<10)-1));
   }
