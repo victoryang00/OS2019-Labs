@@ -13,12 +13,12 @@ static void hello() {
   _putc("012345678"[_cpu()]); _putc('\n');
 }
 
-#include "slab.h"
+#include <slab.h>
 static void yls_test(){
   int *space[5] = {};
   for (int i = 0; i < 5; ++i) {
     space[i] = pmm->alloc(sizeof(int));
-    Assert((struct kmem_item *) (space[i] - sizeof(struct kmem_item))->used == true, "item is not used!!");
+    Assert(((struct kmem_item *) (space[i] - sizeof(struct kmem_item)))->used == true, "item is not used!!");
   }
   for (int i = 0; i < 5; ++i) pmm->free(space[i]);
   CLog(BG_GREEN, "OKOK on cpu %d", _cpu());
