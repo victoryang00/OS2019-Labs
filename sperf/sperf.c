@@ -48,7 +48,9 @@ void child(int fd, int argc, char *argv[]) {
   memcpy(real_argv + 2, argv + 1, (argc - 1) * sizeof(char *));
 
   // not execve because we need environmental variables
-  dup2(fd, 2); // stderr
+  int bh = open("/dev/null");
+  dup2(bh, 1); // stdout -> blackhole
+  dup2(fd, 2); // stderr -> pipe
   execvp(real_argv[0], real_argv); 
   Panic("strace is not executable. (NO PATH HITS.)");
 }
