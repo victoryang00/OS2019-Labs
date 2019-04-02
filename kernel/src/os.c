@@ -14,9 +14,9 @@ static void hello() {
 }
 
 static void yls_test(){
-  static void *space[2000];
+  static void *space[200];
   static int i;
-  for(i=0;i<2000;++i){
+  for(i=0;i<200;++i){
     space[i]=pmm->alloc(rand()%((1<<10)-1));
   }
   for(i=0;i<1000;++i){
