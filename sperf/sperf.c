@@ -42,7 +42,7 @@ void sperf(int argc, char *argv[]) {
 }
 
 void child(int fd, int argc, char *argv[]) {
-  char *real_argv[] = malloc((argc + 1) * sizeof(char *));
+  char *real_argv[];
   real_argv[0] = "strace";
   real_argv[1] = "-T";
   memcpy(real_argv + 2, argv + 1, (argc - 1) * sizeof(char *));
