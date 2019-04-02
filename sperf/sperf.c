@@ -52,7 +52,7 @@ void child(int fd, int argc, char *argv[]) {
 
   // not execve because we need environmental variables
   dup2(fd, 2); // stderr
-  execvp(argv[0], real_argv); 
+  execvp(real_argv[0], real_argv); 
   Panic("strace is not executable. (NO PATH HITS.)");
 }
 
