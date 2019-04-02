@@ -86,7 +86,7 @@ void *kmem_cache_alloc(struct kmem_cache *cp) {
   while (likely(ip->used)) ip = ip->next;
   Assert((void *) ip >= pm && (void *) ip < (void *) kc, "Item %p is not in pm area [%p, %p)!", ip, pm, (void *) kc);
   ip->used = true;
-  sp->nr_items++;
+  if (sp->nr_items < sp->nr_items_max) sp->nr_items++;
   if (sp->nr_items >= sp->nr_items_max) {
     kmem_cache_move_slab_to_full(sp->cache, sp);
   }
@@ -97,13 +97,14 @@ void *kmem_cache_alloc(struct kmem_cache *cp) {
 void kmem_cache_free(void *ptr) {
   struct kmem_item *ip = (struct kmem_item *) (ptr - sizeof(struct kmem_item));
   struct kmem_slab *sp = ip->slab;
-  Assert(ip != (struct kmem_item *) 0x206000, "first freeing");
-  Assert(likely(ip->used), "Access Violation: Double freeing address kmem_item %p.", ip);
+  if(likely(ip->used)) {
+      CLog(BG_RED, "Access Violation: Double freeing address kmem_item %p.", ip);
+  }
   ip->used = false;
   if (sp->nr_items >= sp->nr_items_max) {
     kmem_cache_move_slab_to_free(sp->cache, sp);
   }
-  sp->nr_items--;
+  if (sp->nr_items > 0) sp->nr_items--;
   Assert(sp->nr_items >= 0, "Slab at %p has negative number of items!!", sp);
   CLog(BG_GREEN, "Item at %p freed. Slab at %p has %d items free now.", ptr, sp, sp->nr_items_max - sp->nr_items);
 }
