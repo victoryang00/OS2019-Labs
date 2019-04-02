@@ -24,9 +24,11 @@ static void yls_test(){
     int temp=rand()%10;
     pmm->free(space[temp]);
     space[temp]=pmm->alloc(rand()&((1<<10)-1));
+    printf("%d - yls1 %d\n", _cpu(), i);
   }
   for(i=0;i<100;++i){
     pmm->free(space[i]);
+    printf("%d - yls2 %d\n", _cpu(), i);
   }
   CLog(BG_GREEN, "OKOK on cpu %d", _cpu());
 }
