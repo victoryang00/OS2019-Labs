@@ -58,6 +58,7 @@ void parent(int fd) {
     line[length++] = buf;
     if (buf == '\n') {
       Log("%s, EOL", line);
+      length = 0;
     }
   }
 }
