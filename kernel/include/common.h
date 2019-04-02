@@ -7,7 +7,7 @@
 #include <kernel.h>
 #include <nanos.h>
 
-//#define DEBUG
+#define DEBUG
 #include <debug.h>
 
 #define likely(x)   __builtin_expect(!!(x), 1)
