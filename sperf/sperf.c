@@ -52,8 +52,12 @@ void child(int fd, char *argv[]) {
 
 void parent(int fd) {
   char buf = 0;
-  //char line[1024] = "";
+  char line[1024] = "";
+  int length = 0;
   while (read(fd, &buf, 1) > 0) {
-    Log("%c", buf);
+    line[length++] = buf;
+    if (buf == '\n') {
+      Log("%s, EOL", line);
+    }
   }
 }
