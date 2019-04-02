@@ -57,6 +57,7 @@ void parent(int fd) {
   while (read(fd, &buf, 1) > 0) {
     line[length++] = buf;
     if (buf == '\n') {
+      line[length] = 0;
       Log("%s, EOL", line);
       length = 0;
     }
