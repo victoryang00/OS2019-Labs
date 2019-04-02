@@ -15,9 +15,9 @@ static void hello() {
 
 #include <slab.h>
 static void yls_test(){
-  int *space[5] = {};
+  void *space[5] = {};
   for (int i = 0; i < 5; ++i) {
-    space[i] = pmm->alloc(sizeof(int));
+    space[i] = pmm->alloc(rand()%((1<<10)-1));
   }
   for (int i = 0; i < 5; ++i) pmm->free(space[i]);
   CLog(BG_GREEN, "OKOK on cpu %d", _cpu());
