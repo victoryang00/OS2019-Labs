@@ -18,9 +18,11 @@ static void yls_test(){
   int i;
   for(i=0;i<200;++i){
     printf("%d - yls0 %d addr=%d\n, heap=[%p, %p)\n", _cpu(), i, space + i, _heap.start, _heap.end);
-    space[i]=pmm->alloc(0);
+    size_t size = rand() % ((1 << 10) - 1);
+    Assert(size != 0, "size is 0 on round %d", i);
+    space[i]=pmm->alloc(size);
   }
-  for(i=0;i<200;++i){
+  for(i=0;i<100;++i){
     printf("%d - yls2 %d addr=%p, heap=[%p, %p)\n", _cpu(), i, space[i], _heap.start, _heap.end);
     pmm->free(space[i]);
   }
