@@ -49,8 +49,7 @@ void child(int fd, int argc, char *argv[]) {
 
   // not execve because we need environmental variables
   dup2(fd, 2); // stderr
-  execvp(real_argv[0], real_argv); 
-  Log("%s", real_argv[0]);
+  execvp("strace", real_argv); 
   Panic("strace is not executable. (NO PATH HITS.)");
 }
 
@@ -62,7 +61,7 @@ void parent(int fd) {
     line[length++] = buf;
     if (buf == '\n') {
       line[length] = 0;
-      Log("%s, EOL", line);
+      Log("%s", line);
       length = 0;
     }
   }
