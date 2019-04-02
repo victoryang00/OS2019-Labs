@@ -14,7 +14,7 @@ static void hello() {
 }
 
 static void yls_test(){
-  void *space[5] = {};
+  int *space[5] = {};
   for (int i = 0; i < 5; ++i) space[i] = pmm->alloc(sizeof(int));
   for (int i = 0; i < 5; ++i) pmm->free(space[i]);
   CLog(BG_GREEN, "OKOK on cpu %d", _cpu());
