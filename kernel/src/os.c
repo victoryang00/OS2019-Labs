@@ -13,6 +13,7 @@ static void hello() {
   _putc("012345678"[_cpu()]); _putc('\n');
 }
 
+#include "slab.h"
 static void yls_test(){
   int *space[5] = {};
   for (int i = 0; i < 5; ++i) {
