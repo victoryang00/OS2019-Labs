@@ -32,12 +32,14 @@ void sperf(int argc, char *argv[]) {
     close(pipefd[0]);
     child(pipefd[1], argv);
     Panic("Should not return from child!");
+    while(1) CLog(BG_RED, "C");
   } else {
     /* parent process */
     parent(pipefd[0]);
     close(pipefd[0]);
     close(pipefd[1]);
     //wait(NULL);
+    while(1) CLog(BG_PURPLE, "P");
   }
 }
 
