@@ -15,9 +15,13 @@ static void hello() {
 
 static void yls_test(){
   static void *space[1000] = {};
-  int i = 0;
-  for (i = 0; i < 1000; ++i) space[i] = pmm->alloc(rand()%((1<<10)-1));
-  for (i = 0; i < 1000; ++i) pmm->free(space[i]);
+  for (int i = 0; i < 1000; ++i) space[i] = pmm->alloc(rand()%((1<<10)-1));
+  for (int i = 0; i < 1000; ++i) {
+    int tmp = rand() % 10;
+    pmm->free(space[tmp]);
+    space[tmp] = pmm->alloc(rand()%((1<<10)-1));
+  }
+  for (int i = 0; i < 1000; ++i) pmm->free(space[i]);
   CLog(BG_GREEN, "OKOK on cpu %d", _cpu());
 }
 
