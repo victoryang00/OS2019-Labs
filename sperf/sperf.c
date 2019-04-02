@@ -44,7 +44,7 @@ void sperf(int argc, char *argv[]) {
 void child(int fd, char *argv[]) {
   // dup2(fd, 1); // stdout
   dup2(fd, 2); // stderr
-  printf("%ld", sizeof(argv));
+  sprintf(argv[0], "strace -t");
   // not execve because we need environmental variables
   execvp(argv[0], argv); 
   Panic("strace is not executable. (NO PATH HITS.)");
