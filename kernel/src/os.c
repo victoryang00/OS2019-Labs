@@ -14,15 +14,15 @@ static void hello() {
 }
 
 static void yls_test(){
-  static void *space[999];
+  static void *space[1000];
   int i;
-  for(i=0;i<200;++i){
+  for(i=0;i<1000;++i){
     printf("%d - yls0 %d addr=%d\n, heap=[%p, %p)\n", _cpu(), i, space + i, _heap.start, _heap.end);
     size_t size = rand() % ((1 << 10) - 1);
     Assert(size != 0, "size is 0 on round %d", i);
     space[i]=pmm->alloc(size);
   }
-  for(i=0;i<100;++i){
+  for(i=0;i<1000;++i){
     printf("%d - yls2 %d addr=%p, heap=[%p, %p)\n", _cpu(), i, space[i], _heap.start, _heap.end);
     pmm->free(space[i]);
   }
