@@ -83,6 +83,7 @@ void parent(int fd) {
         CLog(BG_GREEN, "%s %lf", name, time);
         //TODO: HANDLE
         time = -1.0;
+      } 
     }
   }
 }
