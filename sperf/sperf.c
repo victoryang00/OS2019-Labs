@@ -69,6 +69,8 @@ void parent(int fd) {
     line[length++] = buf;
     if (buf == '\n') {
       line[length] = 0;
+      length = 0;
+      
       sscanf(line, "%[^(](%*[^=]= <%lf>", name, &time);
       Log("%s %lf", name, time);
     }
