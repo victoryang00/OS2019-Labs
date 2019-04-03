@@ -15,6 +15,9 @@ static void hello() {
 
 static void os_run() {
   hello();
+  int *a = pmm->alloc(sizeof(int));
+  pmm->free(a);
+  pmm->free(a);
   _intr_write(1);
   while (1) {
     _yield();
