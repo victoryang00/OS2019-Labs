@@ -63,7 +63,7 @@ void parent(int fd) {
   int length = 0;
 
   char name[128] = "";
-  double time = 0.0;
+  double time = -1.0;
   
   while (read(fd, &buf, 1) != EOF) {
     line[length++] = buf;
@@ -72,8 +72,17 @@ void parent(int fd) {
       length = 0;
       
       Log("%s", line);
-      sscanf(line, "%[^(](%*[^<]<%lf>", name, &time);
-      CLog(BG_GREEN, "%s %lf", name, time);
+      if (name[0] == 0) {
+        sscanf(line, "%[^(]%*[^<]<%lf>", name, &time);
+      }
+      if (name[0] != 0) {
+        if (time < 0) {
+          sscanf(line, "%*[^<]<%lf>", &time);
+          if (time < 0) continue;
+        }
+        CLog(BG_GREEN, "%s %lf", name, time);
+        //TODO: HANDLE
+        time = -1.0;
     }
   }
 }
