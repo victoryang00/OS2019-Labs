@@ -71,8 +71,9 @@ void parent(int fd) {
       line[length] = 0;
       length = 0;
       
+      Log("%s", line);
       sscanf(line, "%[^(](%*[^=]= <%lf>", name, &time);
-      Log("%s %lf", name, time);
+      CLog(BG_GREEN, "%s %lf", name, time);
     }
   }
 }
