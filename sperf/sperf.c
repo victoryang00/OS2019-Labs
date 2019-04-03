@@ -68,6 +68,7 @@ void parent(int fd) {
   while (read(fd, &buf, 1) != EOF) {
     line[length++] = buf;
     if (buf == '\n') {
+      line[length] = 0;
       sscanf(line, "%[^(](%*[^=]= <%lf>", name, &time);
       Log("%s %lf", name, time);
     }
