@@ -46,7 +46,7 @@ void sperf(int argc, char *argv[]) {
 void child(int fd, int argc, char *argv[]) {
   char *real_argv[argc + 2];
   real_argv[0] = "strace";
-  real_argv[1] = "-xx";
+  real_argv[1] = "-x";
   real_argv[2] = "-T";
   memcpy(real_argv + 3, argv + 1, (argc - 1) * sizeof(char *));
 
