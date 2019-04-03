@@ -72,7 +72,7 @@ void parent(int fd) {
       length = 0;
       
       Log("%s", line);
-      sscanf(line, "%[^(](%*[^=]= <%lf>", name, &time);
+      sscanf(line, "%[^(](%*[^<]<%lf>", name, &time);
       CLog(BG_GREEN, "%s %lf", name, time);
     }
   }
