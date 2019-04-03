@@ -44,10 +44,11 @@ void sperf(int argc, char *argv[]) {
 }
 
 void child(int fd, int argc, char *argv[]) {
-  char *real_argv[argc + 1];
+  char *real_argv[argc + 2];
   real_argv[0] = "strace";
-  real_argv[1] = "-T";
-  memcpy(real_argv + 2, argv + 1, (argc - 1) * sizeof(char *));
+  real_argv[1] = "-xx";
+  real_argv[2] = "-T";
+  memcpy(real_argv + 3, argv + 1, (argc - 1) * sizeof(char *));
 
   // not execve because we need environmental variables
   int bh = open("/dev/null", O_APPEND);
