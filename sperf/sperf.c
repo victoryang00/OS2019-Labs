@@ -61,12 +61,15 @@ void parent(int fd) {
   char buf = 0;
   char line[1024] = "";
   int length = 0;
+
+  char name[128] = "";
+  double time = 0.0;
+  
   while (read(fd, &buf, 1) != EOF) {
     line[length++] = buf;
     if (buf == '\n') {
-      line[length] = 0;
-      Log("%s", line);
-      length = 0;
+      sscanf(line, "%[^(](%*[^=]= <%lf>", name, &time);
+      Log("%s %lf", name, time);
     }
   }
 }
