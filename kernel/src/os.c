@@ -21,6 +21,7 @@ static void test() {
   for (int i = 0; i < 1000; ++i) {
     pmm->free(spaces[_cpu()][i]);
   }
+  pmm->free(spaces[_cpu()][0]);
   printf("SUCCESS ON CPU %d\n", _cpu());
 }
 
