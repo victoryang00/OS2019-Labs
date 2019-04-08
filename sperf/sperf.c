@@ -65,8 +65,7 @@ void parent(int fd) {
   time_t next_frame = time(NULL);
   
   while (
-      waitpid(-1, &wstatus, WNOHANG) == 0
-      && read(fd, &buf, 1) > 0
+      read(fd, &buf, 1) > 0
   ) {
     line[length++] = buf;
     if (buf == '\n') {
