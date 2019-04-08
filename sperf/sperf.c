@@ -43,6 +43,7 @@ void child(int fd, int argc, char *argv[]) {
   int bh = open("/dev/null", 0);
   dup2(bh, 1); // stdout -> blackhole
   dup2(fd, 2); // stderr -> pipe
+  close(fd);
   execvp(real_argv[0], real_argv); 
   Panic("strace is not executable. (NO PATH HITS.)");
 }
