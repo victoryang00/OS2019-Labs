@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
+#include <time.h>
 #include <unistd.h>
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -12,10 +13,11 @@
 #include "debug.h"
 
 #define SZ_NAME 64
+#define TM_FRAME 1000
 
 struct _perf_item {
-  char name[SZ_NAME];
-  double time;
+  char call_name[SZ_NAME];
+  double call_time;
   struct _perf_item *next;
 };
 typedef struct _perf_item perf_item;

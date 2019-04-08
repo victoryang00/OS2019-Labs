@@ -51,8 +51,10 @@ void parent(int fd) {
   char line[1024] = "";
   int length = 0;
 
-  char name[128] = "";
-  double time = -1.0;
+  char call_name[128] = "";
+  double call_time = -1.0;
+  
+  time_t next_frame = time(0) + TM_FRAME;
   
   while (read(fd, &buf, 1) != EOF) {
     line[length++] = buf;
@@ -61,31 +63,34 @@ void parent(int fd) {
       length = 0;
       
       //Log("%s", line);
-      if (name[0] == 0) {
-        sscanf(line, "%[^(]%*[^<]<%lf>", name, &time);
+      if (call_name[0] == 0) {
+        sscanf(line, "%[^(]%*[^<]<%lf>", call_name, &call_time);
       }
-      if (name[0] != 0) {
-        if (time < 0) {
-          sscanf(line, "%*[^<]<%lf>", &time);
-          if (time < 0) continue;
+      if (call_name[0] != 0) {
+        if (call_time < 0) {
+          sscanf(line, "%*[^<]<%lf>", &call_time);
+          if (call_time < 0) continue;
         }
-        CLog(BG_GREEN, "%s %lf", name, time);
-        addItem(name, time);
-        //TODO: showItems();
-        name[0] = 0;
-        time = -1.0;
+        CLog(BG_GREEN, "%s %lf", call_name, call_time);
+        addItem(call_name, call_time);
+        if (time(0) > next_frame) {
+          next_frame += TM_FRAME;
+          showItems();
+        }
+        call_name[0] = 0;
+        call_time = -1.0;
       } 
     }
   }
 }
 
-void addItem(char *name, double time) {
-  time_total += time;
+void addItem(char *call_name, double call_time) {
+  time_total += call_time;
 
   perf_item *pp = root;
-  while (pp && strncmp(pp->name, name, SZ_NAME - 1) != 0) pp = pp->next;
+  while (pp && strncmp(pp->call_name, call_name, SZ_NAME - 1) != 0) pp = pp->next;
   if (pp) {
-    pp->time += time;
+    pp->call_time += call_time;
     /* disconnect pp from chain */
     if (pp == root) {
       root = pp->next;
@@ -97,17 +102,17 @@ void addItem(char *name, double time) {
   } else {
     /* create a new perf node item */
     pp = malloc(sizeof(perf_item));
-    strncpy(pp->name, name, SZ_NAME - 1);
-    pp->time = time;
+    strncpy(pp->call_name, call_name, SZ_NAME - 1);
+    pp->call_time = call_time;
   }
 
   /* rejoin the chain to sort */
-  if (!root || root->time < pp->time) {
+  if (!root || root->call_time < pp->call_time) {
     pp->next = root;
     root = pp;
   } else {
     perf_item *np = root;
-    while (np->next && np->next->time > pp->time) np = np->next;
+    while (np->next && np->next->call_time > pp->call_time) np = np->next;
     pp->next = np->next;
     np->next = pp;
   }
@@ -116,6 +121,6 @@ void addItem(char *name, double time) {
 void showItems() {
   perf_item *pp = root;
   for (; pp != NULL; pp = pp->next) {
-    printf("%s : %.5lfs (%d%%)", pp->name, pp->time, (int) (pp->time / time_total * 100));
+    printf("%s : %.5lfs (%d%%)", pp->call_name, pp->call_time, (int) (pp->call_time / time_total * 100));
   }
 }
