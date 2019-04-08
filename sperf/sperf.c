@@ -64,7 +64,7 @@ void parent() {
       && read(0, &buf, 1) > 0
   ) {
     line[length++] = buf;
-    if (buf == '\n') {
+    if (buf == '>') {
       line[length] = 0;
       length = 0;
       
