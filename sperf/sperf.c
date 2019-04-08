@@ -65,6 +65,7 @@ void parent(int fd) {
   int wstatus = 0;
   time_t next_frame = time(NULL);
   
+  printf("BEFORE\n");
   while (
       waitpid(-1, &wstatus, WNOHANG) == 0
       && read(fd, &buf, 1) > 0
@@ -95,6 +96,7 @@ void parent(int fd) {
       showItems();
     }
   }
+  printf("AFTER\n");
   showItems();
   CLog(BG_GREEN, "The process has finished.");
 }
