@@ -55,9 +55,13 @@ void parent(int fd) {
   char call_name[128] = "";
   double call_time = -1.0;
   
+  int wstatus = 0;
   time_t next_frame = time(NULL) + TM_FRAME;
   
-  while (read(fd, &buf, 1) > 0) {
+  while (
+      waitpid(-1, &wstatus, WNOHANG) == 0
+      && read(fd, &buf, 1) > 0
+  ) {
     line[length++] = buf;
     if (buf == '\n') {
       line[length] = 0;
