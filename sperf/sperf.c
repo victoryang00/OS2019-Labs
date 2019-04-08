@@ -35,6 +35,7 @@ void sperf(int argc, char *argv[]) {
 void child(int fd, int argc, char *argv[]) {
   char output_arg[64] = "";
   sprintf(output_arg, "/proc/%d/fd/%d", getpid(), fd);
+  CLog(BG_YELLOW, "Child will write to %s", output_arg);
 
   char *real_argv[argc + 6];
   real_argv[0] = "strace";
