@@ -79,11 +79,12 @@ void parent(int fd) {
       } 
     }
     if (time(NULL) > next_frame) {
-          CLog(BG_RED, "PRINT!");
-          next_frame += TM_FRAME;
-          showItems();
+      next_frame += TM_FRAME;
+      showItems();
     }
   }
+  showItems();
+  CLog(BG_GREEN, "The process has finished.");
 }
 
 void addItem(char *call_name, double call_time) {
