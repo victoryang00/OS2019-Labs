@@ -68,6 +68,7 @@ void parent(int fd, int cpid) {
       waitpid(cpid, &wstatus, WNOHANG) == 0
       && read(fd, &buf, 1) > 0
   ) {
+    printf("OKOK\n");
     line[length++] = buf;
     if (buf == '\n') {
       line[length] = 0;
@@ -80,11 +81,7 @@ void parent(int fd, int cpid) {
       if (call_name[0] != 0) {
         if (call_time < 0) {
           sscanf(line, "%*[^<]<%lf>", &call_time);
-          if (call_time < 0) {
-
-            printf("BAD\n");
-            continue;
-          }
+          if (call_time < 0) continue;
         }
         //CLog(BG_GREEN, "%s %lf", call_name, call_time);
         addItem(call_name, call_time);
