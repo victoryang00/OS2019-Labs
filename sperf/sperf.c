@@ -116,6 +116,6 @@ void addItem(char *name, double time) {
 void showItems() {
   perf_item *pp = root;
   for (; pp != NULL; pp = pp->next) {
-    printf("%s : %.5lxs (%d\%)", pp->name, pp->time, (int) (pp->time / time_total * 100));
+    printf("%s : %.5lfs (%d\%)", pp->name, pp->time, (int) (pp->time / time_total * 100));
   }
 }
