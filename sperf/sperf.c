@@ -71,9 +71,10 @@ void parent(int fd) {
           sscanf(line, "%*[^<]<%lf>", &call_time);
           if (call_time < 0) continue;
         }
-        CLog(BG_GREEN, "%s %lf", call_name, call_time);
+        //CLog(BG_GREEN, "%s %lf", call_name, call_time);
         addItem(call_name, call_time);
         if (time(0) > next_frame) {
+          CLog(BG_RED, "PRINT!");
           next_frame += TM_FRAME;
           showItems();
         }
