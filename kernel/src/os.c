@@ -16,7 +16,7 @@ static void hello() {
 static void *spaces[4][1005] = {};
 static void test() {
   for (int i = 0; i < 1000; ++i) {
-    spaces[_cpu()][i] = pmm->alloc(1023);
+    spaces[_cpu()][i] = pmm->alloc(rand() % ((1 << 20) - 1));
   }
   for (int i = 0; i < 1000; ++i) {
     pmm->free(spaces[_cpu()][i]);
