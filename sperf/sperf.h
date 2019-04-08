@@ -9,7 +9,7 @@
 #include <sys/wait.h>
 #include <fcntl.h>
 
-//#define DEBUG
+#define DEBUG
 #include "debug.h"
 
 #define SZ_NAME 64
