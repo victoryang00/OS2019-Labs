@@ -27,6 +27,6 @@ extern double time_total;
 
 void sperf(int, char *[]);
 void child(int, int, char *[]);
-void parent(int);
+void parent(int, int);
 void addItem(char *, double);
 void showItems();
