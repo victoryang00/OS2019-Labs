@@ -13,22 +13,9 @@ static void hello() {
   _putc("012345678"[_cpu()]); _putc('\n');
 }
 
-static void *spaces[4][1005] = {};
-static void test() {
-  for (int i = 0; i < 1000; ++i) {
-    spaces[_cpu()][i] = pmm->alloc(rand() % (4097));
-  }
-  for (int i = 0; i < 1000; ++i) {
-    pmm->free(spaces[_cpu()][i]);
-  }
-  pmm->free(spaces[_cpu()][0]);
-  printf("SUCCESS ON CPU %d\n", _cpu());
-}
-
 static void os_run() {
   hello();
   _intr_write(1);
-  test();
   while (1) {
     _yield();
   }
