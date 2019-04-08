@@ -123,7 +123,7 @@ void addItem(char *call_name, double call_time) {
 
 void showItems() {
   rewind(stdout);
-  ftruncate(stdout, 0);
+  ftruncate(1, 0);
 
   perf_item *pp = root;
   for (; pp != NULL; pp = pp->next) {
