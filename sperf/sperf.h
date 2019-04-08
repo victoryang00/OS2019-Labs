@@ -26,7 +26,7 @@ extern int max_name_length;
 extern double time_total;
 
 void sperf(int, char *[]);
-void child(pid_t, int, char *[]);
+void child(int, int, char *[]);
 void parent();
 void addItem(char *, double);
 void showItems();
