@@ -117,6 +117,7 @@ void addItem(char *call_name, double call_time) {
     pp->next = np->next;
     np->next = pp;
   }
+          CLog(BG_PURPLE, "ADD!");
 }
 
 void showItems() {
