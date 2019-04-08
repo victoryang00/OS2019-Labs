@@ -62,7 +62,7 @@ void parent(int fd) {
   double call_time = -1.0;
   
   int wstatus = 0;
-  time_t next_frame = time(NULL) + TM_FRAME;
+  time_t next_frame = time(NULL);
   
   while (
       waitpid(-1, &wstatus, WNOHANG) == 0
