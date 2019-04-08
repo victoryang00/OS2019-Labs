@@ -80,7 +80,11 @@ void parent(int fd, int cpid) {
       if (call_name[0] != 0) {
         if (call_time < 0) {
           sscanf(line, "%*[^<]<%lf>", &call_time);
-          if (call_time < 0) continue;
+          if (call_time < 0) {
+
+            printf("BAD\n");
+            continue;
+          }
         }
         //CLog(BG_GREEN, "%s %lf", call_name, call_time);
         addItem(call_name, call_time);
@@ -98,7 +102,6 @@ void parent(int fd, int cpid) {
 }
 
 void addItem(char *call_name, double call_time) {
-  printf("HEY!\n");
   time_total += call_time;
 
   perf_item *pp = root;
