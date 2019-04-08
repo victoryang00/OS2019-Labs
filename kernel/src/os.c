@@ -13,13 +13,13 @@ static void hello() {
   _putc("012345678"[_cpu()]); _putc('\n');
 }
 
-static void *spaces[1005] = {};
+static void *spaces[4][1005] = {};
 static void test() {
   for (int i = 0; i < 1000; ++i) {
-    spaces[i] = pmm->alloc(400);
+    spaces[_cpu()][i] = pmm->alloc(400);
   }
   for (int i = 0; i < 1000; ++i) {
-    pmm->free(spaces[i]);
+    pmm->free(spaces[_cpu()][i]);
   }
   printf("SUCCESS ON CPU %d\n", _cpu());
 }
