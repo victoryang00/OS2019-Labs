@@ -67,7 +67,7 @@ void parent(int fd) {
       line[length] = 0;
       length = 0;
       
-      //Log("%s", line);
+      Log("%s", line);
       if (call_name[0] == 0) {
         sscanf(line, "%[^(]%*[^<]<%lf>", call_name, &call_time);
       }
@@ -76,7 +76,7 @@ void parent(int fd) {
           sscanf(line, "%*[^<]<%lf>", &call_time);
           if (call_time < 0) continue;
         }
-        //CLog(BG_GREEN, "%s %lf", call_name, call_time);
+        CLog(BG_GREEN, "%s %lf", call_name, call_time);
         addItem(call_name, call_time);
         call_name[0] = 0;
         call_time = -1.0;
