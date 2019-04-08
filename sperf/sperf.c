@@ -43,7 +43,6 @@ void child(int fd, int argc, char *argv[]) {
   int bh = open("/dev/null", 0);
   dup2(bh, 1); // stdout -> blackhole
   dup2(fd, 2); // stderr -> pipe
-  close(fd);
   execvp(real_argv[0], real_argv); 
   Panic("strace is not executable. (NO PATH HITS.)");
 }
@@ -58,7 +57,7 @@ void parent(int fd) {
   
   time_t next_frame = time(NULL) + TM_FRAME;
   
-  while (read(fd, &buf, 1) != EOF) {
+  while (read(fd, &buf, 1) > 0) {
     line[length++] = buf;
     if (buf == '\n') {
       line[length] = 0;
