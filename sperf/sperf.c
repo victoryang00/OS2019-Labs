@@ -35,7 +35,6 @@ void child(int fd, int argc, char *argv[]) {
   char output_arg[64] = "";
   sprintf(output_arg, "/proc/%d/fd/%d", getpid(), fd);
   CLog(BG_YELLOW, "Child will write to %s", output_arg);
-  printf("Child will write to %s\n", output_arg);
 
   char *real_argv[argc + 5];
   real_argv[0] = "strace";
@@ -137,7 +136,7 @@ void addItem(char *call_name, double call_time) {
 
 void showItems() {
 #ifndef DEBUG
-  //printf("\033[2J\033[1;1H");
+  printf("\033[2J\033[1;1H");
 #endif
   perf_item *pp = root;
   for (; pp != NULL; pp = pp->next) {
