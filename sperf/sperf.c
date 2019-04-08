@@ -63,6 +63,7 @@ void parent() {
       waitpid(-1, &wstatus, WNOHANG) == 0
       && read(0, &buf, 1) > 0
   ) {
+    CLog(BG_GREEN, "OK");
     line[length++] = buf;
     if (buf == '>') {
       line[length] = 0;
