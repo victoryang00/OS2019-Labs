@@ -26,16 +26,17 @@ void sperf(int argc, char *argv[]) {
 
 void child(pid_t ppid, int argc, char *argv[]) {
   char arg_output[64] = "";
-  sprintf(arg_output, "/proc/%d/fd/0\0", ppid);
+  sprintf(arg_output, "/proc/%d/fd/0", ppid);
   CLog(BG_GREEN, "write to %s", arg_output);
     
-  char *real_argv[argc + 4];
+  char *real_argv[argc + 5];
   real_argv[0] = "strace";
   real_argv[1] = "-xx";
   real_argv[2] = "-T";
   real_argv[3] = "-o";
   real_argv[4] = arg_output;
   memcpy(real_argv + 5, argv + 1, (argc - 1) * sizeof(char *));
+  real_argv[argc + 4] = NULL;
 
   // not execve because we need environmental variables
   int bh = open("/dev/null", 0);
