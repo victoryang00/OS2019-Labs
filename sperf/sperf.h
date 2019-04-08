@@ -9,7 +9,7 @@
 #include <sys/wait.h>
 #include <fcntl.h>
 
-#define DEBUG
+//#define DEBUG
 #include "debug.h"
 
 #define SZ_NAME 64
@@ -27,6 +27,6 @@ extern double time_total;
 
 void sperf(int, char *[]);
 void child(int, int, char *[]);
-void parent(int, int);
+void parent(int);
 void addItem(char *, double);
 void showItems();
