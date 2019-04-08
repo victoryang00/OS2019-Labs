@@ -61,10 +61,12 @@ void parent(int fd) {
   char call_name[128] = "";
   double call_time = -1.0;
   
+  int wstatus = 0;
   time_t next_frame = time(NULL);
   
   while (
-      read(fd, &buf, 1) > 0
+      waitpid(-1, &wstatus, WNOHANG) == 0
+      && read(fd, &buf, 1) > 0
   ) {
     line[length++] = buf;
     if (buf == '\n') {
@@ -72,6 +74,7 @@ void parent(int fd) {
       length = 0;
       
       //Log("%s", line);
+      printf("%s\n", line);
       if (call_name[0] == 0) {
         sscanf(line, "%[^(]%*[^<]<%lf>", call_name, &call_time);
       }
