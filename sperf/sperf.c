@@ -37,14 +37,15 @@ void child(int fd, int argc, char *argv[]) {
   sprintf(output_arg, "/proc/%d/fd/%d", getpid(), fd);
   CLog(BG_YELLOW, "Child will write to %s", output_arg);
 
-  char *real_argv[argc + 6];
+  char *real_argv[argc + 7];
   real_argv[0] = "strace";
   real_argv[1] = "-xx";
   real_argv[2] = "-T";
-  real_argv[3] = "-o";
-  real_argv[4] = output_arg;
-  memcpy(real_argv + 5, argv + 1, (argc - 1) * sizeof(char *));
-  real_argv[argc + 5] = NULL;
+  real_argv[3] = "-f";
+  real_argv[4] = "-o";
+  real_argv[5] = output_arg;
+  memcpy(real_argv + 6, argv + 1, (argc - 1) * sizeof(char *));
+  real_argv[argc + 6] = NULL;
 
   // not execve because we need environmental variables
   int bh = open("/dev/null", 0);
