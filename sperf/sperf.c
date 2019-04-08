@@ -37,7 +37,7 @@ void child(int fd, int argc, char *argv[]) {
   CLog(BG_YELLOW, "Child will write to %s", output_arg);
   printf("Child will write to %s\n", output_arg);
 
-  char *real_argv[argc + 6];
+  char *real_argv[argc + 5];
   real_argv[0] = "strace";
   real_argv[1] = "-xx";
   real_argv[2] = "-T";
@@ -65,12 +65,10 @@ void parent(int fd) {
   int wstatus = 0;
   time_t next_frame = time(NULL);
   
-  printf("BEFORE\n");
   while (
       waitpid(-1, &wstatus, WNOHANG) == 0
       && read(fd, &buf, 1) > 0
   ) {
-    printf("%c\n", buf);
     line[length++] = buf;
     if (buf == '\n') {
       line[length] = 0;
@@ -96,7 +94,6 @@ void parent(int fd) {
       showItems();
     }
   }
-  printf("AFTER\n");
   showItems();
   CLog(BG_GREEN, "The process has finished.");
 }
