@@ -73,15 +73,15 @@ void parent(int fd) {
         }
         //CLog(BG_GREEN, "%s %lf", call_name, call_time);
         addItem(call_name, call_time);
+        call_name[0] = 0;
+        call_time = -1.0;
+      } 
+    }
         if (time(NULL) > next_frame) {
           CLog(BG_RED, "PRINT!");
           next_frame += TM_FRAME;
           showItems();
         }
-        call_name[0] = 0;
-        call_time = -1.0;
-      } 
-    }
   }
 }
 
@@ -117,7 +117,6 @@ void addItem(char *call_name, double call_time) {
     pp->next = np->next;
     np->next = pp;
   }
-          CLog(BG_PURPLE, "ADD!");
 }
 
 void showItems() {
