@@ -22,6 +22,7 @@ struct _perf_item {
 };
 typedef struct _perf_item perf_item;
 
+extern size_t max_name_length;
 extern double time_total;
 
 void sperf(int, char *[]);

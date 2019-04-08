@@ -1,5 +1,6 @@
 #include "sperf.h"
 
+int max_name_length = 0;
 double time_total = 0;
 perf_item *root = NULL;
 
@@ -101,6 +102,9 @@ void addItem(char *call_name, double call_time) {
   } else {
     /* create a new perf node item */
     pp = malloc(sizeof(perf_item));
+    if (strlen(call_name) > max_name_length) {
+      max_name_length = strlen(call_name);
+    }
     strncpy(pp->call_name, call_name, SZ_NAME - 1);
     pp->call_time = call_time;
   }
@@ -120,6 +124,6 @@ void addItem(char *call_name, double call_time) {
 void showItems() {
   perf_item *pp = root;
   for (; pp != NULL; pp = pp->next) {
-    printf("%s : %.5lfs (%d%%)\n", pp->call_name, pp->call_time, (int) (pp->call_time / time_total * 100));
+    printf("%*s : %.5lfs (%2d%%)\n", max_name_length, pp->call_name, pp->call_time, (int) (pp->call_time / time_total * 100));
   }
 }
