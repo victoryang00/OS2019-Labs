@@ -13,7 +13,7 @@
 #include "debug.h"
 
 #define SZ_NAME 64
-#define TM_FRAME 10
+#define TM_FRAME 1
 
 struct _perf_item {
   char call_name[SZ_NAME];

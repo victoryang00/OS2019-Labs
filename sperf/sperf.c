@@ -78,9 +78,11 @@ void parent(int fd) {
         call_time = -1.0;
       } 
     }
+    if (time(NULL) > next_frame) {
           CLog(BG_RED, "PRINT!");
           next_frame += TM_FRAME;
           showItems();
+    }
   }
 }
 
