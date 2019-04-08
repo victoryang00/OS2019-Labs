@@ -1,3 +1,22 @@
+/**
+ * For code readers and teachers:
+ * To see debug and more running info,
+ * please remove comment in 'sperf.h'
+ * to enable debug mode.
+ *
+ * I use linked list to sort all strace
+ * items and print them in descending 
+ * order regrading the calling time.
+ *
+ * The child process will call
+ *   -> strace -xx -T -o /path_to_pipe
+ * so that stract will output directly
+ * to the file, therefore we can avoid
+ * the child program outputing to stderr 
+ * and cause errors like
+ *   -> fprintf(stderr, "damn it <114514>");
+ */
+
 #include "sperf.h"
 
 int max_name_length = 0;
