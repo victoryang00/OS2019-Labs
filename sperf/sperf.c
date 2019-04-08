@@ -54,7 +54,7 @@ void parent(int fd) {
   char call_name[128] = "";
   double call_time = -1.0;
   
-  time_t next_frame = time(0) + TM_FRAME;
+  time_t next_frame = time(NULL) + TM_FRAME;
   
   while (read(fd, &buf, 1) != EOF) {
     line[length++] = buf;
@@ -73,7 +73,7 @@ void parent(int fd) {
         }
         //CLog(BG_GREEN, "%s %lf", call_name, call_time);
         addItem(call_name, call_time);
-        if (time(0) > next_frame) {
+        if (time(NULL) > next_frame) {
           CLog(BG_RED, "PRINT!");
           next_frame += TM_FRAME;
           showItems();
