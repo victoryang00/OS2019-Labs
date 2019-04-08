@@ -1,6 +1,6 @@
 #include "sperf.h"
 
-int max_name_length = 0;
+size_t max_name_length = 0;
 double time_total = 0;
 perf_item *root = NULL;
 
