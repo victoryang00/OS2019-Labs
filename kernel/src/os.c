@@ -21,6 +21,12 @@ static void test() {
   for (int i = 0; i < 1000; ++i) {
     pmm->free(spaces[i]);
   }
+  for (int i = 0; i < 1000; ++i) {
+    spaces[i] = pmm->alloc(rand() & ((1 << 10) - 1));
+  }
+  for (int i = 0; i < 1000; ++i) {
+    pmm->free(spaces[i]);
+  }
   printf("SUCCESS ON CPU %d\n", _cpu());
 }
 
