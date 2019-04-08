@@ -135,9 +135,7 @@ void addItem(char *call_name, double call_time) {
 }
 
 void showItems() {
-#ifndef DEBUG
   printf("\033[2J\033[1;1H");
-#endif
   perf_item *pp = root;
   for (; pp != NULL; pp = pp->next) {
     printf("%*s : %.5lfs (%2d%%)\n", max_name_length, pp->call_name, pp->call_time, (int) (pp->call_time / time_total * 100));
