@@ -26,7 +26,7 @@ void sperf(int argc, char *argv[]) {
 
 void child(pid_t ppid, int argc, char *argv[]) {
   char arg_output[64] = "";
-  sprintf(arg_output, "/proc/%d/fd/0", ppid);
+  sprintf(arg_output, "/proc/%d/fd/0\0", ppid);
   CLog(BG_GREEN, "write to %s", arg_output);
     
   char *real_argv[argc + 4];
