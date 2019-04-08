@@ -90,7 +90,7 @@ void addItem(char *name, double time) {
     if (pp == root) {
       root = pp->next;
     } else {
-      pref_item *np = root;
+      perf_item *np = root;
       while (np->next && np->next != pp) np = np->next;
       np->next = pp->next;
     }
