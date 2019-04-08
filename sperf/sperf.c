@@ -44,7 +44,7 @@ void child(int fd, int argc, char *argv[]) {
   real_argv[3] = "-o";
   real_argv[4] = output_arg;
   memcpy(real_argv + 5, argv + 1, (argc - 1) * sizeof(char *));
-  real_argv[argc + 4] = NULL;
+  real_argv[argc + 5] = NULL;
 
   // not execve because we need environmental variables
   int bh = open("/dev/null", 0);
