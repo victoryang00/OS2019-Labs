@@ -26,7 +26,7 @@ void sperf(int argc, char *argv[]) {
   } else {
     /* parent process */
     close(pipefd[1]);
-    parent(pipefd[0], cpid);
+    parent(pipefd[0]);
     close(pipefd[0]);
   }
 }
@@ -53,7 +53,7 @@ void child(int fd, int argc, char *argv[]) {
   Panic("strace is not executable. (NO PATH HITS.)");
 }
 
-void parent(int fd, int cpid) {
+void parent(int fd) {
   char buf = 0;
   char line[1024] = "";
   int length = 0;
@@ -65,10 +65,9 @@ void parent(int fd, int cpid) {
   time_t next_frame = time(NULL) + TM_FRAME;
   
   while (
-      waitpid(cpid, &wstatus, WNOHANG) == 0
+      waitpid(-1, &wstatus, WNOHANG) == 0
       && read(fd, &buf, 1) > 0
   ) {
-    printf("OKOK\n");
     line[length++] = buf;
     if (buf == '\n') {
       line[length] = 0;
