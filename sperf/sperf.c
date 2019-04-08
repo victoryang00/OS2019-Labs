@@ -25,10 +25,9 @@ void sperf(int argc, char *argv[]) {
     Panic("Should not return from child!");
   } else {
     /* parent process */
-    parent(pipefd[0]);
-    close(pipefd[0]);
     close(pipefd[1]);
-    //wait(NULL);
+    parent(pipefd[0], cpid);
+    close(pipefd[0]);
   }
 }
 
@@ -54,7 +53,7 @@ void child(int fd, int argc, char *argv[]) {
   Panic("strace is not executable. (NO PATH HITS.)");
 }
 
-void parent(int fd) {
+void parent(int fd, int cpid) {
   char buf = 0;
   char line[1024] = "";
   int length = 0;
@@ -66,7 +65,7 @@ void parent(int fd) {
   time_t next_frame = time(NULL) + TM_FRAME;
   
   while (
-      waitpid(-1, &wstatus, WNOHANG) == 0
+      waitpid(cpid, &wstatus, WNOHANG) == 0
       && read(fd, &buf, 1) > 0
   ) {
     line[length++] = buf;
