@@ -32,7 +32,7 @@ void child(pid_t ppid, int argc, char *argv[]) {
     
   char *real_argv[argc + 5];
   real_argv[0] = "strace";
-  real_argv[1] = "-xx";
+  real_argv[1] = "";
   real_argv[2] = "-T";
   real_argv[3] = "-o";
   real_argv[4] = arg_output;
