@@ -65,8 +65,11 @@ void parent(int fd) {
   int wstatus = 0;
   time_t next_frame = time(NULL) + TM_FRAME;
   
-  while (waitpid(-1, &wstatus, WNOHANG) == 0) {
-    line[length++] = getchar();
+  while (
+      waitpid(-1, &wstatus, WNOHANG) == 0
+      && read(fd, &buf, 1) > 0
+  ) {
+    line[length++] = buf;
     if (buf == '\n') {
       line[length] = 0;
       length = 0;
