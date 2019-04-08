@@ -11,34 +11,39 @@ int main(int argc, char *argv[]) {
 }
 
 void sperf(int argc, char *argv[]) {
-  int ppid = getpid();
-  int cpid = fork();
+  int cpid = 0;
+  int pipefd[2] = {};
+
+  Assert(pipe(pipefd) != -1, "Pipe failed.");
+  cpid = fork();
   Assert(cpid != -1, "Fork failed.");
 
   if (cpid == 0) {
     /* child process */
-    child(ppid, argc, argv);
+    close(pipefd[0]);
+    child(pipefd[1], argc, argv);
     Panic("Should not return from child!");
   } else {
     /* parent process */
-    parent();
+    parent(pipefd[0]);
+    close(pipefd[0]);
+    close(pipefd[1]);
+    //wait(NULL);
   }
 }
 
-void child(int ppid, int argc, char *argv[]) {
-  char arg_output[64] = "";
-  sprintf(arg_output, "/proc/%d/fd/0", ppid);
-  //sprintf(arg_output, "/proc/3096/fd/0");
-  CLog(BG_GREEN, "write to %s", arg_output);
-    
-  char *real_argv[argc + 5];
+void child(int fd, int argc, char *argv[]) {
+  char output_arg[64] = "";
+  sprintf(output_arg, "/proc/%d/fd/%d", getpid(), fd);
+
+  char *real_argv[argc + 6];
   real_argv[0] = "strace";
-  real_argv[1] = "-x";
+  real_argv[1] = "-xx";
   real_argv[2] = "-T";
   real_argv[3] = "-o";
-  real_argv[4] = arg_output;
+  real_argv[4] = output_arg;
   memcpy(real_argv + 5, argv + 1, (argc - 1) * sizeof(char *));
-  real_argv[argc + 4] = NULL;
+  real_argv[argc + 5] = NULL;
 
   // not execve because we need environmental variables
   int bh = open("/dev/null", 0);
@@ -48,7 +53,7 @@ void child(int ppid, int argc, char *argv[]) {
   Panic("strace is not executable. (NO PATH HITS.)");
 }
 
-void parent() {
+void parent(int fd) {
   char buf = 0;
   char line[1024] = "";
   int length = 0;
@@ -61,11 +66,10 @@ void parent() {
   
   while (
       waitpid(-1, &wstatus, WNOHANG) == 0
-      && read(0, &buf, 1) > 0
+      && read(fd, &buf, 1) > 0
   ) {
-    CLog(BG_GREEN, "OK");
     line[length++] = buf;
-    if (buf == '>') {
+    if (buf == '\n') {
       line[length] = 0;
       length = 0;
       
