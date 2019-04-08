@@ -11,43 +11,40 @@ int main(int argc, char *argv[]) {
 }
 
 void sperf(int argc, char *argv[]) {
-  int cpid = 0;
-  int pipefd[2] = {};
-
-  Assert(pipe(pipefd) != -1, "Pipe failed.");
-  cpid = fork();
+  int cpid = fork();
   Assert(cpid != -1, "Fork failed.");
 
   if (cpid == 0) {
     /* child process */
-    close(pipefd[0]);
-    child(pipefd[1], argc, argv);
+    child(getpid(), argc, argv);
     Panic("Should not return from child!");
   } else {
     /* parent process */
-    parent(pipefd[0]);
-    close(pipefd[0]);
-    close(pipefd[1]);
-    //wait(NULL);
+    parent();
   }
 }
 
-void child(int fd, int argc, char *argv[]) {
-  char *real_argv[argc + 2];
+void child(pid_t ppid, int argc, char *argv[]) {
+  char arg_output[64] = "";
+  sprintf(arg_output, "/proc/%d/fd/0", ppid);
+    
+  char *real_argv[argc + 4];
   real_argv[0] = "strace";
   real_argv[1] = "-xx";
   real_argv[2] = "-T";
-  memcpy(real_argv + 3, argv + 1, (argc - 1) * sizeof(char *));
+  real_argv[3] = "-o";
+  real_argv[4] = arg_output;
+  memcpy(real_argv + 5, argv + 1, (argc - 1) * sizeof(char *));
 
   // not execve because we need environmental variables
   int bh = open("/dev/null", 0);
   dup2(bh, 1); // stdout -> blackhole
-  dup2(fd, 2); // stderr -> pipe
+  dup2(bh, 2); // stderr -> blackhole
   execvp(real_argv[0], real_argv); 
   Panic("strace is not executable. (NO PATH HITS.)");
 }
 
-void parent(int fd) {
+void parent() {
   char buf = 0;
   char line[1024] = "";
   int length = 0;
@@ -60,7 +57,7 @@ void parent(int fd) {
   
   while (
       waitpid(-1, &wstatus, WNOHANG) == 0
-      && read(fd, &buf, 1) > 0
+      && read(0, &buf, 1) > 0
   ) {
     line[length++] = buf;
     if (buf == '\n') {
