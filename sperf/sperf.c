@@ -1,19 +1,7 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdbool.h>
-#include <string.h>
-#include <unistd.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <sys/wait.h>
-#include <fcntl.h>
+#include "sperf.h"
 
-#define DEBUG
-#include "debug.h"
-
-void sperf(int, char *[]);
-void child(int, int, char *[]);
-void parent(int);
+static double time_total = 0;
+static perf_item *root = NULL;
 
 int main(int argc, char *argv[]) {
   Assert(argc > 1, "Usage: sperf-32/64 cmd -arg1 -arg2 ...");
@@ -72,7 +60,7 @@ void parent(int fd) {
       line[length] = 0;
       length = 0;
       
-      Log("%s", line);
+      //Log("%s", line);
       if (name[0] == 0) {
         sscanf(line, "%[^(]%*[^<]<%lf>", name, &time);
       }
@@ -82,10 +70,52 @@ void parent(int fd) {
           if (time < 0) continue;
         }
         CLog(BG_GREEN, "%s %lf", name, time);
-        //TODO: HANDLE
+        addItem(name, time);
+        //TODO: showItems();
         name[0] = 0;
         time = -1.0;
       } 
     }
+  }
+}
+
+void addItem(char *name, double time) {
+  time_total += time;
+
+  perf_item *pp = root;
+  while (pp && strncmp(pp->name, name, SZ_NAME - 1) != 0) pp = pp->next;
+  if (pp) {
+    pp->time += time;
+    /* disconnect pp from chain */
+    if (pp == root) {
+      root = pp->next;
+    } else {
+      pref_item *np = root;
+      while (np->next && np->next != pp) np = np->next;
+      np->next = pp->next;
+    }
+  } else {
+    /* create a new perf node item */
+    pp = malloc(sizeof(perf_item));
+    strncpy(pp->name, name, SZ_NAME - 1);
+    pp->time = time;
+  }
+
+  /* rejoin the chain to sort */
+  if (!root || root->time < pp->time) {
+    pp->next = root;
+    root = pp;
+  } else {
+    perf_item *np = root;
+    while (np->next && np->next->time > pp->time) np = np->next;
+    pp->next = np->next;
+    np->next = pp;
+  }
+}
+
+void showItems() {
+  perf_item *pp = root;
+  for (; pp != NULL; pp = pp->next) {
+    printf("%s : %.5lxs (%p\%)", pp->name, pp->time, (int) (pp->time / time_total * 100));
   }
 }
