@@ -17,8 +17,8 @@ struct _perf_item {
   char name[SZ_NAME];
   double time;
   struct _perf_item *next;
-}
-typedef _perf_item perf_item;
+};
+typedef struct _perf_item perf_item;
 
 extern double time_total;
 

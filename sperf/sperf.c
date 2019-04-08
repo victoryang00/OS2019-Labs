@@ -1,7 +1,7 @@
 #include "sperf.h"
 
-static double time_total = 0;
-static perf_item *root = NULL;
+double time_total = 0;
+perf_item *root = NULL;
 
 int main(int argc, char *argv[]) {
   Assert(argc > 1, "Usage: sperf-32/64 cmd -arg1 -arg2 ...");
