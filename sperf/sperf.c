@@ -120,6 +120,6 @@ void addItem(char *call_name, double call_time) {
 void showItems() {
   perf_item *pp = root;
   for (; pp != NULL; pp = pp->next) {
-    printf("%s : %.5lfs (%d%%)", pp->call_name, pp->call_time, (int) (pp->call_time / time_total * 100));
+    printf("%s : %.5lfs (%d%%)\n", pp->call_name, pp->call_time, (int) (pp->call_time / time_total * 100));
   }
 }
