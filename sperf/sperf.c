@@ -35,7 +35,6 @@ void child(int fd, int argc, char *argv[]) {
   char output_arg[64] = "";
   sprintf(output_arg, "/proc/%d/fd/%d", getpid(), fd);
   CLog(BG_YELLOW, "Child will write to %s", output_arg);
-  printf("Child will write to %s\n", output_arg);
 
   char *real_argv[argc + 6];
   real_argv[0] = "strace";
@@ -96,6 +95,7 @@ void parent(int fd, int cpid) {
   }
   showItems();
   CLog(BG_GREEN, "The process has finished.");
+  printf("DONE!\n");
 }
 
 void addItem(char *call_name, double call_time) {
