@@ -68,6 +68,7 @@ void parent(int fd) {
       waitpid(-1, &wstatus, WNOHANG) == 0
       && read(fd, &buf, 1) > 0
   ) {
+    printf("%c\n", buf);
     line[length++] = buf;
     if (buf == '\n') {
       line[length] = 0;
@@ -136,7 +137,7 @@ void addItem(char *call_name, double call_time) {
 
 void showItems() {
 #ifndef DEBUG
-  printf("\033[2J\033[1;1H");
+  //printf("\033[2J\033[1;1H");
 #endif
   perf_item *pp = root;
   for (; pp != NULL; pp = pp->next) {
