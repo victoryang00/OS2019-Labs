@@ -111,7 +111,7 @@ bool compile(char *code, size_t size) {
 
 bool calculate(char *code, size_t size) {
   code = func_wrapper(code, &size);
-  bool cc_success = compile(code, size)
+  bool cc_success = compile(code, size);
   free(code);
   if (!cc_success) {
     return false;
