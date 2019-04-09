@@ -111,14 +111,19 @@ bool compile(char *code, size_t size) {
 
 bool calculate(char *code, size_t size) {
   code = func_wrapper(code, &size);
-  printf("NOT IMPLEMENTED!\n");
+  bool cc_success = compile(code, size)
   free(code);
-  return true;
+  if (!cc_success) {
+    return false;
+  } else {
+    calc_result = 12450;
+    return true;
+  }
 }
 
 char *func_wrapper(char *code, size_t *size) {
   char *ret = malloc(sizeof(char) * (*size + 64));
-  sprintf(ret, "int __EVAL_FUNC_%d() { %s }", io_count, code);
+  sprintf(ret, "int " FUNC_PREFIX "%d() { %s }", io_count, code);
   *size = strlen(ret);
   return ret;
 }

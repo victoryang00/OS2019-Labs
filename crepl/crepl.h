@@ -21,6 +21,8 @@
 #define TYPE_FUNCT 1
 #define TYPE_VALUE 2
 
+#define FUNC_PREFIX "__EVAL_FUNC_"
+
 void init();
 int precheck();
 bool compile(char *, size_t);
