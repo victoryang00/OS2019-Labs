@@ -2,7 +2,7 @@
 
 int io_count = 0;
 size_t input_size = 0;
-char *input = NULL;
+char input[1024] = "";
 char output[20] = "";
 char func_name[128] = "";
 int calc_result = 0;
