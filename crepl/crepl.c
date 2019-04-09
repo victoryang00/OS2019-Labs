@@ -1,7 +1,7 @@
 #include "crepl.h"
 
 int io_count = 0;
-size_t input_len = 0;
+size_t input_size = 0;
 char *input = NULL;
 char output[20] = "";
 char func_name[128] = "";
@@ -12,7 +12,7 @@ int main(int argc, char *argv[]) {
     printf(" in[%d]: ", io_count);
     sprintf(output, "out[%d]: ", io_count);
 
-    if (getline(&input, &input_len, stdin) < 0) break;
+    if (getline(&input, &input_size, stdin) < 0) break;
     Log("%s", input);
     printf("%s", output); 
 
@@ -41,8 +41,8 @@ int main(int argc, char *argv[]) {
 
 int precheck() {
   size_t pos = 0;
-  while (pos < input_len && isblank(input[pos]) == ' ') ++pos;
-  if (pos >= input_len) return TYPE_INVAL;
+  while (pos < input_size && isblank(input[pos]) == ' ') ++pos;
+  if (pos >= input_size) return TYPE_INVAL;
   if (strncmp(input + pos, "int ", 4) == 0) {
     return TYPE_FUNCT;
   } else {
