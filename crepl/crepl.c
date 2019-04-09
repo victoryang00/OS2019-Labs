@@ -56,7 +56,7 @@ int precheck() {
 
 bool compile(char *code, size_t size) {
   /* scan the name of the function */
-  sscanf(code, " int %[^(]", func_name);
+  sscanf(code, " int %[^ (]", func_name);
   CLog(BG_PURPLE, "The name of func is %s.", func_name);
 
   /* create temporaty files */
