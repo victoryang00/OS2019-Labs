@@ -14,7 +14,6 @@ int main(int argc, char *argv[]) {
     sprintf(output, "out[%d]: ", io_count);
 
     if ((input_size = getline((char **) &input, &buf_size, stdin)) <= 0) break;
-    input[input_size] = '\0';
     Log("%s", input);
 
     switch (precheck()) {
