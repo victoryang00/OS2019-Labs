@@ -94,6 +94,7 @@ bool compile(char *code, size_t size) {
     wait(&wstatus);
     if (WEXITSTATUS(wstatus) != 0) {
       CLog(BG_RED, "Child process exited with %d.", WEXITSTATUS(wstatus));
+      return false;
     }
   }
 
