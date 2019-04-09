@@ -13,7 +13,7 @@ int main(int argc, char *argv[]) {
     printf(" in[%d]: ", io_count);
     sprintf(output, "out[%d]: ", io_count);
 
-    if ((input_size = getline((char **) &input, &buf_size, stdin)) < 0) break;
+    if ((input_size = getline((char **) &input, &buf_size, stdin)) <= 0) break;
     input[input_size] = '\0';
     Log("%s", input);
 
@@ -21,7 +21,7 @@ int main(int argc, char *argv[]) {
       case TYPE_FUNCT:
         if (compile(input, input_size)) {
           printf("%s", output); 
-          printf("\33[0m" FG_GREEN "Added as function %s.\n" "\033[0m", func_name);
+          printf("\33[0m" FG_GREEN "Loaded as function/variable %s.\n" "\033[0m", func_name);
         } else {
           printf("%s", output); 
           printf("\33[0m" FG_RED "Compilation error.\n" "\033[0m");
@@ -57,7 +57,7 @@ int precheck() {
 
 bool compile(char *code, size_t size) {
   /* scan the name of the function */
-  sscanf(code, " int %[^{]", func_name);
+  sscanf(code, " int %[^(]", func_name);
   CLog(BG_PURPLE, "The name of func is %s.", func_name);
 
   /* create temporaty files */
