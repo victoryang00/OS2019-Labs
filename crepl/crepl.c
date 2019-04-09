@@ -36,6 +36,7 @@ int main(int argc, char *argv[]) {
         printf("\33[0m" FG_RED "Input validation failed.\n" "\33[0m");
         break;
     }
+    printf("\n");
   }
 }
 
@@ -48,9 +49,6 @@ int precheck() {
   } else {
     return TYPE_VALUE;  
   }
-}
-
-void error() {
 }
 
 bool compile() {
