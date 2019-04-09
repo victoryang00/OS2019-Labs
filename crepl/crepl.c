@@ -66,7 +66,7 @@ bool compile(char *code, size_t size) {
   sprintf(file_src, "/proc/self/fd/%d", fd_src);
   sprintf(file_dst, "/proc/self/fd/%d", fd_dst);
   write(fd_src, code, size);
-  CLog(BG_PURPLE, "Temporary files created.");
+  CLog(BG_PURPLE, "Temporary files (%s, %s) created.", name_src, name_dst);
 
   char *CC_argv[] = {
     "gcc", 
@@ -79,8 +79,8 @@ bool compile(char *code, size_t size) {
   };
   CLog(BG_PURPLE, "GCC's target ABI is %s.", CC_ABI);
 
-  int pid = fork();
-  Assert(pid > 0, "Fork failed.");
+  pid_t pid = fork();
+  Assert(pid >= 0, "Fork failed.");
   if (pid == 0) {
     /* fork a process to call gcc */
     execvp(CC_argv[0], CC_argv);
