@@ -6,6 +6,9 @@
 #include <unistd.h>
 #include <fcntl.h>
 
-//#define DEBUG
+#define DEBUG
 #include "debug.h"
 
+void error();
+bool compile();
+int calculate();
