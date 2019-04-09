@@ -14,7 +14,8 @@ int main(int argc, char *argv[]) {
     sprintf(output, "out[%d]: ", cnt);
 
     if (getline(&input, &len, stdin) < 0) break;
-    printf("%s%s\n", output, input); 
+    Log("%s", input);
+    printf("%s", output); 
 
     switch (precheck()) {
       case TYPE_FUNCT:
