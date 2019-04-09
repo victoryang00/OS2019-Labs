@@ -13,6 +13,5 @@
 
 void init();
 int precheck();
-void error();
 bool compile();
 bool calculate();

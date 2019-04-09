@@ -19,20 +19,20 @@ int main(int argc, char *argv[]) {
     switch (precheck()) {
       case TYPE_FUNCT:
         if (compile()) {
-          printf("\33[0m" FG_GREEN "Added as function %s." "\033[0m", func_name);
+          printf("\33[0m" FG_GREEN "Added as function %s.\n" "\033[0m", func_name);
         } else {
-          printf("\33[0m" FG_RED "Compilation error." "\033[0m");
+          printf("\33[0m" FG_RED "Compilation error.\n" "\033[0m");
         }
         break;
       case TYPE_VALUE:
         if (calculate()) {
-          printf("\33[0m" FG_GREEN "Result: %d." "\033[0m", calc_result);
+          printf("\33[0m" FG_GREEN "Result: %d.\n" "\033[0m", calc_result);
         } else {
-          printf("\33[0m" FG_RED "Calculation error." "\033[0m");
+          printf("\33[0m" FG_RED "Calculation error.\n" "\033[0m");
         }
         break;
       default:
-        error();
+        printf("\33[0m" FG_RED "Input validation failed.\n" "\33[0m");
         break;
     }
   }
@@ -50,7 +50,6 @@ int precheck() {
 }
 
 void error() {
-  printf("\33[0m" FG_RED "Input validation failed." "\33[0m");
 }
 
 bool compile() {
