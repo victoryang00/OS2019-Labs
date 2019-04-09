@@ -92,7 +92,7 @@ bool compile(char *code, size_t size) {
     /* wait for the child process */
     int wstatus = 0;
     wait(&wstatus);
-    if (!WIFEXITED(wstatus)) {
+    if (WEXITSTATUS(wstatus) != 0) {
       CLog(BG_RED, "Child process exited with %d.", WEXITSTATUS(wstatus));
     }
   }
