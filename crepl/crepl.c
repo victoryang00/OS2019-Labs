@@ -1,7 +1,9 @@
 #include "crepl.h"
 
 int cnt = 0;
-char input[2048] = "";
+size_t len = 0;
+ssize_t nread = 0;
+char *input = NULL;
 char output[20] = "";
 
 int main(int argc, char *argv[]) {
@@ -9,19 +11,21 @@ int main(int argc, char *argv[]) {
     printf(" in[%d]: ", cnt);
     sprintf(output, "out[%d]: ", cnt);
 
-    if (getline(input, 2048, stdin) < 0) break;
+    if (getline(&input, &len, stdin) < 0) break;
     printf("%s\n", input); 
   }
 }
 
 void error() {
-  printf("\33[0m" FG_RED "Compilation failed."
+  printf("\33[0m" FG_RED "Compilation failed." "\33[0m");
 }
 
 bool compile() {
-
+  // TODO
+  return true;
 }
 
 int calculate() {
-
+  // TODO
+  return 0;
 }
