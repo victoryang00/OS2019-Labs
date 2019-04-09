@@ -41,8 +41,8 @@ int main(int argc, char *argv[]) {
 
 int precheck() {
   size_t pos = 0;
-  while (pos < len && isblank(input[pos]) == ' ') ++pos;
-  if (pos >= len) return TYPE_INVAL;
+  while (pos < input_len && isblank(input[pos]) == ' ') ++pos;
+  if (pos >= input_len) return TYPE_INVAL;
   if (strncmp(input + pos, "int ", 4) == 0) {
     return TYPE_FUNCT;
   } else {
