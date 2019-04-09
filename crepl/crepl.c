@@ -12,7 +12,7 @@ int main(int argc, char *argv[]) {
     printf(" in[%d]: ", io_count);
     sprintf(output, "out[%d]: ", io_count);
 
-    if (getline(&input, &input_size, stdin) < 0) break;
+    if (getline((char **) &input, &input_size, stdin) < 0) break;
     Log("%s", input);
 
     switch (precheck()) {
