@@ -87,7 +87,9 @@ bool compile(char *code, size_t size) {
     Panic("execvp() shall not return!");
   } else {
     /* wait for the child process */
-    wait(NULL);
+    int status = 0;
+    wait(&status);
+    if (WIFEXITED(status) != 0) return false;
   }
 
   /* load the dynamic library */
