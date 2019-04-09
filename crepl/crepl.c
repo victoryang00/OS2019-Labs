@@ -2,7 +2,7 @@
 
 int io_count = 0;
 size_t input_size = 0;
-char input[1024] = "";
+char *input = NULL;
 char output[20] = "";
 char func_name[128] = "";
 int calc_result = 0;
@@ -13,6 +13,7 @@ int main(int argc, char *argv[]) {
     sprintf(output, "out[%d]: ", io_count);
 
     if (getline((char **) &input, &input_size, stdin) < 0) break;
+    input[input_size] = '\0';
     Log("%s", input);
 
     switch (precheck()) {
