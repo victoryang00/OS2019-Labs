@@ -13,7 +13,7 @@ int main(int argc, char *argv[]) {
     printf(" in[%d]: ", io_count);
     sprintf(output, "out[%d]: ", io_count);
 
-    if (input_size = (getline((char **) &input, &buf_size, stdin)) < 0) break;
+    if ((input_size = getline((char **) &input, &buf_size, stdin)) < 0) break;
     input[input_size] = '\0';
     Log("%s", input);
 
