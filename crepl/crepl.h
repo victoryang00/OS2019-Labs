@@ -9,6 +9,12 @@
 #define DEBUG
 #include "debug.h"
 
+#define TYPE_INVAL 0
+#define TYPE_FUNCT 1
+#define TYPE_VALUE 2
+
+void init();
+int precheck();
 void error();
 bool compile();
-int calculate();
+bool calculate();
