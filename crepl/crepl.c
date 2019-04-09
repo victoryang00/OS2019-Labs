@@ -53,6 +53,7 @@ int precheck() {
 bool compile(char *code, size_t size) {
   /* scan the name of the function */
   sscanf(code, " int %s ", func_name);
+  CLog(BG_PURPLE, "The name of func is %s.", func_name);
 
   /* create temporaty files */
   int fd_src = mkstemp("SRC_XXXXXX");
@@ -63,6 +64,7 @@ bool compile(char *code, size_t size) {
   char file_dst[128] = "";
   sprintf(file_src, "/proc/self/fd/%d", fd_src);
   sprintf(file_dst, "/proc/self/fd/%d", fd_dst);
+  CLog(BG_PURPLE, "Temporary files created.");
 
   char *CC_argv[] = {
     "gcc", 
@@ -73,12 +75,14 @@ bool compile(char *code, size_t size) {
     "-o", file_dst, file_src,
     NULL
   };
+  CLog(BG_PURPLE, "GCC's target ABI is %s.", CC_ABI);
 
   int pid = fork();
   Assert(pid > 0, "Fork failed.");
   if (pid == 0) {
     /* fork a process to call gcc */
     execvp(CC_argv[0], CC_argv);
+    Panic("execvp() shall not return!");
   } else {
     /* wait for the child process */
     wait(NULL);
