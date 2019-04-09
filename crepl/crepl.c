@@ -57,14 +57,15 @@ bool compile(char *code, size_t size) {
   CLog(BG_PURPLE, "The name of func is %s.", func_name);
 
   /* create temporaty files */
-  int fd_src = mkstemp("SRC_XXXXXX");
-  int fd_dst = mkstemp("DST_XXXXXX");
-  write(fd_src, code, size);
-
+  char name_src[16] = "SRC_XXXXXX";
+  char name_dst[16] = "DST_XXXXXX";
   char file_src[128] = "";
   char file_dst[128] = "";
+  int fd_src = mkstemp(name_src);
+  int fd_dst = mkstemp(name_dst);
   sprintf(file_src, "/proc/self/fd/%d", fd_src);
   sprintf(file_dst, "/proc/self/fd/%d", fd_dst);
+  write(fd_src, code, size);
   CLog(BG_PURPLE, "Temporary files created.");
 
   char *CC_argv[] = {
