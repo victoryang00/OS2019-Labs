@@ -1,8 +1,8 @@
 #include "crepl.h"
 
 int io_count = 0;
-size_t input_size = 0;
-ssize_t buf_size = 0;
+ssize_t input_size = 0;
+size_t buf_size = 0;
 char *input = NULL;
 char output[20] = "";
 char func_name[128] = "";
