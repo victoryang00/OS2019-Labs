@@ -2,6 +2,7 @@
 
 int io_count = 0;
 size_t input_size = 0;
+size_t buf_size = 0;
 char *input = NULL;
 char output[20] = "";
 char func_name[128] = "";
@@ -12,7 +13,7 @@ int main(int argc, char *argv[]) {
     printf(" in[%d]: ", io_count);
     sprintf(output, "out[%d]: ", io_count);
 
-    if (getline((char **) &input, &input_size, stdin) < 0) break;
+    if (input_size = (getline((char **) &input, &buf_size, stdin)) < 0) break;
     input[input_size] = '\0';
     Log("%s", input);
 
