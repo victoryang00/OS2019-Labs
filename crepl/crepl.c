@@ -9,11 +9,12 @@ char func_name[128] = "";
 int calc_result = 0;
 
 int main(int argc, char *argv[]) {
-  for ( ; ; ++io_count) {
+  for (io_count = 1; ; ++io_count) {
     printf(" in[%d]: ", io_count);
     sprintf(output, "out[%d]: ", io_count);
 
     if ((input_size = getline((char **) &input, &buf_size, stdin)) <= 0) break;
+    while (isspace(input[input_size - 1])) --input_size;
     Log("%s", input);
 
     switch (precheck()) {
@@ -45,7 +46,7 @@ int main(int argc, char *argv[]) {
 
 int precheck() {
   size_t pos = 0;
-  while (pos < input_size && isblank(input[pos]) == ' ') ++pos;
+  while (pos < input_size && isspace(input[pos])) ++pos;
   if (pos >= input_size) return TYPE_INVAL;
   if (strncmp(input + pos, "int ", 4) == 0) {
     return TYPE_FUNCT;
