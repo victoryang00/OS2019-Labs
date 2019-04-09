@@ -52,7 +52,17 @@ int precheck() {
 }
 
 bool compile() {
-  // TODO
+  // TODO: USE MKSTEMP OR TMPFILE???
+  FILE *src = tmpfile();
+  FILE *dst = tmpfile();
+  fprintf(tmp, "%s", input);
+
+  char *CC_argv[] = {
+    "gcc", "-fPIC", 
+    "-o", ""
+  }
+  execvp(CC_argv[0], CC_argv);
+  
   return true;
 }
 
