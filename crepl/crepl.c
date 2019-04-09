@@ -14,20 +14,23 @@ int main(int argc, char *argv[]) {
 
     if (getline(&input, &input_size, stdin) < 0) break;
     Log("%s", input);
-    printf("%s", output); 
 
     switch (precheck()) {
       case TYPE_FUNCT:
         if (compile(input, input_size)) {
+          printf("%s", output); 
           printf("\33[0m" FG_GREEN "Added as function %s.\n" "\033[0m", func_name);
         } else {
+          printf("%s", output); 
           printf("\33[0m" FG_RED "Compilation error.\n" "\033[0m");
         }
         break;
       case TYPE_VALUE:
         if (calculate(input, input_size)) {
+          printf("%s", output); 
           printf("\33[0m" FG_GREEN "Result: %d.\n" "\033[0m", calc_result);
         } else {
+          printf("%s", output); 
           printf("\33[0m" FG_RED "Calculation error.\n" "\033[0m");
         }
         break;
