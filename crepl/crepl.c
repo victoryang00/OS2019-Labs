@@ -130,8 +130,7 @@ bool calculate(char *code, size_t size) {
 
 char *func_wrapper(char *code, size_t *size) {
   char *ret = malloc(sizeof(char) * (*size + 64));
-  sprintf(func_name, FUNC_PREFIX "%d", io_count);
-  sprintf(ret, "int %s() {\n  return (%s);\n}", func_name, code);
+  sprintf(ret, "int " FUNC_PREFIX "%d() {\n  return (%s);\n}", io_count, code);
   *size = strlen(ret);
   return ret;
 }
