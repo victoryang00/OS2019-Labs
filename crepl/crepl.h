@@ -28,4 +28,4 @@ int precheck();
 bool compile(char *, size_t);
 bool calculate(char *, size_t);
 char *func_wrapper(char *, size_t *);
-int (*func_lookup)() (void *, char *);
+int (*)() func_lookup(void *, char *);
