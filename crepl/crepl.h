@@ -23,7 +23,6 @@
 
 #define FUNC_PREFIX "__EVAL_FUNC_"
 
-void init();
 int precheck();
 bool compile(char *, size_t);
 bool calculate(char *, size_t);
