@@ -75,6 +75,7 @@ bool compile(char *code, size_t size) {
   char *CC_argv[] = {
     "gcc", 
     "-c",      // Compile and stop
+    "-shared", // Shared library
     "-fPIC",   // Generate PI Code
     "-x", "c", // Language: ANSI C
     CC_ABI,    // ABI Type: 32, 64
