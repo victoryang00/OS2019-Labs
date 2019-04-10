@@ -126,18 +126,38 @@ bool compile(char *code, size_t size) {
 }
 
 bool calculate(char *code, size_t size) {
-  bool success = false;
   char *real_code = func_wrapper(code, &size);
-  if ((success = compile(real_code, size))) {
-    Assert(lib_handle != NULL, "After compilation and loading, the handle is NULL.");
-    CLog(BG_YELLOW, "Search func %s in %p.", func_name, lib_handle);
-    void *func = dlsym(lib_handle, func_name);
-    Assert(func != NULL, "The function pointer is NULL!");
-    calc_result = ((int (*)()) func)();
-    return true;
-  }
+  if (!compile(real_code, size)) return false;
   free(real_code);
-  return success;
+  Assert(lib_handle != NULL, "After compilation and loading, the handle is NULL.");
+  CLog(BG_YELLOW, "Search func %s in %p.", func_name, lib_handle);
+  void *func = dlsym(lib_handle, func_name);
+  Assert(func != NULL, "The function pointer is NULL!");
+
+  /* use pipe to safely calculate */
+  int fd[2] = {};
+  int wstatus = 0;
+  char buf[32] = "";
+  Assert(pipe(fd) != -1, "Fail to create pipes.");
+  pid_t pid = fork();
+  Assert(pid != -1, "Fork failed.");
+
+  if (pid == 0) {
+    /* child process */
+    close(fd[0]);
+    sprintf(buf, "%d", func());
+    write(fd[1], buf, strlen(buf));
+    close(fd[1]);
+    exit(EXIT_SUCCESS);
+  } else {
+    close(fd[1]);
+    wait(&wstatus);
+    if (WEXITSTATUS(wstatus) != 0) return false;
+    read(fd[0], buf, 32);
+    sscanf(buf, "%d", calc_result);
+    close(fd[0]);
+    return true;
+  } 
 }
 
 char *func_wrapper(char *code, size_t *size) {
