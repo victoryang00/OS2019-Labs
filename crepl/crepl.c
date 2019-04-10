@@ -63,8 +63,8 @@ bool compile(char *code, size_t size) {
   CLog(BG_PURPLE, "The name of func is %s.", func_name);
 
   /* create temporaty files */
-  char name_src[16] = "tmp/SRC_XXXXXX";
-  char name_dst[16] = "tmp/DST_XXXXXX";
+  char name_src[16] = ".crepl_tmp/SRC_XXXXXX";
+  char name_dst[16] = ".crepl_tmp/DST_XXXXXX";
   char file_src[128] = "";
   char file_dst[128] = "";
   int fd_src = mkstemp(name_src);
