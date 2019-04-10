@@ -145,7 +145,7 @@ bool calculate(char *code, size_t size) {
   if (pid == 0) {
     /* child process, calculate */
     close(fd[0]);
-    sprintf(buf, "%d", (int (*)()) func());
+    sprintf(buf, "%d", ((int (*)()) func)());
     write(fd[1], buf, strlen(buf));
     close(fd[1]);
     exit(EXIT_SUCCESS);
