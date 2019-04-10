@@ -43,7 +43,7 @@ int main(int argc, char *argv[]) {
         break;
       default:
         printf("%s", output); 
-        printf("\33[0m" FG_BLUE "Good bye!\n" "\33[0m");
+        printf("\33[0m" FG_BLUE "Good bye!\n"  "\33[0m");
         return 0;
     }
     printf("\n");
@@ -90,8 +90,7 @@ bool compile(char *code, size_t size) {
     "-shared", // Compile shared-object file
     "-o", file_dst, 
     CC_ABI,    // ABI Type: 32 or 64 ?
-    //"-Werror", // See all warnings as errors
-    "-w",
+    "-Werror", // See all warnings as errors
     "-fPIC",   // Generate position independent code
     file_src,
     NULL
