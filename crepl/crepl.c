@@ -74,13 +74,13 @@ bool compile(char *code, size_t size) {
 
   char *CC_argv[] = {
     "gcc", 
-    "-c",      // Compile and stop
-    "-shared", // Shared library
-    "-fPIC",   // Generate PI Code
-    "-x", "c", // Language: ANSI C
-    CC_ABI,    // ABI Type: 32, 64
-    "-Werror", // Block all warnings
-    "-o", file_dst, file_src,
+    "-x", "c", // Language: C
+    "-shared", // Compile shared-object file
+    "-o", file_dst, 
+    CC_ABI,    // ABI Type: 32 or 64 ?
+    "-Werror", // See all warnings as errors
+    "-fPIC",   // Generate position independent code
+    file_src,
     NULL
   };
   CLog(BG_PURPLE, "GCC's target ABI is %s.", CC_ABI);
