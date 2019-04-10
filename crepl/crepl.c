@@ -121,6 +121,7 @@ bool calculate(char *code, size_t size) {
   char *real_code = func_wrapper(code, &size);
   if ((success = compile(real_code, size))) {
     Assert(lib_handle != NULL, "After compilation and loading, the handle is NULL.");
+    CLog(BG_YELLOW, "Search func %s in %p.", func_name, lib_handle);
     void *func = dlsym(lib_handle, func_name);
     Assert(func != NULL, "The function pointer is NULL!");
     calc_result = ((int (*)()) func)();
