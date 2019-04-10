@@ -118,7 +118,7 @@ bool compile(char *code, size_t size) {
 bool calculate(char *code, size_t size) {
   bool success = false;
   char *real_code = func_wrapper(code, &size);
-  if ((success = compile(code, size))) {
+  if ((success = compile(real_code, size))) {
     Assert(lib_handle != NULL, "After compilation and loading, the handle is NULL.");
     void *func = dlsym(lib_handle, func_name);
     calc_result = ((int (*)()) func)();
