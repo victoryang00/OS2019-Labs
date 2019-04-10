@@ -69,6 +69,8 @@ bool compile(char *code, size_t size) {
   char file_dst[128] = "";
   int fd_src = mkstemp(name_src);
   int fd_dst = mkstemp(name_dst);
+  Assert(fd_src >= 0, "Unable to create tempfile SRC.");
+  Assert(fd_dst >= 0, "Unable to create tempfile DST.");
   sprintf(file_src, "/proc/self/fd/%d", fd_src);
   sprintf(file_dst, "/proc/self/fd/%d", fd_dst);
   write(fd_src, code, size);
