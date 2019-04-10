@@ -8,7 +8,7 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
-#define DEBUG
+//#define DEBUG
 #include "debug.h"
 
 #if defined (__i386__)
