@@ -99,7 +99,7 @@ bool compile(char *code, size_t size) {
     if (WEXITSTATUS(wstatus) != 0) {
       CLog(BG_RED, "Child process exited with %d.", WEXITSTATUS(wstatus));
     } else {
-      if (dlopen(file_dst, RTLD_GLOBAL) == NULL) {
+      if (dlopen(file_dst, RTLD_LAZY | RTLD_GLOBAL) == NULL) {
         CLog(BG_RED, "Failed to load dynamic library (dlopen).");
       } else {
         CLog(BG_GREEN, "Dynamic library %s loaded.", file_dst);
