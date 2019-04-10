@@ -96,18 +96,16 @@ bool compile(char *code, size_t size) {
     wait(&wstatus);
     if (WEXITSTATUS(wstatus) != 0) {
       CLog(BG_RED, "Child process exited with %d.", WEXITSTATUS(wstatus));
+      close(fd_src);
+      close(fd_dst);
       return false;
+    } else {
+      dlopen(file_dst, RTLD_GLOBAL);
+      close(fd_src);
+      close(fd_dst);
+      return true;
     }
   }
-
-  /* load the dynamic library */
-  dlopen(file_dst, RTLD_GLOBAL);
-
-  /* close temporaty files */
-  close(fd_src);
-  close(fd_dst);
-
-  return true;
 }
 
 bool calculate(char *code, size_t size) {
