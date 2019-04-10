@@ -143,18 +143,19 @@ bool calculate(char *code, size_t size) {
   Assert(pid != -1, "Fork failed.");
 
   if (pid == 0) {
-    /* child process */
+    /* child process, calculate */
     close(fd[0]);
-    sprintf(buf, "%d", func());
+    sprintf(buf, "%d", (int (*)()) func());
     write(fd[1], buf, strlen(buf));
     close(fd[1]);
     exit(EXIT_SUCCESS);
   } else {
+    /* parent process, wait for result */
     close(fd[1]);
     wait(&wstatus);
     if (WEXITSTATUS(wstatus) != 0) return false;
     read(fd[0], buf, 32);
-    sscanf(buf, "%d", calc_result);
+    sscanf(buf, "%d", &calc_result);
     close(fd[0]);
     return true;
   } 
