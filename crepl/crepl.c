@@ -12,6 +12,7 @@ int calc_result = 0;
 
 int main(int argc, char *argv[]) {
   printf("Welcome to C Real-Eval-Print-Loop (crepl).\n");
+  printf("Redefine or call to undefined functions are UBs.\n");
   printf("To exit, type \"exit\", \"quit\" or press Ctrl-D.\n\n");
 
   for (io_count = 1; ; ++io_count) {
