@@ -111,8 +111,8 @@ bool compile(char *code, size_t size) {
       }
     }
   }
-  close(fd_src);
-  close(fd_dst);
+  //close(fd_src);
+  //close(fd_dst);
   return success;
 }
 
