@@ -121,7 +121,7 @@ bool calculate(char *code, size_t size) {
   if ((success = compile(code, size))) {
     Assert(lib_handle != NULL, "After compilation and loading, the handle is NULL.");
     void *func = dlsym(lib_handle, func_name);
-    calc_result = ((int *()) func)();
+    calc_result = func();
     return true;
   }
   free(real_code);
