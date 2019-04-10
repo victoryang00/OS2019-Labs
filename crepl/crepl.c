@@ -78,7 +78,7 @@ bool compile(char *code, size_t size) {
     "-fPIC",   // Generate PI Code
     "-x", "c", // Language: ANSI C
     CC_ABI,    // ABI Type: 32, 64
-    "-w",      // Inhibit warnings
+    "-Werror", // Block all warnings
     "-o", file_dst, file_src,
     NULL
   };
