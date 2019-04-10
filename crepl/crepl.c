@@ -20,7 +20,7 @@ int main(int argc, char *argv[]) {
     Log("%s", input);
 
     switch (precheck()) {
-      case TYPE_FUNCT:
+      case TYPE_FUNC:
         if (compile(input, input_size)) {
           printf("%s", output); 
           printf("\33[0m" FG_GREEN "Loaded as function/variable %s.\n" "\033[0m", func_name);
@@ -29,7 +29,7 @@ int main(int argc, char *argv[]) {
           printf("\33[0m" FG_RED "Compilation error.\n" "\033[0m");
         }
         break;
-      case TYPE_VALUE:
+      case TYPE_EVAL:
         if (calculate(input, input_size)) {
           printf("%s", output); 
           printf("\33[0m" FG_GREEN "Result: %d.\n" "\033[0m", calc_result);
@@ -39,21 +39,23 @@ int main(int argc, char *argv[]) {
         }
         break;
       default:
-        printf("\33[0m" FG_RED "Input validation failed.\n" "\33[0m");
-        break;
+        printf("\33[0m" FG_GREEN "Good bye!\n" "\33[0m");
+        return 0;
     }
     printf("\n");
   }
 }
 
 int precheck() {
-  size_t pos = 0;
-  while (pos < input_size && isspace(input[pos])) ++pos;
-  if (pos >= input_size) return TYPE_INVAL;
-  if (strncmp(input + pos, "int ", 4) == 0) {
-    return TYPE_FUNCT;
+  char first_word[8] = "";
+  sscanf(input, " %7s", first_word);
+  if (strcmp(first_word, "exit") == 0
+      || strcmp(first_word, "quit") == 0) {
+    return TYPE_EXIT;
+  } else if (strcmp(first_word, "int") == 0) {
+    return TYPE_FUNC;
   } else {
-    return TYPE_VALUE;  
+    return TYPE_EVAL;  
   }
 }
 

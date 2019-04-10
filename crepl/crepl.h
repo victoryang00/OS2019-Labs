@@ -17,9 +17,9 @@
   #define CC_ABI "-m64"
 #endif
 
-#define TYPE_INVAL 0
-#define TYPE_FUNCT 1
-#define TYPE_VALUE 2
+#define TYPE_EXIT 0
+#define TYPE_FUNC 1
+#define TYPE_EVAL 2
 
 #define FUNC_PREFIX "__EVAL_FUNC_"
 
