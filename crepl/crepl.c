@@ -84,6 +84,7 @@ bool compile(char *code, size_t size) {
   };
   CLog(BG_PURPLE, "GCC's target ABI is %s.", CC_ABI);
 
+  bool success = false;
   pid_t pid = fork();
   Assert(pid >= 0, "Fork failed.");
   if (pid == 0) {
@@ -96,16 +97,18 @@ bool compile(char *code, size_t size) {
     wait(&wstatus);
     if (WEXITSTATUS(wstatus) != 0) {
       CLog(BG_RED, "Child process exited with %d.", WEXITSTATUS(wstatus));
-      close(fd_src);
-      close(fd_dst);
-      return false;
     } else {
-      dlopen(file_dst, RTLD_GLOBAL);
-      close(fd_src);
-      close(fd_dst);
-      return true;
+      if (dlopen(file_dst, RTLD_GLOBAL) == NULL) {
+        CLog(BG_RED, "Failed to load dynamic library (dlopen).");
+      } else {
+        CLog(BG_GREEN, "Dynamic library %s loaded.", file_dst);
+        success = true;
+      }
     }
   }
+  close(fd_src);
+  close(fd_dst);
+  return success;
 }
 
 bool calculate(char *code, size_t size) {
