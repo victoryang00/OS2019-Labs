@@ -11,8 +11,8 @@ char func_name[128] = "";
 int calc_result = 0;
 
 int main(int argc, char *argv[]) {
-  printf("Welcome to C Real-Eval-Print-Loop (crepl, M4)!\n");
-  printf("To exit, type \"exit\", \"quit\" or press Ctrl-D.\n");
+  printf("Welcome to C Real-Eval-Print-Loop (crepl).\n");
+  printf("To exit, type \"exit\", \"quit\" or press Ctrl-D.\n\n");
 
   for (io_count = 1; ; ++io_count) {
     printf(" in[%d]: ", io_count);
