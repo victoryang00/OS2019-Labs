@@ -90,7 +90,7 @@ bool compile(char *code, size_t size) {
     "-shared", // Compile shared-object file
     "-o", file_dst, 
     CC_ABI,    // ABI Type: 32 or 64 ?
-    "-Werror", // See all warnings as errors
+    "-w",      // Omit all warnings
     "-fPIC",   // Generate position independent code
     file_src,
     NULL
