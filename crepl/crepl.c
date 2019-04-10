@@ -5,6 +5,8 @@ ssize_t input_size = 0;
 size_t buf_size = 0;
 char *input = NULL;
 char output[20] = "";
+
+void *lib_handle = NULL;
 char func_name[128] = "";
 int calc_result = 0;
 
@@ -85,6 +87,7 @@ bool compile(char *code, size_t size) {
   };
   CLog(BG_PURPLE, "GCC's target ABI is %s.", CC_ABI);
 
+  lib_handle = NULL; // reset this global var.
   bool success = false;
   pid_t pid = fork();
   Assert(pid >= 0, "Fork failed.");
@@ -99,7 +102,7 @@ bool compile(char *code, size_t size) {
     if (WEXITSTATUS(wstatus) != 0) {
       CLog(BG_RED, "Child process exited with %d.", WEXITSTATUS(wstatus));
     } else {
-      if (dlopen(file_dst, RTLD_LAZY | RTLD_GLOBAL) == NULL) {
+      if ((lib_handle = dlopen(file_dst, RTLD_LAZY | RTLD_GLOBAL)) == NULL) {
         CLog(BG_RED, "Failed to load dynamic library (dlopen).");
       } else {
         CLog(BG_GREEN, "Dynamic library %s loaded.", file_dst);
@@ -113,20 +116,22 @@ bool compile(char *code, size_t size) {
 }
 
 bool calculate(char *code, size_t size) {
-  code = func_wrapper(code, &size);
-  bool cc_success = compile(code, size);
-  free(code);
-  if (!cc_success) {
-    return false;
-  } else {
-    calc_result = 12450;
+  bool success = false;
+  char *real_code = func_wrapper(code, &size);
+  if ((success = compile(code, size))) {
+    Assert(lib_handle != NULL, "After compilation and loading, the handle is NULL.");
+    void *func = dlsym(lib_handle, func_name);
+    calc_result = ((int *()) func)();
     return true;
   }
+  free(real_code);
+  return success;
 }
 
 char *func_wrapper(char *code, size_t *size) {
   char *ret = malloc(sizeof(char) * (*size + 64));
-  sprintf(ret, "int " FUNC_PREFIX "%d() {\n  return (%s);\n}", io_count, code);
+  sprintf(func_name, FUNC_PREFIX "%d", io_count);
+  sprintf(ret, "int %s() {\n  return (%s);\n}", func_name, code);
   *size = strlen(ret);
   return ret;
 }
