@@ -11,6 +11,9 @@ char func_name[128] = "";
 int calc_result = 0;
 
 int main(int argc, char *argv[]) {
+  printf("Welcome to C Real-Eval-Print-Loop (crepl, M4)!\n");
+  printf("To exit, type \"exit\", \"quit\" or press Ctrl-D.\n");
+
   for (io_count = 1; ; ++io_count) {
     printf(" in[%d]: ", io_count);
     sprintf(output, "out[%d]: ", io_count);
@@ -39,7 +42,8 @@ int main(int argc, char *argv[]) {
         }
         break;
       default:
-        printf("\33[0m" FG_GREEN "Good bye!\n" "\33[0m");
+        printf("%s", output); 
+        printf("\33[0m" FG_BLUE "Good bye!\n" "\33[0m");
         return 0;
     }
     printf("\n");
