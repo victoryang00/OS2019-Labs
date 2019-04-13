@@ -2,6 +2,7 @@
 #define __COMMON_H__
 
 #include <am.h>
+#include <x86.h>
 #include <klib.h>
 #include <stdbool.h>
 
