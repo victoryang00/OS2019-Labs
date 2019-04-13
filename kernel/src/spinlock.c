@@ -5,8 +5,8 @@
  * Spinlock modified from XV6.
  */
 
-int efif[MAX_CPU] = {};
-int ncli[MAX_CPU] = {};
+int efif[_ncpu()] = {};
+int ncli[_ncpu()] = {};
 
 
 void spinlock_init(struct spinlock *lk, char *name) {
