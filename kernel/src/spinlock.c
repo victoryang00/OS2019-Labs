@@ -20,7 +20,7 @@ void spinlock_init(struct spinlock *lk, char *name) {
 
 void spinlock_acquire(struct spinlock *lk) {
   spinlock_pushcli();
-  Assert(unlikely(spinlock_holding(lk) == true), "Acquiring when holding the lock.");
+  Assert(!spinlock_holding(lk), "Acquiring lock %s when holding it.", lk->name);
 
   /**
    * __sync_synchronize is to tell C compiler 
@@ -40,7 +40,7 @@ void spinlock_acquire(struct spinlock *lk) {
 }
 
 void spinlock_release(struct spinlock *lk) {
-  Assert(likely(spinlock_holding(lk) == true), "Releasing a lock that is not holded by current cpu.");
+  Assert(spinlock_holding(lk), "Releasing lock %s not holded by cpu %d.", lk->name, _cpu());
 
   lk->holder = -1;
   CLog(BG_YELLOW, "CPU %d will release lock %s.", _cpu(), lk->name);
@@ -62,7 +62,7 @@ void spinlock_pushcli() {
   int eflags = get_efl();
   
   cli();
-  Assert(unlikely((get_efl() & FL_IF) == 0), "cli() failed to turn off interrupt.");
+  Assert((get_efl() & FL_IF) == 0, "cli() failed to turn off interrupt.");
   if (ncli[_cpu()] == 0) {
     efif[_cpu()] = eflags & FL_IF;
   }
@@ -70,7 +70,7 @@ void spinlock_pushcli() {
 }
 
 void spinlock_popcli() {
-  Assert(unlikely((get_efl() & FL_IF) == 0), "Interruptable in popcli.");
+  Assert((get_efl() & FL_IF) == 0, "Interruptable in popcli.");
 
   ncli[_cpu()] -= 1;
   Assert(ncli[_cpu()] >= 0, "Cli level is negative.");
