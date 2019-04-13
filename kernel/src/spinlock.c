@@ -20,7 +20,7 @@ void spinlock_init(struct spinlock *lk, char *name) {
 
 void spinlock_acquire(struct spinlock *lk) {
   spinlock_pushcli();
-  Assert(unlikely(spinlock_holding(lk)), "Acquiring when holding the lock.");
+  Assert(unlikely(spinlock_holding(lk) == true), "Acquiring when holding the lock.");
 
   /**
    * __sync_synchronize is to tell C compiler 
