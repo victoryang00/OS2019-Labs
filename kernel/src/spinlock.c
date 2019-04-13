@@ -27,7 +27,7 @@ void spinlock_acquire(struct spinlock *lk) {
    * references happen after the lock is acquired.
    */
   while (1) {
-    if (_atomic_xchg(lk->locked, 1) == 0) break;
+    if (_atomic_xchg(&lk->locked, 1) == 0) break;
     pause();
   }
   __sync_synchronize();
@@ -43,7 +43,7 @@ void spinlock_release(struct spinlock *lk) {
   CLog(BG_YELLOW, "CPU %d will release lock %s.", _cpu(), lk->name);
 
   __sync_synchronize();
-  _atomic_xchg(lk->locked, 0);
+  _atomic_xchg(&lk->locked, 0);
   spinlock_popcli();
 }
 
