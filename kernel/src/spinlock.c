@@ -5,6 +5,9 @@
  * Spinlock modified from XV6.
  */
 
+// defined in x86-nemu.h
+#define MAX_CPU 8
+
 int efif[MAX_CPU] = {};
 int ncli[MAX_CPU] = {};
 
