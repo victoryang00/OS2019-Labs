@@ -62,7 +62,7 @@ void spinlock_pushcli() {
   int eflags = get_efl();
   
   cli();
-  Assert((get_efl() & FL_IF) == 0, "cli() failed to turn off interrupt.");
+  Assert(unlikely((get_efl() & FL_IF) == 0), "cli() failed to turn off interrupt.");
   if (ncli[_cpu()] == 0) {
     efif[_cpu()] = eflags & FL_IF;
   }
@@ -70,7 +70,7 @@ void spinlock_pushcli() {
 }
 
 void spinlock_popcli() {
-  Assert(unlikely(get_efl() & FL_IF), "Interruptable in popcli.");
+  Assert(unlikely((get_efl() & FL_IF) == 0), "Interruptable in popcli.");
 
   ncli[_cpu()] -= 1;
   Assert(ncli[_cpu()] >= 0, "Cli level is negative.");
