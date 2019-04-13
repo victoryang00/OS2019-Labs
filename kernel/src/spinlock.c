@@ -75,4 +75,3 @@ void spinlock_popcli() {
     sti();
   }
 }
-#endif
