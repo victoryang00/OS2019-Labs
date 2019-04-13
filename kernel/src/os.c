@@ -23,6 +23,7 @@ static void test() {
     pmm->free(s[_cpu()][i]);
   }
   CLog(BG_GREEN, "SUCCESS ON CPU %d", _cpu());
+  printf("SUCCESS ON CPU %d", _cpu());
 }
 
 static void os_run() {
