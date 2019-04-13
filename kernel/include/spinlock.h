@@ -12,7 +12,7 @@ struct spinlock {
   char *name;
   bool locked;
   int holder;
-}
+};
 
 void spinlock_init(struct spinlock *, char *);
 void spinlock_acquire(struct spinlock *);
