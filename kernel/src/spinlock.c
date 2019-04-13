@@ -20,7 +20,7 @@ void spinlock_init(struct spinlock *lk, char *name) {
 
 void spinlock_acquire(struct spinlock *lk) {
   spinlock_pushcli();
-  Assert(unlikely(holding(lk)), "Acquiring when holding the lock.");
+  Assert(unlikely(spinlock_holding(lk)), "Acquiring when holding the lock.");
 
   /**
    * __sync_synchronize is to tell C compiler 
@@ -40,7 +40,7 @@ void spinlock_acquire(struct spinlock *lk) {
 }
 
 void spinlock_release(struct spinlock *lk) {
-  Assert(likely(holding(lk)), "Releasing a lock that is not holded by current cpu.");
+  Assert(likely(spinlock_holding(lk)), "Releasing a lock that is not holded by current cpu.");
 
   lk->holder = -1;
   CLog(BG_YELLOW, "CPU %d will release lock %s.", _cpu(), lk->name);
