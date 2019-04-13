@@ -13,13 +13,13 @@ static void hello() {
   _putc("012345678"[_cpu()]); _putc('\n');
 }
 
-static void* s[4][11451] = {};
+static void* s[4][1145] = {};
 static void test() {
   srand(uptime());
-  for (int i = 0; i < 11451; ++i) {
+  for (int i = 0; i < 1145; ++i) {
     s[_cpu()][i] = pmm->alloc(rand() % (4096));
   }
-  for (int i = 0; i < 11451; ++i) {
+  for (int i = 0; i < 1145; ++i) {
     pmm->free(s[_cpu()][i]);
   }
   CLog(BG_GREEN, "SUCCESS ON CPU %d", _cpu());
