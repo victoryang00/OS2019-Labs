@@ -62,7 +62,7 @@ void spinlock_pushcli() {
   int eflags = get_efl();
   
   cli();
-  Assert(unlikely(get_efl() & FL_IF), "cli() failed to turn off interrupt.");
+  Assert((get_efl() & FL_IF) == 0, "cli() failed to turn off interrupt.");
   if (ncli[_cpu()] == 0) {
     efif[_cpu()] = eflags & FL_IF;
   }
