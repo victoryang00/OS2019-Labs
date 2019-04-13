@@ -36,7 +36,7 @@ void spinlock_acquire(struct spinlock *lk) {
 }
 
 void spinlock_release(struct spinlock *lk) {
-  Assert(holding(lk), "Releasing a lock that is not holded by current cpu.");
+  Assert(likely(holding(lk)), "Releasing a lock that is not holded by current cpu.");
 
   lk->cpu = -1;
   CLog(BG_YELLOW, "CPU %d will release lock %s.", _cpu(), lk->name);
