@@ -1,6 +1,6 @@
 #include <common.h>
 #include <klib.h>
-#include <slab.h>
+#include <memory.h>
 #include <spinlock.h>
 
 struct spinlock kmm_lock;

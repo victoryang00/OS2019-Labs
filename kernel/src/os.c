@@ -4,6 +4,12 @@
 
 static void os_init() {
   pmm->init();
+  //TODO: implement the following:
+  //pmm->init();
+  //kmt->init();
+  //_vme_init(pmm->allow, pmm->free);
+  //dev->init();
+  ////create proc here
 }
 
 static void hello() {
