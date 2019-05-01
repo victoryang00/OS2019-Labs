@@ -1,11 +1,19 @@
 #include <common.h>
 #include <klib.h>
-#include <debug.h>
+#include <spinlock.h>
+
+struct spinlock printf_lock __attribute__((used));
+struct spinlock os_trap_lock;
+
+static void os_init_locks() {
+  spinlock_init(&printf_lock, "Printf SPIN LOCK");
+  spinlock_init(&os_trap_lock, "OS TRAP SPIN LOCK");
+}
 
 static void os_init() {
-  pmm->init();
   //TODO: implement the following:
-  //pmm->init();
+  os_init_locks();
+  pmm->init();
   //kmt->init();
   //_vme_init(pmm->allow, pmm->free);
   //dev->init();
@@ -28,6 +36,9 @@ static void os_run() {
 }
 
 static _Context *os_trap(_Event ev, _Context *context) {
+  spinlock_acquire(&os_trap_lock);
+  // TODO: what to do here??
+  spinlock_release(&os_trap_lock);
   return context;
 }
 

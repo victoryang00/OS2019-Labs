@@ -10,6 +10,7 @@
 #include <nanos.h>
 
 //#define DEBUG
+#include <mt-safe.h>
 #include <debug.h>
 
 #define likely(x)   __builtin_expect(!!(x), 1)
