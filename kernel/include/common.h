@@ -15,6 +15,10 @@
 #define likely(x)   __builtin_expect(!!(x), 1)
 #define unlikely(x) __builtin_expect(!!(x), 0)
 
+struct task{};
+struct spinlock{};
+struct semaphore{};
+
 static inline size_t power2ify(size_t x) {
   assert((int) x > 0);
   size_t ret = 1;
