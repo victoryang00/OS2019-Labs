@@ -1,3 +1,6 @@
+#ifndef __DEVICES_H__
+#define __DEVICES_H__
+
 #include <common.h>
 #include <amdev.h>
 #include <klib.h>
@@ -104,3 +107,5 @@ typedef struct {
 extern char keymap[], keymap_shift[];
 
 #define TERM_FONT font_sans
+
+#endif
