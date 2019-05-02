@@ -27,7 +27,7 @@ struct task {
   const char* name;
   enum task_stats state;
 
-  _Context context;
+  _Context *context;
   char fenceA[32];
   char stack[4096];
   char fenceB[32];
