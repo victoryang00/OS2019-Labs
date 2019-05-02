@@ -108,7 +108,7 @@ _Context *kmt_sched() {
 
   for (struct task *tp = &root_task; tp != NULL; tp = tp->next) {
     if (tp->state == ST_W) { // choose a waken up task
-      return tp; 
+      return tp->context; 
     }
   }
 }
@@ -116,11 +116,11 @@ _Context *kmt_sched() {
 _Context *kmt_yield(_Event ev, _Context *context) {
   spinlock_acquire(&task_lock);
   get_current_task()->state = ST_W; // give up CPU
-  _Context *ret = kmt_sched(); // call scheduler
-  ret->state = ST_R; // set it as running
-  set_current_task(ret);
+  struct task *next = kmt_sched(); // call scheduler
+  next->state = ST_R; // set it as running
+  set_current_task(next);
   spinlock_release(&task_lock);
-  return ret;
+  return next->context;
 }
 
 void kmt_sleep(void *alarm, struct spinlock *lock) {
