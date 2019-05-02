@@ -101,23 +101,20 @@ _Context *kmt_context_switch(_Event ev, _Context *context) {
   return ret;
 }
 
-_Context *kmt_sched() {
-  Assert(spinlock_holding(&task_lock), "The task is not holding task lock.");
-  Assert(get_current_task()->state != ST_R, "The task is still running.");
-  Assert((get_efl() & FL_IF) == 0, "The CPU is interruptable.");
-
+struct task *kmt_sched() {
   for (struct task *tp = &root_task; tp != NULL; tp = tp->next) {
     if (tp->state == ST_W) { // choose a waken up task
-      return tp->context; 
+      return tp; 
     }
   }
 }
 
 _Context *kmt_yield(_Event ev, _Context *context) {
   spinlock_acquire(&task_lock);
-  get_current_task()->state = ST_W; // give up CPU
+  struct task *cur = get_current_task();
   struct task *next = kmt_sched(); // call scheduler
-  next->state = ST_R; // set it as running
+  cur->state = ST_W;  // set current as given up
+  next->state = ST_R; // set the next as running
   set_current_task(next);
   spinlock_release(&task_lock);
   return next->context;
