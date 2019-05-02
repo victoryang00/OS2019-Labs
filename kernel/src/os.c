@@ -31,10 +31,6 @@ static void os_init() {
   CLog(BG_GREEN, "dev ok");
 
   //create proc here
-  extern void (*input_task) (void *);
-  extern void (*tty_task) (void *);
-  Log("Input Task PID: %d", kmt->create(pmm->alloc(sizeof(task_t)), "Input Task", input_task, NULL));
-  Log("TTY Task PID: %d", kmt->create(pmm->alloc(sizeof(task_t)), "TTY Task", tty_task, NULL));
 }
 
 static void hello() {
