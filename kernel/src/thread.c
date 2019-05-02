@@ -52,7 +52,7 @@ void kmt_init() {
 int kmt_create(struct task *task, const char *name, void (*entry)(void *arg), void *arg) {
   task->pid = next_pid++;
   task->name = name;
-  task->context = kcontext(task->stack, entry, arg);
+  task->context = _kcontext(task->stack, entry, arg);
   memset(task->fenceA, FILL_FENCE, sizeof(task->fenceA));
   memset(task->stack,  FILL_STACK, sizeof(task->stack));
   memset(task->fenceB, FILL_FENCE, sizeof(task->fenceB));
@@ -90,7 +90,6 @@ _Context *kmt_context_save(_Event ev, _Context *context) {
   saved_context = context;
   return NULL;
 }
-
 _Context *kmt_context_switch(_Event ev, _Context *context) {
   Log("KMT Context Switch");
   _Context *ret = saved_context;
