@@ -29,7 +29,10 @@ static void os_init() {
   CLog(BG_RED, "vme not enabled!!!!!!");
   dev->init();
   CLog(BG_GREEN, "dev ok");
+
   //create proc here
+  extern void (*input_task) (void *);
+  extern void (*tty_task) (void *);
   kmt->create(pmm->alloc(sizeof(task_t)), "Input Task", input_task, NULL);
   kmt->create(pmm->alloc(sizeof(task_t)), "TTY Task", tty_task, NULL);
 }
