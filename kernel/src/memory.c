@@ -95,7 +95,7 @@ void *kmem_cache_alloc(struct kmem_cache *cp) {
   }
   Assert(likely(ip->used), "Item is not marked as used after allocation!!");
   CLog(BG_GREEN, "Memory allocated at %p, slab at %p has %d items free now.", (void *)ip + sizeof(struct kmem_item), sp, sp->nr_items_max - sp->nr_items);
-  CLog(BG_PURPLE, "next is %p", ip->next);
+  //CLog(BG_PURPLE, "next is %p", ip->next);
   return ((void *) ip) + sizeof(struct kmem_item);
 }
 
@@ -113,7 +113,7 @@ void kmem_cache_free(void *ptr) {
 }
 
 void* get_free_pages(int nr) {
-  Log("Getting %d free memory pages.", nr);
+  //Log("Getting %d free memory pages.", nr);
   for (int i = 0; i < nr_pages - nr; ) {
     int j = 0;
     bool success = true;
@@ -127,7 +127,7 @@ void* get_free_pages(int nr) {
       for (int j = 0; j < nr; ++j) {
         *(pi + i + j) = true;
       }
-      Log("Memory pages start at %p.", pm + i * SZ_PAGE);
+      //Log("Memory pages start at %p.", pm + i * SZ_PAGE);
       return pm + i * SZ_PAGE;
     } else {
       i += j + 1;
@@ -137,7 +137,7 @@ void* get_free_pages(int nr) {
 }
 
 void free_used_pages(void *base, int nr) {
-  Log("Freeing %d memory pages from %p.", nr, base);
+  //Log("Freeing %d memory pages from %p.", nr, base);
   int b = (base - pm) / SZ_PAGE;
   for (int i = 0; i < nr; ++i) {
     *(pi + b + i) = false;
