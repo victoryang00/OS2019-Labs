@@ -128,12 +128,11 @@ void kmt_sleep(void *alarm, struct spinlock *lock) {
   // before giving up the one we are holding
   // OTHERWISE MAY MISS WAKEUPS (DEADLOCK)
   // TODO: IS THERE OTHER TYPES OF DEADLOCK?
-  if (lock != task_lock) {
-    spinlock_acquire(task_lock);
+  if (lock != &task_lock) {
+    spinlock_acquire(&task_lock);
     spinlock_release(lock);
   }
 
-  struct task *cur = get_current_task();
   cur->alarm = alarm;
   cur->state = ST_S; // go to sleep
   kmt_sched(); // lock will be released
@@ -143,8 +142,8 @@ void kmt_sleep(void *alarm, struct spinlock *lock) {
   
   // We have the task lock when wake up
   // then we need to acquire the original lock
-  if (lock != task_lock) {
-    spinlock_release(task_lock);
+  if (lock != &task_lock) {
+    spinlock_release(&task_lock);
     spinlock_acquire(lock);
   }
 }
