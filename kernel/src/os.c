@@ -15,15 +15,17 @@ static void os_init_locks() {
 }
 
 static void os_init() {
-  //TODO: implement the following:
   os_init_locks();
-  Log("locks ok");
+  CLog(BG_GREEN, "locks ok");
   pmm->init();
-  Log("pmm ok");
-  //kmt->init();
-  //_vme_init(pmm->allow, pmm->free);
-  //dev->init();
-  ////create proc here
+  CLog(BG_GREEN, "pmm ok");
+  kmt->init();
+  CLog(BG_GREEN, "kmt ok")
+  _vme_init(pmm->allow, pmm->free);
+  CLog(BG_GREEN, "vme ok");
+  dev->init();
+  CLog(BG_GREEN, "dev ok");
+  //create proc here
 }
 
 static void hello() {

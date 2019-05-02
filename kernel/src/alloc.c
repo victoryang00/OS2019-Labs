@@ -9,7 +9,6 @@ static void pmm_init() {
   Log("HEAP AREA: [%p, %p)", _heap.start, _heap.end);
   spinlock_init(&kmm_lock, "KMM SPIN LOCK");
   kmem_init(_heap.start, _heap.end);
-  Log("INIT PASSED.");
 }
 
 static void *kalloc(size_t size) {
