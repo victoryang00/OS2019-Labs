@@ -13,7 +13,7 @@
 #define MAX_CPU 8
 
 #define DEBUG
-//#include <mt-safe.h>
+#include <mt-safe.h>
 #include <debug.h>
 
 #define likely(x)   __builtin_expect(!!(x), 1)
