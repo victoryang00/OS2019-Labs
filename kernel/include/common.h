@@ -9,7 +9,10 @@
 #include <kernel.h>
 #include <nanos.h>
 
-//#define DEBUG
+// defined in x86-nemu.h
+#define MAX_CPU 8
+
+#define DEBUG
 #include <mt-safe.h>
 #include <debug.h>
 

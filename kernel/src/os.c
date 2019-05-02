@@ -5,6 +5,10 @@
 struct spinlock printf_lock __attribute__((used));
 struct spinlock os_trap_lock;
 
+const struct os_handler root_handler = {
+  0, _EVENT_NULL, NULL, NULL
+};
+
 static void os_init_locks() {
   spinlock_init(&printf_lock, "Printf SPIN LOCK");
   spinlock_init(&os_trap_lock, "OS TRAP SPIN LOCK");
@@ -36,13 +40,32 @@ static void os_run() {
 }
 
 static _Context *os_trap(_Event ev, _Context *context) {
+  _Context *ret = NULL;
+
   spinlock_acquire(&os_trap_lock);
-  // TODO: what to do here??
+  for (struct os_handler *hp = root_handler->next; hp != NULL; hp = hp->next) {
+    if (hp->event == _EVENT_NULL || hp->event == ev) {
+      _Contect *next = hp->handler(ev, context);
+      if (next) ret = next;
+    }
+  }
   spinlock_release(&os_trap_lock);
-  return context;
+  return ret;
 }
 
 static void os_on_irq(int seq, int event, handler_t handler) {
+  struct os_handler *oh = pmm->alloc(struct os_handler);
+  oh->seq = seq;
+  oh->event = event;
+  oh->handler = handler;
+  oh->next = NULL;
+
+  spinlock_acquire(&os_trap_lock);
+  struct os_handler *hp = &root_handler;
+  while (hp->next && hp->next->seq < seq) hp = hp->next;
+  oh->next = hp->next;
+  hp->next = oh;
+  spinlock_release(&os_trap_lock);
 }
 
 MODULE_DEF(os) {
