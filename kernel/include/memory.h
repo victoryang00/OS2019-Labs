@@ -1,6 +1,14 @@
 #ifndef __SLAB_H__
 #define __SLAB_H__
 
+#ifdef MEM_DEBUG
+#define MEMLog(...)  Log(__VA_ARGS__)
+#define MEMCLog(...) CLog(__VA_ARGS__)
+#else
+#define MEMLog(...) 
+#define MEMCLog(...)
+#endif
+
 #define KB             1024
 #define SZ_PAGE        4 * KB
 #define SZ_SMALL_OBJ   SZ_PAGE / 8
@@ -84,7 +92,7 @@ static inline void kmem_cache_move_slab_to_full(struct kmem_cache *cp, struct km
   } else {
     cp->slabs_full = slab;
   }
-  Log("Slab of size %d at %p moved to full list.", slab->item_size, slab);
+  MEMLog("Slab of size %d at %p moved to full list.", slab->item_size, slab);
 }
 
 static inline void kmem_cache_move_slab_to_free(struct kmem_cache *cp, struct kmem_slab *slab) {
@@ -103,7 +111,7 @@ static inline void kmem_cache_move_slab_to_free(struct kmem_cache *cp, struct km
     Assert(likely(success), "Slab does not exist in chain!!");
   }
   kmem_cache_add_slab(cp, slab);
-  Log("Slab of size %d at %p moved to free list.", slab->item_size, slab);
+  MEMLog("Slab of size %d at %p moved to free list.", slab->item_size, slab);
 }
 
 static inline void kmem_slab_add_item(struct kmem_slab *sp, struct kmem_item *item) {

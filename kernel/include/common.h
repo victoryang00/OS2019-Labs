@@ -13,6 +13,7 @@
 #define MAX_CPU 8
 
 #define DEBUG
+//#define MEM_DEBUG
 #include <mt-safe.h>
 #include <debug.h>
 

@@ -12,7 +12,7 @@ void kmem_init(void *heap_start, void *heap_end) {
   pm = heap_start;
   kc = (struct kmem_cache *) (heap_start + nr_pages * SZ_PAGE);
   pi = (bool *) (heap_start + (nr_pages + NR_CACHE_PAGES) * SZ_PAGE);
-  Log("pm=%p, kc=%p, pi=%p.", pm, kc, pi);
+  MEMLog("pm=%p, kc=%p, pi=%p.", pm, kc, pi);
   Assert((void *) pm >= heap_start && (void *) pm + nr_pages * SZ_PAGE <= heap_end,       "pm is invalid!");
   Assert((void *) kc >= heap_start && (void *) kc + NR_CACHE_PAGES * SZ_PAGE <= heap_end, "kc is invalid!");
   Assert((void *) pi >= heap_start && (void *) pi + nr_pages * sizeof(bool) <= heap_end,  "pi is invalid!");
@@ -24,15 +24,15 @@ struct kmem_cache* kmem_cache_create(size_t size) {
   struct kmem_cache *cp = kc;
 
   size = power2ify(size + sizeof(struct kmem_item)); // use power of 2 as size
-  //Log("Looking for cache of size %d.", size);
+  MEMLog("Looking for cache of size %d.", size);
   while (cp->item_size > 0 && cp->item_size != size) {
-    //Log("However, cache at %p has item size %d.", cp, cp->item_size);
+    //MEMLog("However, cache at %p has item size %d.", cp, cp->item_size);
     cp++;
   }
   if (cp->item_size > 0 && cp->item_size == size) {
-    //Log("Cache of size %d exists at %p.", size, cp);
+    MEMLog("Cache of size %d exists at %p.", size, cp);
   } else {
-    //Log("Cache of size %d does not exist, create a new one at %p.", size, cp);
+    MEMLog("Cache of size %d does not exist, create a new one at %p.", size, cp);
     Assert((void *) kc < (void *) pi, "Kcache zone is full.");
     cp->item_size = size;
     if (cp->item_size <= SZ_SMALL_OBJ) {
@@ -75,16 +75,16 @@ void kmem_cache_grow(struct kmem_cache *cp) {
 
 void *kmem_cache_alloc(struct kmem_cache *cp) {
   if (likely(cp->slabs_free == NULL)) {
-    //Log("No free slabs, allocating a new slab of %d items.", cp->nr_items_slab);
+    MEMLog("No free slabs, allocating a new slab of %d items.", cp->nr_items_slab);
     kmem_cache_grow(cp);
     Assert(likely(cp->slabs_free != NULL), "Still no slab after growth.");
   } else {
-    //Log("The first free slab at %p has %d free items left.", cp->slabs_free, cp->nr_items_slab - cp->slabs_free->nr_items);
+    MEMLog("The first free slab at %p has %d free items left.", cp->slabs_free, cp->nr_items_slab - cp->slabs_free->nr_items);
   }
   struct kmem_slab *sp = cp->slabs_free;
   struct kmem_item *ip = sp->items;
   while (likely(ip->used)) {
-    //Log("%p is used. next is %p", ip, ip->next);
+    //MEMLog("%p is used. next is %p", ip, ip->next);
     ip = ip->next;
   }
   Assert((void *) ip >= pm && (void *) ip < (void *) kc, "Item %p is not in pm area [%p, %p)!", ip, pm, (void *) kc);
@@ -94,8 +94,8 @@ void *kmem_cache_alloc(struct kmem_cache *cp) {
     kmem_cache_move_slab_to_full(sp->cache, sp);
   }
   Assert(likely(ip->used), "Item is not marked as used after allocation!!");
-  //CLog(BG_GREEN, "Memory allocated at %p, slab at %p has %d items free now.", (void *)ip + sizeof(struct kmem_item), sp, sp->nr_items_max - sp->nr_items);
-  //CLog(BG_PURPLE, "next is %p", ip->next);
+  MEMCLog(BG_GREEN, "Memory allocated at %p, slab at %p has %d items free now.", (void *)ip + sizeof(struct kmem_item), sp, sp->nr_items_max - sp->nr_items);
+  MEMCLog(BG_PURPLE, "next is %p", ip->next);
   return ((void *) ip) + sizeof(struct kmem_item);
 }
 
@@ -109,11 +109,11 @@ void kmem_cache_free(void *ptr) {
   }
   if (sp->nr_items > 0) sp->nr_items--;
   Assert(sp->nr_items >= 0, "Slab at %p has negative number of items!!", sp);
-  //CLog(BG_GREEN, "Item at %p freed. Slab at %p has %d items free now.", ptr, sp, sp->nr_items_max - sp->nr_items);
+  MEMCLog(BG_GREEN, "Item at %p freed. Slab at %p has %d items free now.", ptr, sp, sp->nr_items_max - sp->nr_items);
 }
 
 void* get_free_pages(int nr) {
-  //Log("Getting %d free memory pages.", nr);
+  MEMLog("Getting %d free memory pages.", nr);
   for (int i = 0; i < nr_pages - nr; ) {
     int j = 0;
     bool success = true;
@@ -127,7 +127,7 @@ void* get_free_pages(int nr) {
       for (int j = 0; j < nr; ++j) {
         *(pi + i + j) = true;
       }
-      //Log("Memory pages start at %p.", pm + i * SZ_PAGE);
+      MEMLog("Memory pages start at %p.", pm + i * SZ_PAGE);
       return pm + i * SZ_PAGE;
     } else {
       i += j + 1;
@@ -137,7 +137,7 @@ void* get_free_pages(int nr) {
 }
 
 void free_used_pages(void *base, int nr) {
-  //Log("Freeing %d memory pages from %p.", nr, base);
+  MEMLog("Freeing %d memory pages from %p.", nr, base);
   int b = (base - pm) / SZ_PAGE;
   for (int i = 0; i < nr; ++i) {
     *(pi + b + i) = false;
