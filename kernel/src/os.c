@@ -17,7 +17,9 @@ static void os_init_locks() {
 static void os_init() {
   //TODO: implement the following:
   os_init_locks();
+  Log("locks ok");
   pmm->init();
+  Log("pmm ok");
   //kmt->init();
   //_vme_init(pmm->allow, pmm->free);
   //dev->init();
