@@ -103,7 +103,7 @@ _Context *kmt_context_switch(_Event ev, _Context *context) {
 
 struct task *kmt_sched() {
   for (struct task *tp = &root_task; tp != NULL; tp = tp->next) {
-    Log("%d:%s", tp->pid, tp->name);
+    Log("%d:%s [%s]", tp->pid, tp->name, task_states_human[tp->state]);
     if (tp->state == ST_E || tp->state == ST_W) { // choose a waken up task
       return tp; 
     }
