@@ -14,7 +14,7 @@ struct spinlock {
   int holder;
 };
 
-void spinlock_init(struct spinlock *, char *);
+void spinlock_init(struct spinlock *, const char *);
 void spinlock_acquire(struct spinlock *);
 void spinlock_release(struct spinlock *);
 bool spinlock_holding(struct spinlock *);

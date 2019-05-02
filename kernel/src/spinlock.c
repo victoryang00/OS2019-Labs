@@ -11,8 +11,7 @@
 int efif[MAX_CPU] = {};
 int ncli[MAX_CPU] = {};
 
-
-void spinlock_init(struct spinlock *lk, char *name) {
+void spinlock_init(struct spinlock *lk, const char *name) {
   lk->locked = 0;
   lk->holder = -1;
   lk->name = name;
