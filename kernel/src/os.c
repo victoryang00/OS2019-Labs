@@ -43,8 +43,8 @@ static _Context *os_trap(_Event ev, _Context *context) {
   _Context *ret = NULL;
 
   spinlock_acquire(&os_trap_lock);
-  for (struct os_handler *hp = root_handler->next; hp != NULL; hp = hp->next) {
-    if (hp->event == _EVENT_NULL || hp->event == ev) {
+  for (struct os_handler *hp = root_handler.next; hp != NULL; hp = hp->next) {
+    if (hp->event == _EVENT_NULL->event || hp->event == ev->event) {
       _Contect *next = hp->handler(ev, context);
       if (next) ret = next;
     }
