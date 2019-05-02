@@ -9,7 +9,7 @@
  */
 
 struct semaphore {
-  char *name;
+  const char *name;
   int value;
   struct spinlock lock;
 };
