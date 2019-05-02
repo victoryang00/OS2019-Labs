@@ -5,6 +5,9 @@
 #include <amdev.h>
 #include <klib.h>
 
+#include <spinlock.h>
+#include <semaphore.h>
+
 #define LENGTH(arr) ((sizeof(arr) / sizeof(arr[0])))
 
 struct device {
