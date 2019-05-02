@@ -50,6 +50,7 @@ static void os_run() {
 }
 
 static _Context *os_trap(_Event ev, _Context *context) {
+  Log("CPU got trapped!");
   _Context *ret = NULL;
 
   spinlock_acquire(&os_trap_lock);
@@ -64,6 +65,7 @@ static _Context *os_trap(_Event ev, _Context *context) {
 }
 
 static void os_on_irq(int seq, int event, handler_t handler) {
+  CLog(BG_PURPLE, "Handler for seq %d, event %d added.", seq, event);
   struct os_handler *oh = pmm->alloc(sizeof(struct os_handler));
   oh->seq = seq;
   oh->event = event;
