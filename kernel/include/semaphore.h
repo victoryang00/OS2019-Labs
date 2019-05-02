@@ -17,3 +17,5 @@ struct semaphore {
 void semaphore_init(struct semaphore *, const char *, int);
 void semaphore_wait(struct semaphore *);
 void semaphore_signal(struct semaphore *);
+
+#endif
