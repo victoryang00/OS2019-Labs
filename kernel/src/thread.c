@@ -56,7 +56,7 @@ int kmt_create(struct task *task, const char *name, void (*entry)(void *arg), vo
   task->next = NULL;
 
   spinlock_acquire(&task_lock);
-  struct task *tp = root_task;
+  struct task *tp = &root_task;
   while (tp->next) tp = tp->next;
   tp->next = task;
   spinlock_release(&task_lock);
@@ -66,7 +66,7 @@ int kmt_create(struct task *task, const char *name, void (*entry)(void *arg), vo
 
 void kmt_teardown(struct task *task) {
   spinlock_acquire(&task_lock);
-  struct task *tp = root_task;
+  struct task *tp = &root_task;
   while (tp->next && tp->next != task) tp = tp->next;
   Assert(tp->next && tp->next == task, "Task is not in linked list!");
   tp->next = task->next;
@@ -81,11 +81,13 @@ void kmt_inspect_fence(struct task *task) {
 }
 
 _Context *kmt_context_save(_Event ev, _Context *context) {
-
+  Log("KMT Context Save");
+  return NULL;
 }
 
 _Context *kmt_context_switch(_Event ev, _Context *context) {
-  
+  Log("KMT Context Switch");
+  return NULL;  
 }
 
 void kmt_sched() {
@@ -110,8 +112,8 @@ void kmt_sleep(void *sem, struct spinlock *lock) {
 
 void kmt_wakeup(void *sem) {
   spinlock_acquire(&task_lock);
-  for (struct task *tp = tasks; tp != NULL; tp = tp->next) {
-    if (tp->state = ST_S && tp->sleep_sem == sem) {
+  for (struct task *tp = &root_task; tp != NULL; tp = tp->next) {
+    if (tp->state == ST_S && tp->sleep_sem == sem) {
       tp->state = ST_W; // wake up
     }
   }
@@ -128,4 +130,4 @@ MODULE_DEF(kmt) {
   .sem_init    = semaphore_init,
   .sem_wait    = semaphore_wait,
   .sem_signal  = semaphore_signal
-}
+};
