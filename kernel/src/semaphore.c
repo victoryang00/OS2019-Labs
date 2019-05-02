@@ -24,7 +24,7 @@ void semaphore_wait(struct semaphore *sem) {
   spinlock_release(&sem->lock);
 }
 
-void semaphore_sigmal(struct semaphore *sem) {
+void semaphore_signal(struct semaphore *sem) {
   spinlock_acquire(&sem->lock);
   ++sem->value;
   if (sem->value > 0) {
