@@ -14,12 +14,13 @@
 // printf: lock defined in src/os.c.
 
 extern struct spinlock printf_lock;
-#define printf(...) \
+#define printf(...) {\
   __sync_synchronize(); \
   spinlock_acquire(&printf_lock); \
   printf(__VA_ARGS__); \
   spinlock_release(&printf_lock); \
-  __sync_synchronize()
+  __sync_synchronize() \
+}
 
 
 #endif
