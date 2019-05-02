@@ -46,7 +46,7 @@ void kmt_init() {
   Log("%d", -1);
   os->on_irq(INT_MIN, _EVENT_NULL, kmt_context_save);
   os->on_irq(INT_MAX, _EVENT_NULL, kmt_context_switch);
-  os->on_irq(0, _EVENT_YIELD, kmt_yield);
+  //os->on_irq(0, _EVENT_YIELD, kmt_yield);
 }
 
 int kmt_create(struct task *task, const char *name, void (*entry)(void *arg), void *arg) {
