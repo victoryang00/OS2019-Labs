@@ -24,13 +24,13 @@ struct kmem_cache* kmem_cache_create(size_t size) {
   struct kmem_cache *cp = kc;
 
   size = power2ify(size + sizeof(struct kmem_item)); // use power of 2 as size
-  Log("Looking for cache of size %d.", size);
+  //Log("Looking for cache of size %d.", size);
   while (cp->item_size > 0 && cp->item_size != size) {
     //Log("However, cache at %p has item size %d.", cp, cp->item_size);
     cp++;
   }
   if (cp->item_size > 0 && cp->item_size == size) {
-    Log("Cache of size %d exists at %p.", size, cp);
+    //Log("Cache of size %d exists at %p.", size, cp);
   } else {
     Log("Cache of size %d does not exist, create a new one at %p.", size, cp);
     Assert((void *) kc < (void *) pi, "Kcache zone is full.");
@@ -75,11 +75,11 @@ void kmem_cache_grow(struct kmem_cache *cp) {
 
 void *kmem_cache_alloc(struct kmem_cache *cp) {
   if (likely(cp->slabs_free == NULL)) {
-    Log("No free slabs, allocating a new slab of %d items.", cp->nr_items_slab);
+    //Log("No free slabs, allocating a new slab of %d items.", cp->nr_items_slab);
     kmem_cache_grow(cp);
     Assert(likely(cp->slabs_free != NULL), "Still no slab after growth.");
   } else {
-    Log("The first free slab at %p has %d free items left.", cp->slabs_free, cp->nr_items_slab - cp->slabs_free->nr_items);
+    //Log("The first free slab at %p has %d free items left.", cp->slabs_free, cp->nr_items_slab - cp->slabs_free->nr_items);
   }
   struct kmem_slab *sp = cp->slabs_free;
   struct kmem_item *ip = sp->items;
@@ -94,7 +94,7 @@ void *kmem_cache_alloc(struct kmem_cache *cp) {
     kmem_cache_move_slab_to_full(sp->cache, sp);
   }
   Assert(likely(ip->used), "Item is not marked as used after allocation!!");
-  CLog(BG_GREEN, "Memory allocated at %p, slab at %p has %d items free now.", (void *)ip + sizeof(struct kmem_item), sp, sp->nr_items_max - sp->nr_items);
+  //CLog(BG_GREEN, "Memory allocated at %p, slab at %p has %d items free now.", (void *)ip + sizeof(struct kmem_item), sp, sp->nr_items_max - sp->nr_items);
   //CLog(BG_PURPLE, "next is %p", ip->next);
   return ((void *) ip) + sizeof(struct kmem_item);
 }
@@ -109,7 +109,7 @@ void kmem_cache_free(void *ptr) {
   }
   if (sp->nr_items > 0) sp->nr_items--;
   Assert(sp->nr_items >= 0, "Slab at %p has negative number of items!!", sp);
-  CLog(BG_GREEN, "Item at %p freed. Slab at %p has %d items free now.", ptr, sp, sp->nr_items_max - sp->nr_items);
+  //CLog(BG_GREEN, "Item at %p freed. Slab at %p has %d items free now.", ptr, sp, sp->nr_items_max - sp->nr_items);
 }
 
 void* get_free_pages(int nr) {
