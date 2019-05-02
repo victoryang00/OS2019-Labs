@@ -12,7 +12,7 @@
 #define FILL_FENCE 0xcd
 #define FILL_STACK 0xfd
 
-enum task_stats {
+enum task_states {
   ST_U, // Unused
   ST_E, // Embryo
   ST_S, // Sleeping 
@@ -21,7 +21,7 @@ enum task_stats {
   ST_Z, // Zombie
   ST_X  // Special
 };
-const char *task_stats_human[7] = {
+const char *task_states_human[7] = {
   "Unused",
   "Embryo",
   "Sleeping",
@@ -29,12 +29,12 @@ const char *task_stats_human[7] = {
   "Running",
   "Zombie",
   "Special"
-}
+};
 
 struct task {
   int pid;
   const char* name;
-  enum task_stats state;
+  enum task_states state;
 
   _Context *context;
   char fenceA[32];
