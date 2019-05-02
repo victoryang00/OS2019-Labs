@@ -50,11 +50,9 @@ static void os_run() {
 }
 
 static _Context *os_trap(_Event ev, _Context *context) {
-  CLog(BG_CYAN, "Event %d: %s", ev.event, ev.msg);
-
-  _Context *ret = NULL;
-
   spinlock_acquire(&os_trap_lock);
+  CLog(BG_CYAN, "Event %d: %s", ev.event, ev.msg);
+  _Context *ret = NULL;
   for (struct os_handler *hp = root_handler.next; hp != NULL; hp = hp->next) {
     if (hp->event == _EVENT_NULL || hp->event == ev.event) {
       _Context *next = hp->handler(ev, context);
