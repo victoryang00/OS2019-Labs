@@ -43,13 +43,11 @@ static void hello() {
 
 static void os_run() {
   hello();
-  Log("HELLO OK!");
   _intr_write(1);
-  Log("_intr_write(1) ok");
   while (1) {
-    Log("Going to yield!!");
+    //Log("Going to yield!!");
     _yield();
-    Log("Back from yield.");
+    //Log("Back from yield.");
   }
 }
 

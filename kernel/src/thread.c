@@ -90,12 +90,12 @@ void kmt_inspect_fence(struct task *task) {
 
 static _Context *saved_context = NULL;
 _Context *kmt_context_save(_Event ev, _Context *context) {
-  Log("KMT Context Save");
+  //Log("KMT Context Save");
   saved_context = context;
   return NULL;
 }
 _Context *kmt_context_switch(_Event ev, _Context *context) {
-  Log("KMT Context Switch");
+  //Log("KMT Context Switch");
   _Context *ret = saved_context;
   saved_context = NULL;
   return ret;
@@ -118,6 +118,7 @@ _Context *kmt_yield(_Event ev, _Context *context) {
     return context; // no change
   }
 
+  Log("Switching to task %d:%s", next->pid, next->name);
   cur->state = ST_W;  // set current as given up
   next->state = ST_R; // set the next as running
   set_current_task(next);
