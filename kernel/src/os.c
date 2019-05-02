@@ -1,7 +1,9 @@
 #include <common.h>
 #include <os.h>
 #include <devices.h>
+#include <threads.h>
 #include <spinlock.h>
+#include <semaphore.h>
 
 struct spinlock printf_lock __attribute__((used));
 struct spinlock os_trap_lock;
