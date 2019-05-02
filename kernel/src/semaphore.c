@@ -1,4 +1,5 @@
 #include <common.h>
+#include <spinlock.h>
 #include <semaphore.h>
 #include <debug.h>
 
