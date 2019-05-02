@@ -43,6 +43,8 @@ int kmt_create(struct task *, const char *, void (*)(void *), void *);
 void kmt_teardown(struct task *);
 void kmt_inspect_fence(struct task *);
 //int kmt_wait();
+_Context *kmt_context_save(_Event, _Context *);
+_Context *kmt_context_switch(_Event, _Context *);
 void kmt_sched();
 void kmt_yield();
 void kmt_sleep(void *, struct spinlock *);
