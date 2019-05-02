@@ -83,7 +83,10 @@ void *kmem_cache_alloc(struct kmem_cache *cp) {
   }
   struct kmem_slab *sp = cp->slabs_free;
   struct kmem_item *ip = sp->items;
-  while (likely(ip->used)) ip = ip->next;
+  while (likely(ip->used)) {
+    Log("%p is used. next is %p", ip, ip->next);
+    ip = ip->next;
+  }
   Assert((void *) ip >= pm && (void *) ip < (void *) kc, "Item %p is not in pm area [%p, %p)!", ip, pm, (void *) kc);
   ip->used = true;
   if (sp->nr_items < sp->nr_items_max) sp->nr_items++;
