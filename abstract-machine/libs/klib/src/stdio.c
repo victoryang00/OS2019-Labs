@@ -27,6 +27,7 @@ int vprintf_int(int src, int len, char phchar, const int base) {
     int pos = VBUF_MAX_SIZE - 2, cur = 0;
     for ( ; src != 0 && pos >= 0; src /= base, --pos, --len) {
       cur = src % base;
+      if (cur < 0) cur = -cur; // bug of INT_MIN solved!
       vbuf[pos] = cur < 10 ? cur + '0' : cur - 10 + 'a'; 
     }
     for ( ; len > 0 && pos >= 0; --pos, --len) {
@@ -111,7 +112,9 @@ int vsprintf(char *out, const char *fmt, va_list ap) {
               strcat(pout, "-");
               ret++;
               pout++;
-              uarg.intarg = -uarg.intarg;
+              // ancient bug!!!
+              // will err when int == INT_MIN
+              // uarg.intarg = -uarg.intarg;
             }
             bias = vprintf_int(uarg.intarg, width, phchar, (*pfmt == 'd' ? 10 : 16));
             len = (int) VBUF_MAX_SIZE - bias - 1;
