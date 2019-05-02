@@ -33,8 +33,8 @@ static void os_init() {
   //create proc here
   extern void (*input_task) (void *);
   extern void (*tty_task) (void *);
-  kmt->create(pmm->alloc(sizeof(task_t)), "Input Task", input_task, NULL);
-  kmt->create(pmm->alloc(sizeof(task_t)), "TTY Task", tty_task, NULL);
+  Log("Input Task PID: %d", kmt->create(pmm->alloc(sizeof(task_t)), "Input Task", input_task, NULL));
+  Log("TTY Task PID: %d", kmt->create(pmm->alloc(sizeof(task_t)), "TTY Task", tty_task, NULL));
 }
 
 static void hello() {
