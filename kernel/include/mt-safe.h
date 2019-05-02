@@ -1,6 +1,10 @@
 #ifndef __MT_SAFE_H__
 #define __MT_SAFE_H__
 
+#include <common.h>
+#include <debug.h>
+#include <spinlock.h>
+
 /**
  * MT-SAFE Wrapper: wrap the functions that is not MT-SAFE so that program
  * will be blocked if another process is inside the function.
