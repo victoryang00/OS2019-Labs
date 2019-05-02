@@ -9,7 +9,7 @@
  */
 
 struct spinlock {
-  char *name;
+  const char *name;
   bool locked;
   int holder;
 };
