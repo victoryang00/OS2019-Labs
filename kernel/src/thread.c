@@ -46,7 +46,7 @@ void kmt_init() {
   Log("%d", -1);
   os->on_irq(INT_MIN, _EVENT_NULL, kmt_context_save);
   os->on_irq(INT_MAX, _EVENT_NULL, kmt_context_switch);
-  //os->on_irq(0, _EVENT_YIELD, kmt_yield);
+  os->on_irq(0, _EVENT_YIELD, kmt_yield);
 }
 
 int kmt_create(struct task *task, const char *name, void (*entry)(void *arg), void *arg) {
@@ -101,23 +101,26 @@ _Context *kmt_context_switch(_Event ev, _Context *context) {
   return ret;
 }
 
-void kmt_sched() {
+_Context *kmt_sched() {
   Assert(spinlock_holding(&task_lock), "The task is not holding task lock.");
   Assert(get_current_task()->state != ST_R, "The task is still running.");
   Assert((get_efl() & FL_IF) == 0, "The CPU is interruptable.");
 
   for (struct task *tp = &root_task; tp != NULL; tp = tp->next) {
     if (tp->state == ST_W) { // choose a waken up task
-      
+      return tp; 
     }
   }
 }
 
-void kmt_yield() {
+_Context *kmt_yield(_Event ev, _Context *context) {
   spinlock_acquire(&task_lock);
   get_current_task()->state = ST_W; // give up CPU
-  kmt_sched(); // call scheduler to switch to next task
+  _Context *ret = kmt_sched(); // call scheduler
+  ret->state = ST_R; // set it as running
+  set_current_task(ret);
   spinlock_release(&task_lock);
+  return ret;
 }
 
 void kmt_sleep(void *alarm, struct spinlock *lock) {
