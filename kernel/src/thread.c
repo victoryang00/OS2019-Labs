@@ -43,7 +43,7 @@ void kmt_init() {
   spinlock_release(&task_lock);
 
   // add trap handlers
-  Log("%d", -2147483648);
+  Log("%d", -1);
   os->on_irq(INT_MIN, _EVENT_NULL, kmt_context_save);
   os->on_irq(INT_MAX, _EVENT_NULL, kmt_context_switch);
 }
