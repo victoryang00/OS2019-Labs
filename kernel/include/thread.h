@@ -32,8 +32,7 @@ struct task {
   char stack[4096];
   char fenceB[32];
 
-  void *sleep_sem;
-  struct spinlock *sleep_lock;
+  void *alarm;
 
   struct task *next;
 };

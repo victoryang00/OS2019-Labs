@@ -46,6 +46,7 @@ void kmt_init() {
   Log("%d", -1);
   os->on_irq(INT_MIN, _EVENT_NULL, kmt_context_save);
   os->on_irq(INT_MAX, _EVENT_NULL, kmt_context_switch);
+  os->on_irq(0, _EVENT_YIELD, kmt_yield);
 }
 
 int kmt_create(struct task *task, const char *name, void (*entry)(void *arg), void *arg) {
@@ -86,6 +87,7 @@ void kmt_inspect_fence(struct task *task) {
 }
 
 _Context *kmt_context_save(_Event ev, _Context *context) {
+  CLog(BG_ORANGE, "Event class %d: %s", ev.event, ev.msg);
   Log("KMT Context Save");
   Log("Nothing happens!");
   return context;
@@ -98,7 +100,15 @@ _Context *kmt_context_switch(_Event ev, _Context *context) {
 }
 
 void kmt_sched() {
-  //?????
+  Assert(spinlock_holding(&task_lock), "The task is not holding task lock.");
+  Assert(get_current_task()->state != ST_R, "The task is still running.");
+  Assert(get_efl() & FL_IF == 0, "The CPU is interruptable.");
+
+  for (struct task *tp = &root_task; tp != NULL; tp = tp->next) {
+    if (tp->state == ST_W) { // choose a waken up task
+      
+    }
+  }
 }
 
 void kmt_yield() {
@@ -108,19 +118,41 @@ void kmt_yield() {
   spinlock_release(&task_lock);
 }
 
-void kmt_sleep(void *sem, struct spinlock *lock) {
+void kmt_sleep(void *alarm, struct spinlock *lock) {
   struct task *cur = get_current_task();
   Assert(cur != NULL, "NULL task is going to sleep.");
-  Assert(sem != NULL, "Sleep without a semaphore.");
+  Assert(alarm != NULL, "Sleep without a alarm (semaphore).");
   Assert(lock != NULL, "Sleep without a lock.");
 
+  // MUST acquire the tasks lock
+  // before giving up the one we are holding
+  // OTHERWISE MAY MISS WAKEUPS (DEADLOCK)
+  // TODO: IS THERE OTHER TYPES OF DEADLOCK?
+  if (lock != task_lock) {
+    spinlock_acquire(task_lock);
+    spinlock_release(lock);
+  }
 
+  struct task *cur = get_current_task();
+  cur->alarm = alarm;
+  cur->state = ST_S; // go to sleep
+  kmt_sched(); // lock will be released
+
+  __sync_synchronize(); // memory barrier
+  cur->alarm = NULL; // turn off the alarm
+  
+  // We have the task lock when wake up
+  // then we need to acquire the original lock
+  if (lock != task_lock) {
+    spinlock_release(task_lock);
+    spinlock_acquire(lock);
+  }
 }
 
-void kmt_wakeup(void *sem) {
+void kmt_wakeup(void *alarm) {
   spinlock_acquire(&task_lock);
   for (struct task *tp = &root_task; tp != NULL; tp = tp->next) {
-    if (tp->state == ST_S && tp->sleep_sem == sem) {
+    if (tp->state == ST_S && tp->alarm == alarm) {
       tp->state = ST_W; // wake up
     }
   }
