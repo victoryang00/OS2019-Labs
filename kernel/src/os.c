@@ -27,6 +27,8 @@ static void os_init() {
   dev->init();
   CLog(BG_GREEN, "dev ok");
   //create proc here
+  kmt->create(pmm->alloc(sizeof(task_t)), "Input Task", input_task, NULL);
+  kmt->create(pmm->alloc(sizeof(task_t)), "TTY Task", tty_task, NULL);
 }
 
 static void hello() {
