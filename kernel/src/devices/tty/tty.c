@@ -1,3 +1,4 @@
+#include <string.h>
 #include <devices.h>
 
 #define TTY_COOK_BUF_SZ 1024
@@ -238,7 +239,9 @@ void tty_task(void *arg) {
         if (ev.data == '2') next = dev_lookup("tty2");
         if (ev.data == '3') next = dev_lookup("tty3");
         if (ev.data == '4') next = dev_lookup("tty4");
-        if (ev.data == '7') printf("Switch to terminal\n");
+        if (ev.data == '7') {
+          printf("Switch to terminal\n");
+        }
         if (next != ttydev) {
           ttydev = next;
           tty_t *tty = ttydev->ptr;
@@ -252,7 +255,9 @@ void tty_task(void *arg) {
         }
       }
       if (ev.ctrl) {
-        if (ev.data == 'c') printf("Ctrl - c\n");
+        if (ev.data == 'c') {
+          printf("Ctrl - c\n");
+        }
       }
       if (!ev.ctrl && !ev.alt) {
         char ch = ev.data;
