@@ -32,14 +32,14 @@ void spinlock_acquire(struct spinlock *lk) {
   __sync_synchronize();
 
   lk->holder = _cpu();
-  CLog(BG_YELLOW, "CPU %d acquired lock %s.", _cpu(), lk->name);
+  LOCKLog(BG_YELLOW, "CPU %d acquired lock %s.", _cpu(), lk->name);
 }
 
 void spinlock_release(struct spinlock *lk) {
   Assert(spinlock_holding(lk), "Releasing lock %s not holded by cpu %d.", lk->name, _cpu());
 
   lk->holder = -1;
-  CLog(BG_YELLOW, "CPU %d will release lock %s.", _cpu(), lk->name);
+  LOCKLog(BG_YELLOW, "CPU %d will release lock %s.", _cpu(), lk->name);
 
   __sync_synchronize();
   _atomic_xchg((intptr_t *) &lk->locked, 0);
