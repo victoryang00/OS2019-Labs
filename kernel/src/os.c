@@ -1,5 +1,5 @@
 #include <common.h>
-#include <klib.h>
+#include <os.h>
 #include <spinlock.h>
 
 struct spinlock printf_lock __attribute__((used));
