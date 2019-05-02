@@ -11,18 +11,19 @@
 //#define __NATIVE_USE_KLIB__
 
 #ifdef __NATIVE_USE_KLIB__
-#define strlen my_strlen
-#define strcpy my_strcpy
-#define strncpy my_strncpy
-#define strcat my_strcat
-#define strcmp my_strcmp
-#define strncmp my_strncmp
-#define memset my_memset
-#define memcpy my_memcpy
-#define memcmp my_memcmp
-#define printf my_printf
+#define strlen   my_strlen
+#define strcpy   my_strcpy
+#define strncpy  my_strncpy
+#define strcat   my_strcat
+#define strcmp   my_strcmp
+#define strncmp  my_strncmp
+#define memset   my_memset
+#define memcpy   my_memcpy
+#define memmove  my_memmove
+#define memcmp   my_memcmp
+#define printf   my_printf
 #define vsprintf my_vsprintf
-#define sprintf my_sprintf
+#define sprintf  my_sprintf
 #define snprintf my_snprintf
 #endif
 
@@ -43,6 +44,7 @@ int screen_height();
 // string.h
 void* memset(void* v, int c, size_t n);
 void* memcpy(void* dst, const void* src, size_t n);
+void* memmove(void *dst, const void* src, size_t n);
 int memcmp(const void* s1, const void* s2, size_t n);
 size_t strlen(const char* s);
 char* strcat(char* dst, const char* src);

@@ -10,7 +10,7 @@ size_t strlen(const char *s) {
   return ret;
 }
 
-char *strcpy(char* dst,const char* src) {
+char *strcpy(char *dst,const char *src) {
   size_t i = 0;
   for (i = 0; src[i] != '\0'; ++i) {
     dst[i] = src[i];
@@ -19,7 +19,7 @@ char *strcpy(char* dst,const char* src) {
   return dst;
 }
 
-char* strncpy(char* dst, const char* src, size_t n) {
+char *strncpy(char *dst, const char *src, size_t n) {
   size_t i = 0;
   for (i = 0; i < n && src[i] != '\0'; ++i) {
     dst[i] = src[i];
@@ -28,7 +28,7 @@ char* strncpy(char* dst, const char* src, size_t n) {
   return dst;
 }
 
-char* strcat(char* dst, const char* src) {
+char *strcat(char *dst, const char *src) {
   size_t dst_len = strlen(dst);
   size_t i = 0;
   for (i = 0; src[i] != '\0'; ++i) {
@@ -38,7 +38,7 @@ char* strcat(char* dst, const char* src) {
   return dst;
 }
 
-int strcmp(const char* s1, const char* s2) {
+int strcmp(const char *s1, const char *s2) {
   size_t i = 0;
   for (i = 0; s1[i] != '\0' && s2[i] != '\0'; ++i) {
     if (s1[i] != s2[i]) {
@@ -48,7 +48,7 @@ int strcmp(const char* s1, const char* s2) {
   return s1[i] == s2[i] ? 0 : (s1[i] < s2[i] ? -1 : 1);
 }
 
-int strncmp(const char* s1, const char* s2, size_t n) {
+int strncmp(const char *s1, const char *s2, size_t n) {
   size_t i = 0;
   for (i = 0; i < n && s1[i] != '\0' && s2[i] != '\0'; ++i) {
     if (s1[i] != s2[i]) {
@@ -58,7 +58,7 @@ int strncmp(const char* s1, const char* s2, size_t n) {
   return i == n ? 0 : (s1[i] < s2[i] ? -1 : 1);
 }
 
-void* memset(void* v, int c, size_t n) {
+void *memset(void *v, int c, size_t n) {
   int8_t c8 = (int8_t) c & 0xff;
   int32_t c32 = (int32_t) c8 | ((int32_t) c8 << 8) | ((int32_t) c8 << 16) | ((int32_t) c8 << 24);
 
@@ -78,7 +78,7 @@ void* memset(void* v, int c, size_t n) {
   return v;
 }
 
-void* memcpy(void* out, const void* in, size_t n) {
+void *memcpy(void *out, const void *in, size_t n) {
   int8_t *pout = (int8_t *) out;
   int8_t *pin = (int8_t *) in;
 
@@ -98,7 +98,14 @@ void* memcpy(void* out, const void* in, size_t n) {
   return NULL;
 }
 
-int memcmp(const void* s1, const void* s2, size_t n) {
+void *memmove(void *dest, const void *src, size_t n) {
+  void *tmp[n];
+  memcpy(tmp, src, n);
+  memcpy(dest, tmp, n);
+  return dest;
+}
+
+int memcmp(const void *s1, const void *s2, size_t n) {
   int8_t *p1 = (int8_t *) s1;
   int8_t *p2 = (int8_t *) s2;
 
