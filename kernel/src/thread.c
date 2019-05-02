@@ -61,6 +61,7 @@ void kmt_init() {
 int kmt_create(struct task *task, const char *name, void (*entry)(void *arg), void *arg) {
   task->pid = next_pid++;
   task->name = name;
+  task->state = ST_E;
   _Area stack = { 
     (void *) task->stack, 
     (void *) task->stack + sizeof(task->stack) 
