@@ -87,7 +87,7 @@ void kmt_inspect_fence(struct task *task) {
 }
 
 _Context *kmt_context_save(_Event ev, _Context *context) {
-  CLog(BG_ORANGE, "Event class %d: %s", ev.event, ev.msg);
+  CLog(BG_CYAN, "Event class %d: %s", ev.event, ev.msg);
   Log("KMT Context Save");
   Log("Nothing happens!");
   return context;
@@ -102,7 +102,7 @@ _Context *kmt_context_switch(_Event ev, _Context *context) {
 void kmt_sched() {
   Assert(spinlock_holding(&task_lock), "The task is not holding task lock.");
   Assert(get_current_task()->state != ST_R, "The task is still running.");
-  Assert(get_efl() & FL_IF == 0, "The CPU is interruptable.");
+  Assert((get_efl() & FL_IF) == 0, "The CPU is interruptable.");
 
   for (struct task *tp = &root_task; tp != NULL; tp = tp->next) {
     if (tp->state == ST_W) { // choose a waken up task
