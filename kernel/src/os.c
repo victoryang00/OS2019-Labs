@@ -30,17 +30,22 @@ static void os_init() {
 }
 
 static void hello() {
-  for (const char *ptr = "Hello from CPU #"; *ptr; ptr++) {
-    _putc(*ptr);
-  }
-  _putc("012345678"[_cpu()]); _putc('\n');
+  //for (const char *ptr = "Hello from CPU #"; *ptr; ptr++) {
+  //  _putc(*ptr);
+  //}
+  //_putc("012345678"[_cpu()]); _putc('\n');
+  printf("Hello from CPU #%d\n", _cpu());
 }
 
 static void os_run() {
   hello();
+  Log("HELLO OK!");
   _intr_write(1);
+  Log("_intr_write(1) ok");
   while (1) {
+    Log("Going to yield!!");
     _yield();
+    Log("Back from yield.");
   }
 }
 
