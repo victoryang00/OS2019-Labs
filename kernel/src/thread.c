@@ -18,6 +18,15 @@ static const char const_fence[32] = {
   FILL_FENCE, FILL_FENCE, FILL_FENCE, FILL_FENCE,
   FILL_FENCE, FILL_FENCE, FILL_FENCE, FILL_FENCE
 };
+static const char *task_states_human[7] = {
+  "Unused",
+  "Embryo",
+  "Sleeping",
+  "Waken up",
+  "Running",
+  "Zombie",
+  "Special"
+};
 
 struct spinlock task_lock;
 struct task root_task;

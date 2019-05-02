@@ -21,15 +21,6 @@ enum task_states {
   ST_Z, // Zombie
   ST_X  // Special
 };
-const char *task_states_human[7] = {
-  "Unused",
-  "Embryo",
-  "Sleeping",
-  "Waken up",
-  "Running",
-  "Zombie",
-  "Special"
-};
 
 struct task {
   int pid;
