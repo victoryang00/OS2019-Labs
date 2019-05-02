@@ -54,7 +54,7 @@ static _Context *os_trap(_Event ev, _Context *context) {
 }
 
 static void os_on_irq(int seq, int event, handler_t handler) {
-  struct os_handler *oh = pmm->alloc(struct os_handler);
+  struct os_handler *oh = pmm->alloc(sizeof(struct os_handler));
   oh->seq = seq;
   oh->event = event;
   oh->handler = handler;
