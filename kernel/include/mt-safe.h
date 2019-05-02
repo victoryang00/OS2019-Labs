@@ -15,9 +15,10 @@
 
 extern struct spinlock printf_lock;
 #define printf(...) \
-    spinlock_acquire(&printf_lock); \
-    printf(__VA_ARGS__); \
-    spinlock_release(&printf_lock)
+  spinlock_acquire(&printf_lock); \
+  printf(__VA_ARGS__); \
+  fflush(stdout); \
+  spinlock_release(&printf_lock)
 
 
 #endif
