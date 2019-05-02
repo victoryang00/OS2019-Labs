@@ -67,7 +67,7 @@ static _Context *os_trap(_Event ev, _Context *context) {
 }
 
 static void os_on_irq(int seq, int event, handler_t handler) {
-  CLog(BG_PURPLE, "Handler for seq %d, event %d added.", seq, event);
+  CLog(BG_PURPLE, "Handler for event class %d (seq=%d) added.", event, seq);
   struct os_handler *oh = pmm->alloc(sizeof(struct os_handler));
   oh->seq = seq;
   oh->event = event;

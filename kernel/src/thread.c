@@ -87,12 +87,14 @@ void kmt_inspect_fence(struct task *task) {
 
 _Context *kmt_context_save(_Event ev, _Context *context) {
   Log("KMT Context Save");
-  return NULL;
+  Log("Nothing happens!");
+  return context;
 }
 
 _Context *kmt_context_switch(_Event ev, _Context *context) {
   Log("KMT Context Switch");
-  return NULL;  
+  Log("Nothing happens!");
+  return context;
 }
 
 void kmt_sched() {
