@@ -5,7 +5,7 @@
 struct spinlock printf_lock __attribute__((used));
 struct spinlock os_trap_lock;
 
-const struct os_handler root_handler = {
+static struct os_handler root_handler = {
   0, _EVENT_NULL, NULL, NULL
 };
 
@@ -45,7 +45,7 @@ static _Context *os_trap(_Event ev, _Context *context) {
   spinlock_acquire(&os_trap_lock);
   for (struct os_handler *hp = root_handler.next; hp != NULL; hp = hp->next) {
     if (hp->event == _EVENT_NULL || hp->event == ev.event) {
-      _Contect *next = hp->handler(ev, context);
+      _Context *next = hp->handler(ev, context);
       if (next) ret = next;
     }
   }
