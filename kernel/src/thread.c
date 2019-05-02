@@ -35,20 +35,20 @@ void kmt_init() {
   
   __sync_synchronize();
 
-  spinlock_acquire(&task->lock);
+  spinlock_acquire(&task_lock);
   root_task.pid = next_pid++;
   root_task.name = "Root Task";
   root_task.state = ST_X;
-  root_tast.next = NULL;
-  spinlock_release(&task->lock);
+  root_task.next = NULL;
+  spinlock_release(&task_lock);
 }
 
 int kmt_create(struct task *task, const char *name, void (*entry)(void *arg), void *arg) {
   task->pid = next_pid++;
   task->name = name;
-  task->context.eax = arg;
-  task->context.eip = entry;
-  task->context.ebp = task->stack;
+  task->context.eax = (uint32_t) arg;
+  task->context.eip = (uint32_t) entry;
+  task->context.ebp = (uint32_t) task->stack;
   memset(task->fenceA, FILL_FENCE, sizeof(task->fenceA));
   memset(task->stack,  FILL_STACK, sizeof(task->stack));
   memset(task->fenceB, FILL_FENCE, sizeof(task->fenceB));
