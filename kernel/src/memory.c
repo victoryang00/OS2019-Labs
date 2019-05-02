@@ -88,7 +88,7 @@ void *kmem_cache_alloc(struct kmem_cache *cp) {
     ip = ip->next;
   }
   {
-    struct kmem_item ip2 = ip;
+    struct kmem_item *ip2 = ip;
     while (ip2 != NULL) {
       Log("next: %p", ip2);
       ip2 = ip2->next;
