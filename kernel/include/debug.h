@@ -26,10 +26,9 @@
 #define CLog(color, format, ...) \
   printf("\33[0m" color "[%d][%s,%d,%s] " format " \33[0m\n", \
     _cpu(), __FILE__, __LINE__, __func__, ## __VA_ARGS__)
-
 #else
 #define Log(format, ...) ;
-#define CLog(color, format, ...) ;
+#define CLog(color, format, ...) 
 #endif
 
 #define Assert(cond, format, ...) \
