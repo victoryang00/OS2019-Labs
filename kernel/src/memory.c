@@ -32,7 +32,7 @@ struct kmem_cache* kmem_cache_create(size_t size) {
   if (cp->item_size > 0 && cp->item_size == size) {
     Log("Cache of size %d exists at %p.", size, cp);
   } else {
-    Log("Cache of size %d does not exist, create a new one at %p.", cp->item_size, cp);
+    Log("Cache of size %d does not exist, create a new one at %p.", size, cp);
     Assert((void *) kc < (void *) pi, "Kcache zone is full.");
     cp->item_size = size;
     if (cp->item_size <= SZ_SMALL_OBJ) {
