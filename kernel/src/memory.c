@@ -102,6 +102,7 @@ void *kmem_cache_alloc(struct kmem_cache *cp) {
   }
   Assert(likely(ip->used), "Item is not marked as used after allocation!!");
   CLog(BG_GREEN, "Memory allocated at %p, slab at %p has %d items free now.", (void *)ip + sizeof(struct kmem_item), sp, sp->nr_items_max - sp->nr_items);
+  CLog(BG_PURPLE, "next is %p", ip->next);
   return ((void *) ip) + sizeof(struct kmem_item);
 }
 
