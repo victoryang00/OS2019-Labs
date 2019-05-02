@@ -12,7 +12,7 @@
 #define FILL_FENCE 0xcd
 #define FILL_STACK 0xfd
 
-enum task_stats = {
+enum task_stats {
   ST_U, // Unused
   ST_E, // Embryo
   ST_S, // Sleeping 
