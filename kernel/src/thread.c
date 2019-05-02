@@ -41,6 +41,10 @@ void kmt_init() {
   root_task.state = ST_X;
   root_task.next = NULL;
   spinlock_release(&task_lock);
+
+  // add trap handlers
+  os->on_irq(INT_MIN, _EVENT_NULL, kmt_context_save);
+  os->on_irq(INT_MAX, _EVENT_NULL, kmt_context_switch);
 }
 
 int kmt_create(struct task *task, const char *name, void (*entry)(void *arg), void *arg) {
