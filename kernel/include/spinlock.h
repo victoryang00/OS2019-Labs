@@ -10,7 +10,7 @@
 
 // If MT-Safe macro is included, then
 // the lock itself cannot use printf to log.
-#ifdef __MT__SAFE_H__
+#ifdef __MT_SAFE_H__
 #define LOCKLog(...) 
 #else
 #define LOCKLog(...) CLog(__VA_ARGS__)
