@@ -23,7 +23,6 @@ struct spinlock task_lock;
 struct task root_task;
 
 static struct task *cpu_tasks[MAX_CPU] = {};
-static struct task *last_task = root_task; // keep the last visited task
 static inline struct task *get_current_task() {
   return cpu_tasks[_cpu()];
 }
@@ -37,10 +36,10 @@ void kmt_init() {
   __sync_synchronize();
 
   spinlock_acquire(&task->lock);
-  root_task->pid = next_pid++;
-  root_task->name = "Root Task";
-  root_task->state = ST_X;
-  root_tast->next = NULL;
+  root_task.pid = next_pid++;
+  root_task.name = "Root Task";
+  root_task.state = ST_X;
+  root_tast.next = NULL;
   spinlock_release(&task->lock);
 }
 
