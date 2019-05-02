@@ -50,7 +50,8 @@ static void os_run() {
 }
 
 static _Context *os_trap(_Event ev, _Context *context) {
-  Log("CPU got trapped!");
+  CLog(BG_CYAN, "Event %d: %s", ev.event, ev.msg);
+
   _Context *ret = NULL;
 
   spinlock_acquire(&os_trap_lock);

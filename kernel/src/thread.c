@@ -52,9 +52,7 @@ void kmt_init() {
 int kmt_create(struct task *task, const char *name, void (*entry)(void *arg), void *arg) {
   task->pid = next_pid++;
   task->name = name;
-  task->context.eax = (uint32_t) arg;
-  task->context.eip = (uint32_t) entry;
-  task->context.ebp = (uint32_t) task->stack;
+  task->context = kcontext(task->stack, entry, arg);
   memset(task->fenceA, FILL_FENCE, sizeof(task->fenceA));
   memset(task->stack,  FILL_STACK, sizeof(task->stack));
   memset(task->fenceB, FILL_FENCE, sizeof(task->fenceB));
@@ -86,17 +84,18 @@ void kmt_inspect_fence(struct task *task) {
   Assert(memcmp(const_fence, task->fenceB, sizeof(const_fence)) == 0, "Fence inspection B for task %d (%s) failed.", task->pid, task->name);
 }
 
+static _Context *saved_context = NULL;
 _Context *kmt_context_save(_Event ev, _Context *context) {
-  CLog(BG_CYAN, "Event class %d: %s", ev.event, ev.msg);
   Log("KMT Context Save");
-  Log("Nothing happens!");
-  return context;
+  saved_context = context;
+  return NULL;
 }
 
 _Context *kmt_context_switch(_Event ev, _Context *context) {
   Log("KMT Context Switch");
-  Log("Nothing happens!");
-  return context;
+  _Context *ret = saved_context;
+  saved_context = NULL;
+  return ret;
 }
 
 void kmt_sched() {
