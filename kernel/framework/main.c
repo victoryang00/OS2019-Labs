@@ -1,14 +1,12 @@
 #include <kernel.h>
 #include <klib.h>
-#include <stdio.h>
 
-semaphore_t sem_p;
-semaphore_t sem_c;
+sem_t sem_p;
+sem_t sem_c;
 void customer(void *arg) {
   while (1) {
     kmt->sem_wait(&sem_c);
     printf(")");
-    fflush(stdout);
     kmt->sem_signal(&sem_p);
   }
 }
@@ -16,7 +14,6 @@ void producer(void *arg) {
   while (1) {
     kmt->sem_wait(&sem_p);
     printf("(");
-    fflush(stdout);
     kmt->sem_signal(&sem_c);
   }
 }
