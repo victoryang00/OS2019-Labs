@@ -75,6 +75,7 @@ static void hello() {
 static void os_run() {
   hello();
   _intr_write(1);
+  Log("intr %s", (_intr_read() ? "ON" : "OFF"));
   while (1) {
     _yield();
   }
@@ -82,7 +83,6 @@ static void os_run() {
 
 static _Context *os_trap(_Event ev, _Context *context) {
   if (!_intr_read()) { 
-    CLog(BG_YELLOW, "intr off");
     return context; 
   }
 
