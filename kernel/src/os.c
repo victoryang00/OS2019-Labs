@@ -66,17 +66,8 @@ static void os_init() {
 
 static void os_run() {
   printf("Hello from CPU #%d\n", _cpu());
-  //while (_intr_read() == 0) {
-  //  Log("_intr_read = %d", _intr_read());
-  //  sti();
-  //}
-  //Log("Out of while, _intr_read = %d", _intr_read());
-  //panic(0);
-  sti();
-  //__sync_synchronize();
-  //Log("_intr_read() = %d", _intr_read());
-  //Log("EFlags IF = %d", get_efl() & FL_IF);
-  //__sync_synchronize();
+  _intr_write(1);
+  Log("_intr_read() = %d", _intr_read());
   Assert(_intr_read() != 0, "Interrupt disabled");
   while (1) {
     _yield();
