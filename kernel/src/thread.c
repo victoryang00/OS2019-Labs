@@ -148,7 +148,7 @@ _Context *kmt_yield(_Event ev, _Context *context) {
   spinlock_acquire(&task_lock);
   struct task *cur = get_current_task();
   //struct task *next = kmt_sched(); // call scheduler
-  struct task *next = cur->next ? cur->next : root_task->next;
+  struct task *next = cur->next ? cur->next : root_task.next;
   if (!next) {
     Log("No scheduling is made.");
     spinlock_release(&task_lock);
