@@ -66,29 +66,25 @@ int kmt_create(struct task *task, const char *name, void (*entry)(void *arg), vo
     (void *) task->stack, 
     (void *) task->stack + sizeof(task->stack) 
   };
+  memset(task->fenceA, FILL_FENCE, sizeof(task->fenceA));
+  memset(task->stack,  FILL_STACK, sizeof(task->stack));
+  memset(task->fenceB, FILL_FENCE, sizeof(task->fenceB));
+  task->next = NULL;
+
+  /**
+   * We cannot create context before initializing the stack
+   * because kcontext will put the context at the begin of stack
+   */
   task->context = _kcontext(stack, entry, arg);
   Log("TASK %s", name);
   Log("Context at %p", task->context);
   Log("ENTRY IS %p => %p", entry, task->context->eip);
-  memset(task->fenceA, FILL_FENCE, sizeof(task->fenceA));
-  Assert((void *) task->context->eip == entry, "BOOM");
-  memset(task->stack,  FILL_STACK, sizeof(task->stack));
-  Assert((void *) task->context->eip == entry, "BOOM");
-  memset(task->fenceB, FILL_FENCE, sizeof(task->fenceB));
-  Assert((void *) task->context->eip == entry, "BOOM");
-  task->next = NULL;
 
   spinlock_acquire(&task_lock);
-  Assert((void *) task->context->eip == entry, "BOOM");
   struct task *tp = &root_task;
-  Assert((void *) task->context->eip == entry, "BOOM");
   while (tp->next) tp = tp->next;
-  Assert((void *) task->context->eip == entry, "BOOM");
   tp->next = task;
-  Assert((void *) task->context->eip == entry, "BOOM");
   spinlock_release(&task_lock);
-
-  Log("TASK EIP: %p, entry %p", task->context->eip, entry);
 
   return task->pid;
 }
