@@ -99,9 +99,26 @@ void *memcpy(void *out, const void *in, size_t n) {
 }
 
 void *memmove(void *dest, const void *src, size_t n) {
-  void *tmp[n];
-  memcpy(tmp, src, n);
-  memcpy(dest, tmp, n);
+  if (src + n < dest || src > dest + n) {
+    // no overlap
+    memcpy(dest, src, n);
+  } else if (src >= dest) {
+    // front to end
+    int8_t *pin = (int8_t *) src;
+    int8_t *pout = (int8_t *) dest;
+    for (int i = 0; i < n; ++i) {
+      *pout = *pin;
+      ++pout, ++pin;
+    }
+  } else {
+    // end to front
+    int8_t *pin = (int8_t *) (src + n);
+    int8_t *pout = (int8_t *) (dest + n);
+    for (int i = 0; i < n; ++i) {
+      *pout = *pin;
+      --pout, --pin;
+    }
+  }
   return dest;
 }
 
