@@ -48,7 +48,7 @@ static void os_run() {
     Log("Before yield");
     _yield();
     Log("After yield");
-    Panic("Should not return");
+    Panic("Should not return if the task will not finish");
   }
 }
 

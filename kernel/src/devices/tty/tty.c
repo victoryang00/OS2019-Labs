@@ -1,4 +1,5 @@
 #include <devices.h>
+#include <debug.h>
 
 #define TTY_COOK_BUF_SZ 1024
 
@@ -223,6 +224,7 @@ devops_t tty_ops = {
 };
 
 void tty_task(void *arg) {
+  CLog(BG_RED, "Welcome to TTYTTYTTY");
   device_t *in = dev_lookup("input");
   device_t *ttydev = dev_lookup("tty1");
   device_t *fb = dev_lookup("fb");
