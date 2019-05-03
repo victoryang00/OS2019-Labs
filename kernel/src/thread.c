@@ -137,7 +137,7 @@ struct task *kmt_sched() {
     }
   }
   Log("==========================");
-  return NULL;
+  return ret;
 }
 _Context *kmt_yield(_Event ev, _Context *context) {
   spinlock_acquire(&task_lock);
