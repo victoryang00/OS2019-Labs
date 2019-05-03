@@ -142,7 +142,9 @@ struct task *kmt_sched() {
   return ret;
 }
 _Context *kmt_yield(_Event ev, _Context *context) {
-  spinlock_acquire(&task_lock);
+  if (!spinlock_holding(&task_lock)) {
+    spinlock_acquire(&task_lock);
+  }
   struct task *cur = get_current_task();
   struct task *next = kmt_sched(); // call scheduler
   if (!next) {
@@ -175,13 +177,13 @@ void kmt_sleep(void *alarm, struct spinlock *lock) {
     spinlock_release(lock);
   }
 
-  Log("Thread going to sleep");
+  CLog(BG_CYAN, "Thread going to sleep");
   cur->alarm = alarm;
   cur->state = ST_S; // go to sleep
-  kmt_sched(); // lock will be released
+  kmt_yield(); // lock will be released
 
   __sync_synchronize(); // memory barrier
-  Log("Thread has waken up");
+  CLog(BG_CYAN, "Thread has waken up");
   cur->alarm = NULL; // turn off the alarm
   
   // We have the task lock when wake up
