@@ -12,6 +12,23 @@ static struct os_handler root_handler = {
   0, _EVENT_NULL, NULL, NULL
 };
 
+sem_t sem_p;
+sem_t sem_c;
+void customer(void *arg) {
+  while (1) {
+    kmt->sem_wait(&sem_c);
+    printf(")");
+    kmt->sem_signal(&sem_p);
+  }
+}
+void producer(void *arg) {
+  while (1) {
+    kmt->sem_wait(&sem_p);
+    printf("(");
+    kmt->sem_signal(&sem_c);
+  }
+}
+
 static void os_init_locks() {
   spinlock_init(&printf_lock, "Printf SPIN LOCK");
   spinlock_init(&os_trap_lock, "OS TRAP SPIN LOCK");
@@ -31,6 +48,12 @@ static void os_init() {
   CLog(BG_GREEN, "dev ok");
 
   //create proc here
+  // FOR TEST PURPOSE
+  // REMOVE WHEN TEST IS PASSED
+  kmt->sem_init(&sem_p, "Producer SEM", 1);
+  kmt->sem_init(&sem_c, "Customer SEM", 0);
+  kmt->create(pmm->alloc(sizeof(task_t)), "Producer Task", producer, NULL);
+  kmt->create(pmm->alloc(sizeof(task_t)), "Customer Task", customer, NULL);
 }
 
 static void hello() {
