@@ -158,6 +158,7 @@ _Context *kmt_yield(_Event ev, _Context *context) {
     return context; // no change
   }
 
+  ++next->count;
   Log("Switching to task %d:%s", next->pid, next->name);
   //Log("Entry: %p", next->context->eip);
   cur->state = ST_W;  // set current as given up
