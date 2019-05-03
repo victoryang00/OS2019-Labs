@@ -67,6 +67,7 @@ int kmt_create(struct task *task, const char *name, void (*entry)(void *arg), vo
     (void *) task->stack + sizeof(task->stack) 
   };
   task->context = _kcontext(stack, entry, arg);
+  Log("ENTRY IS %p => %p", entry, task->context->eip);
   memset(task->fenceA, FILL_FENCE, sizeof(task->fenceA));
   memset(task->stack,  FILL_STACK, sizeof(task->stack));
   memset(task->fenceB, FILL_FENCE, sizeof(task->fenceB));
