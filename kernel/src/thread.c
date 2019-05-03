@@ -42,7 +42,7 @@ static inline void set_current_task(struct task *task) {
 
 void kmt_init() {
   memset(cpu_tasks, 0x00, sizeof(cpu_tasks));
-  spinlock_init(&task_lock, "KMT(Proc) Lock");
+  spinlock_init(&task_lock, "Task(KMT) Lock");
   
   __sync_synchronize();
 
