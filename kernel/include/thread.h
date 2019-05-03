@@ -26,6 +26,7 @@ struct task {
   int pid;
   const char* name;
   enum task_states state;
+  uint32_t count;
 
   _Context *context;
   char fenceA[32];
