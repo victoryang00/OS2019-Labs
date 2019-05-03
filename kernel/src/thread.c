@@ -99,17 +99,20 @@ void kmt_inspect_fence(struct task *task) {
   Assert(memcmp(const_fence, task->fenceB, sizeof(const_fence)) == 0, "Fence inspection B for task %d (%s) failed.", task->pid, task->name);
 }
 
-static _Context *saved_context = NULL;
 _Context *kmt_context_save(_Event ev, _Context *context) {
   //Log("KMT Context Save");
-  saved_context = context;
+  struct task *tp = &root_task;
+  for (tp = &root_task; tp != NULL; ++tp) {
+    if (tp->context == context) {
+      set_current_task(tp);
+      break;
+    }
+  }
   return NULL;
 }
 _Context *kmt_context_switch(_Event ev, _Context *context) {
   //Log("KMT Context Switch");
-  _Context *ret = saved_context;
-  saved_context = NULL;
-  return ret;
+  return get_current_task()->context;
 }
 
 struct task *kmt_sched() {
