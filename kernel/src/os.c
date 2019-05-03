@@ -66,6 +66,7 @@ static void os_init() {
 
 static void os_run() {
   printf("Hello from CPU #%d\n", _cpu());
+  while (!_intr_read()) sti();
   sti();
   __sync_synchronize();
   Log("_intr_read() = %d", _intr_read());
