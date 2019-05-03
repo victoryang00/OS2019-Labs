@@ -69,6 +69,7 @@ static void os_run() {
   sti();
   __sync_synchronize();
   Log("_intr_read() = %d", _intr_read());
+  Log("EFlags IF = %d", get_efl() & FL_IF);
   __sync_synchronize();
   Assert(_intr_read() != 0, "Interrupt disabled");
   while (1) {
