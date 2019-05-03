@@ -7,7 +7,8 @@
  * Kernel Multi-Thread module (KMT, Proc)
  */
 
-static int next_pid = 1;
+static uint32_t next_pid = 1;
+static uint32_t min_count = 0;
 static const char const_fence[32] = { 
   FILL_FENCE, FILL_FENCE, FILL_FENCE, FILL_FENCE,
   FILL_FENCE, FILL_FENCE, FILL_FENCE, FILL_FENCE,
@@ -63,6 +64,7 @@ int kmt_create(struct task *task, const char *name, void (*entry)(void *arg), vo
   task->pid = next_pid++;
   task->name = name;
   task->state = ST_E;
+  task->count = min_count;
   _Area stack = { 
     (void *) task->stack, 
     (void *) task->stack + sizeof(task->stack) 
@@ -136,6 +138,7 @@ struct task *kmt_sched() {
       if (tp != get_current_task()) {                // must not be the current task
         if (ret == NULL || tp->count < ret->count) { // a least ran one
           ret = tp;
+          min_count = tp->count;
         }
       }
     }

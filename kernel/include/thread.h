@@ -23,7 +23,7 @@ enum task_states {
 };
 
 struct task {
-  int pid;
+  uint32_t pid;
   const char* name;
   enum task_states state;
   uint32_t count;
