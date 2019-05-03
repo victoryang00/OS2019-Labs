@@ -22,3 +22,9 @@ run2: image
 
 run4: image
 	qemu-system-i386 -smp 4 $(QEMU_FLAGS)
+
+gdb2: image
+	qemu-system-i386 -smp 2 $(QEMU_FLAGS) -gdb tcp::8000 -S
+
+gdb4: image
+	qemu-system-i386 -smp 4 $(QEMU_FLAGS) -gdb tcp::8000 -S
