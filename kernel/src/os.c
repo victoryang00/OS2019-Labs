@@ -45,7 +45,10 @@ static void os_run() {
   hello();
   _intr_write(1);
   while (1) {
+    Log("Before yield");
     _yield();
+    Log("After yield");
+    Panic("Should not return");
   }
 }
 
