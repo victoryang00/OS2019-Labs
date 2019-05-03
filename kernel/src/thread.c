@@ -145,7 +145,7 @@ struct task *kmt_sched() {
   return ret;
 }
 _Context *kmt_yield(_Event ev, _Context *context) {
-  bool holding = spinlock(&task_lock);
+  bool holding = spinlock_holding(&task_lock);
   if (!holding) {
     spinlock_acquire(&task_lock);
   }
