@@ -74,11 +74,8 @@ static void os_run() {
 
 static _Context *os_trap(_Event ev, _Context *context) {
   CLog(BG_CYAN, "Event %d: %s", ev.event, ev.msg);
-  if (spinlock_holding(&os_trap_lock)) {
-    CLog(FG_RED, "ignored because already in trap.");
-    return context;
-  }
 
+  Assert(!spinlock_holding(&os_trap_lock), "trap in trap!");
   spinlock_acquire(&os_trap_lock);
   _Context *ret = NULL;
   for (struct os_handler *hp = root_handler.next; hp != NULL; hp = hp->next) {
