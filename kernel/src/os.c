@@ -64,28 +64,15 @@ static void os_init() {
   kmt->create(pmm->alloc(sizeof(task_t)), "Customer Task", customer, NULL);
 }
 
-static void hello() {
-  //for (const char *ptr = "Hello from CPU #"; *ptr; ptr++) {
-  //  _putc(*ptr);
-  //}
-  //_putc("012345678"[_cpu()]); _putc('\n');
-  printf("Hello from CPU #%d\n", _cpu());
-}
-
 static void os_run() {
-  hello();
+  printf("Hello from CPU #%d\n", _cpu());
   _intr_write(1);
-  Assert(get_efl() & FL_IF, "intr is off at first");
   while (1) {
     _yield();
   }
 }
 
 static _Context *os_trap(_Event ev, _Context *context) {
-  if (!_intr_read()) { 
-    return context; 
-  }
-
   spinlock_acquire(&os_trap_lock);
   CLog(BG_CYAN, "Event %d: %s", ev.event, ev.msg);
   _Context *ret = NULL;
