@@ -6,14 +6,8 @@
 
 void semaphore_init(struct semaphore *sem, const char *name, int value) {
   spinlock_init(&sem->lock, "Semaphore Lock");
-
-  // initialize the lock before changing other properties
-  __sync_synchronize();
-
-  spinlock_acquire(&sem->lock);
   sem->name = name;
   sem->value = value;
-  spinlock_release(&sem->lock);
 }
 
 void semaphore_wait(struct semaphore *sem) {
