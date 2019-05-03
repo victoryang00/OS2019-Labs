@@ -71,15 +71,21 @@ int kmt_create(struct task *task, const char *name, void (*entry)(void *arg), vo
   Log("Context at %p", task->context);
   Log("ENTRY IS %p => %p", entry, task->context->eip);
   memset(task->fenceA, FILL_FENCE, sizeof(task->fenceA));
+  Assert(task->context->eip == entry, "BOOM");
   memset(task->stack,  FILL_STACK, sizeof(task->stack));
+  Assert(task->context->eip == entry, "BOOM");
   memset(task->fenceB, FILL_FENCE, sizeof(task->fenceB));
-
+  Assert(task->context->eip == entry, "BOOM");
   task->next = NULL;
 
   spinlock_acquire(&task_lock);
+  Assert(task->context->eip == entry, "BOOM");
   struct task *tp = &root_task;
+  Assert(task->context->eip == entry, "BOOM");
   while (tp->next) tp = tp->next;
+  Assert(task->context->eip == entry, "BOOM");
   tp->next = task;
+  Assert(task->context->eip == entry, "BOOM");
   spinlock_release(&task_lock);
 
   Log("TASK EIP: %p, entry %p", task->context->eip, entry);
