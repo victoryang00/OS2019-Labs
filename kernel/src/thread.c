@@ -178,7 +178,7 @@ void kmt_sleep(void *alarm, struct spinlock *lock) {
     spinlock_release(lock);
   }
 
-  CLog(BG_CYAN, "Thread going to sleep");
+  CLog(BG_CYAN, "Thread %d going to sleep", cur->pid);
   cur->alarm = alarm;
   cur->state = ST_S; // go to sleep
   
@@ -188,7 +188,7 @@ void kmt_sleep(void *alarm, struct spinlock *lock) {
   __sync_synchronize(); // memory barrier
   spinlock_acquire(&task_lock);
 
-  CLog(BG_CYAN, "Thread has waken up");
+  CLog(BG_CYAN, "Thread %d has waken up", cur->pid);
   cur->alarm = NULL; // turn off the alarm
   
   // We have the task lock when wake up
