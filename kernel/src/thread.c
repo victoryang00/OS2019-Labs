@@ -3,6 +3,9 @@
 #include <spinlock.h>
 #include <semaphore.h>
 
+#define Log(...) 
+#define CLog(...) 
+
 /**
  * Kernel Multi-Thread module (KMT, Proc)
  */
