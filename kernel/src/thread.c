@@ -149,6 +149,7 @@ _Context *kmt_yield(_Event ev, _Context *context) {
   if (!holding) {
     spinlock_acquire(&task_lock);
   }
+  Log("YIELD LOCK OK");
   struct task *cur = get_current_task();
   struct task *next = kmt_sched(); // call scheduler
   if (!next) {
