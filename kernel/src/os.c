@@ -17,14 +17,14 @@ sem_t sem_c;
 void customer(void *arg) {
   while (1) {
     kmt->sem_wait(&sem_c);
-    printf(")");
+    CLog(BG_RED, ")");
     kmt->sem_signal(&sem_p);
   }
 }
 void producer(void *arg) {
   while (1) {
     kmt->sem_wait(&sem_p);
-    printf("(");
+    CLog(BG_RED, "(");
     kmt->sem_signal(&sem_c);
   }
 }
@@ -88,7 +88,7 @@ static _Context *os_trap(_Event ev, _Context *context) {
 
   Assert(ret != NULL, "Returning to a null context after trap.");
   Log("Current context: %p", context);
-  Log("   Next Context: %p", ret);
+  Log("   Next context: %p", ret);
   return ret;
 }
 
