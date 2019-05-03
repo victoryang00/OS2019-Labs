@@ -112,6 +112,7 @@ _Context *kmt_context_save(_Event ev, _Context *context) {
   for (tp = &root_task; tp != NULL; tp = tp->next) {
     if (tp->context == context) {
       set_current_task(tp);
+      tp->context = context;
       break;
     }
   }
