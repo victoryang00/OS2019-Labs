@@ -68,9 +68,9 @@ static void os_run() {
   printf("Hello from CPU #%d\n", _cpu());
   intr_write(1);
   __sync_synchronize();
-  Log("_intr_read() = %d", _intr_read());
+  Log("intr_read() = %d", intr_read());
   __sync_synchronize();
-  Assert(_intr_read() != 0, "Interrupt disabled");
+  Assert(intr_read() != 0, "Interrupt disabled");
   while (1) {
     _yield();
   }
