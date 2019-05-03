@@ -67,8 +67,6 @@ static _Context *os_trap(_Event ev, _Context *context) {
   Assert(ret != NULL, "Returning to a null context after trap.");
   Log("Current context: %p", context);
   Log("   Next Context: %p", ret);
-  extern void (*tty_task) (void *);
-  Log("EIP IS %p, tty's eip is %p", (void *) ret->eip, (void *) tty_task);
   return ret;
 }
 
