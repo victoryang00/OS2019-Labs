@@ -111,6 +111,7 @@ _Context *kmt_context_save(_Event ev, _Context *context) {
   struct task *tp = &root_task;
   for (tp = &root_task; tp != NULL; tp = tp->next) {
     if (tp->context == context) {
+      Log("Context saved!");
       set_current_task(tp);
       tp->context = context;
       break;
