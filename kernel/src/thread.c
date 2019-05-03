@@ -145,11 +145,7 @@ struct task *kmt_sched() {
   return ret;
 }
 _Context *kmt_yield(_Event ev, _Context *context) {
-  bool holding = spinlock_holding(&task_lock);
-  if (!holding) {
-    spinlock_acquire(&task_lock);
-  }
-  Log("YIELD LOCK OK");
+  spinlock_acquire(&task_lock);
   struct task *cur = get_current_task();
   struct task *next = kmt_sched(); // call scheduler
   if (!next) {
@@ -166,10 +162,7 @@ _Context *kmt_yield(_Event ev, _Context *context) {
   cur->state = ST_W;  // set current as given up
   next->state = ST_R; // set the next as running
   set_current_task(next);
-  if (!holding) {
-    spinlock_release(&task_lock);
-  }
-
+  spinlock_release(&task_lock);
   return next->context;
 }
 
