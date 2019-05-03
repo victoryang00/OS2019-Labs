@@ -14,19 +14,24 @@ static struct os_handler root_handler = {
 
 sem_t sem_p;
 sem_t sem_c;
+sem_t mutex;
 void customer(void *arg) {
   while (1) {
     kmt->sem_wait(&sem_c);
+    kmt->sem_wait(&mutex);
     printf(")");
     CLog(BG_RED, ")");
+    kmt->sem_signal(&mutex);
     kmt->sem_signal(&sem_p);
   }
 }
 void producer(void *arg) {
   while (1) {
     kmt->sem_wait(&sem_p);
+    kmt->sem_wait(&mutex);
     printf("(");
     CLog(BG_RED, "(");
+    kmt->sem_signal(&mutex);
     kmt->sem_signal(&sem_c);
   }
 }
@@ -54,6 +59,7 @@ static void os_init() {
   // REMOVE WHEN TEST IS PASSED
   kmt->sem_init(&sem_p, "Producer SEM", 1);
   kmt->sem_init(&sem_c, "Customer SEM", 0);
+  kmt->sem_init(&mutex, "Producer-Customer MUTEX", 1);
   kmt->create(pmm->alloc(sizeof(task_t)), "Producer Task", producer, NULL);
   kmt->create(pmm->alloc(sizeof(task_t)), "Customer Task", customer, NULL);
 }
