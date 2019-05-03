@@ -128,12 +128,15 @@ _Context *kmt_context_switch(_Event ev, _Context *context) {
 
 struct task *kmt_sched() {
   Assert(spinlock_holding(&task_lock), "Not holding the task lock!");
+  Log("========== TASKS ==========");
+  struct task *ret = NULL;
   for (struct task *tp = &root_task; tp != NULL; tp = tp->next) {
     Log("%d:%s [%s]", tp->pid, tp->name, task_states_human[tp->state]);
     if (tp->state == ST_E || tp->state == ST_W) { // choose a waken up task
-      return tp; 
+      ret = tp;
     }
   }
+  Log("==========================");
   return NULL;
 }
 _Context *kmt_yield(_Event ev, _Context *context) {
