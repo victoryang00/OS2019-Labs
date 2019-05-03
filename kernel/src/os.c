@@ -76,9 +76,7 @@ static void os_run() {
   hello();
   _intr_write(1);
   while (1) {
-    CLog(BG_RED, "BEFORE YIELD");
     _yield();
-    CLog(BG_RED, "AFTER  YIELD");
   }
 }
 
