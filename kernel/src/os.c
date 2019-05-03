@@ -74,10 +74,8 @@ static void hello() {
 
 static void os_run() {
   hello();
-  Log("intr0 %d", _intr_read());
-  sti();
-  Log("intr1 %d", _intr_read());
-  Assert(_intr_read() != 0, "intr is off at first");
+  _intr_write(1);
+  Assert(get_efl() & FL_IF, "intr is off at first");
   while (1) {
     _yield();
   }
