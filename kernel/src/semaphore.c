@@ -18,6 +18,7 @@ void semaphore_init(struct semaphore *sem, const char *name, int value) {
 
 void semaphore_wait(struct semaphore *sem) {
   spinlock_acquire(&sem->lock);
+  Log("Waiting for semaphore %s (%d)", sem->name, sem->value);
   while (sem->value <= 0) {
     kmt_sleep((void *) sem, &sem->lock);
   }
@@ -31,5 +32,6 @@ void semaphore_signal(struct semaphore *sem) {
   if (sem->value >= 0) {
     kmt_wakeup((void *) sem);
   }
+  Log("Signaled for semaphore %s (%d)", sem->name, sem->value);
   spinlock_release(&sem->lock);
 }
