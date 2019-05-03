@@ -18,7 +18,7 @@ static const char const_fence[32] = {
   FILL_FENCE, FILL_FENCE, FILL_FENCE, FILL_FENCE,
   FILL_FENCE, FILL_FENCE, FILL_FENCE, FILL_FENCE
 };
-static const char *task_states_human[7] = {
+static const char *task_states_human[7] __attribute__((used)) = {
   "Unused",
   "Embryo",
   "Sleeping",
