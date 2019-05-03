@@ -150,9 +150,7 @@ _Context *kmt_yield(_Event ev, _Context *context) {
   struct task *next = kmt_sched(); // call scheduler
   if (!next) {
     Log("No scheduling is made.");
-    if (!holding) {
-      spinlock_release(&task_lock);
-    }
+    spinlock_release(&task_lock);
     return context; // no change
   }
 
