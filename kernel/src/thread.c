@@ -52,7 +52,6 @@ void kmt_init() {
   spinlock_release(&task_lock);
 
   // add trap handlers
-  Log("%d", -1);
   os->on_irq(INT_MIN, _EVENT_NULL, kmt_context_save);
   os->on_irq(INT_MAX, _EVENT_NULL, kmt_context_switch);
   os->on_irq(0, _EVENT_YIELD, kmt_yield);
@@ -103,7 +102,7 @@ _Context *kmt_context_save(_Event ev, _Context *context) {
   //Log("KMT Context Save");
   spinlock_acquire(&task_lock);
   struct task *tp = &root_task;
-  for (tp = &root_task; tp != NULL; ++tp) {
+  for (tp = &root_task; tp != NULL; tp = tp->next) {
     if (tp->context == context) {
       set_current_task(tp);
       break;
