@@ -17,6 +17,7 @@ sem_t sem_c;
 void customer(void *arg) {
   while (1) {
     kmt->sem_wait(&sem_c);
+    printf(")");
     CLog(BG_RED, ")");
     kmt->sem_signal(&sem_p);
   }
@@ -24,6 +25,7 @@ void customer(void *arg) {
 void producer(void *arg) {
   while (1) {
     kmt->sem_wait(&sem_p);
+    printf("(");
     CLog(BG_RED, "(");
     kmt->sem_signal(&sem_c);
   }
