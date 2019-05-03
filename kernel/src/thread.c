@@ -134,12 +134,10 @@ struct task *kmt_sched() {
   struct task *ret = NULL;
   for (struct task *tp = &root_task; tp != NULL; tp = tp->next) {
     Log("%d:%s [%s]", tp->pid, tp->name, task_states_human[tp->state]);
-    if (tp->state == ST_E || tp->state == ST_W) {    // choose a waken up task
-      if (tp != get_current_task()) {                // must not be the current task
-        if (ret == NULL || tp->count < ret->count) { // a least ran one
-          ret = tp;
-          min_count = tp->count;
-        }
+    if (tp->state == ST_E || tp->state == ST_W) {  // choose a waken up task
+      if (ret == NULL || tp->count < ret->count) { // a least ran one
+        ret = tp;
+        min_count = tp->count;
       }
     }
   }
@@ -147,7 +145,8 @@ struct task *kmt_sched() {
   return ret;
 }
 _Context *kmt_yield(_Event ev, _Context *context) {
-  if (!spinlock_holding(&task_lock)) {
+  bool holding = spinlock(&task_lock);
+  if (!holding) {
     spinlock_acquire(&task_lock);
   }
   struct task *cur = get_current_task();
@@ -164,7 +163,9 @@ _Context *kmt_yield(_Event ev, _Context *context) {
   cur->state = ST_W;  // set current as given up
   next->state = ST_R; // set the next as running
   set_current_task(next);
-  spinlock_release(&task_lock);
+  if (!holding) {
+    spinlock_release(&task_lock);
+  }
 
   return next->context;
 }
@@ -188,11 +189,9 @@ void kmt_sleep(void *alarm, struct spinlock *lock) {
   cur->alarm = alarm;
   cur->state = ST_S; // go to sleep
   
-  spinlock_release(&task_lock);
-  __sync_synchronize(); // memory barrier
+  __sync_synchronize();
   _yield();
   __sync_synchronize(); // memory barrier
-  spinlock_acquire(&task_lock);
 
   CLog(BG_CYAN, "Thread %d has waken up", cur->pid);
   cur->alarm = NULL; // turn off the alarm
