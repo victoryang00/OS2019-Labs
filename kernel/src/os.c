@@ -75,6 +75,7 @@ static void hello() {
 static void os_run() {
   hello();
   _intr_write(1);
+  Log("IF: %d", get_efl() & FL_IF);
   Assert(get_efl() & FL_IF, "intr is off at first");
   while (1) {
     _yield();
