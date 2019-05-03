@@ -135,6 +135,7 @@ struct task *kmt_sched() {
   for (struct task *tp = &root_task; tp != NULL; tp = tp->next) {
     Log("%d:%s [%s]", tp->pid, tp->name, task_states_human[tp->state]);
     if (tp->state == ST_E || tp->state == ST_W) {  // choose a waken up task
+      return tp;
       if (ret == NULL || tp->count < ret->count) { // a least ran one
         ret = tp;
         min_count = tp->count;
@@ -147,8 +148,7 @@ struct task *kmt_sched() {
 _Context *kmt_yield(_Event ev, _Context *context) {
   spinlock_acquire(&task_lock);
   struct task *cur = get_current_task();
-  //struct task *next = kmt_sched(); // call scheduler
-  struct task *next = cur->next ? cur->next : root_task.next;
+  struct task *next = kmt_sched(); // call scheduler
   if (!next) {
     Log("No scheduling is made.");
     spinlock_release(&task_lock);
