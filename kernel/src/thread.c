@@ -82,6 +82,8 @@ int kmt_create(struct task *task, const char *name, void (*entry)(void *arg), vo
   tp->next = task;
   spinlock_release(&task_lock);
 
+  Log("TASK EIP: %p, entry %p", task->context->eip, entry);
+
   return task->pid;
 }
 
@@ -139,6 +141,7 @@ _Context *kmt_yield(_Event ev, _Context *context) {
   }
 
   Log("Switching to task %d:%s", next->pid, next->name);
+  Log("Entry: %p", next->context->eip);
   cur->state = ST_W;  // set current as given up
   next->state = ST_R; // set the next as running
   set_current_task(next);
