@@ -40,6 +40,7 @@ static inline void set_current_task(struct task *task) {
 }
 
 void kmt_init() {
+  memset(cpu_tasks, NULL, sizeof(cpu_tasks));
   spinlock_init(&task_lock, "KMT(Proc) Lock");
   
   __sync_synchronize();
@@ -121,7 +122,8 @@ _Context *kmt_context_save(_Event ev, _Context *context) {
 }
 _Context *kmt_context_switch(_Event ev, _Context *context) {
   //Log("KMT Context Switch");
-  return get_current_task()->context;
+  struct task *cur = get_current_task();
+  return cur ? cur->context : context;
 }
 
 struct task *kmt_sched() {
