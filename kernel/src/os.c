@@ -87,8 +87,8 @@ static _Context *os_trap(_Event ev, _Context *context) {
   spinlock_release(&os_trap_lock);
 
   Assert(ret != NULL, "Returning to a null context after trap.");
-  Log("Current context: %p", context);
-  Log("   Next context: %p", ret);
+  //Log("Current context: %p", context);
+  //Log("   Next context: %p", ret);
   return ret;
 }
 
