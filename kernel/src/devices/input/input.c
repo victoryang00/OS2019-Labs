@@ -1,4 +1,5 @@
 #include <devices.h>
+#include <debug.h>
 
 #define NEVENTS 128
 sem_t sem_kbdirq;
@@ -92,6 +93,7 @@ void input_task(void *args) {
     while ((code = read_key()) != 0) {
       input_keydown(in, code);
     }
+    Log("Waiting for kbdirq!");
     kmt->sem_wait(&sem_kbdirq);
   }
 }

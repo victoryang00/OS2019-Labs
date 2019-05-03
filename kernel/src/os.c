@@ -45,15 +45,13 @@ static void os_run() {
   hello();
   _intr_write(1);
   while (1) {
-    //Log("Going to yield!!");
     _yield();
-    //Log("Back from yield.");
   }
 }
 
 static _Context *os_trap(_Event ev, _Context *context) {
   spinlock_acquire(&os_trap_lock);
-  CLog(BG_CYAN, "Event %d: %s", ev.event, ev.msg);
+  //CLog(BG_CYAN, "Event %d: %s", ev.event, ev.msg);
   _Context *ret = NULL;
   for (struct os_handler *hp = root_handler.next; hp != NULL; hp = hp->next) {
     if (hp->event == _EVENT_NULL || hp->event == ev.event) {
