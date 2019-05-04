@@ -153,16 +153,14 @@ struct task *kmt_sched() {
 }
 
 _Context *kmt_yield(_Event ev, _Context *context) {
-  Log("in yield");
-  bool holding = spinlock_holding(&task_lock);
-  if (!holding) spinlock_acquire(&task_lock);
-  Log("yield: lock acquired");
+  spinlock_acquire(&task_lock);
   struct task *cur = get_current_task();
   struct task *next = kmt_sched(); // call scheduler
-  _Context *ret = NULL;
   if (!next) {
     Log("No scheduling is made.");
     if (cur) cur->state = ST_R;
+    spinlock_release(&task_lock);
+    return NULL; // no change
   } else {
     ++next->count;
     Log("Switching to task %d:%s", next->pid, next->name);
@@ -172,10 +170,9 @@ _Context *kmt_yield(_Event ev, _Context *context) {
     }
     next->state = ST_R; // set the next as running
     set_current_task(next);
-    ret = next->context;
+    spinlock_release(&task_lock);
+    return next->context;
   }
-  if (!holding) spinlock_release(&task_lock);
-  return ret;
 }
 
 void kmt_sleep(void *alarm, struct spinlock *lock) {
