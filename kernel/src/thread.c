@@ -33,6 +33,7 @@ struct spinlock task_lock;
 struct task root_task;
 struct alarm_log alarm_log_head;
 
+static _Context *null_context = NULL;
 static struct task *cpu_tasks[MAX_CPU] = {};
 static inline struct task *get_current_task() {
   return cpu_tasks[_cpu()];
@@ -121,6 +122,8 @@ _Context *kmt_context_save(_Event ev, _Context *context) {
     Assert(!cur->context, "task already has context saved");
     cur->context = context;
     Log("Context for task %d: %s saved.", cur->pid, cur->name);
+  } else {
+    if (!null_context) null_context = context;
   }
   spinlock_release(&task_lock);
   return NULL;
@@ -135,6 +138,8 @@ _Context *kmt_context_switch(_Event ev, _Context *context) {
     ret = cur->context;
     cur->context = NULL;
     Log("Context for task %d: %s loaded.", cur->pid, cur->name);
+  } else {
+    ret = null_context;
   }
   spinlock_release(&task_lock);
   return ret;
