@@ -183,18 +183,18 @@ _Context *kmt_yield(_Event ev, _Context *context) {
         cur->state = ST_S;
         bool already = false;
         struct alarm_log *at = alarm_log_head.next;
-        struct alarm_log *next = NULL;
+        struct alarm_log *an = NULL;
         alarm_log_head.next = NULL;
         while (at) {
           if (at->alarm == cur->alarm) already = true;
-          next = at->next;
+          an = at->next;
           if (at->issuer != cur) {
             pmm->free(at);
           } else {
             at->next = alarm_log_head.next;
             alarm_log_head.next = at;
           }
-          at = next;
+          at = an;
         }
         if (already) {
           next = cur; // OVERRIDE
