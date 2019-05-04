@@ -30,6 +30,7 @@ static const char *task_states_human[8] __attribute__((used)) = {
 };
 
 struct spinlock task_lock;
+struct spinlock sleep_lock;
 struct task root_task;
 struct alarm_log alarm_log_head;
 
@@ -214,6 +215,7 @@ void kmt_before_sleep(struct task *task) {
   } else {
     task->state = ST_S;
   }
+  spinlock_release(&sleep_lock);
 }
 
 void kmt_sleep(void *alarm, struct spinlock *lock) {
@@ -231,6 +233,7 @@ void kmt_sleep(void *alarm, struct spinlock *lock) {
     spinlock_release(lock);
   }
   Assert(spinlock_holding(&task_lock), "Not holding the task lock");
+  spinlock_acquire(&sleep_lock);
 
   CLog(BG_CYAN, "Thread %d going to sleep", cur->pid);
   cur->alarm = alarm;
