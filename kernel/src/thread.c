@@ -133,7 +133,7 @@ _Context *kmt_context_switch(_Event ev, _Context *context) {
   Assert(!cur || cur->context, "task has null context");
   _Context *ret = cur ? cur->context : context;
   spinlock_release(&task_lock);
-  CLog(BG_YELLOW, "loaded eip: %p", context->eip);
+  CLog(BG_YELLOW, "loaded eip: %p", ret->eip);
   return ret;
 }
 
