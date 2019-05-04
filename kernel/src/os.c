@@ -78,7 +78,7 @@ static _Context *os_trap(_Event ev, _Context *context) {
   CLog(BG_CYAN, "Event %d: %s", ev.event, ev.msg);
   if (ev.event == _EVENT_IRQ_TIMER || ev.event == _EVENT_IRQ_IODEV) {
     if (!_intr_read()) {
-      //CLog(BG_CYAN, "INTR OFF");
+      CLog(BG_CYAN, "INTR OFF");
       return context;
     }
   } else if (ev.event == _EVENT_ERROR) {
