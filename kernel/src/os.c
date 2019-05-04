@@ -60,8 +60,10 @@ static void os_init() {
   kmt->sem_init(&sem_p, "Producer SEM", 5);
   kmt->sem_init(&sem_c, "Customer SEM", 0);
   kmt->sem_init(&mutex, "Producer-Customer MUTEX", 1);
-  kmt->create(pmm->alloc(sizeof(task_t)), "Producer Task", producer, NULL);
-  kmt->create(pmm->alloc(sizeof(task_t)), "Customer Task", customer, NULL);
+  for (int i = 0; i < 5; ++i) {
+    kmt->create(pmm->alloc(sizeof(task_t)), "Producer Task", producer, NULL);
+    kmt->create(pmm->alloc(sizeof(task_t)), "Customer Task", customer, NULL);
+  }
 }
 
 static void os_run() {
