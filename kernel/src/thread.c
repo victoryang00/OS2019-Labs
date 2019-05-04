@@ -30,7 +30,6 @@ static const char *task_states_human[8] __attribute__((used)) = {
 };
 
 struct spinlock task_lock;
-struct spinlock sleep_lock;
 struct task root_task;
 struct alarm_log alarm_log_head;
 
@@ -47,7 +46,6 @@ void kmt_init() {
   memset(cpu_tasks, 0x00, sizeof(cpu_tasks));
   alarm_log_head.next = NULL;
   spinlock_init(&task_lock, "Task(KMT) Lock");
-  spinlock_init(&sleep_lock, "Sleep Lock");
   
   __sync_synchronize();
 
@@ -218,7 +216,6 @@ void kmt_before_sleep(struct task *task) {
   } else {
     task->state = ST_S;
   }
-  spinlock_release(&sleep_lock);
 }
 
 void kmt_sleep(void *alarm, struct spinlock *lock) {
@@ -231,7 +228,6 @@ void kmt_sleep(void *alarm, struct spinlock *lock) {
   // before giving up the one we are holding
   // OTHERWISE MAY MISS WAKEUPS (DEADLOCK)
   // TODO: IS THERE OTHER TYPES OF DEADLOCK?
-  spinlock_acquire(&sleep_lock);
   if (lock != &task_lock) {
     spinlock_acquire(&task_lock);
     spinlock_release(lock);
