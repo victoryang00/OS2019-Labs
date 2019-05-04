@@ -130,7 +130,7 @@ _Context *kmt_context_switch(_Event ev, _Context *context) {
   spinlock_acquire(&task_lock);
   struct task *cur = get_current_task();
   Assert(!cur || cur->context, "task has null context");
-  struct task *ret = cur ? cur->context : context;
+  _Context *ret = cur ? cur->context : context;
   spinlock_release(&task_lock);
   return ret;
 }
