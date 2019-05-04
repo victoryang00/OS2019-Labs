@@ -19,9 +19,10 @@ static const char const_fence[32] = {
   FILL_FENCE, FILL_FENCE, FILL_FENCE, FILL_FENCE,
   FILL_FENCE, FILL_FENCE, FILL_FENCE, FILL_FENCE
 };
-static const char *task_states_human[7] __attribute__((used)) = {
+static const char *task_states_human[8] __attribute__((used)) = {
   "Unused",
   "Embryo",
+  "To sleep",
   "Sleeping",
   "Waken up",
   "Running",
@@ -167,16 +168,13 @@ _Context *kmt_yield(_Event ev, _Context *context) {
     ++next->count;
     Log("Switching to task %d:%s", next->pid, next->name);
     //Log("Entry: %p", next->context->eip);
-    if (cur && cur->state == ST_R) {
-      cur->state = ST_W;  // set current as given up
-      Log("Current task is set as [waken up]");
+    if (cur) {
+      if (cur->state == ST_R) cur->state == ST_W; // running -> waken up
+      if (cur->state == ST_T) cur->state == ST_S; // to sleep -> sleeping
     }
     next->state = ST_R; // set the next as running
-    Log("Next task is set as [running]");
     set_current_task(next);
-    Log("Next task is set as current task");
     ret = next->context;
-    Log("return value set as next context");
   }
   spinlock_release(&task_lock);
   return ret;
@@ -199,7 +197,7 @@ void kmt_sleep(void *alarm, struct spinlock *lock) {
 
   CLog(BG_CYAN, "Thread %d going to sleep", cur->pid);
   cur->alarm = alarm;
-  cur->state = ST_S; 
+  cur->state = ST_T; 
   
   __sync_synchronize();
   spinlock_release(&task_lock);

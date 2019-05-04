@@ -15,6 +15,7 @@
 enum task_states {
   ST_U, // Unused
   ST_E, // Embryo
+  ST_T, // To sleep
   ST_S, // Sleeping 
   ST_W, // Waken up
   ST_R, // Running
