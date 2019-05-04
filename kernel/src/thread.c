@@ -164,7 +164,7 @@ _Context *kmt_yield(_Event ev, _Context *context) {
   ++next->count;
   Log("Switching to task %d:%s", next->pid, next->name);
   //Log("Entry: %p", next->context->eip);
-  Assert(!cur || cur->state == ST_R || cur->state == ST_S, "invalid state of caller of _yield on cpu %d, task name %s, state [%s]", _cpu(), cur ? "NULL" : cur->name, cur ? "N/A" : task_states_human[cur->state]);
+  Assert(!cur || cur->state == ST_R || cur->state == ST_S, "invalid state of caller of _yield on cpu %d, task name %s, state [%s]", _cpu(), cur ? cur->name : "NULL", cur ? task_states_human[cur->state] : "N/A");
   if (cur && cur->state == ST_R) {
     cur->state = ST_W;  // set current as given up
   }
