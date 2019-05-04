@@ -115,7 +115,7 @@ _Context *kmt_context_save(_Event ev, _Context *context) {
   //Log("KMT Context Save");
   spinlock_acquire(&task_lock);
   struct task *cur = get_current_task();
-  cur->context = context;
+  if (cur) cur->context = context;
   spinlock_release(&task_lock);
   return NULL;
 }
