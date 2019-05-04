@@ -159,8 +159,6 @@ struct task *kmt_sched() {
       if (ret == NULL || tp->count < ret->count) { // a least ran one
         ret = tp;
       }
-    } else if (tp->state == ST_T) {
-      kmt_before_sleep(tp);
     }
   }
   Log("===========================");
@@ -184,8 +182,6 @@ _Context *kmt_yield(_Event ev, _Context *context) {
       if (cur->state == ST_R) {
         cur->state = ST_W;
       } else if (cur->state == ST_T) {
-        // actually will not happen
-        // because all tasks are handled in sched
         kmt_before_sleep(cur);
       }
     }
