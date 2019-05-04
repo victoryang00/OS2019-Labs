@@ -114,6 +114,7 @@ void kmt_inspect_fence(struct task *task) {
 _Context *kmt_context_save(_Event ev, _Context *context) {
   bool holding = spinlock_holding(&task_lock);
   if (!holding) spinlock_acquire(&task_lock);
+  else CLog(FG_RED, "ALREADY HOLDING LOCK, MAYBE SLEEPING");
   struct task *cur = get_current_task();
   if (cur) {
     Assert(!cur->context, "task already has context saved");
