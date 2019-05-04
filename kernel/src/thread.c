@@ -179,12 +179,12 @@ _Context *kmt_yield(_Event ev, _Context *context) {
         struct alarm_log *next = NULL;
         while (at) {
           if (at->alarm == cur->alarm) already = true;
+          next = at->next;
           if (at->issuer != cur) {
-            next = at->next;
             if (alarm_log_head.next == at) alarm_log_head.next = next;
             pmm->free(at);
-            at = next;
           }
+          at = next;
         }
         cur->state = already ? ST_W : ST_S;
       }
