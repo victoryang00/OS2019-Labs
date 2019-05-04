@@ -164,8 +164,10 @@ _Context *kmt_yield(_Event ev, _Context *context) {
   ++next->count;
   Log("Switching to task %d:%s", next->pid, next->name);
   //Log("Entry: %p", next->context->eip);
-  Assert(cur->state == ST_R || cur->state == ST_S, "invalid state of caller of _yield");
-  if (cur->state == ST_R) cur->state = ST_W;  // set current as given up
+  Assert(!cur || cur->state == ST_R || cur->state == ST_S, "invalid state of caller of _yield");
+  if (cur && cur->state == ST_R) {
+    cur->state = ST_W;  // set current as given up
+  }
   next->state = ST_R; // set the next as running
   set_current_task(next);
   spinlock_release(&task_lock);
