@@ -115,7 +115,10 @@ _Context *kmt_context_save(_Event ev, _Context *context) {
   //Log("KMT Context Save");
   spinlock_acquire(&task_lock);
   struct task *cur = get_current_task();
-  if (cur) cur->context = context;
+  if (cur) {
+    cur->context = context;
+    Log("Context for task %d: %s saved.", cur->pid, cur->name);
+  }
   spinlock_release(&task_lock);
   return NULL;
 }
@@ -124,7 +127,8 @@ _Context *kmt_context_switch(_Event ev, _Context *context) {
   spinlock_acquire(&task_lock);
   struct task *cur = get_current_task();
   Assert(!cur || cur->context, "task has null context");
-  _Context *ret = cur ? cur->context : context;
+  _Context *ret = cur ? cur->context : NULL;
+  if (cur) Log("Context for task %d: %s loaded.", cur->pid, cur->name);
   spinlock_release(&task_lock);
   return ret;
 }
