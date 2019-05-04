@@ -140,7 +140,7 @@ _Context *kmt_context_switch(_Event ev, _Context *context) {
     cur->holding_task_lock = false;
     Log("Context for task %d: %s loaded.", cur->pid, cur->name);
   }
-  if (!holding) spinlock_release(&task_lock);
+  if (holding) spinlock_release(&task_lock);
   return ret;
 }
 
