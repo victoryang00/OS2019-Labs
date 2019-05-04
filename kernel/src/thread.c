@@ -127,9 +127,12 @@ _Context *kmt_context_save(_Event ev, _Context *context) {
 }
 _Context *kmt_context_switch(_Event ev, _Context *context) {
   //Log("KMT Context Switch");
+  spinlock_acquire(&task_lock);
   struct task *cur = get_current_task();
   Assert(!cur || cur->context, "task has null context");
-  return cur ? cur->context : context;
+  struct task *ret = cur ? cur->context : context;
+  spinlock_release(&task_lock);
+  return ret;
 }
 
 struct task *kmt_sched() {
