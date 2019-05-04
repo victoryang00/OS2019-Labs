@@ -50,9 +50,9 @@ static void os_init() {
   CLog(BG_GREEN, "kmt ok");
   //_vme_init(pmm->alloc, pmm->free);
   //CLog(BG_GREEN, "vme ok");
-  CLog(BG_RED, "vme not enabled!!!!!!");
-  dev->init();
-  CLog(BG_GREEN, "dev ok");
+  //CLog(BG_RED, "vme not enabled!!!!!!");
+  //dev->init();
+  //CLog(BG_GREEN, "dev ok");
 
   //create proc here
   // FOR TEST PURPOSE
