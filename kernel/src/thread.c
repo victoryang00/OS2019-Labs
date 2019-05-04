@@ -56,6 +56,7 @@ void kmt_init() {
   memset(root_task.fenceA, FILL_FENCE, sizeof(root_task.fenceA));
   memset(root_task.stack,  FILL_STACK, sizeof(root_task.stack));
   memset(root_task.fenceB, FILL_FENCE, sizeof(root_task.fenceB));
+  kmt_inspect_fence(root_task);
   spinlock_release(&task_lock);
 
   // add trap handlers
