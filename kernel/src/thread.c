@@ -111,6 +111,7 @@ void kmt_teardown(struct task *task) {
 }
 
 void kmt_inspect_fence(struct task *task) {
+  for (int i = 0; i < 32; ++i) printf("%p <=> %p\n", task->fenceA[i], const_fence[i]);
   Assert(memcmp(const_fence, task->fenceA, sizeof(const_fence)) == 0, "Fence inspection A for task %d (%s) failed.", task->pid, task->name);
   Assert(memcmp(const_fence, task->fenceB, sizeof(const_fence)) == 0, "Fence inspection B for task %d (%s) failed.", task->pid, task->name);
 }
@@ -137,7 +138,6 @@ _Context *kmt_context_switch(_Event ev, _Context *context) {
   struct task *cur = get_current_task();
   if (cur) {
     Assert(cur->context, "task has null context to load");
-    for (int i = 0; i < 32; ++i) printf("%p\n", cur->fenceA[i]);
     kmt_inspect_fence(cur);
     ret = cur->context;
     cur->context = NULL;
@@ -154,6 +154,7 @@ struct task *kmt_sched() {
   Log("========== TASKS ==========");
   struct task *ret = NULL;
   for (struct task *tp = &root_task; tp != NULL; tp = tp->next) {
+    kmt_inspect_fence(tp);
     Log("%d:%s [%03d, %s]", tp->pid, tp->name, tp->count, task_states_human[tp->state]);
     if (tp->state == ST_E || tp->state == ST_W) {  // choose a waken up task
       Assert(tp->context, "A ready task has no context");
