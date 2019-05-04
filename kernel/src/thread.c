@@ -130,6 +130,7 @@ _Context *kmt_context_save(_Event ev, _Context *context) {
 
 _Context *kmt_context_switch(_Event ev, _Context *context) {
   //Log("KMT Context Switch");
+  printf("switch!\n");
   spinlock_acquire(&task_lock);
   _Context *ret = NULL;
   struct task *cur = get_current_task();
