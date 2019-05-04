@@ -59,18 +59,18 @@ int strncmp(const char *s1, const char *s2, size_t n) {
 }
 
 void *memset(void *v, int c, size_t n) {
-  int8_t c8 = (int8_t) c & 0xff;
-  int32_t c32 = (int32_t) c8 | ((int32_t) c8 << 8) | ((int32_t) c8 << 16) | ((int32_t) c8 << 24);
+  uint8_t c8 = (uint8_t) c & 0xff;
+  uint32_t c32 = (uint32_t) c8 | ((uint32_t) c8 << 8) | ((uint32_t) c8 << 16) | ((uint32_t) c8 << 24);
 
-  int8_t *pv = (int8_t *) v;
+  uint8_t *pv = (uint8_t *) v;
 
-  int i = 0, loops = (n / sizeof(int32_t));
+  int i = 0, loops = (n / sizeof(uint32_t));
   for (i = 0; i < loops; ++i) {
-    *((int32_t *) pv) = c32;
-    pv += sizeof(int32_t);
+    *((uint32_t *) pv) = c32;
+    pv += sizeof(uint32_t);
   }
 
-  loops = (n % sizeof(int32_t));
+  loops = (n % sizeof(uint32_t));
   for (i = 0; i < loops; ++i) {
     *pv = c8;
     pv++;
