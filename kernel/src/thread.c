@@ -85,11 +85,10 @@ int kmt_create(struct task *task, const char *name, void (*entry)(void *arg), vo
    * We cannot create context before initializing the stack
    * because kcontext will put the context at the begin of stack
    */
-  _Context *context = _kcontext(stack, entry, arg);
-  memcpy(&task->context, context, sizeof(task->context));
+  task->context = _kcontext(stack, entry, arg);
   Log("TASK %s", name);
   Log("Context at %p", task->context);
-  Log("ENTRY IS %p => %p", entry, task->context.eip);
+  Log("ENTRY IS %p => %p", entry, task->context->eip);
 
   spinlock_acquire(&task_lock);
   struct task *tp = &root_task;
@@ -121,7 +120,7 @@ _Context *kmt_context_save(_Event ev, _Context *context) {
   spinlock_acquire(&task_lock);
   struct task *cur = get_current_task();
   if (cur) {
-    memcpy(&cur->context, context, sizeof(cur->context));
+    memcpy(cur->context, context, sizeof(cur->context));
     Log("Context for task %d: %s saved.", cur->pid, cur->name);
   }
   spinlock_release(&task_lock);
@@ -135,7 +134,7 @@ _Context *kmt_context_switch(_Event ev, _Context *context) {
   struct task *cur = get_current_task();
   if (cur) {
     kmt_inspect_fence(cur);
-    ret = &cur->context;
+    ret = cur->context;
     Log("Context for task %d: %s loaded.", cur->pid, cur->name);
   } else {
     ret = context;
