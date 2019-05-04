@@ -196,6 +196,11 @@ _Context *kmt_yield(_Event ev, _Context *context) {
 }
 
 void kmt_before_sleep(struct task *task) {
+  Assert(spinlock_holding(&task_lock), "not holding lock");
+  Assert(task->context, "no context before sleep");
+  Assert(task->alarm, "no alarm before sleep");
+  Assert(task->state == ST_T, "wrong state before sleep");
+
   bool already = false;
   struct alarm_log *at = alarm_log_head.next;
   struct alarm_log *an = NULL;
