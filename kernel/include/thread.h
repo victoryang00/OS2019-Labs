@@ -41,6 +41,7 @@ struct task {
 
 struct alarm_log {
   void *alarm;
+  struct task *issuer;
   struct alarm_log *next;
 };
 

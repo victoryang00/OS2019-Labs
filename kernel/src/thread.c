@@ -178,13 +178,14 @@ _Context *kmt_yield(_Event ev, _Context *context) {
         struct alarm_log *at = alarm_log_head.next;
         struct alarm_log *next = NULL;
         while (at) {
-          if (at == cur->alarm) already = true;
-          next = at->next;
-          pmm->free(at);
-          at = next;
+          if (at->alarm == cur->alarm) already == true;
+          if (at->issuer != cur) {
+            next = at->next;
+            if (alarm_log_head.next == at) alarm_log_head.next = next;
+            pmm->free(at);
+            at = next;
+          }
         }
-        alarm_log_head.next = NULL;
-
         cur->state = already ? ST_W : ST_S;
       }
     }
@@ -238,6 +239,7 @@ void kmt_wakeup(void *alarm) {
   spinlock_acquire(&task_lock);
   struct alarm_log *log = pmm->alloc(sizeof(struct alarm_log));
   log->alarm = alarm;
+  log->issuer = get_current_task();
   log->next = alarm_log_head.next;
   alarm_log_head.next = log;
   for (struct task *tp = &root_task; tp != NULL; tp = tp->next) {
