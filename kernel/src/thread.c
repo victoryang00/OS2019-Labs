@@ -139,6 +139,7 @@ _Context *kmt_context_switch(_Event ev, _Context *context) {
     cur->context = NULL;
     Log("Context for task %d: %s loaded.", cur->pid, cur->name);
   } else {
+    printf("N");
     ret = null_context;
   }
   spinlock_release(&task_lock);
