@@ -85,7 +85,7 @@ int kmt_create(struct task *task, const char *name, void (*entry)(void *arg), vo
    * We cannot create context before initializing the stack
    * because kcontext will put the context at the begin of stack
    */
-  task->context = _kcontext(stack, entry, arg);
+  _kcontext(stack, entry, arg);
   Log("TASK %s", name);
   Log("Context at %p", task->context);
   Log("ENTRY IS %p => %p", entry, task->context->eip);
