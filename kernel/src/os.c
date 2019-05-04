@@ -90,6 +90,7 @@ static _Context *os_trap(_Event ev, _Context *context) {
     CLog(FG_CYAN, "Handler seq %d", hp->seq);
     if (hp->event == _EVENT_NULL || hp->event == ev.event) {
       _Context *next = hp->handler(ev, context);
+      Assert(!next || next->eip, "NULL EIP of the return context");
       if (next) ret = next;
     }
   }
