@@ -94,15 +94,13 @@ static _Context *os_trap(_Event ev, _Context *context) {
     CLog(FG_CYAN, "Handler seq %d", hp->seq);
     if (hp->event == _EVENT_NULL || hp->event == ev.event) {
       _Context *next = hp->handler(ev, context);
-      //Assert(!next || (next->eip && next->esp0), "NULL EIP/ESP0 of the return context");
-      //Assert(!next || *((void **) (next->esp0)), "return context will return to 0x0000000");
       if (next) ret = next;
     }
   }
   CLog(FG_CYAN, "Lock released. Trap process finished.");
   spinlock_release(&os_trap_lock);
 
-  Assert(ret != NULL, "Returning to a null context after trap.");
+  Assert(ret, "Returning to a null context after trap.");
   //Log("Current context: %p", context);
   //Log("   Next context: %p", ret);
   return ret;
