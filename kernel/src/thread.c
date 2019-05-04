@@ -228,12 +228,12 @@ void kmt_sleep(void *alarm, struct spinlock *lock) {
   // before giving up the one we are holding
   // OTHERWISE MAY MISS WAKEUPS (DEADLOCK)
   // TODO: IS THERE OTHER TYPES OF DEADLOCK?
+  spinlock_acquire(&sleep_lock);
   if (lock != &task_lock) {
     spinlock_acquire(&task_lock);
     spinlock_release(lock);
   }
   Assert(spinlock_holding(&task_lock), "Not holding the task lock");
-  spinlock_acquire(&sleep_lock);
 
   CLog(BG_CYAN, "Thread %d going to sleep", cur->pid);
   cur->alarm = alarm;
