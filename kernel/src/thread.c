@@ -135,6 +135,7 @@ _Context *kmt_context_switch(_Event ev, _Context *context) {
   struct task *cur = get_current_task();
   if (cur) {
     Assert(cur->context, "task has null context to load");
+    for (int i = 0; i < 32; ++i) printf("%p\n", cur->fenceA[i]);
     kmt_inspect_fence(cur);
     ret = cur->context;
     cur->context = NULL;
