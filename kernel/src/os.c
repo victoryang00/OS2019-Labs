@@ -101,7 +101,7 @@ static _Context *os_trap(_Event ev, _Context *context) {
   CLog(FG_CYAN, "Lock released. Trap process finished.");
   spinlock_release(&os_trap_lock);
 
-  Assert(ret, "Returning to a null context after trap.");
+  Assert(ret != NULL, "Returning to a null context after trap.");
   //Log("Current context: %p", context);
   //Log("   Next context: %p", ret);
   return ret;
