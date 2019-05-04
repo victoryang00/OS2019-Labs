@@ -8,7 +8,6 @@
  */
 
 static uint32_t next_pid = 1;
-static uint32_t min_count = 0;
 static const char const_fence[32] = { 
   FILL_FENCE, FILL_FENCE, FILL_FENCE, FILL_FENCE,
   FILL_FENCE, FILL_FENCE, FILL_FENCE, FILL_FENCE,
@@ -32,6 +31,7 @@ static const char *task_states_human[8] __attribute__((used)) = {
 
 struct spinlock task_lock;
 struct task root_task;
+struct alarm_log alarm_log_head;
 
 static struct task *cpu_tasks[MAX_CPU] = {};
 static inline struct task *get_current_task() {
@@ -43,6 +43,7 @@ static inline void set_current_task(struct task *task) {
 
 void kmt_init() {
   memset(cpu_tasks, 0x00, sizeof(cpu_tasks));
+  alarm_log_head.next = NULL;
   spinlock_init(&task_lock, "Task(KMT) Lock");
   
   __sync_synchronize();
@@ -68,7 +69,7 @@ int kmt_create(struct task *task, const char *name, void (*entry)(void *arg), vo
   task->pid = next_pid++;
   task->name = name;
   task->state = ST_E;
-  task->count = min_count;
+  task->count = 0;
   _Area stack = { 
     (void *) task->stack, 
     (void *) task->stack + sizeof(task->stack) 
@@ -148,7 +149,6 @@ struct task *kmt_sched() {
     if (tp->state == ST_E || tp->state == ST_W) {  // choose a waken up task
       if (ret == NULL || tp->count < ret->count) { // a least ran one
         ret = tp;
-        min_count = tp->count;
       }
     }
   }
@@ -164,16 +164,29 @@ _Context *kmt_yield(_Event ev, _Context *context) {
   if (!next) {
     Log("No scheduling is made.");
     if (cur) {
-      ++cur->count;
+      cur->count = cur->count >= 1000 ? 0 : cur->count + 1;
       cur->state = ST_R;
     }
   } else {
-    ++next->count;
+    next->count = next->count >= 1000 ? 0 : next->count + 1;
     Log("Switching to task %d:%s", next->pid, next->name);
     //Log("Entry: %p", next->context->eip);
     if (cur) {
       if (cur->state == ST_R) cur->state = ST_W; // running -> waken up
-      if (cur->state == ST_T) cur->state = ST_S; // to sleep -> sleeping
+      if (cur->state == ST_T) {
+        bool already = false;
+        struct alarm_log *at = alarm_log_head.next;
+        struct alarm_log *next = NULL;
+        while (at) {
+          if (at == cur->alarm) already = true;
+          next = at->next;
+          pmm->free(at);
+          at = next;
+        }
+        alarm_log_head.next = NULL;
+
+        cur->state = already ? ST_W : ST_S;
+      }
     }
     next->state = ST_R; // set the next as running
     set_current_task(next);
@@ -223,6 +236,10 @@ void kmt_sleep(void *alarm, struct spinlock *lock) {
 
 void kmt_wakeup(void *alarm) {
   spinlock_acquire(&task_lock);
+  struct alarm_log *log = pmm->alloc(sizeof(struct alarm_log));
+  log->alarm = alarm;
+  log->next = alarm_log_head.next;
+  alarm_log_head.next = log;
   for (struct task *tp = &root_task; tp != NULL; tp = tp->next) {
     if (tp->state == ST_S && tp->alarm == alarm) {
       tp->state = ST_W; // wake up
