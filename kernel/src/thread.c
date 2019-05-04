@@ -117,7 +117,7 @@ _Context *kmt_context_save(_Event ev, _Context *context) {
   struct task *cur = get_current_task();
   cur->context = context;
   spinlock_release(&task_lock);
-  CLog(BG_YELLOW, "saved esp: %p", context->esp);
+  CLog(BG_YELLOW, "saved ebp: %p", context->ebp);
   return NULL;
 }
 _Context *kmt_context_switch(_Event ev, _Context *context) {
@@ -127,7 +127,7 @@ _Context *kmt_context_switch(_Event ev, _Context *context) {
   Assert(!cur || cur->context, "task has null context");
   _Context *ret = cur ? cur->context : context;
   spinlock_release(&task_lock);
-  CLog(BG_YELLOW, "loaded esp: %p", ret->esp);
+  CLog(BG_YELLOW, "loaded ebp: %p", ret->ebp);
   return ret;
 }
 
