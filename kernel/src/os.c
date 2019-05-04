@@ -107,7 +107,6 @@ static _Context *os_trap(_Event ev, _Context *context) {
   Assert(ret != NULL, "Returning to a null context after trap.");
   //Log("Current context: %p", context);
   //Log("   Next context: %p", ret);
-  printf("next context: %p -> %p", ret, ret->eip);
   return ret;
 }
 
