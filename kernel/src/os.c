@@ -57,10 +57,18 @@ static void os_init() {
   //create proc here
   // FOR TEST PURPOSE
   // REMOVE WHEN TEST IS PASSED
-  kmt->sem_init(&sem_p, "Producer SEM", 1);
+  kmt->sem_init(&sem_p, "Producer SEM", 5);
   kmt->sem_init(&sem_c, "Customer SEM", 0);
   kmt->sem_init(&mutex, "Producer-Customer MUTEX", 1);
   kmt->create(pmm->alloc(sizeof(task_t)), "Producer Task", producer, NULL);
+  kmt->create(pmm->alloc(sizeof(task_t)), "Producer Task", producer, NULL);
+  kmt->create(pmm->alloc(sizeof(task_t)), "Producer Task", producer, NULL);
+  kmt->create(pmm->alloc(sizeof(task_t)), "Producer Task", producer, NULL);
+  kmt->create(pmm->alloc(sizeof(task_t)), "Producer Task", producer, NULL);
+  kmt->create(pmm->alloc(sizeof(task_t)), "Customer Task", customer, NULL);
+  kmt->create(pmm->alloc(sizeof(task_t)), "Customer Task", customer, NULL);
+  kmt->create(pmm->alloc(sizeof(task_t)), "Customer Task", customer, NULL);
+  kmt->create(pmm->alloc(sizeof(task_t)), "Customer Task", customer, NULL);
   kmt->create(pmm->alloc(sizeof(task_t)), "Customer Task", customer, NULL);
 }
 
