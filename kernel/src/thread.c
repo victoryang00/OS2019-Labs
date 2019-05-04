@@ -172,11 +172,12 @@ _Context *kmt_yield(_Event ev, _Context *context) {
   struct task *cur = get_current_task();
   struct task *next = kmt_sched(); // call scheduler
   if (!next) {
-    printf("N");
     Log("No scheduling is made.");
     if (cur) {
       cur->count = cur->count >= 1000 ? 0 : cur->count + 1;
-      cur->state = ST_R;
+      if (cur->state == ST_T) {
+        kmt_before_sleep(cur);
+      }
     }
   } else {
     Log("Switching to task %d:%s", next->pid, next->name);
