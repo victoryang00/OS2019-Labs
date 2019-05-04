@@ -90,7 +90,10 @@ static _Context *os_trap(_Event ev, _Context *context) {
     Panic("BAD EVENT %d: %s, caused by (%p of %p)", ev.event, ev.msg, ev.cause, ev.ref);
   }
   CLog(BG_CYAN, "Event %d: %s", ev.event, ev.msg);
-  if (ev.event == _EVENT_IRQ_IODEV) printf("\nIODEV IRQ on CPU %d\n", _cpu());
+  if (ev.event == _EVENT_IRQ_IODEV) {
+    printf("\nIODEV IRQ on CPU %d\n", _cpu());
+    printf("context at %p\n", context);
+  }
 
   Assert(!spinlock_holding(&os_trap_lock), "trap in trap!");
   spinlock_acquire(&os_trap_lock);
