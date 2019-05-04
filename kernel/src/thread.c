@@ -112,36 +112,29 @@ void kmt_inspect_fence(struct task *task) {
 }
 
 _Context *kmt_context_save(_Event ev, _Context *context) {
-  bool holding = spinlock_holding(&task_lock);
-  CLog(FG_YELLOW, "in save");
-  if (!holding) spinlock_acquire(&task_lock);
-  else CLog(FG_RED, "ALREADY HOLDING LOCK, MAYBE SLEEPING");
+  //Log("KMT Context Save");
+  spinlock_acquire(&task_lock);
   struct task *cur = get_current_task();
   if (cur) {
     Assert(!cur->context, "task already has context saved");
     cur->context = context;
-    cur->holding_task_lock = holding;
     Log("Context for task %d: %s saved.", cur->pid, cur->name);
   }
   spinlock_release(&task_lock);
   return NULL;
 }
-
 _Context *kmt_context_switch(_Event ev, _Context *context) {
   //Log("KMT Context Switch");
-  bool holding = false;
-  _Context *ret = NULL;
   spinlock_acquire(&task_lock);
+  _Context *ret = NULL;
   struct task *cur = get_current_task();
   if (cur) {
     Assert(cur->context, "task has null context to load");
     ret = cur->context;
-    holding = cur->holding_task_lock;
     cur->context = NULL;
-    cur->holding_task_lock = false;
     Log("Context for task %d: %s loaded.", cur->pid, cur->name);
   }
-  if (!holding) spinlock_release(&task_lock);
+  spinlock_release(&task_lock);
   return ret;
 }
 
@@ -204,15 +197,19 @@ void kmt_sleep(void *alarm, struct spinlock *lock) {
     spinlock_release(lock);
   }
 
-  CLog(BG_CYAN, "Thread %d: %s going to sleep", cur->pid, cur->name);
+  CLog(BG_CYAN, "Thread %d going to sleep", cur->pid);
   cur->alarm = alarm;
   cur->state = ST_S; 
   
   __sync_synchronize();
+  spinlock_release(&task_lock);
+  CLog(FG_YELLOW, "task lock released before sleeping");
   _yield();
+  spinlock_acquire(&task_lock);
+  CLog(FG_YELLOW, "task lock acquired after sleeping");
   __sync_synchronize();
 
-  CLog(BG_CYAN, "Thread %d: %s has waken up", cur->pid, cur->name);
+  CLog(BG_CYAN, "Thread %d has waken up", cur->pid);
   cur->alarm = NULL; // turn off the alarm
   
   // We have the task lock when wake up

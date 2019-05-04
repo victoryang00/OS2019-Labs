@@ -34,7 +34,6 @@ struct task {
   char fenceB[32];
 
   void *alarm;
-  bool holding_task_lock;
 
   struct task *next;
 };
