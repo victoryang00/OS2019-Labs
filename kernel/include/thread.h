@@ -54,6 +54,7 @@ _Context *kmt_context_save(_Event, _Context *);
 _Context *kmt_context_switch(_Event, _Context *);
 struct task *kmt_sched();
 _Context *kmt_yield(_Event, _Context *);
+void kmt_before_sleep(struct task *);
 void kmt_sleep(void *, struct spinlock *);
 void kmt_wakeup(void *);
 
