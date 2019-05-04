@@ -175,12 +175,12 @@ _Context *kmt_yield(_Event ev, _Context *context) {
     }
     ret = cur->context;
   } else {
-    next->count = next->count >= 1000 ? 0 : next->count + 1;
     Log("Switching to task %d:%s", next->pid, next->name);
     //Log("Entry: %p", next->context->eip);
     if (cur) {
       if (cur->state == ST_R) cur->state = ST_W;
       else if (cur->state == ST_T) {
+        cur->state = ST_S;
         bool already = false;
         struct alarm_log *at = alarm_log_head.next;
         struct alarm_log *next = NULL;
@@ -196,10 +196,13 @@ _Context *kmt_yield(_Event ev, _Context *context) {
           }
           at = next;
         }
-        cur->state = already ? ST_W : ST_S;
+        if (already) {
+          next = cur; // OVERRIDE
+        }
       }
     }
     next->state = ST_R; // set the next as running
+    next->count = next->count >= 1000 ? 0 : next->count + 1;
     set_current_task(next);
     ret = next->context;
   }
@@ -221,6 +224,7 @@ void kmt_sleep(void *alarm, struct spinlock *lock) {
     spinlock_acquire(&task_lock);
     spinlock_release(lock);
   }
+  Assert(spinlock_holding(&task_lock), "Not holding the task lock");
 
   CLog(BG_CYAN, "Thread %d going to sleep", cur->pid);
   cur->alarm = alarm;
@@ -239,6 +243,7 @@ void kmt_sleep(void *alarm, struct spinlock *lock) {
   
   // We have the task lock when wake up
   // then we need to acquire the original lock
+  Assert(spinlock_holding(&task_lock), "Not holding the task lock");
   if (lock != &task_lock) {
     spinlock_release(&task_lock);
     spinlock_acquire(lock);
