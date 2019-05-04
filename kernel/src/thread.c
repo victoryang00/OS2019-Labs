@@ -157,6 +157,8 @@ _Context *kmt_yield(_Event ev, _Context *context) {
   if (!holding) {
     CLog(FG_PURPLE, "Not holding task lock.");
     spinlock_acquire(&task_lock);
+  } else {
+    CLog(FG_RED, "Holding the task lock.");
   }
   struct task *cur = get_current_task();
   struct task *next = kmt_sched(); // call scheduler
