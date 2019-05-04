@@ -197,7 +197,7 @@ _Context *kmt_yield(_Event ev, _Context *context) {
           at = an;
         }
         if (already) {
-          next = cur; // OVERRIDE
+          next = cur; // override the next task
         }
       }
     }
