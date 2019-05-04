@@ -172,8 +172,8 @@ _Context *kmt_yield(_Event ev, _Context *context) {
     if (cur) {
       cur->count = cur->count >= 1000 ? 0 : cur->count + 1;
       cur->state = ST_R;
+      ret = cur->context; // >?
     }
-    ret = cur->context;
   } else {
     Log("Switching to task %d:%s", next->pid, next->name);
     //Log("Entry: %p", next->context->eip);
