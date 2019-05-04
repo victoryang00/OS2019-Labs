@@ -169,8 +169,8 @@ _Context *kmt_yield(_Event ev, _Context *context) {
     Log("Switching to task %d:%s", next->pid, next->name);
     //Log("Entry: %p", next->context->eip);
     if (cur) {
-      if (cur->state == ST_R) cur->state == ST_W; // running -> waken up
-      if (cur->state == ST_T) cur->state == ST_S; // to sleep -> sleeping
+      if (cur->state == ST_R) cur->state = ST_W; // running -> waken up
+      if (cur->state == ST_T) cur->state = ST_S; // to sleep -> sleeping
     }
     next->state = ST_R; // set the next as running
     set_current_task(next);
