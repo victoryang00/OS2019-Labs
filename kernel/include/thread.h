@@ -29,7 +29,7 @@ struct task {
   enum task_states state;
   uint32_t count;
 
-  _Context *context;
+  _Context context;
   char fenceA[32];
   char stack[4096];
   char fenceB[32];
