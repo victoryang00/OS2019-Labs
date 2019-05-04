@@ -85,6 +85,7 @@ static _Context *os_trap(_Event ev, _Context *context) {
 
   Assert(!spinlock_holding(&os_trap_lock), "trap in trap!");
   spinlock_acquire(&os_trap_lock);
+  CLog(FG_CYAN, "Log acquired. Begin trap process.");
   _Context *ret = NULL;
   for (struct os_handler *hp = root_handler.next; hp != NULL; hp = hp->next) {
     if (hp->event == _EVENT_NULL || hp->event == ev.event) {
