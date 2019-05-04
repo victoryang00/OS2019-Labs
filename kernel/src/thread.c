@@ -151,7 +151,7 @@ struct task *kmt_sched() {
   struct task *ret = NULL;
   for (struct task *tp = &root_task; tp != NULL; tp = tp->next) {
     kmt_inspect_fence(tp);
-    Log("%d:%s [%03d, %s, %c]", tp->pid, tp->name, tp->count, task_states_human[tp->state], tp->state == ST_R ? "0123456789"[_cpu()] : '/');
+    Log("%d:%s [%03d, %s, %s]", tp->pid, tp->name, tp->count, task_states_human[tp->state], tp->state == ST_R ? "0123456789"[_cpu()] : '/');
     if (tp->state == ST_E || tp->state == ST_W) {  // choose a waken up task
       if (ret == NULL || tp->count < ret->count) { // a least ran one
         ret = tp;
