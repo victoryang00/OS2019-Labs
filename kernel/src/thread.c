@@ -73,7 +73,7 @@ int kmt_create(struct task *task, const char *name, void (*entry)(void *arg), vo
   task->count = 0;
   _Area stack = { 
     (void *) task->stack, 
-    (void *) task->stack + sizeof(task->stack) - sizeof(uint32_t) 
+    (void *) task->stack + sizeof(task->stack) 
   };
   memset(task->fenceA, FILL_FENCE, sizeof(task->fenceA));
   memset(task->stack,  FILL_STACK, sizeof(task->stack));
