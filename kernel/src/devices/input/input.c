@@ -1,4 +1,5 @@
 #include <devices.h>
+#include <debug.h>
 
 #define NEVENTS 128
 sem_t sem_kbdirq;
@@ -15,7 +16,7 @@ static void push_event(input_t *in, struct input_event ev) {
   kmt->spin_lock(&in->lock);
   in->events[in->rear] = ev;
   in->rear = (in->rear + 1) % NEVENTS;
-  if (in->rear == in->front) { panic("input queue full"); }
+  if (in->rear == in->front) { Panic("input queue full"); }
   kmt->spin_unlock(&in->lock);
   kmt->sem_signal(&in->event_sem);
 }
@@ -23,7 +24,7 @@ static void push_event(input_t *in, struct input_event ev) {
 static struct input_event pop_event(input_t *in) {
   kmt->sem_wait(&in->event_sem);
   kmt->spin_lock(&in->lock);
-  if (in->rear == in->front) { panic("input queue empty"); }
+  if (in->rear == in->front) { Panic("input queue empty"); }
   int idx = in->front;
   in->front = (in->front + 1) % NEVENTS;
   struct input_event ret = in->events[idx];
