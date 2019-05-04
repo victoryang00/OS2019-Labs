@@ -157,21 +157,21 @@ _Context *kmt_yield(_Event ev, _Context *context) {
   struct task *next = kmt_sched(); // call scheduler
   if (!next) {
     Log("No scheduling is made.");
+    if (cur) cur->state = ST_R;
     spinlock_release(&task_lock);
-    return context; // no change
+    return NULL; // no change
+  } else {
+    ++next->count;
+    Log("Switching to task %d:%s", next->pid, next->name);
+    //Log("Entry: %p", next->context->eip);
+    if (cur && cur->state == ST_R) {
+      cur->state = ST_W;  // set current as given up
+    }
+    next->state = ST_R; // set the next as running
+    set_current_task(next);
+    spinlock_release(&task_lock);
+    return next->context;
   }
-
-  ++next->count;
-  Log("Switching to task %d:%s", next->pid, next->name);
-  //Log("Entry: %p", next->context->eip);
-  Assert(!cur || cur->state == ST_R || cur->state == ST_S, "invalid state of caller of _yield on cpu %d, task name %s, state [%s]", _cpu(), cur ? cur->name : "NULL", cur ? task_states_human[cur->state] : "N/A");
-  if (cur && cur->state == ST_R) {
-    cur->state = ST_W;  // set current as given up
-  }
-  next->state = ST_R; // set the next as running
-  set_current_task(next);
-  spinlock_release(&task_lock);
-  return next->context;
 }
 
 void kmt_sleep(void *alarm, struct spinlock *lock) {
