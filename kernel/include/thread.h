@@ -41,7 +41,7 @@ struct task {
 
 struct alarm_log {
   void *alarm;
-  struct alarm_list *next;
+  struct alarm_log *next;
 };
 
 void kmt_init();
