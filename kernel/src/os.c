@@ -100,6 +100,7 @@ static _Context *os_trap(_Event ev, _Context *context) {
   CLog(FG_CYAN, "Lock acquired. Begin trap process.");
   _Context *ret = NULL;
   for (struct os_handler *hp = root_handler.next; hp != NULL; hp = hp->next) {
+    CLog(FG_CYAN, "Handler seq %d", hp->seq);
     if (hp->event == _EVENT_NULL || hp->event == ev.event) {
       _Context *next = hp->handler(ev, context);
       if (next) ret = next;
