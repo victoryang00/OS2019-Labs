@@ -88,7 +88,7 @@ int kmt_create(struct task *task, const char *name, void (*entry)(void *arg), vo
   _kcontext(stack, entry, arg);
   Log("TASK %s", name);
   Log("Context at %p", task->context);
-  Log("ENTRY IS %p => %p", entry, task->context->eip);
+  Log("ENTRY IS %p => %p", entry, task->context.eip);
 
   spinlock_acquire(&task_lock);
   struct task *tp = &root_task;
