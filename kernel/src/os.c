@@ -82,7 +82,8 @@ static _Context *os_trap(_Event ev, _Context *context) {
     }
   }
   if (ev.event == _EVENT_ERROR) {
-    Panic("BAD EVENT %d: %s, caused by (%p of %p)", ev.event, ev.msg, ev.cause, ev.ref);
+    CLog(BG_RED, "BAD EVENT %d: %s, caused by (%p of %p)", ev.event, ev.msg, ev.cause, ev.ref);
+    return context;
   }
   CLog(BG_CYAN, "Event %d: %s", ev.event, ev.msg);
   if (ev.event == _EVENT_IRQ_IODEV) printf("\n\n");
