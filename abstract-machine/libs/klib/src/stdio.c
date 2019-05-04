@@ -10,6 +10,7 @@
 // TODO: add more types of arguments!
 union arg {
   int intarg;
+  char chararg;
   char *pchararg;
 } uarg;
 
@@ -78,6 +79,11 @@ int vsprintf(char *out, const char *fmt, va_list ap) {
         pfmt++;
         done = true; // default syntax is one-character long
         switch (*pfmt) {
+          case 'c':
+            uarg.chararg = va_arg(ap, int);
+            len = 1;
+            *pout = uarg.chararg; 
+            break;
           case 's':
             uarg.pchararg = va_arg(ap, char*);
             len = strlen(uarg.pchararg);
@@ -112,9 +118,6 @@ int vsprintf(char *out, const char *fmt, va_list ap) {
               strcat(pout, "-");
               ret++;
               pout++;
-              // ancient bug!!!
-              // will err when int == INT_MIN
-              // uarg.intarg = -uarg.intarg;
             }
             bias = vprintf_int(uarg.intarg, width, phchar, (*pfmt == 'd' ? 10 : 16));
             len = (int) VBUF_MAX_SIZE - bias - 1;
