@@ -47,6 +47,7 @@ void kmt_init() {
   memset(cpu_tasks, 0x00, sizeof(cpu_tasks));
   alarm_log_head.next = NULL;
   spinlock_init(&task_lock, "Task(KMT) Lock");
+  spinlock_init(&sleep_lock, "Sleep Lock");
   
   __sync_synchronize();
 
