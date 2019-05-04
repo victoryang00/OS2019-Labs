@@ -116,8 +116,8 @@ void kmt_inspect_fence(struct task *task) {
 }
 
 _Context *kmt_context_save(_Event ev, _Context *context) {
+  //Log("KMT Context Save");
   spinlock_acquire(&task_lock);
-  Log("KMT Context Save");
   struct task *cur = get_current_task();
   if (cur) {
     memcpy(&cur->context, context, sizeof(cur->context));
@@ -133,7 +133,6 @@ _Context *kmt_context_switch(_Event ev, _Context *context) {
   _Context *ret = NULL;
   struct task *cur = get_current_task();
   if (cur) {
-    Assert(&cur->context, "task has null context to load");
     kmt_inspect_fence(cur);
     ret = &cur->context;
     Log("Context for task %d: %s loaded.", cur->pid, cur->name);
@@ -152,7 +151,6 @@ struct task *kmt_sched() {
     kmt_inspect_fence(tp);
     Log("%d:%s [%03d, %s]", tp->pid, tp->name, tp->count, task_states_human[tp->state]);
     if (tp->state == ST_E || tp->state == ST_W) {  // choose a waken up task
-      Assert(tp->context, "A ready task has no context");
       if (ret == NULL || tp->count < ret->count) { // a least ran one
         ret = tp;
       }
