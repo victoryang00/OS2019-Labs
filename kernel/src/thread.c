@@ -114,14 +114,8 @@ void kmt_inspect_fence(struct task *task) {
 _Context *kmt_context_save(_Event ev, _Context *context) {
   //Log("KMT Context Save");
   spinlock_acquire(&task_lock);
-  struct task *tp = &root_task;
   struct task *cur = get_current_task();
-  for (tp = &root_task; tp != NULL; tp = tp->next) {
-    if (tp == cur) {
-      tp->context = context;
-      break;
-    }
-  }
+  cur->context = context;
   spinlock_release(&task_lock);
   CLog(BG_YELLOW, "saved eip: %p", context->eip);
   return NULL;
