@@ -91,6 +91,7 @@ static _Context *os_trap(_Event ev, _Context *context) {
     if (hp->event == _EVENT_NULL || hp->event == ev.event) {
       _Context *next = hp->handler(ev, context);
       Assert(!next || (next->eip && next->esp0), "NULL EIP/ESP0 of the return context");
+      printf("ret: %p\n", (void *) (next->esp0) + 1);
       if (next) ret = next;
     }
   }
