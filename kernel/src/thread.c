@@ -199,6 +199,7 @@ void kmt_sleep(void *alarm, struct spinlock *lock) {
   cur->state = ST_S; 
   
   __sync_synchronize();
+  Assert(spinlock_holding(&task_lock), "Not hodling the task lock before sleep.");
   _yield();
   __sync_synchronize();
 
