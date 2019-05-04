@@ -16,7 +16,7 @@
 #define DEBUG
 //#define MEM_DEBUG
 //#define LOCK_DEBUG
-#include <mt-safe.h>
+//#include <mt-safe.h>
 #include <debug.h>
 
 #define likely(x)   __builtin_expect(!!(x), 1)
