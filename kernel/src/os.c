@@ -91,12 +91,7 @@ static _Context *os_trap(_Event ev, _Context *context) {
     if (hp->event == _EVENT_NULL || hp->event == ev.event) {
       _Context *next = hp->handler(ev, context);
       Assert(!next || (next->eip && next->esp0), "NULL EIP/ESP0 of the return context");
-      if (next) {
-        printf("seq %d, ret: %p\n", hp->seq, *((void **) (next->esp0)));
-      } else {
-        printf("seq %d, ret: N/A\n", hp->seq);
-      }
-
+      Assert(*((void **) (next->esp0)), "return context will return to 0x0000000");
       if (next) ret = next;
     }
   }
