@@ -152,33 +152,23 @@ struct task *kmt_sched() {
   return ret;
 }
 _Context *kmt_yield(_Event ev, _Context *context) {
-  bool holding = spinlock_holding(&task_lock);
-  
-  if (!holding) {
-    CLog(FG_PURPLE, "Not holding task lock.");
-    spinlock_acquire(&task_lock);
-  } else {
-    CLog(FG_RED, "Holding the task lock.");
-  }
+  spinlock_acquire(&task_lock);
   struct task *cur = get_current_task();
   struct task *next = kmt_sched(); // call scheduler
   if (!next) {
     Log("No scheduling is made.");
-    if (!holding) {
-      spinlock_release(&task_lock);
-    }
+    spinlock_release(&task_lock);
     return context; // no change
   }
 
   ++next->count;
   Log("Switching to task %d:%s", next->pid, next->name);
   //Log("Entry: %p", next->context->eip);
-  cur->state = ST_W;  // set current as given up
+  Assert(cur->state == ST_R || cur->state == ST_S, "invalid state of caller of _yield");
+  if (cur->state == ST_R) cur->state = ST_W;  // set current as given up
   next->state = ST_R; // set the next as running
   set_current_task(next);
-  if (!holding) {
-    spinlock_release(&task_lock);
-  }
+  spinlock_release(&task_lock);
   return next->context;
 }
 
@@ -201,10 +191,11 @@ void kmt_sleep(void *alarm, struct spinlock *lock) {
   cur->alarm = alarm;
   cur->state = ST_S; 
   
+  spinlock_release(&task_lock);
   __sync_synchronize();
-  Assert(spinlock_holding(&task_lock), "Not hodling the task lock before sleep.");
   _yield();
   __sync_synchronize();
+  spinlock_acquire(&task_lock);
 
   CLog(BG_CYAN, "Thread %d has waken up", cur->pid);
   cur->alarm = NULL; // turn off the alarm
