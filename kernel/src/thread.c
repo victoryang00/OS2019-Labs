@@ -190,8 +190,10 @@ void kmt_sleep(void *alarm, struct spinlock *lock) {
   
   __sync_synchronize();
   spinlock_release(&task_lock);
+  CLog(FG_YELLOW, "task lock released before sleeping");
   _yield();
   spinlock_acquire(&task_lock);
+  CLog(FG_YELLOW, "task lock acquired after sleeping");
   __sync_synchronize();
 
   CLog(BG_CYAN, "Thread %d has waken up", cur->pid);
