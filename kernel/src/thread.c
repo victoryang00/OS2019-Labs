@@ -172,6 +172,7 @@ _Context *kmt_yield(_Event ev, _Context *context) {
   struct task *cur = get_current_task();
   struct task *next = kmt_sched(); // call scheduler
   if (!next) {
+    printf("N");
     Log("No scheduling is made.");
     if (cur) {
       cur->count = cur->count >= 1000 ? 0 : cur->count + 1;
