@@ -17,7 +17,9 @@ static void push_event(input_t *in, struct input_event ev) {
   in->rear = (in->rear + 1) % NEVENTS;
   if (in->rear == in->front) { panic("input queue full"); }
   kmt->spin_unlock(&in->lock);
+  printf("\nPUSH INPUT EVENT\n");
   kmt->sem_signal(&in->event_sem);
+  printf("\nINPUT EVENT PUSHED AND SIGNALLED\n");
 }
 
 static struct input_event pop_event(input_t *in) {
@@ -80,7 +82,9 @@ void input_keydown(device_t *dev, int code) {
 }
 
 static _Context *input_notify(_Event ev, _Context *context) {
+  printf("\nHAS INPUT\n");
   kmt->sem_signal(&sem_kbdirq);
+  printf("\nINPUT NOTIFIED\n");
   return NULL;
 }
 
@@ -92,7 +96,6 @@ void input_task(void *args) {
     while ((code = read_key()) != 0) {
       input_keydown(in, code);
     }
-    Log("Waiting for kbdirq!");
     kmt->sem_wait(&sem_kbdirq);
   }
 }
