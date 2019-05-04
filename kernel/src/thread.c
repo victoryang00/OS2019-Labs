@@ -32,7 +32,6 @@ static const char *task_states_human[7] __attribute__((used)) = {
 struct spinlock task_lock;
 struct task root_task;
 
-static bool cpu_has_task_lock = false; // important for sleeping
 static struct task *cpu_tasks[MAX_CPU] = {};
 static inline struct task *get_current_task() {
   return cpu_tasks[_cpu()];
@@ -113,12 +112,13 @@ void kmt_inspect_fence(struct task *task) {
 }
 
 _Context *kmt_context_save(_Event ev, _Context *context) {
-  cpu_has_task_lock = spinlock_holding(&task_lock);
-  if (!cpu_has_task_lock) spinlock_acquire(&task_lock);
+  bool holding = spinlock_holding(&task_lock);
+  if (!holding) spinlock_acquire(&task_lock);
   struct task *cur = get_current_task();
   if (cur) {
     Assert(!cur->context, "task already has context saved");
     cur->context = context;
+    cur->holding_task_lock = holding;
     Log("Context for task %d: %s saved.", cur->pid, cur->name);
   }
   spinlock_release(&task_lock);
@@ -127,17 +127,19 @@ _Context *kmt_context_save(_Event ev, _Context *context) {
 
 _Context *kmt_context_switch(_Event ev, _Context *context) {
   //Log("KMT Context Switch");
-  spinlock_acquire(&task_lock);
+  bool holding = false;
   _Context *ret = NULL;
+  spinlock_acquire(&task_lock);
   struct task *cur = get_current_task();
   if (cur) {
     Assert(cur->context, "task has null context to load");
     ret = cur->context;
+    holding = cur->holding_task_lock;
     cur->context = NULL;
+    cur->holding_task_lock = false;
     Log("Context for task %d: %s loaded.", cur->pid, cur->name);
   }
-  if (!cpu_has_task_lock) spinlock_release(&task_lock);
-  cpu_has_task_lock = false;
+  if (!holding) spinlock_release(&task_lock);
   return ret;
 }
 
