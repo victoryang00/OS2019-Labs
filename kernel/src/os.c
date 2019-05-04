@@ -92,7 +92,7 @@ static _Context *os_trap(_Event ev, _Context *context) {
       _Context *next = hp->handler(ev, context);
       Assert(!next || (next->eip && next->esp0), "NULL EIP/ESP0 of the return context");
       if (next)
-        printf("seq %d, ret: %p\n", hp->seq, *((void **) (next->esp0) + 1));
+        printf("seq %d, ret: %p\n", hp->seq, *((void **) (next->esp0 + 4)));
       else
         printf("seq %d, ret: N/A\n", hp->seq);
       if (next) ret = next;
