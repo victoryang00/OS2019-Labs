@@ -107,7 +107,6 @@ void kmt_teardown(struct task *task) {
 }
 
 void kmt_inspect_fence(struct task *task) {
-  for (int i = 0; i < sizeof(task->fenceA); ++i) printf("%p\n", task->fenceA[i]);
   Assert(memcmp(const_fence, task->fenceA, sizeof(const_fence)) == 0, "Fence inspection A for task %d (%s) failed.", task->pid, task->name);
   Assert(memcmp(const_fence, task->fenceB, sizeof(const_fence)) == 0, "Fence inspection B for task %d (%s) failed.", task->pid, task->name);
 }
