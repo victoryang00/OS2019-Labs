@@ -160,10 +160,14 @@ _Context *kmt_yield(_Event ev, _Context *context) {
     //Log("Entry: %p", next->context->eip);
     if (cur && cur->state == ST_R) {
       cur->state = ST_W;  // set current as given up
+      Log("Current task is set as [waken up]");
     }
     next->state = ST_R; // set the next as running
+    Log("Next task is set as [running]");
     set_current_task(next);
+    Log("Next task is set as current task");
     ret = next->context;
+    Log("return value set as next context");
   }
   spinlock_release(&task_lock);
   return ret;
