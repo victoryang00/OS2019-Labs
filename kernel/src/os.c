@@ -95,6 +95,7 @@ static _Context *os_trap(_Event ev, _Context *context) {
         printf("seq %d, ret: %p\n", hp->seq, *((void **) (next->esp0 + 4)));
       else
         printf("seq %d, ret: N/A\n", hp->seq);
+
       if (next) ret = next;
     }
   }
