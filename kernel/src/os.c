@@ -85,7 +85,7 @@ static _Context *os_trap(_Event ev, _Context *context) {
 
   Assert(!spinlock_holding(&os_trap_lock), "trap in trap!");
   spinlock_acquire(&os_trap_lock);
-  CLog(FG_CYAN, "Log acquired. Begin trap process.");
+  CLog(FG_CYAN, "Lock acquired. Begin trap process.");
   _Context *ret = NULL;
   for (struct os_handler *hp = root_handler.next; hp != NULL; hp = hp->next) {
     if (hp->event == _EVENT_NULL || hp->event == ev.event) {
@@ -93,7 +93,7 @@ static _Context *os_trap(_Event ev, _Context *context) {
       if (next) ret = next;
     }
   }
-  CLog(FG_CYAN, "Log released. Trap process finished.");
+  CLog(FG_CYAN, "Lock released. Trap process finished.");
   spinlock_release(&os_trap_lock);
 
   Assert(ret != NULL, "Returning to a null context after trap.");
