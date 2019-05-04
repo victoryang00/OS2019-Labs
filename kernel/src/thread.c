@@ -195,7 +195,9 @@ void kmt_sleep(void *alarm, struct spinlock *lock) {
   cur->state = ST_S; 
   
   __sync_synchronize();
+  spinlock_release(&task_lock);
   _yield();
+  spinlock_acquire(&task_lock);
   __sync_synchronize();
 
   CLog(BG_CYAN, "Thread %d has waken up", cur->pid);
