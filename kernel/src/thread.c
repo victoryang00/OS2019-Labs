@@ -139,6 +139,7 @@ _Context *kmt_context_switch(_Event ev, _Context *context) {
   } else {
     ret = context;
   }
+  Assert(ret, "BAD SAVED CONTEXT");
   spinlock_release(&task_lock);
   return ret;
 }
