@@ -172,8 +172,8 @@ _Context *kmt_yield(_Event ev, _Context *context) {
     Log("Switching to task %d:%s", next->pid, next->name);
     //Log("Entry: %p", next->context->eip);
     if (cur) {
-      if (cur->state == ST_R) cur->state = ST_W; // running -> waken up
-      if (cur->state == ST_T) {
+      if (cur->state == ST_R) cur->state = ST_W;
+      else if (cur->state == ST_T) {
         bool already = false;
         struct alarm_log *at = alarm_log_head.next;
         struct alarm_log *next = NULL;
