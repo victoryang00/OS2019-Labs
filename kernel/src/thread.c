@@ -155,6 +155,7 @@ _Context *kmt_yield(_Event ev, _Context *context) {
   bool holding = spinlock_holding(&task_lock);
   
   if (!holding) {
+    CLog(FG_PURPLE, "Not holding task lock.");
     spinlock_acquire(&task_lock);
   }
   struct task *cur = get_current_task();
