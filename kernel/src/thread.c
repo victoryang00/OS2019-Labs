@@ -51,6 +51,9 @@ void kmt_init() {
   root_task.name = "Root Task";
   root_task.state = ST_X;
   root_task.next = NULL;
+  memset(root_task.fenceA, FILL_FENCE, sizeof(root_task.fenceA));
+  memset(root_task.stack,  FILL_STACK, sizeof(root_task.stack));
+  memset(root_task.fenceB, FILL_FENCE, sizeof(root_task.fenceB));
   spinlock_release(&task_lock);
 
   // add trap handlers
@@ -88,8 +91,6 @@ int kmt_create(struct task *task, const char *name, void (*entry)(void *arg), vo
   while (tp->next) tp = tp->next;
   tp->next = task;
   spinlock_release(&task_lock);
-
-  CLog(FG_PURPLE, "%p", task->fenceA[0]);
 
   return task->pid;
 }
@@ -137,7 +138,6 @@ struct task *kmt_sched() {
   Log("========== TASKS ==========");
   struct task *ret = NULL;
   for (struct task *tp = &root_task; tp != NULL; tp = tp->next) {
-    kmt_inspect_fence(tp);
     Log("%d:%s [%s]", tp->pid, tp->name, task_states_human[tp->state]);
     if (tp->state == ST_E || tp->state == ST_W) {  // choose a waken up task
       if (ret == NULL || tp->count < ret->count) { // a least ran one
