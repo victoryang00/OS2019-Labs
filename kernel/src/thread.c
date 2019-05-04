@@ -144,7 +144,7 @@ struct task *kmt_sched() {
   Log("========== TASKS ==========");
   struct task *ret = NULL;
   for (struct task *tp = &root_task; tp != NULL; tp = tp->next) {
-    Log("%d:%s [%s]", tp->pid, tp->name, task_states_human[tp->state]);
+    Log("%d:%s [%03d, %s]", tp->pid, tp->name, tp->count, task_states_human[tp->state]);
     if (tp->state == ST_E || tp->state == ST_W) {  // choose a waken up task
       if (ret == NULL || tp->count < ret->count) { // a least ran one
         ret = tp;
