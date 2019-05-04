@@ -163,7 +163,10 @@ _Context *kmt_yield(_Event ev, _Context *context) {
   _Context *ret = NULL;
   if (!next) {
     Log("No scheduling is made.");
-    if (cur) cur->state = ST_R;
+    if (cur) {
+      ++cur->count;
+      cur->state = ST_R;
+    }
   } else {
     ++next->count;
     Log("Switching to task %d:%s", next->pid, next->name);
