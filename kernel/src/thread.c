@@ -70,7 +70,7 @@ int kmt_create(struct task *task, const char *name, void (*entry)(void *arg), vo
     (void *) task->stack + sizeof(task->stack) 
   };
   memset(task->fenceA, FILL_FENCE, sizeof(task->fenceA));
-  CLog(FG_PURPLE, task->fanceA[0]);
+  CLog(FG_PURPLE, "%p\n", task->fanceA[0]);
   memset(task->stack,  FILL_STACK, sizeof(task->stack));
   memset(task->fenceB, FILL_FENCE, sizeof(task->fenceB));
   task->next = NULL;
