@@ -76,11 +76,7 @@ static void os_run() {
 }
 
 static _Context *os_trap(_Event ev, _Context *context) {
-  if (ev.event == _EVENT_IRQ_TIMER) {
-    if (!_intr_read()) {
-      return context;
-    }
-  } else if (ev.event == _EVENT_ERROR) {
+  if (ev.event == _EVENT_ERROR) {
     Panic("BAD EVENT %d: %s, caused by (%p of %p)", ev.event, ev.msg, ev.cause, ev.ref);
   }
   CLog(BG_CYAN, "Event %d: %s", ev.event, ev.msg);
