@@ -154,6 +154,8 @@ struct task *kmt_sched() {
       if (ret == NULL || tp->count < ret->count) { // a least ran one
         ret = tp;
       }
+    } else if (tp->state == ST_T) {
+      kmt_before_sleep(tp);
     }
   }
   Log("===========================");
@@ -174,27 +176,12 @@ _Context *kmt_yield(_Event ev, _Context *context) {
     Log("Switching to task %d:%s", next->pid, next->name);
     //Log("Entry: %p", next->context->eip);
     if (cur) {
-      if (cur->state == ST_R) cur->state = ST_W;
-      else if (cur->state == ST_T) {
-        cur->state = ST_S;
-        bool already = false;
-        struct alarm_log *at = alarm_log_head.next;
-        struct alarm_log *an = NULL;
-        alarm_log_head.next = NULL;
-        while (at) {
-          if (at->alarm == cur->alarm) already = true;
-          an = at->next;
-          if (at->issuer != cur) {
-            pmm->free(at);
-          } else {
-            at->next = alarm_log_head.next;
-            alarm_log_head.next = at;
-          }
-          at = an;
-        }
-        if (already) {
-          next = cur; // override the next task
-        }
+      if (cur->state == ST_R) {
+        cur->state = ST_W;
+      } else if (cur->state == ST_T) {
+        // actually will not happen
+        // because all tasks are handled in sched
+        kmt_before_sleep(cur);
       }
     }
     next->state = ST_R; // set the next as running
@@ -203,6 +190,29 @@ _Context *kmt_yield(_Event ev, _Context *context) {
   }
   spinlock_release(&task_lock);
   return NULL;
+}
+
+void kmt_before_sleep(struct task *task) {
+  bool already = false;
+  struct alarm_log *at = alarm_log_head.next;
+  struct alarm_log *an = NULL;
+  alarm_log_head.next = NULL;
+  while (at) {
+    if (at->alarm == task->alarm) already = true;
+    an = at->next;
+    if (at->issuer != task) {
+      pmm->free(at);
+    } else {
+      at->next = alarm_log_head.next;
+      alarm_log_head.next = at;
+    }
+    at = an;
+  }
+  if (already) {
+    task->state = ST_W;
+  } else {
+    task->state = ST_S;
+  }
 }
 
 void kmt_sleep(void *alarm, struct spinlock *lock) {
