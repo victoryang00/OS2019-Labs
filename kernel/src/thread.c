@@ -219,9 +219,11 @@ uintptr_t kmt_sem_sleep(void *alarm) {
 
   struct task *next = kmt_sched();
   if (!next || already_alarmed) {
+    CLog(YG_YELLOW, "No next task or already alarmed");
     cur->state = ST_R;
     cur->count = cur->count >= 1000 ? 0 : cur->count + 1; 
   } else {
+    CLog(YG_YELLOW, "Next is %d: %s", next->pid, next->name);
     cur->state = ST_S;
     cur->alarm = alarm;
     next->state = ST_R;
