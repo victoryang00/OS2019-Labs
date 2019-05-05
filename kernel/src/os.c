@@ -38,17 +38,16 @@ void producer(void *arg) {
 }
 */
 
-extern void tty_putc(tty_t *tty, char ch);
 void echo_task(void *name) {
   device_t *tty = dev_lookup(name);
   while (1) {
     char line[128], text[128];
     sprintf(text, "(%s) $ ", name);
-    for (char *c = text; *c != '\0'; ++c) tty_putc(tty, *c);
+    tty->ops->write(tty, 0, text, strlen(text));
     int nread = tty->ops->read(tty, 0, line, sizeof(line));
     line[nread - 1] = '\0';
     sprintf(text, "Echo: %s.\n", line);
-    for (char *c = text; *c != '\0'; ++c) tty_putc(tty, *c);
+    tty->ops->write(tty, 0, text, strlen(text));
   }
 }
 
