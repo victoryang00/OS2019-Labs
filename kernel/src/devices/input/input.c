@@ -17,21 +17,21 @@ static void push_event(input_t *in, struct input_event ev) {
   in->events[in->rear] = ev;
   in->rear = (in->rear + 1) % NEVENTS;
   if (in->rear == in->front) { Panic("input queue full"); }
-  printf("\nEVENT PUSHED! <<<<<<<<< %d\n", in->rear - in->front);
+  //printf("EVENT PUSHED! <<<<<<<<< %d\n", in->rear - in->front);
   kmt->spin_unlock(&in->lock);
   kmt->sem_signal(&in->event_sem);
-  printf("\nEVENT SIGNAL SENT\n");
+  //printf("EVENT SIGNAL SENT\n");
 }
 
 static struct input_event pop_event(input_t *in) {
   kmt->sem_wait(&in->event_sem);
-  printf("\nEVENT SIGNAL CAUGHT\n");
+  //printf("EVENT SIGNAL CAUGHT\n");
   kmt->spin_lock(&in->lock);
   if (in->rear == in->front) { Panic("input queue empty"); }
   int idx = in->front;
   in->front = (in->front + 1) % NEVENTS;
   struct input_event ret = in->events[idx];
-  printf("\nEVENT POPED! >>>>>>>>>> %d\n", in->rear - in->front);
+  //printf("EVENT POPED! >>>>>>>>>> %d\n", in->rear - in->front);
   kmt->spin_unlock(&in->lock);
   return ret;
 }
