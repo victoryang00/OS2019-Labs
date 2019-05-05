@@ -1,5 +1,6 @@
 #include <common.h>
 #include <debug.h>
+#include <thread.h>
 #include <syscall.h>
 
 _Context* do_syscall(_Event ev, _Context *context) {
