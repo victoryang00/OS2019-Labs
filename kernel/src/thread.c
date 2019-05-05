@@ -161,6 +161,9 @@ struct task *kmt_sched() {
   Log("========== TASKS ==========");
   struct task *ret = NULL;
   for (struct task *tp = &root_task; tp != NULL; tp = tp->next) {
+    if (tp->pid == 2) {
+      printf("\ninput task: %s\n", task_states_human[tp->state]);
+    }
     if (tp->pid == 3) {
       printf("\ntty task: %s\n", task_states_human[tp->state]);
     }
