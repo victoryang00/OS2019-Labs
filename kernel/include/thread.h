@@ -23,6 +23,17 @@ enum task_states {
   ST_X  // Special
 };
 
+struct context_item {
+  _Context *context;
+  struct context_item *next;
+};
+
+struct alarm_log {
+  void *alarm;
+  struct task *issuer;
+  struct alarm_log *next;
+};
+
 struct task {
   uint32_t pid;
   const char* name;
@@ -38,17 +49,6 @@ struct task {
   void *alarm;
 
   struct task *next;
-};
-
-struct context_item {
-  _Context *context;
-  struct context_item *next;
-};
-
-struct alarm_log {
-  void *alarm;
-  struct task *issuer;
-  struct alarm_log *next;
 };
 
 void kmt_init();
