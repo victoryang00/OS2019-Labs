@@ -235,6 +235,7 @@ uintptr_t kmt_sem_sleep(void *alarm) {
 }
 
 uintptr_t kmt_sem_wakeup(void *alarm) {
+  spinlock_acquire(&task_lock);
   struct alarm_log *ap = pmm->alloc(sizeof(struct alarm_log));
   ap->alarm = alarm;
   ap->issuer = get_current_task();
