@@ -20,6 +20,7 @@ static void push_event(input_t *in, struct input_event ev) {
   printf("\nEVENT PUSHED! <<<<<<<<< %d\n", in->rear - in->front);
   kmt->spin_unlock(&in->lock);
   kmt->sem_signal(&in->event_sem);
+  printf("\nEVENT SIGNAL SENT\n");
 }
 
 static struct input_event pop_event(input_t *in) {
