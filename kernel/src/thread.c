@@ -144,6 +144,9 @@ _Context *kmt_context_switch(_Event ev, _Context *context) {
     cur->context_head.next = cp->next;
     ret = cp->context;
     pmm->free(cp);
+    if (cur->context_head.next == NULL) {
+      cur->alarm = NULL; // clear alarm
+    }
     Log("Context for task %d: %s loaded.", cur->pid, cur->name);
   } else {
     ret = context;
