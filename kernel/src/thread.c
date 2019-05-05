@@ -32,7 +32,6 @@ static const char *task_states_human[8] __attribute__((used)) = {
 
 struct spinlock task_lock;
 struct task root_task;
-struct alarm_log alarm_log_head;
 
 static struct task *cpu_tasks[MAX_CPU] = {};
 static inline struct task *get_current_task() {
@@ -45,7 +44,6 @@ static inline void set_current_task(struct task *task) {
 
 void kmt_init() {
   memset(cpu_tasks, 0x00, sizeof(cpu_tasks));
-  alarm_log_head.next = NULL;
   spinlock_init(&task_lock, "Task Lock");
   
   __sync_synchronize();
