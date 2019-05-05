@@ -24,6 +24,7 @@ _Context* do_syscall(_Event ev, _Context *context) {
   }
 
   // TODO: HANDLE RETURN VALUE
+  CLog(FG_YELLOW, "Syscall finished.");
 
   return NULL;
 }
