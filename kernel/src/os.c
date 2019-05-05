@@ -38,6 +38,7 @@ void producer(void *arg) {
 }
 */
 
+extern void tty_putc(tty_t *tty, char ch);
 void echo_task(void *name) {
   device_t *tty = dev_lookup(name);
   while (1) {
