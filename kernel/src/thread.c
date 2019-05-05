@@ -241,6 +241,8 @@ uintptr_t kmt_sem_wakeup(void *alarm) {
     if (tp->state == ST_S && tp->alarm == alarm) {
       CLog(FG_YELLOW, "waked up task pid %d", tp->pid);
       tp->state = ST_W; // wake up
+    } else {
+      CLog(FG_YELLOW, "task pid %d not match", tp->pid);
     }
   }
   spinlock_release(&task_lock);
