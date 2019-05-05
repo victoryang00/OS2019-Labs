@@ -159,7 +159,7 @@ struct task *kmt_sched() {
   struct task *ret = NULL;
   for (struct task *tp = &root_task; tp != NULL; tp = tp->next) {
     if (tp->pid == 3) {
-      printf("tty task: %s", task_states_human[tp->state]);
+      printf("\ntty task: %s\n", task_states_human[tp->state]);
     }
     kmt_inspect_fence(tp);
     Log("%d:%s [%s, L%d, C%d]", tp->pid, tp->name,task_states_human[tp->state], tp->owner, tp->count);
