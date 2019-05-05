@@ -204,7 +204,7 @@ uintptr_t kmt_sem_sleep(void *alarm) {
   while (ap) {
     an = ap->next;
     if (ap->alarm == alarm) already_alarmed = true;
-    if (ap->issuer == cur) {
+    if (ap->issuer != cur) {
       pmm->free(ap);
     } else {
       ap->next = alarm_head.next;
@@ -239,6 +239,7 @@ uintptr_t kmt_sem_wakeup(void *alarm) {
 
   for (struct task *tp = &root_task; tp != NULL; tp = tp->next) {
     if (tp->state == ST_S && tp->alarm == alarm) {
+      CLog(FG_YELLOW, "waked up task pid %d", tp->pid);
       tp->state = ST_W; // wake up
     }
   }
