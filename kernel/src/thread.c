@@ -1,5 +1,6 @@
 #include <common.h>
 #include <thread.h>
+#include <syscall.h>
 #include <spinlock.h>
 #include <semaphore.h>
 
@@ -45,7 +46,7 @@ static inline void set_current_task(struct task *task) {
 void kmt_init() {
   memset(cpu_tasks, 0x00, sizeof(cpu_tasks));
   alarm_log_head.next = NULL;
-  spinlock_init(&task_lock, "Task(KMT) Lock");
+  spinlock_init(&task_lock, "Task Lock");
   
   __sync_synchronize();
 
@@ -65,6 +66,7 @@ void kmt_init() {
   os->on_irq(INT_MAX, _EVENT_NULL, kmt_context_switch);
   os->on_irq(0, _EVENT_YIELD, kmt_yield);
   os->on_irq(0, _EVENT_IRQ_TIMER, kmt_yield);
+  os->on_irq(0, _EVENT_SYSCALL, do_syscall);
 }
 
 int kmt_create(struct task *task, const char *name, void (*entry)(void *arg), void *arg) {
@@ -173,9 +175,6 @@ _Context *kmt_yield(_Event ev, _Context *context) {
     Log("No scheduling is made.");
     if (cur) {
       cur->count = cur->count >= 1000 ? 0 : cur->count + 1;
-      if (cur->state == ST_T) {
-        kmt_before_sleep(cur);
-      }
     }
   } else {
     Log("Switching to task %d:%s", next->pid, next->name);
@@ -183,8 +182,6 @@ _Context *kmt_yield(_Event ev, _Context *context) {
     if (cur) {
       if (cur->state == ST_R) {
         cur->state = ST_W;
-      } else if (cur->state == ST_T) {
-        kmt_before_sleep(cur);
       }
     }
     next->state = ST_R; // set the next as running
@@ -195,35 +192,7 @@ _Context *kmt_yield(_Event ev, _Context *context) {
   return NULL;
 }
 
-void kmt_before_sleep(struct task *task) {
-  Assert(spinlock_holding(&task_lock), "not holding lock");
-  Assert(task->context, "no context before sleep");
-  Assert(task->alarm, "no alarm before sleep");
-  Assert(task->state == ST_T, "wrong state before sleep");
-
-  bool already = false;
-  struct alarm_log *at = alarm_log_head.next;
-  struct alarm_log *an = NULL;
-  alarm_log_head.next = NULL;
-  while (at) {
-    if (at->alarm == task->alarm) already = true;
-    an = at->next;
-    if (at->issuer != task) {
-      pmm->free(at);
-    } else {
-      at->next = alarm_log_head.next;
-      alarm_log_head.next = at;
-    }
-    at = an;
-  }
-  if (already) {
-    task->state = ST_W;
-  } else {
-    task->state = ST_S;
-  }
-}
-
-void kmt_sleep(void *alarm, struct spinlock *lock) {
+void kmt_sem_sleep(void *alarm, struct spinlock *lock) {
   struct task *cur = get_current_task();
   Assert(cur != NULL, "NULL task is going to sleep.");
   Assert(alarm != NULL, "Sleep without a alarm (semaphore).");
@@ -241,21 +210,29 @@ void kmt_sleep(void *alarm, struct spinlock *lock) {
 
   CLog(BG_CYAN, "Thread %d going to sleep", cur->pid);
   cur->alarm = alarm;
-  cur->state = ST_T; 
+  cur->state = ST_S; 
   
   __sync_synchronize();
-  spinlock_release(&task_lock);
-  CLog(FG_YELLOW, "task lock released before sleeping");
-  _yield();
-  spinlock_acquire(&task_lock);
-  CLog(FG_YELLOW, "task lock acquired after sleeping");
+  struct task *next = kmt_sched();
+  if (!next) {
+    if (cur) {
+      cur->state = ST_R;
+      cur->count = cur->count >= 1000 ? 0 : cur->count + 1;
+    }
+  } else {
+    Log("Switching to task %d:%s", next->pid, next->name);
+    //Log("Entry: %p", next->context->eip);
+    if (cur) {
+      if (cur->state == ST_R) {
+        cur->state = ST_W;
+      }
+    }
+    next->state = ST_R; // set the next as running
+    next->count = next->count >= 1000 ? 0 : next->count + 1;
+    set_current_task(next);
+  }
   __sync_synchronize();
-
-  CLog(BG_CYAN, "Thread %d has waken up", cur->pid);
-  cur->alarm = NULL; // turn off the alarm
   
-  // We have the task lock when wake up
-  // then we need to acquire the original lock
   Assert(spinlock_holding(&task_lock), "Not holding the task lock");
   if (lock != &task_lock) {
     spinlock_release(&task_lock);
@@ -263,7 +240,7 @@ void kmt_sleep(void *alarm, struct spinlock *lock) {
   }
 }
 
-void kmt_wakeup(void *alarm) {
+void kmt_sem_wakeup(void *alarm) {
   spinlock_acquire(&task_lock);
   struct alarm_log *log = pmm->alloc(sizeof(struct alarm_log));
   log->alarm = alarm;
