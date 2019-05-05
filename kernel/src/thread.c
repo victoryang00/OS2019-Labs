@@ -160,6 +160,7 @@ struct task *kmt_sched() {
   Assert(spinlock_holding(&task_lock), "Not holding the task lock!");
   Log("========== TASKS ==========");
   struct task *ret = NULL;
+  printf("interrupter: %d: %s\n", get_current_task()->pid, get_current_task()->name);
   for (struct task *tp = &root_task; tp != NULL; tp = tp->next) {
     if (tp->pid == 2) {
       printf("\ninput task: %s\n", task_states_human[tp->state]);
