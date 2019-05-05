@@ -160,18 +160,18 @@ struct task *kmt_sched() {
   Assert(spinlock_holding(&task_lock), "Not holding the task lock!");
   Log("========== TASKS ==========");
   struct task *ret = NULL;
-  printf("\ninterrupt by cpu %d\n", _cpu());
+  //printf("\ninterrupt by cpu %d\n", _cpu());
   struct task *cur = NULL;
-  if ((cur = get_current_task()) != NULL) {
-    printf("interrupter task is %d:%s", cur->pid, cur->name);
-  }
+  //if ((cur = get_current_task()) != NULL) {
+  //  printf("interrupter task is %d:%s", cur->pid, cur->name);
+  //}
   for (struct task *tp = &root_task; tp != NULL; tp = tp->next) {
-    if (tp->pid == 2) {
-      printf("input task: %s\n", task_states_human[tp->state]);
-    }
-    if (tp->pid == 3) {
-      printf("tty task: %s\n", task_states_human[tp->state]);
-    }
+    //if (tp->pid == 2) {
+    //  printf("input task: %s\n", task_states_human[tp->state]);
+    //}
+    //if (tp->pid == 3) {
+    //  printf("tty task: %s\n", task_states_human[tp->state]);
+    //}
     kmt_inspect_fence(tp);
     Log("%d:%s [%s, L%d, C%d]", tp->pid, tp->name,task_states_human[tp->state], tp->owner, tp->count);
     if (tp->state == ST_E || tp->state == ST_W) {  // choose a waken up task
