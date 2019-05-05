@@ -25,7 +25,7 @@ _Context* do_syscall(_Event ev, _Context *context) {
   }
 
   context->GPRx = ret;
-  CLog(FG_YELLOW, "Syscall finished.");
+  CLog(FG_YELLOW, "Syscall %d finished.", a[0]);
 
   return NULL;
 }
