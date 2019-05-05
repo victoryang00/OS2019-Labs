@@ -36,21 +36,21 @@ void producer(void *arg) {
   }
 }
 
-static void os_init_locks() {
+static void os_init() {
   spinlock_init(&printf_lock, "Printf SPIN LOCK");
   spinlock_init(&os_trap_lock, "OS TRAP SPIN LOCK");
-}
-
-static void os_init() {
-  os_init_locks();
   CLog(BG_GREEN, "locks ok");
+
   pmm->init();
   CLog(BG_GREEN, "pmm ok");
+
   kmt->init();
   CLog(BG_GREEN, "kmt ok");
+
   //_vme_init(pmm->alloc, pmm->free);
   //CLog(BG_GREEN, "vme ok");
   //CLog(BG_RED, "vme not enabled!!!!!!");
+  
   dev->init();
   CLog(BG_GREEN, "dev ok");
 
@@ -60,7 +60,7 @@ static void os_init() {
   kmt->sem_init(&sem_p, "Producer SEM", 5);
   kmt->sem_init(&sem_c, "Customer SEM", 0);
   kmt->sem_init(&mutex, "Producer-Customer MUTEX", 1);
-  for (int i = 0; i < 2; ++i) {
+  for (int i = 0; i < 0; ++i) {
     kmt->create(pmm->alloc(sizeof(task_t)), "Producer Task", producer, NULL);
     kmt->create(pmm->alloc(sizeof(task_t)), "Customer Task", customer, NULL);
   }
