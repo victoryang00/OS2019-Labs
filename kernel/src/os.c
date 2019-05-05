@@ -76,7 +76,7 @@ static void os_run() {
 }
 
 static _Context *os_trap(_Event ev, _Context *context) {
-  if (ev.event == _EVENT_IRQ_TIMER) {
+  if (ev.event == _EVENT_IRQ_TIMER || ev.event == _EVENT_IRQ_IODEV) {
     if (!_intr_read()) {
       return context;
     }
