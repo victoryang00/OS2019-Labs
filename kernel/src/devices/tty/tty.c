@@ -90,7 +90,7 @@ static void tty_render(tty_t *tty) {
   struct character *ch = tty->buf;
   uint8_t *d = tty->dirty;
   kmt->sem_wait(&tty->lock);
-  printf(">01 tty lock acquired\n");
+  //printf(">01 tty lock acquired\n");
   for (int y = 0; y < tty->lines; y++) {
     for (int x = 0; x < tty->columns; x++) {
       if (*d) {
@@ -107,7 +107,7 @@ static void tty_render(tty_t *tty) {
     }
   }
   kmt->sem_signal(&tty->lock);
-  printf(">02 tty lock released\n");
+  //printf(">02 tty lock released\n");
 }
 
 static void tty_mark(tty_t *tty, struct character *ch) {
@@ -211,14 +211,14 @@ ssize_t tty_read(device_t *dev, off_t offset, void *buf, size_t count) {
 ssize_t tty_write(device_t *dev, off_t offset, const void *buf, size_t count) {
   tty_t *tty = dev->ptr;
   kmt->sem_wait(&tty->lock);
-  printf("=>1 write lock acquired\n");
+  //printf("=>1 write lock acquired\n");
   for (size_t i = 0; i < count; i++) {
     tty_putc(tty, ((const char *)buf)[i]);
   }
   kmt->sem_signal(&tty->lock);
-  printf("=>2 write lock released\n");
+  //printf("=>2 write lock released\n");
   tty_render(tty);
-  printf("=>3 tty rendered\n");
+  //printf("=>3 tty rendered\n");
   return count;
 }
 
@@ -236,9 +236,9 @@ void tty_task(void *arg) {
   tty_render(ttydev->ptr);
   while (1) {
     struct input_event ev;
-    printf(">>> waiting for input\n");
+    //printf(">>> waiting for input\n");
     int nread = in->ops->read(in, 0, &ev, sizeof(ev));
-    printf("<<< handling new input\n");
+    //printf("<<< handling new input\n");
     if (nread > 0) {
       if (ev.alt) {
         device_t *next = ttydev;
@@ -276,6 +276,6 @@ void tty_task(void *arg) {
     } else {
       panic("error");
     }
-    printf("=== input handle complete\n");
+    //printf("=== input handle complete\n");
   }
 }
