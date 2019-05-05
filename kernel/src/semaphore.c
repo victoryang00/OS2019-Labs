@@ -16,7 +16,9 @@ void semaphore_wait(struct semaphore *sem) {
   //Log("Waiting for semaphore %s (%d)", sem->name, sem->value);
   while (sem->value <= 0) {
     // SYSCALL: go to sleep
-    asm volatile ("int $0x80" : : "a"(SYS_sem_wait), "b"(sem), "c"(&sem->lock));
+    spinlock_release(&sem->lock);
+    asm volatile ("int $0x80" : : "a"(SYS_sem_wait), "b"(sem));
+    spinlock_acquire(&sem->lock);
   }
   --sem->value;
   spinlock_release(&sem->lock);

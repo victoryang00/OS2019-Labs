@@ -36,7 +36,6 @@ struct task {
   char fenceB[32];
 
   void *alarm;
-  struct spinlock *sem_lock;
 
   struct task *next;
 };
@@ -50,7 +49,7 @@ _Context *kmt_context_save(_Event, _Context *);
 _Context *kmt_context_switch(_Event, _Context *);
 struct task *kmt_sched();
 _Context *kmt_yield(_Event, _Context *);
-void kmt_sem_sleep(void *, struct spinlock *);
+void kmt_sem_sleep(void *);
 void kmt_sem_wakeup(void *);
 
 #endif

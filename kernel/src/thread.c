@@ -139,11 +139,6 @@ _Context *kmt_context_switch(_Event ev, _Context *context) {
     kmt_inspect_fence(cur);
     ret = cur->context;
     cur->context = NULL;
-    if (cur->alarm) {
-      // wake-up procedure
-      cur->alarm = NULL;
-      spinlock_acquire(cur->sem_lock);
-    }
     Log("Context for task %d: %s loaded.", cur->pid, cur->name);
   } else {
     ret = context;
@@ -195,7 +190,7 @@ _Context *kmt_yield(_Event ev, _Context *context) {
   return NULL;
 }
 
-void kmt_sem_sleep(void *alarm, struct spinlock *lock) {
+void kmt_sem_sleep(void *alarm) {
   struct task *cur = get_current_task();
   Assert(cur != NULL, "NULL task is going to sleep.");
   Assert(alarm != NULL, "Sleep without a alarm (semaphore).");
@@ -217,7 +212,6 @@ void kmt_sem_sleep(void *alarm, struct spinlock *lock) {
     next->state = ST_R;
     next->count = next->count >= 1000 ? 0 : next->count + 1;
     set_current_task(next);
-    spinlock_release(lock);
   }
   __sync_synchronize();
   spinlock_release(&task_lock);
