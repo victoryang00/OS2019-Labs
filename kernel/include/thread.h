@@ -44,7 +44,7 @@ struct alarm_log {
   void *alarm;
   struct task *issuer;
   struct alarm_log *next;
-}
+};
 
 void kmt_init();
 int kmt_create(struct task *, const char *, void (*)(void *), void *);
