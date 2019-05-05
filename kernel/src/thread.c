@@ -32,6 +32,7 @@ static const char *task_states_human[8] __attribute__((used)) = {
 
 struct spinlock task_lock;
 struct task root_task;
+struct alarm_log alarm_head;
 
 static struct task *cpu_tasks[MAX_CPU] = {};
 static inline struct task *get_current_task() {
@@ -196,27 +197,46 @@ uintptr_t kmt_sem_sleep(void *alarm) {
   Assert(alarm != NULL, "Sleep without a alarm (semaphore).");
 
   spinlock_acquire(&task_lock);
-  CLog(BG_CYAN, "Thread %d going to sleep", cur->pid);
-  cur->alarm = alarm;
-  cur->state = ST_S; 
-  
+  bool already_alarmed = false;
+  struct alarm_log *ap = alarm_head.next;
+  struct alarm_log *an = NULL;
+  alarm_head.next = NULL;
+  while (ap) {
+    an = ap->next;
+    if (ap->alarm == alarm) already_alarmed = true;
+    if (ap->issuer != cur) {
+      pmm->free(ap);
+    } else {
+      ap->next = alarm_head.next;
+      alarm_head.next = ap;
+    }
+    ap = an;
+  }
+
   struct task *next = kmt_sched();
-  if (!next) {
+  if (!next || already_alarmed) {
     cur->state = ST_R;
-    cur->count = cur->count >= 1000 ? 0 : cur->count + 1;
+    cur->count = cur->count >= 1000 ? 0 : cur->couont + 1; 
   } else {
-    Log("Switching to task %d:%s", next->pid, next->name);
+    cur->state = ST_S;
     next->state = ST_R;
     next->count = next->count >= 1000 ? 0 : next->count + 1;
     set_current_task(next);
   }
-
   spinlock_release(&task_lock);
   return 0;
 }
 
 uintptr_t kmt_sem_wakeup(void *alarm) {
   spinlock_acquire(&task_lock);
+  
+  struct alarm_log *ap = pmm->alloc(sizeof(struct alarm_log));
+  ap->alarm = alarm;
+  ap->issuer = get_current_task();
+  ap->next = &alarm_head.next;
+  alarm_head.next = ap;
+  Assert(ap->issuer, "NULL task cannot wakeup others");
+
   for (struct task *tp = &root_task; tp != NULL; tp = tp->next) {
     if (tp->state == ST_S && tp->alarm == alarm) {
       tp->state = ST_W; // wake up
