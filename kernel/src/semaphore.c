@@ -1,5 +1,6 @@
 #include <common.h>
 #include <thread.h>
+#include <syscall.h>
 #include <spinlock.h>
 #include <semaphore.h>
 #include <debug.h>
