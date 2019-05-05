@@ -219,6 +219,7 @@ uintptr_t kmt_sem_sleep(void *alarm) {
     cur->count = cur->count >= 1000 ? 0 : cur->count + 1; 
   } else {
     cur->state = ST_S;
+    cur->alarm = alarm;
     next->state = ST_R;
     next->count = next->count >= 1000 ? 0 : next->count + 1;
     set_current_task(next);
