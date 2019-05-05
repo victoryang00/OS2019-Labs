@@ -226,6 +226,10 @@ uintptr_t kmt_sem_sleep(void *alarm) {
   struct task *next = kmt_sched();
   if (!next || already_alarmed) {
     if (cur->pid == 2) {
+      printf("input not falling sleep because %s\n", next ? "already alarmed" : "no next task");
+    }
+    CLog(FG_YELLOW, "No next task or already alarmed");
+    if (cur->pid == 3) {
       printf("tty not falling sleep because %s\n", next ? "already alarmed" : "no next task");
     }
     CLog(FG_YELLOW, "No next task or already alarmed");
