@@ -204,7 +204,7 @@ uintptr_t kmt_sem_sleep(void *alarm) {
   while (ap) {
     an = ap->next;
     if (ap->alarm == alarm) already_alarmed = true;
-    if (ap->issuer != cur) {
+    if (ap->issuer == cur) {
       pmm->free(ap);
     } else {
       ap->next = alarm_head.next;
