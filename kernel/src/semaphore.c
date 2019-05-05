@@ -16,7 +16,6 @@ void semaphore_wait(struct semaphore *sem) {
   while (sem->value <= 0) {
     spinlock_release(&sem->lock);
     asm volatile ("int $0x80" : : "a"(SYS_sem_wait), "b"(sem));
-    printf("waken up");
     spinlock_acquire(&sem->lock);
   }
   --sem->value;

@@ -219,9 +219,6 @@ uintptr_t kmt_sem_sleep(void *alarm) {
 
   struct task *next = kmt_sched();
   if (!next || already_alarmed) {
-    if (next && cur->pid == 2) {
-      printf("\ntty not sleeping\n");
-    }
     CLog(FG_YELLOW, "No next task or already alarmed");
     cur->state = ST_R;
     cur->count = cur->count >= 1000 ? 0 : cur->count + 1; 
@@ -238,8 +235,6 @@ uintptr_t kmt_sem_sleep(void *alarm) {
 }
 
 uintptr_t kmt_sem_wakeup(void *alarm) {
-  spinlock_acquire(&task_lock);
-  
   struct alarm_log *ap = pmm->alloc(sizeof(struct alarm_log));
   ap->alarm = alarm;
   ap->issuer = get_current_task();
@@ -251,8 +246,6 @@ uintptr_t kmt_sem_wakeup(void *alarm) {
     if (tp->state == ST_S && tp->alarm == alarm) {
       CLog(FG_YELLOW, "waked up task pid %d", tp->pid);
       tp->state = ST_W; // wake up
-    } else {
-      CLog(FG_YELLOW, "not waking up task %d: %s, state %s, current alarm %p, waiting alarm %p", tp->pid, tp->name, task_states_human[tp->state], alarm, tp->alarm);
     }
   }
   spinlock_release(&task_lock);
