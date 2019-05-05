@@ -51,13 +51,13 @@ static void os_init() {
   //CLog(BG_GREEN, "vme ok");
   //CLog(BG_RED, "vme not enabled!!!!!!");
   
-  dev->init();
+  //dev->init();
   CLog(BG_GREEN, "dev ok");
 
   //create proc here
   // FOR TEST PURPOSE
   // REMOVE WHEN TEST IS PASSED
-  kmt->sem_init(&sem_p, "Producer SEM", 5);
+  kmt->sem_init(&sem_p, "Producer SEM", 20);
   kmt->sem_init(&sem_c, "Customer SEM", 0);
   kmt->sem_init(&mutex, "Producer-Customer MUTEX", 1);
   for (int i = 0; i < 8; ++i) {
