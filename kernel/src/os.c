@@ -105,7 +105,7 @@ static _Context *os_trap(_Event ev, _Context *context) {
   //Log("Current context: %p", context);
   //Log("   Next context: %p", ret);
   
-  for (int i = 0; i < 100; ++i) {
+  for (int i = 0; i < 10000; ++i) {
     asm volatile ("nop" : : );
   }
 
