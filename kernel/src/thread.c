@@ -161,6 +161,9 @@ struct task *kmt_sched() {
   Log("========== TASKS ==========");
   struct task *ret = NULL;
   printf("\ninterrupt by cpu %d\n", _cpu());
+  if ((struct task *cur = get_current_task()) != NULL) {
+    printf("interrupter task is %d:%s", cur->pid, cur->name);
+  }
   for (struct task *tp = &root_task; tp != NULL; tp = tp->next) {
     if (tp->pid == 2) {
       printf("input task: %s\n", task_states_human[tp->state]);
