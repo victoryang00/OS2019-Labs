@@ -139,6 +139,11 @@ _Context *kmt_context_switch(_Event ev, _Context *context) {
     kmt_inspect_fence(cur);
     ret = cur->context;
     cur->context = NULL;
+    if (cur->alarm) {
+      // wake-up procedure
+      cur->alarm = NULL;
+      spinlock_acquire(cur->sem_lock);
+    }
     Log("Context for task %d: %s loaded.", cur->pid, cur->name);
   } else {
     ret = context;
@@ -196,46 +201,26 @@ void kmt_sem_sleep(void *alarm, struct spinlock *lock) {
   Assert(alarm != NULL, "Sleep without a alarm (semaphore).");
   Assert(lock != NULL, "Sleep without a lock.");
 
-  // MUST acquire the tasks lock
-  // before giving up the one we are holding
-  // OTHERWISE MAY MISS WAKEUPS (DEADLOCK)
-  // TODO: IS THERE OTHER TYPES OF DEADLOCK?
-  if (lock != &task_lock) {
-    spinlock_acquire(&task_lock);
-    spinlock_release(lock);
-  }
-  Assert(spinlock_holding(&task_lock), "Not holding the task lock");
-
+  spinlock_acquire(&task_lock);
   CLog(BG_CYAN, "Thread %d going to sleep", cur->pid);
   cur->alarm = alarm;
+  cur->sem_lock = lock;
   cur->state = ST_S; 
   
   __sync_synchronize();
   struct task *next = kmt_sched();
   if (!next) {
-    if (cur) {
-      cur->state = ST_R;
-      cur->count = cur->count >= 1000 ? 0 : cur->count + 1;
-    }
+    cur->state = ST_R;
+    cur->count = cur->count >= 1000 ? 0 : cur->count + 1;
   } else {
     Log("Switching to task %d:%s", next->pid, next->name);
-    //Log("Entry: %p", next->context->eip);
-    if (cur) {
-      if (cur->state == ST_R) {
-        cur->state = ST_W;
-      }
-    }
-    next->state = ST_R; // set the next as running
+    next->state = ST_R;
     next->count = next->count >= 1000 ? 0 : next->count + 1;
     set_current_task(next);
+    spinlock_release(lock);
   }
   __sync_synchronize();
-  
-  Assert(spinlock_holding(&task_lock), "Not holding the task lock");
-  if (lock != &task_lock) {
-    spinlock_release(&task_lock);
-    spinlock_acquire(lock);
-  }
+  spinlock_release(&task_lock);
 }
 
 void kmt_sem_wakeup(void *alarm) {
