@@ -76,7 +76,7 @@ static void os_run() {
 }
 
 static _Context *os_trap(_Event ev, _Context *context) {
-  if (ev.event == _EVENT_IRQ_TIMER || ev.event == _EVENT_IRQ_IODEV) {
+  if (ev.event == _EVENT_IRQ_TIMER) {
     if (!_intr_read()) {
       return context;
     }
@@ -88,7 +88,8 @@ static _Context *os_trap(_Event ev, _Context *context) {
   CLog(BG_CYAN, "Event %d: %s", ev.event, ev.msg);
   if (ev.event == _EVENT_IRQ_IODEV) printf("\n\n");
 
-  spinlock_acquire(&os_trap_lock);
+  bool holding = spinlock_holding(&os_trap_lock);
+  if (!holding) spinlock_acquire(&os_trap_lock);
   CLog(FG_CYAN, "Lock acquired. Begin trap process.");
   _Context *ret = NULL;
   for (struct os_handler *hp = root_handler.next; hp != NULL; hp = hp->next) {
@@ -99,7 +100,7 @@ static _Context *os_trap(_Event ev, _Context *context) {
     }
   }
   CLog(FG_CYAN, "Lock released. Trap process finished.");
-  spinlock_release(&os_trap_lock);
+  if (!holding) spinlock_release(&os_trap_lock);
 
   Assert(ret != NULL, "Returning to a null context after trap.");
   //Log("Current context: %p", context);

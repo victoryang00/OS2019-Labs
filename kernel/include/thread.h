@@ -30,7 +30,7 @@ struct task {
   uint32_t owner;
   uint32_t count;
 
-  _Context *context;
+  struct context_item context_head;
   char fenceA[32];
   char stack[4096];
   char fenceB[32];
@@ -38,6 +38,11 @@ struct task {
   void *alarm;
 
   struct task *next;
+};
+
+struct context_item {
+  _Context *context;
+  struct context_item *next;
 };
 
 struct alarm_log {
