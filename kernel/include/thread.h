@@ -49,7 +49,11 @@ _Context *kmt_context_save(_Event, _Context *);
 _Context *kmt_context_switch(_Event, _Context *);
 struct task *kmt_sched();
 _Context *kmt_yield(_Event, _Context *);
-void kmt_sem_sleep(void *);
-void kmt_sem_wakeup(void *);
+
+// ----------------------------------------------------------------------------
+// syscalls
+
+uintptr_t kmt_sem_sleep(void *);
+uintptr_t kmt_sem_wakeup(void *);
 
 #endif

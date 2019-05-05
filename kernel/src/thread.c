@@ -190,7 +190,7 @@ _Context *kmt_yield(_Event ev, _Context *context) {
   return NULL;
 }
 
-void kmt_sem_sleep(void *alarm) {
+uintptr_t kmt_sem_sleep(void *alarm) {
   struct task *cur = get_current_task();
   Assert(cur != NULL, "NULL task is going to sleep.");
   Assert(alarm != NULL, "Sleep without a alarm (semaphore).");
@@ -200,7 +200,6 @@ void kmt_sem_sleep(void *alarm) {
   cur->alarm = alarm;
   cur->state = ST_S; 
   
-  __sync_synchronize();
   struct task *next = kmt_sched();
   if (!next) {
     cur->state = ST_R;
@@ -211,11 +210,12 @@ void kmt_sem_sleep(void *alarm) {
     next->count = next->count >= 1000 ? 0 : next->count + 1;
     set_current_task(next);
   }
-  __sync_synchronize();
+
   spinlock_release(&task_lock);
+  return 0;
 }
 
-void kmt_sem_wakeup(void *alarm) {
+uintptr_t kmt_sem_wakeup(void *alarm) {
   spinlock_acquire(&task_lock);
   for (struct task *tp = &root_task; tp != NULL; tp = tp->next) {
     if (tp->state == ST_S && tp->alarm == alarm) {
@@ -223,6 +223,7 @@ void kmt_sem_wakeup(void *alarm) {
     }
   }
   spinlock_release(&task_lock);
+  return 0;
 }
 
 MODULE_DEF(kmt) {
