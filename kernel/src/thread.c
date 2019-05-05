@@ -194,12 +194,10 @@ void kmt_sem_sleep(void *alarm) {
   struct task *cur = get_current_task();
   Assert(cur != NULL, "NULL task is going to sleep.");
   Assert(alarm != NULL, "Sleep without a alarm (semaphore).");
-  Assert(lock != NULL, "Sleep without a lock.");
 
   spinlock_acquire(&task_lock);
   CLog(BG_CYAN, "Thread %d going to sleep", cur->pid);
   cur->alarm = alarm;
-  cur->sem_lock = lock;
   cur->state = ST_S; 
   
   __sync_synchronize();
