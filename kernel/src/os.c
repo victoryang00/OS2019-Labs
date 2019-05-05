@@ -104,6 +104,11 @@ static _Context *os_trap(_Event ev, _Context *context) {
   Assert(ret != NULL, "Returning to a null context after trap.");
   //Log("Current context: %p", context);
   //Log("   Next context: %p", ret);
+  
+  for (int i = 0; i < 100; ++i) {
+    asm volatile ("nop" : : );
+  }
+
   return ret;
 }
 
