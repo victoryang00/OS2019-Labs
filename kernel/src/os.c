@@ -12,6 +12,7 @@ static struct os_handler root_handler = {
   0, _EVENT_NULL, NULL, NULL
 };
 
+/*
 sem_t sem_p;
 sem_t sem_c;
 sem_t mutex;
@@ -35,6 +36,7 @@ void producer(void *arg) {
     kmt->sem_signal(&sem_c);
   }
 }
+*/
 
 static void os_init() {
   spinlock_init(&printf_lock, "Printf SPIN LOCK");
@@ -55,15 +57,13 @@ static void os_init() {
   CLog(BG_GREEN, "dev ok");
 
   //create proc here
-  // FOR TEST PURPOSE
-  // REMOVE WHEN TEST IS PASSED
-  kmt->sem_init(&sem_p, "Producer SEM", 20);
-  kmt->sem_init(&sem_c, "Customer SEM", 0);
-  kmt->sem_init(&mutex, "Producer-Customer MUTEX", 1);
-  for (int i = 0; i < 1; ++i) {
-    kmt->create(pmm->alloc(sizeof(task_t)), "Producer Task", producer, NULL);
-    kmt->create(pmm->alloc(sizeof(task_t)), "Customer Task", customer, NULL);
-  }
+  //kmt->sem_init(&sem_p, "Producer SEM", 20);
+  //kmt->sem_init(&sem_c, "Customer SEM", 0);
+  //kmt->sem_init(&mutex, "Producer-Customer MUTEX", 1);
+  //for (int i = 0; i < 1; ++i) {
+  //  kmt->create(pmm->alloc(sizeof(task_t)), "Producer Task", producer, NULL);
+  //  kmt->create(pmm->alloc(sizeof(task_t)), "Customer Task", customer, NULL);
+  //}
 }
 
 static void os_run() {
