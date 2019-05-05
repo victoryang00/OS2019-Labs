@@ -17,7 +17,7 @@ static void push_event(input_t *in, struct input_event ev) {
   in->events[in->rear] = ev;
   in->rear = (in->rear + 1) % NEVENTS;
   if (in->rear == in->front) { Panic("input queue full"); }
-  CLog(FG_RED, "EVENT PUSHED! <<<<<<<<<");
+  printf("\nEVENT PUSHED! <<<<<<<<< %d\n", in->rear - in->front);
   kmt->spin_unlock(&in->lock);
   kmt->sem_signal(&in->event_sem);
 }
@@ -29,7 +29,7 @@ static struct input_event pop_event(input_t *in) {
   int idx = in->front;
   in->front = (in->front + 1) % NEVENTS;
   struct input_event ret = in->events[idx];
-  CLog(FG_RED, "EVENT POPED! >>>>>>>>>>");
+  printf("\nEVENT POPED! >>>>>>>>>> %d\n", in->read - in->front);
   kmt->spin_unlock(&in->lock);
   return ret;
 }
