@@ -271,5 +271,6 @@ void tty_task(void *arg) {
     } else {
       panic("error");
     }
+    printf("=== input handle complete\n");
   }
 }
