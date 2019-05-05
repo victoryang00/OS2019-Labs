@@ -242,11 +242,6 @@ void kmt_sem_sleep(void *alarm, struct spinlock *lock) {
 
 void kmt_sem_wakeup(void *alarm) {
   spinlock_acquire(&task_lock);
-  struct alarm_log *log = pmm->alloc(sizeof(struct alarm_log));
-  log->alarm = alarm;
-  log->issuer = get_current_task();
-  log->next = alarm_log_head.next;
-  alarm_log_head.next = log;
   for (struct task *tp = &root_task; tp != NULL; tp = tp->next) {
     if (tp->state == ST_S && tp->alarm == alarm) {
       tp->state = ST_W; // wake up
