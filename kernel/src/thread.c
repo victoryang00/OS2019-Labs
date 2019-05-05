@@ -258,7 +258,6 @@ uintptr_t kmt_sem_wakeup(void *alarm) {
   ap->issuer = get_current_task();
   ap->next = alarm_head.next;
   alarm_head.next = ap;
-  Assert(ap->issuer, "NULL task cannot wakeup others");
 
   for (struct task *tp = &root_task; tp != NULL; tp = tp->next) {
     if (tp->state == ST_S && tp->alarm == alarm) {
