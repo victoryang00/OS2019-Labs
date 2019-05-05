@@ -216,7 +216,7 @@ uintptr_t kmt_sem_sleep(void *alarm) {
   struct task *next = kmt_sched();
   if (!next || already_alarmed) {
     cur->state = ST_R;
-    cur->count = cur->count >= 1000 ? 0 : cur->couont + 1; 
+    cur->count = cur->count >= 1000 ? 0 : cur->count + 1; 
   } else {
     cur->state = ST_S;
     next->state = ST_R;
@@ -233,7 +233,7 @@ uintptr_t kmt_sem_wakeup(void *alarm) {
   struct alarm_log *ap = pmm->alloc(sizeof(struct alarm_log));
   ap->alarm = alarm;
   ap->issuer = get_current_task();
-  ap->next = &alarm_head.next;
+  ap->next = alarm_head.next;
   alarm_head.next = ap;
   Assert(ap->issuer, "NULL task cannot wakeup others");
 
