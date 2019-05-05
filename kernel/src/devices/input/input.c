@@ -29,7 +29,7 @@ static struct input_event pop_event(input_t *in) {
   int idx = in->front;
   in->front = (in->front + 1) % NEVENTS;
   struct input_event ret = in->events[idx];
-  printf("\nEVENT POPED! >>>>>>>>>> %d\n", in->read - in->front);
+  printf("\nEVENT POPED! >>>>>>>>>> %d\n", in->rear - in->front);
   kmt->spin_unlock(&in->lock);
   return ret;
 }
