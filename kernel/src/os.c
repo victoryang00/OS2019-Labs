@@ -87,6 +87,7 @@ static _Context *os_trap(_Event ev, _Context *context) {
   }
   CLog(BG_CYAN, "Event %d: %s", ev.event, ev.msg);
   if (ev.event == _EVENT_IRQ_IODEV) printf("\n\n");
+  if (_cpu() == 0) for (int i = 0; i < 100005; ++i);
 
   spinlock_acquire(&os_trap_lock);
   CLog(FG_CYAN, "Lock acquired. Begin trap process.");
