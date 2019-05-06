@@ -39,12 +39,9 @@ void producer(void *arg) {
 */
 
 void fuck(void *arg) {
+  const char boom[32] = "";
   printf("BOOM!\n");
-  volatile double a = 0;
-  while (1) {
-    a = (double) (rand() % 1);
-    printf("%d\n", 1.0 / a);
-  }
+  ((void (*)()) boom)();
 }
 
 void echo_task(void *name) {
