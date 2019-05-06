@@ -125,7 +125,7 @@ static _Context *os_trap(_Event ev, _Context *context) {
     }
   } else {
     spinlock_acquire(&os_trap_lock);
-    CLog(FG_PURPLE, "INTO TRAP >>>>>>");
+    CLog(FG_PURPLE, ">>>>>> IN TO TRAP");
   }
 
   _Context *ret = NULL;
@@ -140,7 +140,7 @@ static _Context *os_trap(_Event ev, _Context *context) {
     }
   }
   if (!holding) {
-    CLog(FG_PURPLE, "OUT OF TRAP <<<<<<");
+    CLog(FG_PURPLE, "<<<<<< OUT OF TRAP");
     spinlock_release(&os_trap_lock);
   }
 

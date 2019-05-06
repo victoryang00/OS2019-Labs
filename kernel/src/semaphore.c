@@ -27,5 +27,6 @@ void semaphore_signal(struct semaphore *sem) {
   ++sem->value;
   __sync_synchronize();
   asm volatile ("int $0x80" : : "a"(SYS_wakeup), "b"(sem));
+  printf("signal OK\n");
   spinlock_release(&sem->lock);
 }
