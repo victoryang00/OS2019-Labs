@@ -98,6 +98,7 @@ static void os_run() {
 
 static _Context *os_trap(_Event ev, _Context *context) {
   CLog(BG_CYAN, "Event %d: %s", ev.event, ev.msg);
+  if (ev.event == _EVENT_IRQ_IODEV) printf("\n\nIO\n\n");
 
   bool holding = spinlock_holding(&os_trap_lock);
   if (holding) {
@@ -105,7 +106,6 @@ static _Context *os_trap(_Event ev, _Context *context) {
       case _EVENT_IRQ_TIMER:
         Panic("No timer interrupt during trap.");
       case _EVENT_IRQ_IODEV:
-        printf("\n\n\nIODEV\n");
         break;
       case _EVENT_YIELD:
         Panic("No yield inside trap.");
