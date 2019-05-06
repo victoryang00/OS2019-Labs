@@ -62,10 +62,10 @@ void kmt_init() {
 
   // add trap handlers
   os->on_irq(INT_MIN, _EVENT_NULL,      kmt_context_save);
+  os->on_irq(-1,      _EVENT_ERROR,     kmt_error);
   os->on_irq(0,       _EVENT_YIELD,     kmt_yield);
   os->on_irq(1,       _EVENT_IRQ_TIMER, kmt_yield);
   os->on_irq(2,       _EVENT_SYSCALL,   do_syscall);
-  os->on_irq(3,       _EVENT_ERROR,     kmt_reset);
   os->on_irq(INT_MAX, _EVENT_NULL,      kmt_context_switch);
 }
 
@@ -207,35 +207,10 @@ _Context *kmt_yield(_Event ev, _Context *context) {
   return NULL;
 }
 
-_Context *kmt_reset(_Event ev, _Context *context) {
-  spinlock_acquire(&task_lock);
+_Context *kmt_error(_Event ev, _Context *context) {
   Assert(ev.event = _EVENT_ERROR, "Not an error interrupt");
   printf("\nError detected: %s\n", ev.msg);
-  CLog(BG_RED, "Error detected: %s", ev.msg);
-  
-  struct task *cur = get_current_task();
-  Assert(cur, "Error in null task.");
-  Assert(cur->state == ST_R, "Error when a task is not running.");
-  struct context_item *cp = cur->context_head.next;
-  struct context_item *cn = NULL;
-  while (cp) {
-    cn = cp->next;
-    pmm->free(cp);
-    cp = cn;
-  }
-
-  _Area stack = {
-    (void *) cur->stack,
-    (void *) cur->stack + sizeof(cur->stack)
-  };
-  cp = pmm->alloc(sizeof(struct context_item));
-  cp->context = _kcontext(stack, cur->entry, cur->arg);
-  cp->next = NULL;
-  cur->context_head.next = cp;
-
-  spinlock_release(&task_lock);
-  printf("Task reset.\n");
-  CLog(BG_RED, "Task reset.");
+  //CLog(BG_RED, "Error detected: %s", ev.msg);
   return NULL;
 }
 
