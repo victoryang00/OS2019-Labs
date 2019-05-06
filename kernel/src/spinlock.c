@@ -54,6 +54,14 @@ bool spinlock_holding(struct spinlock *lk) {
   return res;
 }
 
+bool spinlock_isfree(struct spinlock *lk) {
+  bool res = 0;
+  spinlock_pushcli();
+  res = lk->locked;
+  spinlock_popcli();
+  return res;
+}
+
 void spinlock_pushcli() {
   int eflags = get_efl();
   

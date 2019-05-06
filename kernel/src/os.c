@@ -96,6 +96,9 @@ static void os_run() {
 }
 
 static _Context *os_trap(_Event ev, _Context *context) {
+  if (!spinlock_isfree(&os_trap_lock)) {
+    if (ev.event == _EVENT_IRQ_TIMER) return context;
+  }
   CLog(BG_CYAN, "Event %d: %s", ev.event, ev.msg);
 
   bool holding = spinlock_holding(&os_trap_lock);
