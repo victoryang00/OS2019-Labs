@@ -23,11 +23,6 @@ enum task_states {
   ST_X  // Special
 };
 
-struct context_item {
-  _Context *context;
-  struct context_item *next;
-};
-
 struct alarm_log {
   void *alarm;
   struct task *issuer;
@@ -43,8 +38,8 @@ struct task {
   enum task_states state;
   uint32_t owner;
   uint32_t count;
+  _Context *context;
 
-  struct context_item context_head;
   char fenceA[32];
   char stack[4096];
   char fenceB[32];

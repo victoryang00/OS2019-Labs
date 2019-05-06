@@ -30,10 +30,10 @@ static const char *task_states_human[8] __attribute__((used)) = {
   "Special"
 };
 
-struct spinlock task_lock;
 struct task root_task;
 struct alarm_log alarm_head;
 
+_Contexts *null_contexts[MAX_CPU] = {};
 struct task *cpu_tasks[MAX_CPU] = {};
 static inline struct task *get_current_task() {
   return cpu_tasks[_cpu()];
@@ -44,12 +44,6 @@ static inline void set_current_task(struct task *task) {
 }
 
 void kmt_init() {
-  memset(cpu_tasks, 0x00, sizeof(cpu_tasks));
-  spinlock_init(&task_lock,       "Task Lock");
-  
-  __sync_synchronize();
-
-  spinlock_acquire(&task_lock);
   root_task.pid   = next_pid++;
   root_task.name  = "Root Task";
   root_task.state = ST_X;
@@ -58,7 +52,6 @@ void kmt_init() {
   memset(root_task.stack,  FILL_STACK, sizeof(root_task.stack));
   memset(root_task.fenceB, FILL_FENCE, sizeof(root_task.fenceB));
   kmt_inspect_fence(&root_task);
-  spinlock_release(&task_lock);
 
   // add trap handlers
   os->on_irq(INT_MIN, _EVENT_NULL,      kmt_context_save);
@@ -96,23 +89,18 @@ int kmt_create(struct task *task, const char *name, void (*entry)(void *arg), vo
   cp->next = NULL;
   task->context_head.next = cp;
 
-  spinlock_acquire(&task_lock);
   struct task *tp = &root_task;
   while (tp->next) tp = tp->next;
   tp->next = task;
-  spinlock_release(&task_lock);
 
   return task->pid;
 }
 
 void kmt_teardown(struct task *task) {
-  spinlock_acquire(&task_lock);
   struct task *tp = &root_task;
   while (tp->next && tp->next != task) tp = tp->next;
   Assert(tp->next && tp->next == task, "Task is not in linked list!");
   tp->next = task->next;
-  spinlock_release(&task_lock);
-
   pmm->free(task);
 }
 
@@ -122,55 +110,41 @@ void kmt_inspect_fence(struct task *task) {
 }
 
 _Context *kmt_context_save(_Event ev, _Context *context) {
-  //Log("KMT Context Save");
-  spinlock_acquire(&task_lock);
   struct task *cur = get_current_task();
   if (cur) {
-    struct context_item *cp = pmm->alloc(sizeof(struct context_item));
-    cp->context = context;
-    cp->next = cur->context_head.next;
-    cur->context_head.next = cp;
-    Log("Context for task %d: %s saved.", cur->pid, cur->name);
+    Assert(!cur->context, "double context saving for task %d: %s", cur->pid, cur->name);
+    cur->context = context;
+  } else {
+    Assert(!null_contexts[_cpu()], "double context saving for null context");
+    null_contexts[_cpu()] = context;
   }
-  spinlock_release(&task_lock);
   return NULL;
 }
 
 _Context *kmt_context_switch(_Event ev, _Context *context) {
-  //Log("KMT Context Switch");
-  spinlock_acquire(&task_lock);
   _Context *ret = NULL;
   struct task *cur = get_current_task();
   if (cur) {
     kmt_inspect_fence(cur);
-    struct context_item *cp = cur->context_head.next;
-    Assert(cp, "task has no context to load");
-    cur->context_head.next = cp->next;
-    ret = cp->context;
-    pmm->free(cp);
-    Log("Context for task %d: %s loaded.", cur->pid, cur->name);
+    ret = cur->context;
+    cur->context = NULL;
+    Assert(ret, "task context is empty");
   } else {
-    ret = context;
+    ret = null_contexts[_cpu()];
+    null_contexts[_cpu()] = null;
+    Assert(ret, "null context is empty");
   }
-  Assert(ret, "BAD SAVED CONTEXT");
-  spinlock_release(&task_lock);
   return ret;
 }
 
 struct task *kmt_sched() {
-  Assert(spinlock_holding(&task_lock), "Not holding the task lock!");
   Log("========== TASKS ==========");
   struct task *ret = NULL;
-  //printf("\ninterrupt by cpu %d\n", _cpu());
-  //struct task *cur = NULL;
-  //if ((cur = get_current_task()) != NULL) {
-  //  printf("interrupter task is %d:%s", cur->pid, cur->name);
-  //}
   for (struct task *tp = &root_task; tp != NULL; tp = tp->next) {
     kmt_inspect_fence(tp);
     Log("%d:%s [%s, L%d, C%d]", tp->pid, tp->name, task_states_human[tp->state], tp->owner, tp->count);
-    if (tp->state == ST_E || tp->state == ST_W) {  // choose a waken up task
-      if (ret == NULL || tp->count < ret->count) { // a least ran one
+    if (tp->state == ST_E || tp->state == ST_W) {
+      if (ret == NULL || tp->count < ret->count) {
         ret = tp;
       }
     }
@@ -180,51 +154,38 @@ struct task *kmt_sched() {
 }
 
 _Context *kmt_yield(_Event ev, _Context *context) {
-  spinlock_acquire(&task_lock);
   struct task *cur = get_current_task();
-  if (cur->state == ST_T) {
-    // going to sleep. this shall override.
-    spinlock_release(&task_lock);
-    return NULL; // no change!
+
+  // override when the task is going to sleep
+  if (cur->state == ST_T) return NULL;
+
+  struct task *next = kmt_sched();
+  if (!next) {
+    // no next task, back to NULL
+    set_current_task(NULL);
+    return NULL;
   }
 
-  struct task *next = kmt_sched(); // call scheduler
-  if (!next) {
-    Log("No scheduling is made.");
-    if (cur) {
-      cur->count = cur->count >= 1000 ? 0 : cur->count + 1;
-    }
-  } else {
-    Log("Switching to task %d:%s", next->pid, next->name);
-    //Log("Entry: %p", next->context->eip);
-    if (cur) {
-      if (cur->state == ST_R) {
-        cur->state = ST_W;
-      }
-    }
-    Assert(next->state != ST_T, "switching to a task that is going to sleep.");
-    next->state = ST_R; // set the next as running
-    next->count = next->count >= 1000 ? 0 : next->count + 1;
-    set_current_task(next);
-  }
-  spinlock_release(&task_lock);
+  if (cur) cur->state = ST_W;
+  next->state = ST_R;
+  next->count = next->count >= 1000 ? 0 : next->count + 1;
+  set_current_task(next);
   return NULL;
 }
 
 _Context *kmt_error(_Event ev, _Context *context) {
   Assert(ev.event = _EVENT_ERROR, "Not an error interrupt");
   printf("\nError detected: %s\n", ev.msg);
-  //CLog(BG_RED, "Error detected: %s", ev.msg);
+  Panic("Error detected: %s", ev.msg);
   return NULL;
 }
 
 uintptr_t kmt_sem_sleep(void *alarm) {
   struct task *cur = get_current_task();
   Assert(cur != NULL, "NULL task is going to sleep.");
-  Assert(cur->state == ST_T || cur->state == ST_R, "Task in wrong state %s instead of ST_T.", task_states_human[cur->state]);
+  Assert(cur->state == ST_T, "Task in wrong state [%s] instead of [To sleep].", task_states_human[cur->state]);
   Assert(alarm != NULL, "Sleep without a alarm (semaphore).");
 
-  spinlock_acquire(&task_lock);
   bool already_alarmed = false;
   struct alarm_log *ap = alarm_head.next;
   struct alarm_log *an = NULL;
@@ -241,26 +202,27 @@ uintptr_t kmt_sem_sleep(void *alarm) {
     ap = an;
   }
 
-  struct task *next = kmt_sched();
-  if (!next || already_alarmed) {
-    CLog(FG_YELLOW, "No next task or already alarmed");
+  if (already_alarmed) {
     cur->state = ST_R;
-    cur->count = cur->count >= 1000 ? 0 : cur->count + 1; 
+    cur->count = cur->count >= 1000 ? 0 : cur->count + 1;
+    return -1;
+  }
+
+  struct task *next = kmt_sched();
+  cur->state = ST_S;
+  cur->alarm = alarm;
+  if (!next) {
+    // no next task, return to NULL
+    set_current_task(NULL);
   } else {
-    CLog(FG_YELLOW, "Next is %d: %s", next->pid, next->name);
-    cur->state = ST_S;
-    cur->alarm = alarm;
-    Assert(next->state != ST_T, "switching to a task that is going to sleep.");
     next->state = ST_R;
     next->count = next->count >= 1000 ? 0 : next->count + 1;
     set_current_task(next);
   }
-  spinlock_release(&task_lock);
   return 0;
 }
 
 uintptr_t kmt_sem_wakeup(void *alarm) {
-  spinlock_acquire(&task_lock);
   struct task* cur = get_current_task();
 
   // avoid reinsertion
@@ -285,7 +247,6 @@ uintptr_t kmt_sem_wakeup(void *alarm) {
       tp->state = ST_W; // wake up
     }
   }
-  spinlock_release(&task_lock);
   return 0;
 }
 

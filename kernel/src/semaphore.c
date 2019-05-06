@@ -15,15 +15,13 @@ void semaphore_init(struct semaphore *sem, const char *name, int value) {
 
 void semaphore_wait(struct semaphore *sem) {
   spinlock_acquire(&sem->lock);
-  //printf("-[%s = %d]\n", sem->name, sem->value);
   struct task *cur = cpu_tasks[_cpu()];
+  Assert(cur, "null task cannot sleep");
   while (sem->value <= 0) {
-    if (cur) cur->state = ST_T;
-    __sync_synchronize();
+    cur->state = ST_T;
     spinlock_release(&sem->lock);
     asm volatile ("int $0x80" : : "a"(SYS_sem_wait), "b"(sem));
     spinlock_acquire(&sem->lock);
-    //printf("-[%s = %d]\n", sem->name, sem->value);
   }
   __sync_synchronize();
   --sem->value;
@@ -34,7 +32,6 @@ void semaphore_signal(struct semaphore *sem) {
   spinlock_acquire(&sem->lock);
   ++sem->value;
   __sync_synchronize();
-  //printf("+[%s = %d]\n", sem->name, sem->value);
   asm volatile ("int $0x80" : : "a"(SYS_sem_signal), "b"(sem));
   spinlock_release(&sem->lock);
 }

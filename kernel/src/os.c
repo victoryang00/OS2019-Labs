@@ -96,27 +96,24 @@ static void os_run() {
 }
 
 static _Context *os_trap(_Event ev, _Context *context) {
-  if (!spinlock_isfree(&os_trap_lock)) {
-    if (ev.event == _EVENT_IRQ_TIMER) return context;
-  }
   CLog(BG_CYAN, "Event %d: %s", ev.event, ev.msg);
 
-  bool holding = spinlock_holding(&os_trap_lock);
   Assert(!(holding && ev.event == _EVENT_IRQ_TIMER), "FUCK");
   if (!holding) spinlock_acquire(&os_trap_lock);
-  CLog(FG_CYAN, "Lock acquired. Begin trap process.");
   _Context *ret = NULL;
   for (struct os_handler *hp = root_handler.next; hp != NULL; hp = hp->next) {
-    if (hp->event == _EVENT_NULL || hp->event == ev.event) {
+    if (
+      (!holding && hp->event == _EVENT_NULL) 
+      || hp->event == ev.event
+    ) {
       CLog(FG_CYAN, "Handler seq %d", hp->seq);
       _Context *next = hp->handler(ev, context);
       if (next) ret = next;
     }
   }
-  CLog(FG_CYAN, "Lock released. Trap process finished.");
   if (!holding) spinlock_release(&os_trap_lock);
 
-  Assert(ret != NULL, "Returning to a null context after trap.");
+  Assert(ret, "Returning to a null context after trap.");
   return ret;
 }
 
