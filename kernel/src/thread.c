@@ -202,6 +202,7 @@ _Context *kmt_yield(_Event ev, _Context *context) {
         cur->state = ST_W;
       }
     }
+    Assert(next->state != ST_T, "switching to a task that is going to sleep.");
     next->state = ST_R; // set the next as running
     next->count = next->count >= 1000 ? 0 : next->count + 1;
     set_current_task(next);
@@ -249,6 +250,7 @@ uintptr_t kmt_sem_sleep(void *alarm) {
     CLog(FG_YELLOW, "Next is %d: %s", next->pid, next->name);
     cur->state = ST_S;
     cur->alarm = alarm;
+    Assert(next->state != ST_T, "switching to a task that is going to sleep.");
     next->state = ST_R;
     next->count = next->count >= 1000 ? 0 : next->count + 1;
     set_current_task(next);
