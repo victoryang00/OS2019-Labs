@@ -20,7 +20,7 @@ void semaphore_wait(struct semaphore *sem) {
     // hold the lock so that it will not be interrupted
     spinlock_acquire(&goto_sleep_lock);
     spinlock_release(&sem->lock);
-    asm volatile ("int $0x80" : : "a"(SYS_sem_wait), "b"(sem), "c"(&sem->lock));
+    asm volatile ("int $0x80" : : "a"(SYS_sem_wait), "b"(sem));
     spinlock_acquire(&sem->lock);
     //printf("-[%s = %d]\n", sem->name, sem->value);
   }
