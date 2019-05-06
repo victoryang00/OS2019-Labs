@@ -14,8 +14,7 @@ void semaphore_init(struct semaphore *sem, const char *name, int value) {
 void semaphore_wait(struct semaphore *sem) {
   spinlock_acquire(&sem->lock);
   while (sem->value <= 0) {
-    asm volatile ("int $0x80" : : "a"(SYS_sem_wait), "b"(sem), "c"(&sem->lock));
-    spinlock_acquire(&sem->lock);
+    kmt_sem_wait((void *) sem, &sem->lock);
   }
   __sync_synchronize();
   --sem->value;
@@ -23,9 +22,7 @@ void semaphore_wait(struct semaphore *sem) {
 }
 
 void semaphore_signal(struct semaphore *sem) {
-  spinlock_acquire(&sem->lock);
   ++sem->value;
   __sync_synchronize();
-  asm volatile ("int $0x80" : : "a"(SYS_sem_signal), "b"(sem));
-  spinlock_release(&sem->lock);
+  kmt_sem_signal((void *) sem);
 }
