@@ -16,7 +16,7 @@ _Context* do_syscall(_Event ev, _Context *context) {
 
   switch (a[0]) {
     case SYS_sem_wait:
-      ret = kmt_sem_sleep((void *) a[1], (struct spinlock *) a[2]);
+      ret = kmt_sem_sleep((void *) a[1]);
       break;
     case SYS_sem_signal:
       ret = kmt_sem_wakeup((void *) a[1]);
