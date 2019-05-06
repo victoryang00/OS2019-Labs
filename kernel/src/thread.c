@@ -205,7 +205,10 @@ uintptr_t kmt_sleep(void *alarm, struct spinlock *lock) {
     }
     ap = an;
   }
-  if (already_alarmed) return -1;
+  if (already_alarmed) {
+    CLog(FG_YELLOW, "No sleep");
+    return -1;
+  }
 
   cur->state = ST_S;
   printf("lock saved just before sleep\n");
