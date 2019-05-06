@@ -71,7 +71,7 @@ static void os_init() {
   CLog(BG_GREEN, "dev ok");
 
   //create proc here
-  kmt->sem_init(&sem_p, "Producer SEM", 1);
+  kmt->sem_init(&sem_p, "Producer SEM", 5);
   kmt->sem_init(&sem_c, "Customer SEM", 0);
   kmt->sem_init(&mutex, "Producer-Customer MUTEX", 1);
   for (int i = 0; i < 1; ++i) {
