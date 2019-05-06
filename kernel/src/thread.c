@@ -34,7 +34,7 @@ struct spinlock task_lock;
 struct task root_task;
 struct alarm_log alarm_head;
 
-static struct task *cpu_tasks[MAX_CPU] = {};
+struct task *cpu_tasks[MAX_CPU] = {};
 static inline struct task *get_current_task() {
   return cpu_tasks[_cpu()];
 }

@@ -17,9 +17,8 @@ void semaphore_wait(struct semaphore *sem) {
   spinlock_acquire(&sem->lock);
   //printf("-[%s = %d]\n", sem->name, sem->value);
   struct task *cur = cpu_tasks[_cpu()];
-  Assert(cur, "current task cannot be null");
   while (sem->value <= 0) {
-    cur->state = ST_T;
+    if (cur) cur->state = ST_T;
     __sync_synchronize();
     spinlock_release(&sem->lock);
     asm volatile ("int $0x80" : : "a"(SYS_sem_wait), "b"(sem));
