@@ -122,12 +122,14 @@ _Context *kmt_context_switch(_Event ev, _Context *context) {
   _Context *ret = NULL;
   struct task *cur = get_current_task();
   if (cur) {
+    Log("Next is %d: %s", cur->pid, cur->name);
     kmt_inspect_fence(cur);
     ret = cur->context;
     cur->context = NULL;
     cur->alarm   = NULL;
     Assert(ret, "task context is empty");
   } else {
+    Log("Next is NULL task");
     ret = null_contexts[_cpu()];
     null_contexts[_cpu()] = NULL;
     Assert(ret, "null context is empty");
