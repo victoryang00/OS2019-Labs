@@ -1,6 +1,7 @@
 #include <common.h>
 #include <os.h>
 #include <devices.h>
+#include <syscall.h>
 #include <threads.h>
 #include <spinlock.h>
 #include <semaphore.h>
