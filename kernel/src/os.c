@@ -73,7 +73,6 @@ static void os_init() {
   kmt->sem_init(&sem_p, "Producer SEM", 20);
   kmt->sem_init(&sem_c, "Customer SEM", 0);
   kmt->sem_init(&mutex, "Producer-Customer MUTEX", 1);
-  printf("%s", mutex.name);
   for (int i = 0; i < 1; ++i) {
     kmt->create(pmm->alloc(sizeof(task_t)), "Producer Task", producer, NULL);
     kmt->create(pmm->alloc(sizeof(task_t)), "Customer Task", customer, NULL);
