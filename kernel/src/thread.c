@@ -130,6 +130,7 @@ _Context *kmt_context_switch(_Event ev, _Context *context) {
     cur->context = NULL;
     cur->alarm   = NULL;
     if (cur->lock) {
+      printf("lock reacquired\n");
       spinlock_acquire(cur->lock);
       cur->lock  = NULL;
     }
