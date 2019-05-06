@@ -210,7 +210,7 @@ uintptr_t kmt_sem_sleep(void *alarm, struct spinlock *lock) {
   struct task *next = kmt_sched();
   cur->state = ST_S;
   cur->alarm = alarm;
-  spinlock_release(&lock);
+  spinlock_release(lock);
   if (!next) {
     // no next task, return to NULL
     set_current_task(NULL);
