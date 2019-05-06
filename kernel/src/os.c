@@ -133,8 +133,8 @@ static _Context *os_trap(_Event ev, _Context *context) {
     spinlock_release(&os_trap_lock);
   }
 
-  Assert(ret, "Returning to a null context after trap.");
-  return ret;
+  Assert(holding || ret, "Returning to a null context after normal trap.");
+  return holding ? context : ret;
 }
 
 static void os_on_irq(int seq, int event, handler_t handler) {
