@@ -95,7 +95,6 @@ static void os_run() {
 
 static _Context *os_trap(_Event ev, _Context *context) {
   CLog(BG_CYAN, "Event %d: %s", ev.event, ev.msg);
-  if (ev.event == _EVENT_IRQ_IODEV) printf("\n\nIO, %d\n", context->eax);
 
   bool holding = spinlock_holding(&os_trap_lock);
   if (holding) {
