@@ -15,10 +15,10 @@ void semaphore_wait(struct semaphore *sem) {
   spinlock_acquire(&sem->lock);
   printf("-[%s = %d]\n", sem->name, sem->value);
   while (sem->value <= 0) {
-    printf("-[%s = %d]\n", sem->name, sem->value);
     spinlock_release(&sem->lock);
     asm volatile ("int $0x80" : : "a"(SYS_sem_wait), "b"(sem));
     spinlock_acquire(&sem->lock);
+    printf("-[%s = %d]\n", sem->name, sem->value);
   }
   --sem->value;
   spinlock_release(&sem->lock);
