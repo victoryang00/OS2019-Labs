@@ -65,7 +65,7 @@ void kmt_init() {
   os->on_irq(0,       _EVENT_YIELD,     kmt_yield);
   os->on_irq(1,       _EVENT_IRQ_TIMER, kmt_yield);
   os->on_irq(2,       _EVENT_SYSCALL,   do_syscall);
-  //os->on_irq(3,       _EVENT_ERROR,     kmt_reset);
+  os->on_irq(3,       _EVENT_ERROR,     kmt_reset);
   os->on_irq(INT_MAX, _EVENT_NULL,      kmt_context_switch);
 }
 
