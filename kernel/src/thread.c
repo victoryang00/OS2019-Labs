@@ -33,7 +33,7 @@ static const char *task_states_human[8] __attribute__((used)) = {
 struct task root_task;
 struct alarm_log alarm_head;
 
-_Contexts *null_contexts[MAX_CPU] = {};
+_Context *null_contexts[MAX_CPU] = {};
 struct task *cpu_tasks[MAX_CPU] = {};
 static inline struct task *get_current_task() {
   return cpu_tasks[_cpu()];
@@ -84,10 +84,7 @@ int kmt_create(struct task *task, const char *name, void (*entry)(void *arg), vo
     (void *) task->stack, 
     (void *) task->stack + sizeof(task->stack) 
   };
-  struct context_item *cp = pmm->alloc(sizeof(struct context_item));
-  cp->context = _kcontext(stack, entry, arg);
-  cp->next = NULL;
-  task->context_head.next = cp;
+  task->context = _kcontext(stack, entry, arg);
 
   struct task *tp = &root_task;
   while (tp->next) tp = tp->next;
