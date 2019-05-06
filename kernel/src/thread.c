@@ -215,6 +215,7 @@ _Context *kmt_reset(_Event ev, _Context *context) {
   
   struct task *cur = get_current_task();
   Assert(cur, "Error in null task.");
+  Assert(cur->state == ST_R, "Error when a task is not running.");
   struct context_item *cp = cur->context_head.next;
   struct context_item *cn = NULL;
   while (cp) {
