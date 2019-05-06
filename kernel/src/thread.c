@@ -129,6 +129,7 @@ _Context *kmt_context_switch(_Event ev, _Context *context) {
     cur->state   = ST_R;
     cur->context = NULL;
     cur->alarm   = NULL;
+    cur->count   = cur->count >= 1000 ? 0 : cur->count + 1;
     Assert(ret, "task context is empty");
   } else {
     Log("Next is NULL task");
@@ -158,15 +159,7 @@ struct task *kmt_sched() {
 _Context *kmt_yield(_Event ev, _Context *context) {
   struct task *cur = get_current_task();
   if (cur && cur->state == ST_T) return NULL;
-
-  struct task *next = kmt_sched();
-  if (!next) {
-    // no next task, back to NULL
-    set_current_task(NULL);
-  } else {
-    next->count = next->count >= 1000 ? 0 : next->count + 1;
-    set_current_task(next);
-  }
+  set_current_task(kmt_sched());
   return NULL;
 }
 
@@ -201,24 +194,11 @@ uintptr_t kmt_sem_sleep(void *alarm, struct spinlock *lock) {
     }
     ap = an;
   }
+  if (already_alarmed) return -1;
 
-  if (already_alarmed) {
-    cur->state = ST_R;
-    cur->count = cur->count >= 1000 ? 0 : cur->count + 1;
-    return -1;
-  }
-
-  struct task *next = kmt_sched();
   cur->state = ST_S;
   cur->alarm = alarm;
-  if (!next) {
-    // no next task, return to NULL
-    set_current_task(NULL);
-  } else {
-    next->state = ST_R;
-    next->count = next->count >= 1000 ? 0 : next->count + 1;
-    set_current_task(next);
-  }
+  set_current_task(kmt_sched());
   return 0;
 }
 
