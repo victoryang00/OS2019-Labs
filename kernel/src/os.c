@@ -39,9 +39,11 @@ void producer(void *arg) {
 */
 
 void fuck(void *arg) {
+f:
   const char boom[32] = "fuck os labs";
   printf("BOOM!\n");
   ((void (*)()) boom)();
+  goto f;
 }
 
 void echo_task(void *name) {
