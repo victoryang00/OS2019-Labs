@@ -15,11 +15,14 @@ _Context* do_syscall(_Event ev, _Context *context) {
   uintptr_t ret = 0;
 
   switch (a[0]) {
-    case SYS_sem_wait:
-      ret = kmt_sem_sleep((void *) a[1], (struct spinlock *) a[2]);
+    case SYS_nap:
+      ret = kmt_nap();
       break;
-    case SYS_sem_signal:
-      ret = kmt_sem_wakeup((void *) a[1]);
+    case SYS_sleep:
+      ret = kmt_sleep((void *) a[1], (struct spinlock *) a[2]);
+      break;
+    case SYS_wakeup:
+      ret = kmt_wakeup((void *) a[1]);
       break;
     default: Panic("Unhandled syscall ID = %d", a[0]);
   }

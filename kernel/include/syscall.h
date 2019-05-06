@@ -23,8 +23,9 @@ enum {
   SYS_times,
   SYS_gettimeofday,
 
-  SYS_sem_wait,
-  SYS_sem_signal
+  SYS_nap,
+  SYS_sleep,
+  SYS_wakeup
 };
 
 _Context *do_syscall(_Event, _Context *);

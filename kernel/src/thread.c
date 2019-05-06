@@ -173,7 +173,13 @@ _Context *kmt_error(_Event ev, _Context *context) {
   return NULL;
 }
 
-uintptr_t kmt_sem_sleep(void *alarm, struct spinlock *lock) {
+uintptr_t kmt_nap() {
+  struct task *cur = get_current_task();
+  Assert(cur, "NULL task is going to sleep.");
+  cur->state = ST_S;
+}
+
+uintptr_t kmt_sleep(void *alarm, struct spinlock *lock) {
   struct task *cur = get_current_task();
   Assert(cur,   "NULL task is going to sleep.");
   Assert(alarm, "Sleep without a alarm (semaphore).");
@@ -202,7 +208,7 @@ uintptr_t kmt_sem_sleep(void *alarm, struct spinlock *lock) {
   return 0;
 }
 
-uintptr_t kmt_sem_wakeup(void *alarm) {
+uintptr_t kmt_wakeup(void *alarm) {
   struct task* cur = get_current_task();
 
   // avoid reinsertion
