@@ -37,6 +37,9 @@ struct alarm_log {
 struct task {
   uint32_t pid;
   const char* name;
+  void (*entry)(void *);
+  void *arg;
+
   enum task_states state;
   uint32_t owner;
   uint32_t count;

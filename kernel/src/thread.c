@@ -50,10 +50,10 @@ void kmt_init() {
   __sync_synchronize();
 
   spinlock_acquire(&task_lock);
-  root_task.pid = next_pid++;
-  root_task.name = "Root Task";
+  root_task.pid   = next_pid++;
+  root_task.name  = "Root Task";
   root_task.state = ST_X;
-  root_task.next = NULL;
+  root_task.next  = NULL;
   memset(root_task.fenceA, FILL_FENCE, sizeof(root_task.fenceA));
   memset(root_task.stack,  FILL_STACK, sizeof(root_task.stack));
   memset(root_task.fenceB, FILL_FENCE, sizeof(root_task.fenceB));
@@ -70,8 +70,10 @@ void kmt_init() {
 }
 
 int kmt_create(struct task *task, const char *name, void (*entry)(void *arg), void *arg) {
-  task->pid = next_pid++;
-  task->name = name;
+  task->pid   = next_pid++;
+  task->name  = name;
+  task->entry = entry;
+  task->arg   = arg;
   task->state = ST_E;
   task->count = 0;
   memset(task->fenceA, FILL_FENCE, sizeof(task->fenceA));
@@ -79,7 +81,7 @@ int kmt_create(struct task *task, const char *name, void (*entry)(void *arg), vo
   memset(task->fenceB, FILL_FENCE, sizeof(task->fenceB));
   kmt_inspect_fence(task);
   task->alarm = NULL;
-  task->next = NULL;
+  task->next  = NULL;
 
   /**
    * We cannot create context before initializing the stack
@@ -213,12 +215,13 @@ _Context *kmt_yield(_Event ev, _Context *context) {
 
 _Context *kmt_reset(_Event ev, _Context *context) {
   spinlock_acquire(&task_lock);
-  Assert(ev.event = _EVENT_ERROR);
+  Assert(ev.event = _EVENT_ERROR, "Not an error interrupt");
   CLog(BG_RED, "Error detected: %s", ev.msg);
   
   struct task *cur = get_current_task();
   Assert(cur, "Error in null task.");
   struct context_item *cp = cur->context_head.next;
+  struct context_item *cn = NULL;
   while (cp) {
     cn = cp->next;
     pmm->free(cp);
