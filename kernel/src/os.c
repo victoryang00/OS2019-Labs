@@ -40,10 +40,10 @@ void producer(void *arg) {
 
 void fuck(void *arg) {
   printf("BOOM!\n");
-  volatile int a = 0;
+  volatile double a = 0;
   while (1) {
-    a = rand() % 1;
-    printf("%d\n", 0 / a);
+    a = (double) (rand() % 1);
+    printf("%d\n", 1.0 / a);
   }
 }
 
