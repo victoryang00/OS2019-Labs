@@ -176,9 +176,9 @@ _Context *kmt_yield(_Event ev, _Context *context) {
 _Context *kmt_error(_Event ev, _Context *context) {
   Assert(ev.event = _EVENT_ERROR, "Not an error interrupt");
   printf("\nError detected: %s\n", ev.msg);
-  printf("EIP was %p", context->eip);
-  printf("ESP was %p", context->esp0);
-  printf("RET ADDR %p", *((void **) context->esp0));
+  printf("EIP was %p\n", context->eip);
+  printf("ESP was %p\n", context->esp0);
+  printf("RET ADDR %p\n", *((void **) context->esp0));
   Panic("Error detected: %s", ev.msg);
   return NULL;
 }
