@@ -97,7 +97,6 @@ static void os_run() {
 
 static _Context *os_trap(_Event ev, _Context *context) {
   CLog(BG_CYAN, "Event %d: %s", ev.event, ev.msg);
-  if (_cpu() == 0) printf("trap %s\n", ev.msg);
   if (ev.event == _EVENT_IRQ_IODEV) printf("\n\nIO\n");
 
   bool holding = spinlock_holding(&os_trap_lock);
@@ -126,7 +125,6 @@ static _Context *os_trap(_Event ev, _Context *context) {
       (!holding && hp->event == _EVENT_NULL) 
       || hp->event == ev.event
     ) {
-      if(ev.event == _EVENT_IRQ_IODEV) printf("%d\n", hp->seq);
       CLog(FG_CYAN, "Handler seq %d", hp->seq);
       _Context *next = hp->handler(ev, context);
       if (next) ret = next;
@@ -136,8 +134,6 @@ static _Context *os_trap(_Event ev, _Context *context) {
     CLog(FG_PURPLE, "OUT OF TRAP <<<<<<");
     spinlock_release(&os_trap_lock);
   }
-
-  if (ev.event == _EVENT_IRQ_IODEV) printf("IO OK\n\n");
 
   Assert(holding || ret, "Returning to a null context after normal trap.");
   return holding ? context : ret;
