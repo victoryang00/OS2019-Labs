@@ -177,6 +177,7 @@ uintptr_t kmt_nap() {
   struct task *cur = get_current_task();
   Assert(cur, "NULL task is going to sleep.");
   cur->state = ST_S;
+  return 0;
 }
 
 uintptr_t kmt_sleep(void *alarm, struct spinlock *lock) {
