@@ -109,7 +109,8 @@ static _Context *os_trap(_Event ev, _Context *context) {
         Panic("No yield inside trap.");
       case _EVENT_SYSCALL:
         switch(context->eax) {
-          case SYS_sem_wait:
+          case SYS_nap:
+          case SYS_sleep:
             Panic("No semaphore wait/sleep inside trap.");
         }
     }
