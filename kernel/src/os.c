@@ -15,24 +15,24 @@ static struct os_handler root_handler = {
 
 sem_t sem_p;
 sem_t sem_c;
-spinlock_t mutex;
+sem_t mutex;
 void customer(void *arg) {
   while (1) {
     kmt->sem_wait(&sem_c);
-    spinlock_acquire(&mutex);
+    kmt->sem_wait(&mutex);
     printf(")");
     CLog(BG_RED, ")");
-    spinlock_release(&mutex);
+    kmt->sem_signal(&mutex);
     kmt->sem_signal(&sem_p);
   }
 }
 void producer(void *arg) {
   while (1) {
     kmt->sem_wait(&sem_p);
-    spinlock_acquire(&mutex);
+    kmt->sem_wait(&mutex);
     printf("(");
     CLog(BG_RED, "(");
-    spinlock_release(&mutex);
+    kmt->sem_signal(&mutex);
     kmt->sem_signal(&sem_c);
   }
 }
@@ -72,7 +72,7 @@ static void os_init() {
   //create proc here
   kmt->sem_init(&sem_p, "Producer SEM", 20);
   kmt->sem_init(&sem_c, "Customer SEM", 0);
-  kmt->spin_init(&mutex, "Producer-Customer MUTEX");
+  kmt->sem_init(&mutex, "Producer-Customer MUTEX", 1);
   for (int i = 0; i < 1; ++i) {
     kmt->create(pmm->alloc(sizeof(task_t)), "Producer Task", producer, NULL);
     kmt->create(pmm->alloc(sizeof(task_t)), "Customer Task", customer, NULL);
