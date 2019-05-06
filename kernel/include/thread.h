@@ -68,7 +68,7 @@ _Context *kmt_error(_Event, _Context *);
 // ----------------------------------------------------------------------------
 // syscalls
 
-uintptr_t kmt_sem_sleep(void *);
+uintptr_t kmt_sem_sleep(void *, struct spinlock *);
 uintptr_t kmt_sem_wakeup(void *);
 
 #endif
