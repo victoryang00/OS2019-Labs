@@ -6,7 +6,6 @@
 #include <debug.h>
 
 void semaphore_init(struct semaphore *sem, const char *name, int value) {
-  sprintf(sem->fence, "FUCK");
   spinlock_init(&sem->lock, "Sem Lock");
   sem->name = name;
   sem->value = value;
@@ -15,9 +14,7 @@ void semaphore_init(struct semaphore *sem, const char *name, int value) {
 void semaphore_wait(struct semaphore *sem) {
   spinlock_acquire(&sem->lock);
   printf("(%s = %d)\n", sem->name, sem->value);
-    Assert(strcmp(sem->fence, "FUCK") == 0, "FENCE BOOM");
   while (sem->value <= 0) {
-    Assert(strcmp(sem->fence, "FUCK") == 0, "FENCE BOOM");
     printf("(%s = %d)", sem->name, sem->value);
     spinlock_release(&sem->lock);
     asm volatile ("int $0x80" : : "a"(SYS_sem_wait), "b"(sem));
