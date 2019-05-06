@@ -84,18 +84,10 @@ static void os_init() {
   //  kmt->create(pmm->alloc(sizeof(task_t)), "Customer Task", customer, NULL);
   //}
 
-  //kmt->create(pmm->alloc(sizeof(task_t)), "print", echo_task, "tty1");
-  //kmt->create(pmm->alloc(sizeof(task_t)), "print", echo_task, "tty2");
-  //kmt->create(pmm->alloc(sizeof(task_t)), "print", echo_task, "tty3");
-  //kmt->create(pmm->alloc(sizeof(task_t)), "print", echo_task, "tty4");
-  
-  //kmt->create(pmm->alloc(sizeof(task_t)), "fuck", fuck, "a");
-  //kmt->create(pmm->alloc(sizeof(task_t)), "fuck", fuck, "b");
-  //kmt->create(pmm->alloc(sizeof(task_t)), "fuck", fuck, "c");
-  //kmt->create(pmm->alloc(sizeof(task_t)), "fuck", fuck, "d");
-  //kmt->create(pmm->alloc(sizeof(task_t)), "fuck", fuck, "e");
-  //kmt->create(pmm->alloc(sizeof(task_t)), "fuck", fuck, "f");
-  //kmt->create(pmm->alloc(sizeof(task_t)), "fuck", fuck, "g");
+  kmt->create(pmm->alloc(sizeof(task_t)), "print", echo_task, "tty1");
+  kmt->create(pmm->alloc(sizeof(task_t)), "print", echo_task, "tty2");
+  kmt->create(pmm->alloc(sizeof(task_t)), "print", echo_task, "tty3");
+  kmt->create(pmm->alloc(sizeof(task_t)), "print", echo_task, "tty4");
 }
 
 static void os_run() {
