@@ -74,10 +74,6 @@ int kmt_create(struct task *task, const char *name, void (*entry)(void *arg), vo
   task->name = name;
   task->state = ST_E;
   task->count = 0;
-  _Area stack = { 
-    (void *) task->stack, 
-    (void *) task->stack + sizeof(task->stack) 
-  };
   memset(task->fenceA, FILL_FENCE, sizeof(task->fenceA));
   memset(task->stack,  FILL_STACK, sizeof(task->stack));
   memset(task->fenceB, FILL_FENCE, sizeof(task->fenceB));
@@ -89,6 +85,10 @@ int kmt_create(struct task *task, const char *name, void (*entry)(void *arg), vo
    * We cannot create context before initializing the stack
    * because kcontext will put the context at the begin of stack
    */
+  _Area stack = { 
+    (void *) task->stack, 
+    (void *) task->stack + sizeof(task->stack) 
+  };
   struct context_item *cp = pmm->alloc(sizeof(struct context_item));
   cp->context = _kcontext(stack, entry, arg);
   cp->next = NULL;
@@ -207,6 +207,33 @@ _Context *kmt_yield(_Event ev, _Context *context) {
     next->count = next->count >= 1000 ? 0 : next->count + 1;
     set_current_task(next);
   }
+  spinlock_release(&task_lock);
+  return NULL;
+}
+
+_Context *kmt_reset(_Event ev, _Context *context) {
+  spinlock_acquire(&task_lock);
+  Assert(ev.event = _EVENT_ERROR);
+  CLog(BG_RED, "Error detected: %s", ev.msg);
+  
+  struct task *cur = get_current_task();
+  Assert(cur, "Error in null task.");
+  struct context_item *cp = cur->context_head.next;
+  while (cp) {
+    cn = cp->next;
+    pmm->free(cp);
+    cp = cn;
+  }
+
+  _Area stack = {
+    (void *) cur->stack,
+    (void *) cur->stack + sizeof(cur->stack)
+  };
+  cp = pmm->alloc(sizeof(struct context_item));
+  cp->context = _kcontext(stack, cur->entry, cur->arg);
+  cp->next = NULL;
+  cur->context_head.next = cp;
+
   spinlock_release(&task_lock);
   return NULL;
 }

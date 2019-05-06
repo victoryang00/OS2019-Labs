@@ -55,11 +55,11 @@ void kmt_init();
 int kmt_create(struct task *, const char *, void (*)(void *), void *);
 void kmt_teardown(struct task *);
 void kmt_inspect_fence(struct task *);
-//int kmt_wait();
 _Context *kmt_context_save(_Event, _Context *);
 _Context *kmt_context_switch(_Event, _Context *);
 struct task *kmt_sched();
 _Context *kmt_yield(_Event, _Context *);
+_Context *kmt_reset(_Event, _Context *);
 
 // ----------------------------------------------------------------------------
 // syscalls
