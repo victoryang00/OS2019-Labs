@@ -12,7 +12,7 @@ static struct os_handler root_handler = {
   0, _EVENT_NULL, NULL, NULL
 };
 
-/*
+
 sem_t sem_p;
 sem_t sem_c;
 sem_t mutex;
@@ -36,15 +36,7 @@ void producer(void *arg) {
     kmt->sem_signal(&sem_c);
   }
 }
-*/
 
-void fuck(void *arg) {
-  const char boom[32] = "s";
-f:
-  printf("BOOM!\n");
-  ((void (*)()) boom)();
-  goto f;
-}
 
 void echo_task(void *name) {
   device_t *tty = dev_lookup(name);
@@ -78,20 +70,19 @@ static void os_init() {
   CLog(BG_GREEN, "dev ok");
 
   //create proc here
-  //kmt->sem_init(&sem_p, "Producer SEM", 20);
-  //kmt->sem_init(&sem_c, "Customer SEM", 0);
-  //kmt->sem_init(&mutex, "Producer-Customer MUTEX", 1);
-  //for (int i = 0; i < 1; ++i) {
-  //  kmt->create(pmm->alloc(sizeof(task_t)), "Producer Task", producer, NULL);
-  //  kmt->create(pmm->alloc(sizeof(task_t)), "Customer Task", customer, NULL);
-  //}
+  kmt->sem_init(&sem_p, "Producer SEM", 20);
+  kmt->sem_init(&sem_c, "Customer SEM", 0);
+  kmt->sem_init(&mutex, "Producer-Customer MUTEX", 1);
+  for (int i = 0; i < 1; ++i) {
+    kmt->create(pmm->alloc(sizeof(task_t)), "Producer Task", producer, NULL);
+    kmt->create(pmm->alloc(sizeof(task_t)), "Customer Task", customer, NULL);
+  }
 
-  kmt->create(pmm->alloc(sizeof(task_t)), "boom", fuck, NULL);
 
   kmt->create(pmm->alloc(sizeof(task_t)), "print", echo_task, "tty1");
-  //kmt->create(pmm->alloc(sizeof(task_t)), "print", echo_task, "tty2");
-  //kmt->create(pmm->alloc(sizeof(task_t)), "print", echo_task, "tty3");
-  //kmt->create(pmm->alloc(sizeof(task_t)), "print", echo_task, "tty4");
+  kmt->create(pmm->alloc(sizeof(task_t)), "print", echo_task, "tty2");
+  kmt->create(pmm->alloc(sizeof(task_t)), "print", echo_task, "tty3");
+  kmt->create(pmm->alloc(sizeof(task_t)), "print", echo_task, "tty4");
 }
 
 static void os_run() {
