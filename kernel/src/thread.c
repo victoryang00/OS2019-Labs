@@ -243,6 +243,7 @@ uintptr_t kmt_sem_sleep(void *alarm) {
     cur->count = cur->count >= 1000 ? 0 : cur->count + 1; 
   } else {
     CLog(FG_YELLOW, "Next is %d: %s", next->pid, next->name);
+    printf("%s going to sleep.", cur->name);
     cur->state = ST_S;
     cur->alarm = alarm;
     next->state = ST_R;
