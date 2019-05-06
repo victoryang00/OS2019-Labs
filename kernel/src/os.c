@@ -90,11 +90,9 @@ static void os_init() {
 static void os_run() {
   printf("Hello from CPU #%d\n", _cpu());
   _intr_write(1);
-  Assert(_intr_read() != 0, "Interrupt disabled");
   while (1) {
     _yield();
   }
-  Panic("Should not reach here after _yield()");
 }
 
 static _Context *os_trap(_Event ev, _Context *context) {
