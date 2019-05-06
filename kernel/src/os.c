@@ -97,13 +97,10 @@ static void os_run() {
   while (1) {
     _yield();
   }
+  Panic("Should not reach here after _yield()");
 }
 
 static _Context *os_trap(_Event ev, _Context *context) {
-  if (ev.event == _EVENT_ERROR) {
-    CLog(BG_RED, "BAD EVENT %d: %s, caused by (%p of %p)", ev.event, ev.msg, ev.cause, ev.ref);
-    return context;
-  }
   CLog(BG_CYAN, "Event %d: %s", ev.event, ev.msg);
 
   bool holding = spinlock_holding(&os_trap_lock);
@@ -121,9 +118,6 @@ static _Context *os_trap(_Event ev, _Context *context) {
   if (!holding) spinlock_release(&os_trap_lock);
 
   Assert(ret != NULL, "Returning to a null context after trap.");
-  //Log("Current context: %p", context);
-  //Log("   Next context: %p", ret);
-  
   return ret;
 }
 
