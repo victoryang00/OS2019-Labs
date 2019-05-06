@@ -15,24 +15,24 @@ static struct os_handler root_handler = {
 
 sem_t sem_p;
 sem_t sem_c;
-sem_t mutex;
+spinlock_t mutex;
 void customer(void *arg) {
   while (1) {
     kmt->sem_wait(&sem_c);
-    kmt->sem_wait(&mutex);
+    spinlock_acquire(&mutex);
     printf(")");
     CLog(BG_RED, ")");
-    kmt->sem_signal(&mutex);
+    spinlock_release(&mutex);
     kmt->sem_signal(&sem_p);
   }
 }
 void producer(void *arg) {
   while (1) {
     kmt->sem_wait(&sem_p);
-    kmt->sem_wait(&mutex);
+    spinlock_acquire(&mutex);
     printf("(");
     CLog(BG_RED, "(");
-    kmt->sem_signal(&mutex);
+    spinlock_release(&mutex);
     kmt->sem_signal(&sem_c);
   }
 }
