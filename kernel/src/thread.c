@@ -221,7 +221,7 @@ _Context *kmt_error(_Event ev, _Context *context) {
 uintptr_t kmt_sem_sleep(void *alarm) {
   struct task *cur = get_current_task();
   Assert(cur != NULL, "NULL task is going to sleep.");
-  Assert(cur->state == ST_T, "Task in wrong state %s instead of ST_T.", task_states_human[cur->state]);
+  Assert(cur->state == ST_T || cur->state == ST_R, "Task in wrong state %s instead of ST_T.", task_states_human[cur->state]);
   Assert(alarm != NULL, "Sleep without a alarm (semaphore).");
 
   spinlock_acquire(&task_lock);
