@@ -9,9 +9,9 @@
  */
 
 struct semaphore {
+  struct spinlock lock;
   const char *name;
   volatile int value;
-  struct spinlock lock;
 };
 
 void semaphore_init(struct semaphore *, const char *, int);
