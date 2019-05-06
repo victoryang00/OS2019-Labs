@@ -123,8 +123,7 @@ void kmt_inspect_fence(struct task *task) {
 
 _Context *kmt_context_save(_Event ev, _Context *context) {
   //Log("KMT Context Save");
-  if (!spinlock_holding(&task_lock))
-    spinlock_acquire(&task_lock);
+  spinlock_acquire(&task_lock);
   struct task *cur = get_current_task();
   if (cur) {
     struct context_item *cp = pmm->alloc(sizeof(struct context_item));
