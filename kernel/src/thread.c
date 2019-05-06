@@ -129,6 +129,10 @@ _Context *kmt_context_switch(_Event ev, _Context *context) {
     cur->state   = ST_R;
     cur->context = NULL;
     cur->alarm   = NULL;
+    if (cur->lock) {
+      spinlock_acquire(cur->lock);
+      cur->lock  = NULL;
+    }
     cur->count   = cur->count >= 1000 ? 0 : cur->count + 1;
     Assert(ret, "task context is empty");
   } else {
@@ -173,18 +177,10 @@ _Context *kmt_error(_Event ev, _Context *context) {
   return NULL;
 }
 
-uintptr_t kmt_nap() {
-  struct task *cur = get_current_task();
-  Assert(cur, "NULL task is going to sleep.");
-  cur->state = ST_S;
-  return 0;
-}
-
 uintptr_t kmt_sleep(void *alarm, struct spinlock *lock) {
   struct task *cur = get_current_task();
   Assert(cur,   "NULL task is going to sleep.");
   Assert(alarm, "Sleep without a alarm (semaphore).");
-  Assert(lock,  "Sleep without releasing a lock." );
 
   bool already_alarmed = false;
   struct alarm_log *ap = alarm_head.next;
@@ -205,6 +201,7 @@ uintptr_t kmt_sleep(void *alarm, struct spinlock *lock) {
 
   cur->state = ST_S;
   cur->alarm = alarm;
+  cur->lock  = lock;
   set_current_task(kmt_sched());
   return 0;
 }

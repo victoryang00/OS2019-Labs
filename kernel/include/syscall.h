@@ -23,7 +23,6 @@ enum {
   SYS_times,
   SYS_gettimeofday,
 
-  SYS_nap,
   SYS_sleep,
   SYS_wakeup
 };

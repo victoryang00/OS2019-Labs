@@ -15,9 +15,6 @@ _Context* do_syscall(_Event ev, _Context *context) {
   uintptr_t ret = 0;
 
   switch (a[0]) {
-    case SYS_nap:
-      ret = kmt_nap();
-      break;
     case SYS_sleep:
       ret = kmt_sleep((void *) a[1], (struct spinlock *) a[2]);
       break;

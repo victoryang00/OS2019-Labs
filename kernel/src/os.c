@@ -98,6 +98,12 @@ static void os_run() {
 static _Context *os_trap(_Event ev, _Context *context) {
   CLog(BG_CYAN, "Event %d: %s", ev.event, ev.msg);
 
+  // important: if this is to sleep, we must
+  // release the lock now before acquiring next lock
+  if (ev.event == _EVENT_SYSCALL && context->GPR1 == SYS_sleep) {
+    spinlock_release((struct spinlock *) context->ecx);
+  }
+
   bool holding = spinlock_holding(&os_trap_lock);
   if (holding) {
     switch (ev.event) {
@@ -109,7 +115,6 @@ static _Context *os_trap(_Event ev, _Context *context) {
         Panic("No yield inside trap.");
       case _EVENT_SYSCALL:
         switch(context->eax) {
-          case SYS_nap:
           case SYS_sleep:
             Panic("No semaphore wait/sleep inside trap.");
         }
