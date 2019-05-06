@@ -5,8 +5,6 @@
 #include <semaphore.h>
 #include <debug.h>
 
-extern struct task **cpu_tasks;
-
 void semaphore_init(struct semaphore *sem, const char *name, int value) {
   spinlock_init(&sem->lock, "Sem Lock");
   sem->name = name;
@@ -15,13 +13,8 @@ void semaphore_init(struct semaphore *sem, const char *name, int value) {
 
 void semaphore_wait(struct semaphore *sem) {
   spinlock_acquire(&sem->lock);
-  struct task *cur = cpu_tasks[_cpu()];
-  Assert(cur, "null task cannot sleep");
   while (sem->value <= 0) {
-    cur->state = ST_T;
-    spinlock_release(&sem->lock);
-    asm volatile ("int $0x80" : : "a"(SYS_sem_wait), "b"(sem));
-    spinlock_acquire(&sem->lock);
+    asm volatile ("int $0x80" : : "a"(SYS_sem_wait), "b"(sem), "c"(&sem->lock));
   }
   __sync_synchronize();
   --sem->value;
