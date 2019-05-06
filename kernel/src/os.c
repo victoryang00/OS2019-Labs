@@ -39,7 +39,7 @@ void producer(void *arg) {
 */
 
 void fuck(void *arg) {
-  const char boom[32] = "fuck os labs";
+  const char boom[32] = "s";
 f:
   printf("BOOM!\n");
   ((void (*)()) boom)();
