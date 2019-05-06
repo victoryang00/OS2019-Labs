@@ -38,6 +38,12 @@ void producer(void *arg) {
 }
 */
 
+void fuck(void *arg) {
+  while (1) {
+    printf("%c", *arg);
+  }
+}
+
 void echo_task(void *name) {
   device_t *tty = dev_lookup(name);
   while (1) {
@@ -78,10 +84,14 @@ static void os_init() {
   //  kmt->create(pmm->alloc(sizeof(task_t)), "Customer Task", customer, NULL);
   //}
 
-  kmt->create(pmm->alloc(sizeof(task_t)), "print", echo_task, "tty1");
-  kmt->create(pmm->alloc(sizeof(task_t)), "print", echo_task, "tty2");
-  kmt->create(pmm->alloc(sizeof(task_t)), "print", echo_task, "tty3");
-  kmt->create(pmm->alloc(sizeof(task_t)), "print", echo_task, "tty4");
+  //kmt->create(pmm->alloc(sizeof(task_t)), "print", echo_task, "tty1");
+  //kmt->create(pmm->alloc(sizeof(task_t)), "print", echo_task, "tty2");
+  //kmt->create(pmm->alloc(sizeof(task_t)), "print", echo_task, "tty3");
+  //kmt->create(pmm->alloc(sizeof(task_t)), "print", echo_task, "tty4");
+  
+  kmt->create(pmm->alloc(sizeof(task_t)), "fuck", fuck, "a");
+  kmt->create(pmm->alloc(sizeof(task_t)), "fuck", fuck, "b");
+  kmt->create(pmm->alloc(sizeof(task_t)), "fuck", fuck, "c");
 }
 
 static void os_run() {
