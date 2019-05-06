@@ -128,13 +128,13 @@ _Context *kmt_context_switch(_Event ev, _Context *context) {
     ret = cur->context;
     cur->state   = ST_R;
     cur->context = NULL;
-    cur->alarm   = NULL;
-    if (cur->lock) {
-      printf("lock reacquired\n");
+    cur->count   = cur->count >= 1000 ? 0 : cur->count + 1;
+    if (cur->alarm) {
+      Assert(cur->lock, "has alarm, but no lock");
       spinlock_acquire(cur->lock);
+      cur->alarm = NULL;
       cur->lock  = NULL;
     }
-    cur->count   = cur->count >= 1000 ? 0 : cur->count + 1;
     Assert(ret, "task context is empty");
   } else {
     Log("Next is NULL task");
