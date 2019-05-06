@@ -220,8 +220,8 @@ uintptr_t kmt_sem_sleep(void *alarm) {
   Assert(alarm != NULL, "Sleep without a alarm (semaphore).");
   Assert(spinlock_holding(&goto_sleep_lock), "Not holding goto sleep lock when going to sleep.");
 
-  spinlock_acquire(&task_lock);
   spinlock_release(&goto_sleep_lock);
+  spinlock_acquire(&task_lock);
   bool already_alarmed = false;
   struct alarm_log *ap = alarm_head.next;
   struct alarm_log *an = NULL;
