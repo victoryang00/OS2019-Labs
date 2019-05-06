@@ -10,7 +10,7 @@
 
 struct semaphore {
   const char *name;
-  int value;
+  volatile int value;
   struct spinlock lock;
 };
 

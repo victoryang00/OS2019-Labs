@@ -20,6 +20,7 @@ void semaphore_wait(struct semaphore *sem) {
     spinlock_acquire(&sem->lock);
     printf("-[%s = %d]\n", sem->name, sem->value);
   }
+  __sync_synchronize();
   --sem->value;
   spinlock_release(&sem->lock);
 }
@@ -27,6 +28,7 @@ void semaphore_wait(struct semaphore *sem) {
 void semaphore_signal(struct semaphore *sem) {
   spinlock_acquire(&sem->lock);
   ++sem->value;
+  __sync_synchronize();
   printf("+[%s = %d]\n", sem->name, sem->value);
   asm volatile ("int $0x80" : : "a"(SYS_sem_signal), "b"(sem));
   spinlock_release(&sem->lock);
