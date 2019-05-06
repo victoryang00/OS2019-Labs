@@ -40,7 +40,7 @@ void producer(void *arg) {
 
 void fuck(void *arg) {
   printf("BOOM!\n");
-  asm volatile("int $0x30" : : );
+  asm volatile("int $0x80" : : );
 }
 
 void echo_task(void *name) {
