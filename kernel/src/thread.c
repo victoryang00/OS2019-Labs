@@ -193,7 +193,7 @@ uintptr_t kmt_sem_sleep(void *alarm, struct spinlock *lock) {
   while (ap) {
     an = ap->next;
     if (ap->alarm == alarm) already_alarmed = true;
-    if (ap->alarm != alarm && ap->issuer != cur) {
+    if (ap->alarm == alarm && ap->issuer != cur) {
       pmm->free(ap);
     } else {
       ap->next = alarm_head.next;
