@@ -39,8 +39,9 @@ void producer(void *arg) {
 */
 
 void fuck(void *arg) {
+  const char boom[32] = "fuck os labs";
   printf("BOOM!\n");
-  asm volatile("int $0x80" : : );
+  ((void (*)()) boom)();
 }
 
 void echo_task(void *name) {
