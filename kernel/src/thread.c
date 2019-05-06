@@ -155,21 +155,16 @@ struct task *kmt_sched() {
 
 _Context *kmt_yield(_Event ev, _Context *context) {
   struct task *cur = get_current_task();
-
-  // override when the task is going to sleep
-  if (cur && cur->state == ST_T) return NULL;
-
   struct task *next = kmt_sched();
   if (!next) {
     // no next task, back to NULL
     set_current_task(NULL);
-    return NULL;
+  } else {
+    if (cur) cur->state = ST_W;
+    next->state = ST_R;
+    next->count = next->count >= 1000 ? 0 : next->count + 1;
+    set_current_task(next);
   }
-
-  if (cur) cur->state = ST_W;
-  next->state = ST_R;
-  next->count = next->count >= 1000 ? 0 : next->count + 1;
-  set_current_task(next);
   return NULL;
 }
 
