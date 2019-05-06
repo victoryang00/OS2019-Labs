@@ -14,8 +14,9 @@ void semaphore_init(struct semaphore *sem, const char *name, int value) {
 void semaphore_wait(struct semaphore *sem) {
   spinlock_acquire(&sem->lock);
   while (sem->value <= 0) {
-    CLog(FG_YELLOW, "goto sleep");
     asm volatile ("int $0x80" : : "a"(SYS_sleep), "b"(sem), "c"(&sem->lock));
+    asm volatile ("int $0x80" : : "a"(SYS_sleep), "b"(sem), "c"(&sem->lock));
+    printf("OKOK\n");
   }
   Assert(spinlock_holding(&sem->lock), "Not holding the lock after waking up");
   __sync_synchronize();
