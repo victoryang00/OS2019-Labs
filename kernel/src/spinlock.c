@@ -8,6 +8,10 @@
 int efif[MAX_CPU] = {};
 int ncli[MAX_CPU] = {};
 
+bool cpu_no_spinlock() {
+  return ncli[_cpu()] == 0;
+}
+
 void spinlock_init(struct spinlock *lk, const char *name) {
   lk->locked = 0;
   lk->holder = -1;
@@ -50,14 +54,6 @@ bool spinlock_holding(struct spinlock *lk) {
   bool res = 0;
   spinlock_pushcli();
   res = lk->locked && lk->holder == _cpu();
-  spinlock_popcli();
-  return res;
-}
-
-bool spinlock_isfree(struct spinlock *lk) {
-  bool res = 0;
-  spinlock_pushcli();
-  res = lk->locked;
   spinlock_popcli();
   return res;
 }
