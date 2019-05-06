@@ -61,11 +61,12 @@ void kmt_init() {
   spinlock_release(&task_lock);
 
   // add trap handlers
-  os->on_irq(INT_MIN, _EVENT_NULL, kmt_context_save);
-  os->on_irq(INT_MAX, _EVENT_NULL, kmt_context_switch);
-  os->on_irq(0, _EVENT_YIELD, kmt_yield);
-  os->on_irq(-1, _EVENT_IRQ_TIMER, kmt_yield);
-  os->on_irq(-2, _EVENT_SYSCALL, do_syscall);
+  os->on_irq(INT_MIN, _EVENT_NULL,      kmt_context_save);
+  os->on_irq(0,       _EVENT_YIELD,     kmt_yield);
+  os->on_irq(1,       _EVENT_IRQ_TIMER, kmt_yield);
+  os->on_irq(2,       _EVENT_SYSCALL,   do_syscall);
+  //os->on_irq(3,       _EVENT_ERROR,     kmt_reset);
+  os->on_irq(INT_MAX, _EVENT_NULL,      kmt_context_switch);
 }
 
 int kmt_create(struct task *task, const char *name, void (*entry)(void *arg), void *arg) {
@@ -81,6 +82,7 @@ int kmt_create(struct task *task, const char *name, void (*entry)(void *arg), vo
   memset(task->stack,  FILL_STACK, sizeof(task->stack));
   memset(task->fenceB, FILL_FENCE, sizeof(task->fenceB));
   kmt_inspect_fence(task);
+  task->alarm = NULL;
   task->next = NULL;
 
   /**
@@ -222,7 +224,7 @@ uintptr_t kmt_sem_sleep(void *alarm) {
   while (ap) {
     an = ap->next;
     if (ap->alarm == alarm) already_alarmed = true;
-    if (ap->issuer != cur) {
+    if (ap->alarm != alarm && ap->issuer != cur) {
       pmm->free(ap);
     } else {
       ap->next = alarm_head.next;
@@ -233,12 +235,6 @@ uintptr_t kmt_sem_sleep(void *alarm) {
 
   struct task *next = kmt_sched();
   if (!next || already_alarmed) {
-    //if (cur->pid == 2) {
-    //  printf("input not falling sleep because %s\n", next ? "already alarmed" : "no next task");
-    //}
-    //if (cur->pid == 3) {
-    //  printf("tty not falling sleep because %s\n", next ? "already alarmed" : "no next task");
-    //}
     CLog(FG_YELLOW, "No next task or already alarmed");
     cur->state = ST_R;
     cur->count = cur->count >= 1000 ? 0 : cur->count + 1; 
