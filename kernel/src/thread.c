@@ -260,7 +260,7 @@ uintptr_t kmt_sem_wakeup(void *alarm) {
   // avoid reinsertion
   bool already_alarmed = false;
   for (struct alarm_log *ap = alarm_head.next; ap != NULL; ap = ap->next) {
-    if (ap->alarm == alarm && ap->alarm == cur) {
+    if (ap->alarm == alarm && ap->issuer == cur) {
       already_alarmed = true;
       break;
     }
