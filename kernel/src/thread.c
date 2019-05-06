@@ -123,7 +123,8 @@ void kmt_inspect_fence(struct task *task) {
 
 _Context *kmt_context_save(_Event ev, _Context *context) {
   //Log("KMT Context Save");
-  spinlock_acquire(&task_lock);
+  if (!spinlock_holding(&task_lock))
+    spinlock_acquire(&task_lock);
   struct task *cur = get_current_task();
   if (cur) {
     struct context_item *cp = pmm->alloc(sizeof(struct context_item));
@@ -148,11 +149,6 @@ _Context *kmt_context_switch(_Event ev, _Context *context) {
     cur->context_head.next = cp->next;
     ret = cp->context;
     pmm->free(cp);
-    if (cur->context_head.next == NULL && cur->alarm) {
-      // clear alarm and re-acquire lock
-      cur->alarm = NULL;
-      spinlock_acquire(cur->lock);
-    }
     Log("Context for task %d: %s loaded.", cur->pid, cur->name);
   } else {
     ret = context;
@@ -218,7 +214,7 @@ _Context *kmt_error(_Event ev, _Context *context) {
   return NULL;
 }
 
-uintptr_t kmt_sem_sleep(void *alarm, struct spinlock *lock) {
+uintptr_t kmt_sem_sleep(void *alarm) {
   struct task *cur = get_current_task();
   Assert(cur != NULL, "NULL task is going to sleep.");
   Assert(cur->state == ST_R, "A task that is not running is to sleep.");
@@ -248,11 +244,9 @@ uintptr_t kmt_sem_sleep(void *alarm, struct spinlock *lock) {
     cur->count = cur->count >= 1000 ? 0 : cur->count + 1; 
   } else {
     CLog(FG_YELLOW, "Next is %d: %s", next->pid, next->name);
-    printf("%s going to sleep when waiting for %s.", cur->name, ((struct semaphore *) alarm)->name);
+    printf("%s going to sleep when waiting for %s.", cur->name, ((struct semaphore *) alarm));
     cur->state = ST_S;
     cur->alarm = alarm;
-    cur->lock  = lock;
-    spinlock_release(lock);
     next->state = ST_R;
     next->count = next->count >= 1000 ? 0 : next->count + 1;
     set_current_task(next);
