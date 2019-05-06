@@ -186,6 +186,7 @@ uintptr_t kmt_sem_sleep(void *alarm, struct spinlock *lock) {
   Assert(alarm, "Sleep without a alarm (semaphore).");
   Assert(lock,  "Sleep without releasing a lock." );
   cur->state = ST_T;
+  spinlock_release(lock);
 
   bool already_alarmed = false;
   struct alarm_log *ap = alarm_head.next;
@@ -212,7 +213,6 @@ uintptr_t kmt_sem_sleep(void *alarm, struct spinlock *lock) {
   struct task *next = kmt_sched();
   cur->state = ST_S;
   cur->alarm = alarm;
-  spinlock_release(lock);
   if (!next) {
     // no next task, return to NULL
     set_current_task(NULL);
