@@ -98,6 +98,7 @@ static void os_run() {
 static _Context *os_trap(_Event ev, _Context *context) {
   CLog(BG_CYAN, "Event %d: %s", ev.event, ev.msg);
 
+  bool holding = spinlock_holding(&os_trap_lock);
   Assert(!(holding && ev.event == _EVENT_IRQ_TIMER), "FUCK");
   if (!holding) spinlock_acquire(&os_trap_lock);
   _Context *ret = NULL;
