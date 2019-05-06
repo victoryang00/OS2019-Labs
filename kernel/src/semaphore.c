@@ -5,6 +5,8 @@
 #include <semaphore.h>
 #include <debug.h>
 
+extern struct task **cpu_tasks;
+
 void semaphore_init(struct semaphore *sem, const char *name, int value) {
   spinlock_init(&sem->lock, "Sem Lock");
   sem->name = name;
@@ -15,7 +17,8 @@ void semaphore_wait(struct semaphore *sem) {
   spinlock_acquire(&sem->lock);
   //printf("-[%s = %d]\n", sem->name, sem->value);
   while (sem->value <= 0) {
-    struct task *cur = get_current_task();
+    struct task *cur = cpu_tasks[_cpu()];
+    Assert(cur, "current task cannot be null");
     cur->state = ST_T;
     __sync_synchronize();
 
