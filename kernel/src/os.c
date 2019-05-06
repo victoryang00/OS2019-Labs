@@ -100,7 +100,6 @@ static _Context *os_trap(_Event ev, _Context *context) {
   if (ev.event == _EVENT_IRQ_IODEV) printf("K");
 
   bool holding = spinlock_holding(&os_trap_lock);
-  Assert(!holding || ev.event == _EVENT_IRQ_IODEV, "already holding the lock, but not an IO interrupt. The event is %s", ev.msg);
   if (!holding) spinlock_acquire(&os_trap_lock);
   CLog(FG_CYAN, "Lock acquired. Begin trap process.");
   _Context *ret = NULL;
