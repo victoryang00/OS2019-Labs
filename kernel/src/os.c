@@ -99,11 +99,23 @@ static _Context *os_trap(_Event ev, _Context *context) {
   CLog(BG_CYAN, "Event %d: %s", ev.event, ev.msg);
 
   bool holding = spinlock_holding(&os_trap_lock);
-  Assert(!holding || ev.event == _EVENT_IRQ_IODEV, "Invalid double trap");
-  if (!holding) {
+  if (holding) {
+    switch (ev.event) {
+      case _EVENT_IRQ_TIMER:
+        Panic("No timer interrupt during trap.");
+      case _EVENT_YIELD:
+        Panic("No yield inside trap.");
+      case _EVENT_SYSCALL:
+        switch(context->eax) {
+          case SYS_sem_sleep:
+            Panic("No sleep inside trap.");
+        }
+    }
+  } else {
     spinlock_acquire(&os_trap_lock);
     CLog(FG_PURPLE, "INTO TRAP >>>>>>");
   }
+
   _Context *ret = NULL;
   for (struct os_handler *hp = root_handler.next; hp != NULL; hp = hp->next) {
     if (
