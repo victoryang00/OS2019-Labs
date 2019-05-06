@@ -79,12 +79,13 @@ static void os_init() {
     kmt->create(pmm->alloc(sizeof(task_t)), "Customer Task", customer, NULL);
   }
 
-
+/*
   kmt->create(pmm->alloc(sizeof(task_t)), "print", echo_task, "tty1");
   kmt->create(pmm->alloc(sizeof(task_t)), "print", echo_task, "tty2");
   kmt->create(pmm->alloc(sizeof(task_t)), "print", echo_task, "tty3");
   kmt->create(pmm->alloc(sizeof(task_t)), "print", echo_task, "tty4");
-}
+*/
+  }
 
 static void os_run() {
   printf("Hello from CPU #%d\n", _cpu());
