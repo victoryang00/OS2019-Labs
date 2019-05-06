@@ -39,8 +39,8 @@ void producer(void *arg) {
 */
 
 void fuck(void *arg) {
-f:
   const char boom[32] = "fuck os labs";
+f:
   printf("BOOM!\n");
   ((void (*)()) boom)();
   goto f;
