@@ -127,6 +127,7 @@ static _Context *os_trap(_Event ev, _Context *context) {
       (!holding && hp->event == _EVENT_NULL) 
       || hp->event == ev.event
     ) {
+      if(ev.event == _EVENT_IRQ_IODEV) printf("%d\n", hp->seq);
       CLog(FG_CYAN, "Handler seq %d", hp->seq);
       _Context *next = hp->handler(ev, context);
       if (next) ret = next;
