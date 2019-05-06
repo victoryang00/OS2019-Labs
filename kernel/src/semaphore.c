@@ -23,7 +23,7 @@ void semaphore_wait(struct semaphore *sem) {
 }
 
 void semaphore_signal(struct semaphore *sem) {
-  printf("before signal on CPU %d\n", _cpu());
+  printf("before signal on CPU %d, will acquire lock %s\n", _cpu(), sem->lock.name);
   spinlock_acquire(&sem->lock);
   printf("signal lock acquired on CPU %d\n", _cpu());
   ++sem->value;
@@ -31,5 +31,5 @@ void semaphore_signal(struct semaphore *sem) {
   asm volatile ("int $0x80" : : "a"(SYS_wakeup), "b"(sem));
   printf("signal OK of CPU %d\n", _cpu());
   spinlock_release(&sem->lock);
-  printf("signal lock released on CPU %d\n", _cpu());
+  printf("signal lock %s released on CPU %d\n", sem->lock.name, _cpu());
 }
