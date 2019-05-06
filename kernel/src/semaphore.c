@@ -6,6 +6,7 @@
 #include <debug.h>
 
 void semaphore_init(struct semaphore *sem, const char *name, int value) {
+  sprintf(sem->fence, "FUCK");
   spinlock_init(&sem->lock, "Sem Lock");
   sem->name = name;
   sem->value = value;
