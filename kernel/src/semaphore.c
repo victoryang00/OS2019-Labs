@@ -19,7 +19,7 @@ void semaphore_wait(struct semaphore *sem) {
   Assert(cur, "sleep without a valid task");
   while (sem->value <= 0) {
     cur->state = ST_T;
-    spinlock_unlock(&sem->lock);
+    spinlock_release(&sem->lock);
     asm volatile ("int $0x80" : : "a"(SYS_sem_wait), "b"(sem), "c"(&sem->lock));
     spinlock_acquire(&sem->lock);
   }
