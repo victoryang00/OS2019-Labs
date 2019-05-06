@@ -210,7 +210,7 @@ _Context *kmt_yield(_Event ev, _Context *context) {
 _Context *kmt_reset(_Event ev, _Context *context) {
   spinlock_acquire(&task_lock);
   Assert(ev.event = _EVENT_ERROR, "Not an error interrupt");
-  printf("Error detected: %s\n", ev.msg);
+  printf("\nError detected: %s\n", ev.msg);
   CLog(BG_RED, "Error detected: %s", ev.msg);
   
   struct task *cur = get_current_task();
@@ -233,6 +233,8 @@ _Context *kmt_reset(_Event ev, _Context *context) {
   cur->context_head.next = cp;
 
   spinlock_release(&task_lock);
+  printf("Task reset.\n");
+  CLog(BG_RED, "Task reset.");
   return NULL;
 }
 
