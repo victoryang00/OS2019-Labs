@@ -101,6 +101,7 @@ static _Context *os_trap(_Event ev, _Context *context) {
   // important: if this is to sleep, we must
   // release the lock now before acquiring next lock
   if (ev.event == _EVENT_SYSCALL && context->GPR1 == SYS_sleep) {
+    printf("release the lock before sleep\n");
     spinlock_release((struct spinlock *) context->ecx);
   }
 
