@@ -184,6 +184,12 @@ uintptr_t kmt_sleep(void *alarm, struct spinlock *lock) {
   Assert(cur,   "NULL task is going to sleep.");
   Assert(alarm, "Sleep without a alarm (semaphore).");
 
+  // even if the task does not sleep,
+  // the lock must be saved so that it
+  // will be reacquired when trap returns
+  cur->alarm = alarm;
+  cur->lock  = lock;
+
   bool already_alarmed = false;
   struct alarm_log *ap = alarm_head.next;
   struct alarm_log *an = NULL;
@@ -202,8 +208,6 @@ uintptr_t kmt_sleep(void *alarm, struct spinlock *lock) {
   if (already_alarmed) return -1;
 
   cur->state = ST_S;
-  cur->alarm = alarm;
-  cur->lock  = lock;
   printf("lock saved just before sleep\n");
   set_current_task(kmt_sched());
   return 0;
