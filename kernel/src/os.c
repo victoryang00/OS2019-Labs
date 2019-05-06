@@ -107,7 +107,7 @@ static _Context *os_trap(_Event ev, _Context *context) {
     printf("release the lock before sleep\n");
     spinlock_release((struct spinlock *) context->ecx);
   }
-  Assert(cpu_no_spinlock(), "not allowed to trap with lock acquired");
+  Assert(ev.event != _EVENT_YIELD || cpu_no_spinlock(), "not allowed to yield with lock acquired");
 
   bool holding = spinlock_holding(&os_trap_lock);
   if (holding) {
