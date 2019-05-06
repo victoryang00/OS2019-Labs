@@ -148,9 +148,6 @@ _Context *kmt_context_switch(_Event ev, _Context *context) {
     cur->context_head.next = cp->next;
     ret = cp->context;
     pmm->free(cp);
-    if (cur->context_head.next == NULL) {
-      cur->alarm = NULL; // clear alarm
-    }
     Log("Context for task %d: %s loaded.", cur->pid, cur->name);
   } else {
     ret = context;
@@ -267,9 +264,9 @@ uintptr_t kmt_sem_wakeup(void *alarm) {
   }
   if (!already_alarmed) {
     struct alarm_log *ap = pmm->alloc(sizeof(struct alarm_log));
-    ap->alarm = alarm;
-    ap->issuer = get_current_task();
-    ap->next = alarm_head.next;
+    ap->alarm  = alarm;
+    ap->issuer = cur;
+    ap->next   = alarm_head.next;
     alarm_head.next = ap;
   }
 
