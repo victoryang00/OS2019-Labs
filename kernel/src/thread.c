@@ -167,6 +167,8 @@ struct task *kmt_sched() {
   //  printf("interrupter task is %d:%s", cur->pid, cur->name);
   //}
   for (struct task *tp = &root_task; tp != NULL; tp = tp->next) {
+    if (tp->pid == 4) printf("%1s", task_states_human[tp->state]);
+    if (tp->pid == 5) printf("%1s\n", task_states_human[tp->state]);
     kmt_inspect_fence(tp);
     Log("%d:%s [%s, L%d, C%d]", tp->pid, tp->name, task_states_human[tp->state], tp->owner, tp->count);
     if (tp->state == ST_E || tp->state == ST_W) {  // choose a waken up task
