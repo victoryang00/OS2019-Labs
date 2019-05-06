@@ -9,7 +9,7 @@
  */
 
 struct semaphore {
-  const char fence[5] = { 'F', 'U', 'C', 'K', '\0' };
+  const char fence[5] = "FUCK";
   const char *name;
   int value;
   struct spinlock lock;
