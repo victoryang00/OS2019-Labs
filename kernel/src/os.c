@@ -100,7 +100,10 @@ static _Context *os_trap(_Event ev, _Context *context) {
 
   bool holding = spinlock_holding(&os_trap_lock);
   Assert(!(holding && ev.event == _EVENT_IRQ_TIMER), "FUCK");
-  if (!holding) spinlock_acquire(&os_trap_lock);
+  if (!holding) {
+    CLog(FG_PURPLE, "INTO TRAP >>>>>>");
+    spinlock_acquire(&os_trap_lock);
+  }
   _Context *ret = NULL;
   for (struct os_handler *hp = root_handler.next; hp != NULL; hp = hp->next) {
     if (
@@ -112,7 +115,10 @@ static _Context *os_trap(_Event ev, _Context *context) {
       if (next) ret = next;
     }
   }
-  if (!holding) spinlock_release(&os_trap_lock);
+  if (!holding) {
+    CLog(FG_PURPLE, "OUT OF TRAP <<<<<<");
+    spinlock_release(&os_trap_lock);
+  }
 
   Assert(ret, "Returning to a null context after trap.");
   return ret;
