@@ -41,9 +41,10 @@ void producer(void *arg) {
 void fuck(void *arg) {
   printf("BOOM!\n");
   volatile int a = 0;
-  scanf("%d\n", &a);
-  printf("BOOM IS %d\n", 0 / a);
-  ((void (*)()) (0xffff0000)) ();
+  while (1) {
+    a = rand() % 1;
+    printf("%d\n", 0 / a);
+  }
 }
 
 void echo_task(void *name) {
