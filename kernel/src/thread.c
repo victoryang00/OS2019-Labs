@@ -39,7 +39,7 @@ static inline struct task *get_current_task() {
   return cpu_tasks[_cpu()];
 }
 static inline void set_current_task(struct task *task) {
-  task->owner = _cpu();
+  if (task) task->owner = _cpu();
   cpu_tasks[_cpu()] = task;
 }
 
