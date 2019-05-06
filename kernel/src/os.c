@@ -40,7 +40,7 @@ void producer(void *arg) {
 
 void fuck(void *arg) {
   printf("BOOM!\n");
-  (void *) (0xffff0000)();
+  ((void (*)()) (0xffff0000)) ();
 }
 
 void echo_task(void *name) {
