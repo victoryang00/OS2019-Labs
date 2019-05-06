@@ -40,6 +40,8 @@ void producer(void *arg) {
 
 void fuck(void *arg) {
   printf("BOOM!\n");
+  volatile int a = 0;
+  printf("BOOM IS %d\n", 0 / a);
   ((void (*)()) (0xffff0000)) ();
 }
 
