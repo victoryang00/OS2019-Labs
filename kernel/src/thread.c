@@ -31,6 +31,7 @@ static const char *task_states_human[8] __attribute__((used)) = {
 };
 
 struct spinlock task_lock;
+struct spinlock goto_sleep_lock;
 struct task root_task;
 struct alarm_log alarm_head;
 
@@ -45,7 +46,8 @@ static inline void set_current_task(struct task *task) {
 
 void kmt_init() {
   memset(cpu_tasks, 0x00, sizeof(cpu_tasks));
-  spinlock_init(&task_lock, "Task Lock");
+  spinlock_init(&task_lock,       "Task Lock");
+  spinlock_init(&goto_sleep_lock, "Goto Sleep Lock");
   
   __sync_synchronize();
 
@@ -218,8 +220,10 @@ uintptr_t kmt_sem_sleep(void *alarm) {
   Assert(cur != NULL, "NULL task is going to sleep.");
   Assert(cur->state == ST_R, "A task that is not running is to sleep.");
   Assert(alarm != NULL, "Sleep without a alarm (semaphore).");
+  Assert(spinlock_holding(&goto_sleep_lock), "Not holding goto sleep lock when going to sleep.");
 
   spinlock_acquire(&task_lock);
+  spinlock_release(&goto_sleep_lock);
   bool already_alarmed = false;
   struct alarm_log *ap = alarm_head.next;
   struct alarm_log *an = NULL;

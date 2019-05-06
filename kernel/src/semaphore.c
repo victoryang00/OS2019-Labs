@@ -5,7 +5,7 @@
 #include <semaphore.h>
 #include <debug.h>
 
-extern struct spinlock os_trap_lock;
+extern struct spinlock goto_sleep_lock;
 
 void semaphore_init(struct semaphore *sem, const char *name, int value) {
   spinlock_init(&sem->lock, "Sem Lock");
@@ -19,11 +19,10 @@ void semaphore_wait(struct semaphore *sem) {
   Assert(!spinlock_holding(&os_trap_lock), "cannot sleep while hoding the trap lock");
   while (sem->value <= 0) {
     // hold the lock so that it will not be interrupted
-    spinlock_acquire(&os_trap_lock);
+    spinlock_acquire(&goto_sleep_lock);
     spinlock_release(&sem->lock);
     asm volatile ("int $0x80" : : "a"(SYS_sem_wait), "b"(sem), "c"(&sem->lock));
     spinlock_acquire(&sem->lock);
-    spinlock_release(&os_trap_lock);
     printf("-[%s = %d]\n", sem->name, sem->value);
   }
   __sync_synchronize();
