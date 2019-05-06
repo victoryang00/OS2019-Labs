@@ -104,6 +104,9 @@ static _Context *os_trap(_Event ev, _Context *context) {
     switch (ev.event) {
       case _EVENT_IRQ_TIMER:
         Panic("No timer interrupt during trap.");
+      case _EVENT_IRQ_IODEV:
+        printf("\n\n\nIODEV\n");
+        break;
       case _EVENT_YIELD:
         Panic("No yield inside trap.");
       case _EVENT_SYSCALL:
