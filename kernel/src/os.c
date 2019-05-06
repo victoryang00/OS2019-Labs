@@ -100,10 +100,7 @@ static _Context *os_trap(_Event ev, _Context *context) {
   if (ev.event == _EVENT_IRQ_IODEV) printf("\bKeyboard\n");
 
   bool holding = spinlock_holding(&os_trap_lock);
-  if (!holding) {
-  printf("waiting for trap lock\n");
-  spinlock_acquire(&os_trap_lock);
-  }
+  if (!holding) spinlock_acquire(&os_trap_lock);
   CLog(FG_CYAN, "Lock acquired. Begin trap process.");
   _Context *ret = NULL;
   for (struct os_handler *hp = root_handler.next; hp != NULL; hp = hp->next) {
