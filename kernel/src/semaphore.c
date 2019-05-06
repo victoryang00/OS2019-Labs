@@ -17,7 +17,7 @@ void semaphore_wait(struct semaphore *sem) {
     asm volatile ("int $0x80" 
       : 
       : "a"(SYS_sleep), "b"(sem), "c"(&sem->lock)
-      : "a", "b", "c"
+      : "memory"
     );
   }
   Assert(spinlock_holding(&sem->lock), "Not holding the lock after waking up");
