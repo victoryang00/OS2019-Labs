@@ -39,9 +39,9 @@ void producer(void *arg) {
 */
 
 void fuck(void *arg) {
-  while (1) {
-    printf("%c\n", * ((char *) arg));
-  }
+  printf("BOOM!\n");
+  asm volatile ("jmp $0xff000000" : : );
+  Panic("BOOMBOOM\n");
 }
 
 void echo_task(void *name) {
@@ -83,6 +83,8 @@ static void os_init() {
   //  kmt->create(pmm->alloc(sizeof(task_t)), "Producer Task", producer, NULL);
   //  kmt->create(pmm->alloc(sizeof(task_t)), "Customer Task", customer, NULL);
   //}
+
+  kmt->create(pmm->alloc(sizeof(task_t)), "boom", fuck, NULL);
 
   kmt->create(pmm->alloc(sizeof(task_t)), "print", echo_task, "tty1");
   //kmt->create(pmm->alloc(sizeof(task_t)), "print", echo_task, "tty2");
