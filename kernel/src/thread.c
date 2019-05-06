@@ -156,6 +156,9 @@ struct task *kmt_sched() {
 }
 
 _Context *kmt_yield(_Event ev, _Context *context) {
+  struct task *cur = get_current_task();
+  if (cur && cur->state == ST_T) return NULL;
+
   struct task *next = kmt_sched();
   if (!next) {
     // no next task, back to NULL
@@ -182,8 +185,6 @@ uintptr_t kmt_sem_sleep(void *alarm, struct spinlock *lock) {
   Assert(cur,   "NULL task is going to sleep.");
   Assert(alarm, "Sleep without a alarm (semaphore).");
   Assert(lock,  "Sleep without releasing a lock." );
-  cur->state = ST_T;
-  spinlock_release(lock);
 
   bool already_alarmed = false;
   struct alarm_log *ap = alarm_head.next;
