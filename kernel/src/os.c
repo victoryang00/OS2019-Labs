@@ -71,19 +71,21 @@ static void os_init() {
   CLog(BG_GREEN, "dev ok");
 
   //create proc here
-  kmt->sem_init(&sem_p, "Producer SEM", 20);
+  kmt->sem_init(&sem_p, "Producer SEM", 5);
   kmt->sem_init(&sem_c, "Customer SEM", 0);
   kmt->sem_init(&mutex, "Producer-Customer MUTEX", 1);
-  for (int i = 0; i < 0; ++i) {
+  for (int i = 0; i < 1; ++i) {
     kmt->create(pmm->alloc(sizeof(task_t)), "Producer Task", producer, NULL);
     kmt->create(pmm->alloc(sizeof(task_t)), "Customer Task", customer, NULL);
   }
 
+/*
   kmt->create(pmm->alloc(sizeof(task_t)), "print", echo_task, "tty1");
   kmt->create(pmm->alloc(sizeof(task_t)), "print", echo_task, "tty2");
   kmt->create(pmm->alloc(sizeof(task_t)), "print", echo_task, "tty3");
   kmt->create(pmm->alloc(sizeof(task_t)), "print", echo_task, "tty4");
-  }
+*/
+}
 
 static void os_run() {
   printf("Hello from CPU #%d\n", _cpu());
