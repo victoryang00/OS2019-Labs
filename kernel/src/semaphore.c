@@ -16,6 +16,7 @@ void semaphore_init(struct semaphore *sem, const char *name, int value) {
 void semaphore_wait(struct semaphore *sem) {
   spinlock_acquire(&sem->lock);
   printf("-[%s = %d]\n", sem->name, sem->value);
+  Assert(!spinlock_holding(&os_trap_lock), "cannot sleep while hoding the trap lock");
   while (sem->value <= 0) {
     // hold the lock so that it will not be interrupted
     spinlock_acquire(&os_trap_lock);
