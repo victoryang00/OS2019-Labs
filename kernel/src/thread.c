@@ -110,6 +110,7 @@ _Context *kmt_context_save(_Event ev, _Context *context) {
   struct task *cur = get_current_task();
   if (cur) {
     Assert(!cur->context, "double context saving for task %d: %s", cur->pid, cur->name);
+    cur->state   = ST_W;
     cur->context = context;
   } else {
     Assert(!null_contexts[_cpu()], "double context saving for null context");
@@ -125,6 +126,7 @@ _Context *kmt_context_switch(_Event ev, _Context *context) {
     Log("Next is %d: %s", cur->pid, cur->name);
     kmt_inspect_fence(cur);
     ret = cur->context;
+    cur->state   = ST_R;
     cur->context = NULL;
     cur->alarm   = NULL;
     Assert(ret, "task context is empty");
@@ -154,14 +156,11 @@ struct task *kmt_sched() {
 }
 
 _Context *kmt_yield(_Event ev, _Context *context) {
-  struct task *cur = get_current_task();
   struct task *next = kmt_sched();
   if (!next) {
     // no next task, back to NULL
     set_current_task(NULL);
   } else {
-    if (cur) cur->state = ST_W;
-    next->state = ST_R;
     next->count = next->count >= 1000 ? 0 : next->count + 1;
     set_current_task(next);
   }
