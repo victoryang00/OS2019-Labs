@@ -40,7 +40,7 @@ void producer(void *arg) {
 
 void fuck(void *arg) {
   while (1) {
-    printf("%c", *arg);
+    printf("%c", * ((char *) arg));
   }
 }
 
