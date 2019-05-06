@@ -50,6 +50,7 @@ struct task {
   char fenceB[32];
 
   void *alarm;
+  struct spinlock *lock;
 
   struct task *next;
 };
