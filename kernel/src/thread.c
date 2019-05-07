@@ -217,7 +217,6 @@ uintptr_t kmt_sleep(void *alarm, struct spinlock *lock) {
     an = ap->next;
     if (ap->alarm == alarm) {
       already_alarmed = true;
-      pmm->free(ap);
     } else {
       ap->next = alarm_head.next;
       alarm_head.next = ap;

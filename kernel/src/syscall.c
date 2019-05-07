@@ -13,17 +13,19 @@ _Context* do_syscall(_Event ev, _Context *context) {
     context->GPR3,
     context->GPR4
   };
+  uintptr_t ret = 0;
 
   switch (a[0]) {
     case SYS_sleep:
-      kmt_sleep((void *) a[1], (struct spinlock *) a[2]);
+      ret = kmt_sleep((void *) a[1], (struct spinlock *) a[2]);
       break;
     case SYS_wakeup:
-      kmt_wakeup((void *) a[1]);
+      ret = kmt_wakeup((void *) a[1]);
       break;
     default: Panic("Unhandled syscall ID = %d", a[0]);
   }
 
+  context->GPRx = ret;
   CLog(FG_YELLOW, "Syscall %d finished.", a[0]);
   return NULL;
 }
