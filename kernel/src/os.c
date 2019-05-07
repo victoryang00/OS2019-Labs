@@ -41,12 +41,12 @@ void echo_task(void *name) {
   char text[128], line[128];
   while (1) {
     sprintf("(%s) ", name);
-    tty->ops->write(tty, 0, text, sizeof(text));
+    tty->ops->write(tty, 0, text, strlen(text));
     
     int nread = tty->ops->read(tty, 0, line, sizeof(line));
     line[nread - 1] = '\0';
     sprintf("Echo: \"%s\".", line);
-    tty->ops->write(tty, 0, text, sizeof(text));
+    tty->ops->write(tty, 0, text, strlen(text));
   }
 }
 
