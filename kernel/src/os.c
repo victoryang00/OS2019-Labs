@@ -43,7 +43,7 @@ struct spinlock sprintf_lock;
 void echo_task(void *name) {
   device_t *tty = dev_lookup(name);
   char line[128], text[128];
-  size_t text_len, line_len;
+  size_t text_len;
   kmt->spin_lock(&sprintf_lock);
   sprintf(text, "(%s) $ ", name);
   text_len = strlen(text);
