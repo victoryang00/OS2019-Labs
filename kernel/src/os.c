@@ -39,15 +39,20 @@ void producer(void *arg) {
     kmt->sem_signal(&sem_c);
   }
 }
+struct spinlock sprintf_lock;
 void echo_task(void *name) {
   device_t *tty = dev_lookup(name);
   while (1) {
     char line[128], text[128];
+    kmt->spin_lock(&sprintf_lock);
     sprintf(text, "(%s) $ ", name);
+    kmt->spin_unlock(&sprintf_lock);
     tty->ops->write(tty, 0, text, strlen(text));
     int nread = tty->ops->read(tty, 0, line, sizeof(line));
     line[nread - 1] = '\0';
+    kmt->spin_lock(&sprintf_lock);
     sprintf(text, "Echo: %s.\n", line);
+    kmt->spin_unlock(&sprintf_lock);
     tty->ops->write(tty, 0, text, strlen(text));
   }
 }
@@ -79,12 +84,11 @@ static void os_init() {
     kmt->create(pmm->alloc(sizeof(task_t)), "Customer Task", customer, NULL);
   }
 
-  /*
+  kmt->spin_init(&sprintf_lock, "sprintf-lock");
   kmt->create(pmm->alloc(sizeof(task_t)), "echo-1", echo_task, "tty1");
   kmt->create(pmm->alloc(sizeof(task_t)), "echo-2", echo_task, "tty2");
   kmt->create(pmm->alloc(sizeof(task_t)), "echo-3", echo_task, "tty3");
   kmt->create(pmm->alloc(sizeof(task_t)), "echo-4", echo_task, "tty4");
-  */
 }
 
 static void os_run() {
