@@ -142,6 +142,7 @@ _Context *kmt_context_switch(_Event ev, _Context *context) {
     Assert(ret, "task context is empty");
   } else {
     Log("Next is NULL task");
+    printf("[%d] switching to NULL", _cpu());
     ret = null_contexts[_cpu()];
     null_contexts[_cpu()] = NULL;
     Assert(ret, "null context is empty");
