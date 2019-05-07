@@ -39,7 +39,7 @@ void semaphore_signal(struct semaphore *sem) {
   bool holding = spinlock_holding(&os_trap_lock);
   if (!holding) spinlock_acquire(&os_trap_lock);
   for (struct task *tp = root_task.next; tp != NULL; tp = tp->next) {
-    if (tp->state == ST_S && tp->alarm == sem) {
+    if (tp->alarm == sem) {
       tp->state = ST_W;
       tp->alarm = NULL;
     }
