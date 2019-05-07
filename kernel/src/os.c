@@ -56,7 +56,7 @@ void echo_task(void *name) {
   line_len = strlen(line);
   kmt->spin_unlock(&sprintf_lock);
     line[nread - 1] = '\0';
-    tty->ops->write(tty, 0, line, line_len;
+    tty->ops->write(tty, 0, line, line_len);
   }
 }
 
