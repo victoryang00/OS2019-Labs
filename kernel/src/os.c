@@ -103,15 +103,18 @@ static _Context *os_trap(_Event ev, _Context *context) {
   if (holding) {
     switch (ev.event) {
       case _EVENT_IRQ_TIMER:
-        Panic("No timer interrupt during trap.");
+        printf("No timer interrupt during trap.\n");
+        return context;
       case _EVENT_IRQ_IODEV:
         break;
       case _EVENT_YIELD:
-        Panic("No yield inside trap.");
+        printf("No yield inside trap.\n");
+        return context;
       case _EVENT_SYSCALL:
         switch(context->GPR1) {
           case SYS_sleep:
-            Panic("No semaphore wait/sleep inside trap.");
+            printf("No semaphore wait/sleep inside trap.\n");
+            return context;
         }
     }
   } else {

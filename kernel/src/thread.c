@@ -223,8 +223,6 @@ uintptr_t sys_sleep(void *alarm, struct spinlock *lock) {
   // will be reacquired when trap returns
   cur->alarm = alarm;
   cur->lock  = lock;
-  set_current_task(NULL);
-  return 0;
 
   bool already_alarmed = false;
   struct alarm_log *ap = alarm_head.next;
@@ -243,6 +241,7 @@ uintptr_t sys_sleep(void *alarm, struct spinlock *lock) {
   }
 
   if (true || already_alarmed) {
+    set_current_task(NULL);
   } else {
     cur->state = ST_S;
     set_current_task(kmt_sched());
