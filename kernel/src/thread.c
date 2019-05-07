@@ -34,8 +34,8 @@ struct task root_task;
 struct alarm_log alarm_head;
 struct spinlock *wakeup_reacquire_lock = NULL;
 
-_Context volatile *null_contexts[MAX_CPU] = {};
-struct task volatile *cpu_tasks[MAX_CPU] = {};
+_Context *null_contexts[MAX_CPU] = {};
+struct task *cpu_tasks[MAX_CPU] = {};
 struct task *get_current_task() {
   Assert(cpu_tasks[_cpu()] != &root_task, "cannot tun as root-task");
   return cpu_tasks[_cpu()];
@@ -120,6 +120,8 @@ _Context *kmt_context_save(_Event ev, _Context *context) {
     cur->context = context;
   } else {
     Assert(!null_contexts[_cpu()], "double context saving for null context");
+    Assert(context->eip > 0x000010, "bad eip");
+    Assert(*(context->esp0) > 0x000010, "bad ret addr");
     null_contexts[_cpu()] = context;
   }
   return NULL;
