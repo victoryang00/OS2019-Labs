@@ -279,7 +279,7 @@ uintptr_t sys_wakeup(void *alarm) {
   }
 
   for (struct task *tp = root_task.next; tp != NULL; tp = tp->next) {
-    if (tp->state == ST_S && tp->alarm == alarm) {
+    if (tp->state == ST_S) {
       CLog(FG_YELLOW, "waked up task %d: %s", tp->pid, tp->name);
       tp->state = ST_W; // wake up
     }
