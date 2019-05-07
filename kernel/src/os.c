@@ -92,12 +92,6 @@ static void os_run() {
 static _Context *os_trap(_Event ev, _Context *context) {
   CLog(BG_CYAN, "Event %d: %s", ev.event, ev.msg);
 
-  // important: if this is to sleep, we must
-  // release the lock now before acquiring next lock
-  if (ev.event == _EVENT_SYSCALL && context->GPR1 == SYS_sleep) {
-    spinlock_release((struct spinlock *) context->GPR3);
-  }
-
   bool holding = spinlock_holding(&os_trap_lock);
   if (holding) {
     switch (ev.event) {
@@ -122,6 +116,10 @@ static _Context *os_trap(_Event ev, _Context *context) {
     }
     return context;
   } else {
+    if (ev.event == _EVENT_SYSCALL && context->GPR1 == SYS_sleep) {
+      spinlock_release((struct spinlock *) context->GPR3);
+    }
+
     spinlock_acquire(&os_trap_lock);
     CLog(FG_PURPLE, ">>>>>> IN TO TRAP");
     _Context *ret = NULL;
