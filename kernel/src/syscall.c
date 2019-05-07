@@ -3,7 +3,11 @@
 #include <thread.h>
 #include <syscall.h>
 
-_Context* do_syscall(_Event ev, _Context *context) {
+void syscall_ret(_Context *c, int val) {
+  c->GPRx = val;
+}
+
+_Context* do_syscall(_Context *context) {
   Assert(ev.event == _EVENT_SYSCALL, "not a syscall");
   Assert(context->GPR1 != -1, "bad eax for syscall");
   
@@ -13,21 +17,17 @@ _Context* do_syscall(_Event ev, _Context *context) {
     context->GPR3,
     context->GPR4
   };
-  uintptr_t ret = 0;
 
   switch (a[0]) {
     case SYS_sleep:
-      ret = context->GPRx;
       kmt_sleep((void *) a[1], (struct spinlock *) a[2]);
       break;
     case SYS_wakeup:
-      ret = context->GPRx;
       kmt_wakeup((void *) a[1]);
       break;
     default: Panic("Unhandled syscall ID = %d", a[0]);
   }
 
-  context->GPRx = ret;
   CLog(FG_YELLOW, "Syscall %d finished.", a[0]);
   return NULL;
 }

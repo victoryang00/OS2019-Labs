@@ -62,7 +62,7 @@ void kmt_init() {
   os->on_irq(-1,      _EVENT_ERROR,     kmt_error);
   os->on_irq(0,       _EVENT_YIELD,     kmt_yield);
   os->on_irq(0,       _EVENT_IRQ_TIMER, kmt_yield);
-  os->on_irq(1,       _EVENT_SYSCALL,   do_syscall);
+  os->on_irq(1,       _EVENT_SYSCALL,   kmt_syscall);
   os->on_irq(INT_MAX, _EVENT_NULL,      kmt_context_switch);
 }
 
@@ -171,6 +171,11 @@ struct task *kmt_sched() {
 
 _Context *kmt_yield(_Event ev, _Context *context) {
   set_current_task(kmt_sched());
+  return NULL;
+}
+
+_Context *kmt_syscall(_Event ev, _Context *context) {
+  do_syscall(context);
   return NULL;
 }
 
