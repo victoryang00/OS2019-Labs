@@ -118,12 +118,12 @@ _Context *kmt_context_save(_Event ev, _Context *context) {
     cur->state   = ST_W;
     cur->owner   = -1;
     cur->context = context;
-    Assert(context->eip > 0x100000, "bad eip (1) when saving %s", cur->name);
-    Assert(context->eip < 0x200000, "bad eip (2) when saving %s", cur->name);
+    Assert(context->eip >= 0x100000, "bad eip (1) when saving %s", cur->name);
+    Assert(context->eip <  0x200000, "bad eip (2) when saving %s", cur->name);
   } else {
     Assert(!null_contexts[_cpu()], "double context saving for null context");
-    Assert(context->eip > 0x100000, "bad eip (1) when saving null");
-    Assert(context->eip < 0x200000, "bad eip (2) when saving null");
+    Assert(context->eip >= 0x100000, "bad eip (1) when saving null");
+    Assert(context->eip <  0x200000, "bad eip (2) when saving null");
     null_contexts[_cpu()] = context;
   }
   return NULL;
@@ -141,8 +141,8 @@ _Context *kmt_context_switch(_Event ev, _Context *context) {
     ret = cur->context;
     cur->context = NULL;
     Assert(ret, "task context is empty");
-    Assert(ret->eip > 0x100000, "bad eip (1) when switching to %s", cur->name);
-    Assert(ret->eip < 0x200000, "bad eip (2) when switching to %s", cur->name);
+    Assert(ret->eip >= 0x100000, "bad eip (1) when switching to %s", cur->name);
+    Assert(ret->eip <  0x200000, "bad eip (2) when switching to %s", cur->name);
     if (cur->alarm) {
       Assert(cur->lock, "No lock to reacquire");
       wakeup_reacquire_lock = cur->lock;
@@ -155,8 +155,8 @@ _Context *kmt_context_switch(_Event ev, _Context *context) {
     ret = null_contexts[_cpu()];
     null_contexts[_cpu()] = NULL;
     Assert(ret, "null context is empty");
-    Assert(ret->eip > 0x100000, "bad eip (1) when switching to null");
-    Assert(ret->eip < 0x200000, "bad eip (2) when switching to null");
+    Assert(ret->eip >= 0x100000, "bad eip (1) when switching to null");
+    Assert(ret->eip <  0x200000, "bad eip (2) when switching to null");
   }
   return ret;
 }
@@ -249,6 +249,7 @@ uintptr_t sys_sleep(void *alarm, struct spinlock *lock) {
   }
 
   if (true || already_alarmed) {
+    return 0;
     set_current_task(NULL);
   } else {
     cur->state = ST_S;
