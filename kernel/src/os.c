@@ -6,7 +6,7 @@
 #include <spinlock.h>
 #include <semaphore.h>
 
-struct spinlock *os_trap_lock;
+struct spinlock os_trap_lock;
 static struct os_handler root_handler = {
   0, _EVENT_NULL, NULL, NULL
 };
@@ -51,8 +51,7 @@ void echo_task(void *name) {
 }
 
 static void os_init() {
-  os_trap_lock = pmm->alloc(sizeof(struct spinlock));
-  spinlock_init(os_trap_lock, "OS TRAP SPIN LOCK");
+  spinlock_init(&os_trap_lock, "OS TRAP SPIN LOCK");
   CLog(BG_GREEN, "locks ok");
 
   pmm->init();
@@ -101,7 +100,7 @@ static _Context *os_trap(_Event ev, _Context *context) {
   }
   Assert(ev.event != _EVENT_YIELD || cpu_no_spinlock(), "not allowed to yield with lock acquired");
 
-  bool holding = spinlock_holding(os_trap_lock);
+  bool holding = spinlock_holding(&os_trap_lock);
   if (holding) {
     switch (ev.event) {
       case _EVENT_IRQ_TIMER:
@@ -117,7 +116,7 @@ static _Context *os_trap(_Event ev, _Context *context) {
         }
     }
   } else {
-    spinlock_acquire(os_trap_lock);
+    spinlock_acquire(&os_trap_lock);
     CLog(FG_PURPLE, ">>>>>> IN TO TRAP");
   }
 
@@ -137,7 +136,7 @@ static _Context *os_trap(_Event ev, _Context *context) {
   wakeup_reacquire_lock = NULL;
   if (!holding) {
     CLog(FG_PURPLE, "<<<<<< OUT OF TRAP");
-    spinlock_release(os_trap_lock);
+    spinlock_release(&os_trap_lock);
   }
   if (lock) {
     spinlock_acquire(lock);
@@ -156,12 +155,12 @@ static void os_on_irq(int seq, int event, handler_t handler) {
   oh->handler = handler;
   oh->next = NULL;
 
-  spinlock_acquire(os_trap_lock);
+  spinlock_acquire(&os_trap_lock);
   struct os_handler *hp = &root_handler;
   while (hp->next && hp->next->seq < seq) hp = hp->next;
   oh->next = hp->next;
   hp->next = oh;
-  spinlock_release(os_trap_lock);
+  spinlock_release(&os_trap_lock);
 }
 
 MODULE_DEF(os) {
