@@ -18,27 +18,27 @@ sem_t sem_p;
 sem_t sem_c;
 sem_t mutex;
 void customer(void *arg) {
+  device_t *tty = dev_lookup("tty1");
   while (1) {
     kmt->sem_wait(&sem_c);
     kmt->sem_wait(&mutex);
-    printf(")");
+    tty->ops->write(tty, 0, ")", 1);
     CLog(BG_RED, ")");
     kmt->sem_signal(&mutex);
     kmt->sem_signal(&sem_p);
   }
 }
 void producer(void *arg) {
+  device_t *tty = dev_lookup("tty1");
   while (1) {
     kmt->sem_wait(&sem_p);
     kmt->sem_wait(&mutex);
-    printf("(");
+    tty->ops->write(tty, 0, "(", 1);
     CLog(BG_RED, "(");
     kmt->sem_signal(&mutex);
     kmt->sem_signal(&sem_c);
   }
 }
-
-
 void echo_task(void *name) {
   device_t *tty = dev_lookup(name);
   while (1) {
