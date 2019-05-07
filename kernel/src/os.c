@@ -94,6 +94,7 @@ static _Context *os_trap(_Event ev, _Context *context) {
   bool holding = spinlock_holding(&os_trap_lock);
   if (holding) {
     printf("[%d] trap in trap: %s\n", _cpu(), ev.msg);
+    struct task *cur = get_current_task();
     switch (ev.event) {
       case _EVENT_IRQ_TIMER:
         Panic("No timer interrupt during trap.\n");
@@ -101,7 +102,6 @@ static _Context *os_trap(_Event ev, _Context *context) {
       case _EVENT_IRQ_IODEV:
         break;
       case _EVENT_YIELD:
-        struct task *cur = get_current_task();
         Assert(cur && cur->state == ST_T, "yield when holding the lock, but not going to sleep.");
         break;
       case _EVENT_ERROR:
