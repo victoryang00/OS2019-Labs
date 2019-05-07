@@ -210,6 +210,7 @@ uintptr_t kmt_sleep(void *alarm, struct spinlock *lock) {
   if (already_alarmed) {
     CLog(FG_YELLOW, "No sleep");
     cur->state = ST_W;
+    set_current_task(kmt_sched());
     return -1;
   } else {
     cur->state = ST_S;
