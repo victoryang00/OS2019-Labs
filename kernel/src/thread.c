@@ -118,7 +118,6 @@ _Context *kmt_context_save(_Event ev, _Context *context) {
     Assert(context->eip <  0x200000, "bad eip (2) when saving %s", cur->name);
   } else {
     Assert(!null_contexts[_cpu()], "double context saving for null context");
-    Assert(context->eip >= 0x100000, "bad eip (1) when saving null");
     Assert(context->eip <  0x200000, "bad eip (2) when saving null");
     null_contexts[_cpu()] = context;
   }
@@ -145,7 +144,6 @@ _Context *kmt_context_switch(_Event ev, _Context *context) {
     ret = null_contexts[_cpu()];
     null_contexts[_cpu()] = NULL;
     Assert(ret, "null context is empty");
-    Assert(ret->eip >= 0x100000, "bad eip (1) when switching to null");
     Assert(ret->eip <  0x200000, "bad eip (2) when switching to null");
   }
   return ret;
