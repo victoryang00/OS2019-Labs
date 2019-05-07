@@ -40,8 +40,8 @@ void semaphore_signal(struct semaphore *sem) {
   if (!holding) spinlock_acquire(&os_trap_lock);
   for (struct task *tp = root_task.next; tp != NULL; tp = tp->next) {
     if (tp->alarm == sem) {
-      tp->state = ST_W;
-      tp->alarm = NULL;
+      if (tp->state == ST_S) tp->state = ST_W;
+      tp->alarm = NULL; // stop going to sleep
     }
   }
   if (!holding) spinlock_release(&os_trap_lock);
