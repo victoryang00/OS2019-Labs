@@ -96,7 +96,7 @@ static _Context *os_trap(_Event ev, _Context *context) {
   // important: if this is to sleep, we must
   // release the lock now before acquiring next lock
   if (ev.event == _EVENT_SYSCALL && context->GPR1 == SYS_sleep) {
-    spinlock_release((struct spinlock *) context->ecx);
+    spinlock_release((struct spinlock *) context->GPR3);
   }
   Assert(ev.event != _EVENT_YIELD || cpu_no_spinlock(), "not allowed to yield with lock acquired");
 
@@ -110,7 +110,7 @@ static _Context *os_trap(_Event ev, _Context *context) {
       case _EVENT_YIELD:
         Panic("No yield inside trap.");
       case _EVENT_SYSCALL:
-        switch(context->eax) {
+        switch(context->GPR1) {
           case SYS_sleep:
             Panic("No semaphore wait/sleep inside trap.");
         }
