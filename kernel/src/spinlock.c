@@ -43,9 +43,7 @@ void spinlock_release(struct spinlock *lk) {
   Assert(spinlock_holding(lk), "Releasing lock %s not holded by cpu %d.", lk->name, _cpu());
 
   lk->holder = -1;
-
-  __sync_synchronize();
-  _atomic_xchg((intptr_t *) &lk->locked, 0);
+  lk->locked = 0;
   spinlock_popcli();
 }
 
