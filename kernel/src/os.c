@@ -80,11 +80,11 @@ static void os_init() {
   }
 
   /*
-  kmt->create(pmm->alloc(sizeof(task_t)), "print", echo_task, "tty1");
+  kmt->create(pmm->alloc(sizeof(task_t)), "echo-1", echo_task, "tty1");
   */
-  kmt->create(pmm->alloc(sizeof(task_t)), "print", echo_task, "tty2");
-  kmt->create(pmm->alloc(sizeof(task_t)), "print", echo_task, "tty3");
-  kmt->create(pmm->alloc(sizeof(task_t)), "print", echo_task, "tty4");
+  kmt->create(pmm->alloc(sizeof(task_t)), "echo-2", echo_task, "tty2");
+  kmt->create(pmm->alloc(sizeof(task_t)), "echo-3", echo_task, "tty3");
+  kmt->create(pmm->alloc(sizeof(task_t)), "echo-4", echo_task, "tty4");
 }
 
 static void os_run() {
