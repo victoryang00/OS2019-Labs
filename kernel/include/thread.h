@@ -43,9 +43,6 @@ struct task {
   struct task *next;
 };
 
-extern struct task **cpu_tasks;
-extern struct task root_task;
-
 struct task *get_current_task();
 void set_current_task(struct task *);
 

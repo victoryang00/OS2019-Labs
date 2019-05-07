@@ -139,12 +139,6 @@ _Context *kmt_context_switch(_Event ev, _Context *context) {
     Assert(ret, "task context is empty");
     Assert(ret->eip >= 0x100000, "bad eip (1) when switching to %s", cur->name);
     Assert(ret->eip <  0x200000, "bad eip (2) when switching to %s", cur->name);
-    if (cur->alarm) {
-      Assert(cur->lock, "No lock to reacquire");
-      wakeup_reacquire_lock = cur->lock;
-      cur->alarm = NULL;
-      cur->lock  = NULL;
-    }
     cur->count   = cur->count >= 1000 ? 0 : cur->count + 1;
   } else {
     Log("Next is NULL task");

@@ -5,6 +5,9 @@
 #include <semaphore.h>
 #include <debug.h>
 
+extern struct task **cpu_tasks;
+extern struct task root_task;
+
 void semaphore_init(struct semaphore *sem, const char *name, int value) {
   spinlock_init(&sem->lock, name);
   sem->name = name;
@@ -39,6 +42,7 @@ void semaphore_signal(struct semaphore *sem) {
   for (struct task *tp = root_task.next; tp != NULL; tp = tp->next) {
     if (tp->state == ST_S && tp->alarm == sem) {
       tp->state = ST_W;
+      tp->alarm = NULL;
     }
   }
   if (!holding) spinlock_release(&os_trap_lock);
