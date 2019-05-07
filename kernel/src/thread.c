@@ -164,7 +164,7 @@ struct task *kmt_sched() {
     }
   }
   Log("===========================");
-  if (ret) printf("[%d] switched to task %d: %s\n", _cpu(), ret->pid, ret->name);
+  if (ret) printf("[%d] switched to %s\n", _cpu(), ret->name);
   return ret;
 }
 
