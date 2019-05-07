@@ -2,6 +2,7 @@
 #include <debug.h>
 #include <thread.h>
 #include <syscall.h>
+#include <spinlock.h>
 #include <semaphore.h>
 
 void syscall_ret(_Context *c, uintptr_t val) {
