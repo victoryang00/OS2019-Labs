@@ -41,7 +41,7 @@ struct task {
   _Context *context;
 
   char fenceA[32];
-  char stack[4096];
+  char stack[8192];
   char fenceB[32];
 
   void *alarm;
