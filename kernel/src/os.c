@@ -153,7 +153,6 @@ static _Context *os_trap(_Event ev, _Context *context) {
     //printf("[%d] lock %s reacquired\n", _cpu(), lock->name);
   }
 
-  Assert(!wakeup_reacquire_lock, "Haven't cleared the lock after waken up and reqacuiring it.");
   Assert(holding || ret, "Returning to a null context after normal trap.");
   return holding ? context : ret;
 }
