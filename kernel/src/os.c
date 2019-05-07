@@ -142,6 +142,7 @@ static _Context *os_trap(_Event ev, _Context *context) {
   }
 
   struct spinlock *lock = wakeup_reacquire_lock;
+  wakeup_reacquire_lock = NULL;
   if (!holding) {
     CLog(FG_PURPLE, "<<<<<< OUT OF TRAP");
     spinlock_release(&os_trap_lock);
