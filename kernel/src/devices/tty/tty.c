@@ -231,9 +231,7 @@ void tty_task(void *arg) {
   tty_render(ttydev->ptr);
   while (1) {
     struct input_event ev;
-    //printf(">>> waiting for input\n");
     int nread = in->ops->read(in, 0, &ev, sizeof(ev));
-    //printf("<<< handling new input\n");
     if (nread > 0) {
       if (ev.alt) {
         device_t *next = ttydev;
@@ -271,6 +269,5 @@ void tty_task(void *arg) {
     } else {
       panic("error");
     }
-    //printf("=== input handle complete\n");
   }
 }
