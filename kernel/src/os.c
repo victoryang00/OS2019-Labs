@@ -46,7 +46,7 @@ void echo_task(void *name) {
   while (1) {
     int nread = tty->ops->read(tty, 0, line, 128);
     line[nread - 1] = '\0';
-    tty->ops->write(tty, 0, line, 10);
+    tty->ops->write(tty, 0, line, strlen(line));
   }
 }
 
