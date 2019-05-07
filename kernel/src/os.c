@@ -42,8 +42,8 @@ void producer(void *arg) {
 struct spinlock sprintf_lock;
 void echo_task(void *name) {
   device_t *tty = dev_lookup(name);
+  char line[128], text[128];
   while (1) {
-    char line[128], text[128];
     kmt->spin_lock(&sprintf_lock);
     sprintf(text, "(%s) $ ", name);
     kmt->spin_unlock(&sprintf_lock);
