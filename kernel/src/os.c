@@ -44,7 +44,7 @@ void echo_task(void *name) {
   device_t *tty = dev_lookup(name);
   char text[128], line[128];
   while (1) {
-    tty->ops->write(tty, 0, "HELLO", 2);
+    tty->ops->write(tty, 0, "HELLO", 5);
     int nread = tty->ops->read(tty, 0, line, 128);
     line[nread - 1] = '\0';
     sprintf(text, "Echo: %s.\n(%s) $ ", line, name);
