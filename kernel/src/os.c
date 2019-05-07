@@ -6,7 +6,7 @@
 #include <spinlock.h>
 #include <semaphore.h>
 
-struct spinlock os_trap_lock;
+struct spinlock *os_trap_lock;
 static struct os_handler root_handler = {
   0, _EVENT_NULL, NULL, NULL
 };
@@ -51,6 +51,7 @@ void echo_task(void *name) {
 }
 
 static void os_init() {
+  os_trap_lock = pmm->alloc(sizeof(struct spinlock));
   spinlock_init(&os_trap_lock, "OS TRAP SPIN LOCK");
   CLog(BG_GREEN, "locks ok");
 
