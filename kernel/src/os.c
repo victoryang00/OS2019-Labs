@@ -134,13 +134,15 @@ static _Context *os_trap(_Event ev, _Context *context) {
 
   struct spinlock *lock = wakeup_reacquire_lock;
   wakeup_reacquire_lock = NULL;
-  if (!holding) {
+  if (holding) {
+    Assert(!lock, "cannot wake up in multi trap");
+  } else {
     CLog(FG_PURPLE, "<<<<<< OUT OF TRAP");
     spinlock_release(&os_trap_lock);
-  }
-  if (lock) {
-    spinlock_acquire(lock);
-    //printf("[%d] lock %s reacquired\n", _cpu(), lock->name);
+    if (lock) {
+      spinlock_acquire(lock);
+      //printf("[%d] lock %s reacquired\n", _cpu(), lock->name);
+    }
   }
 
   Assert(holding || ret, "Returning to a null context after normal trap.");
