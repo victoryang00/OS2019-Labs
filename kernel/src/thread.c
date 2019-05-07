@@ -236,6 +236,7 @@ uintptr_t kmt_sleep(void *alarm, struct spinlock *lock) {
 
 uintptr_t kmt_wakeup(void *alarm) {
   struct task* cur = get_current_task();
+  Assert(cur || cur->state == ST_R, "not a null or running task");
 
   // avoid reinsertion
   bool already_alarmed = false;
