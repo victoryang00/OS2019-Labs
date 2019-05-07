@@ -25,7 +25,6 @@ _Context* do_syscall(_Event ev, _Context *context) {
     default: Panic("Unhandled syscall ID = %d", a[0]);
   }
 
-  context->GPRx = ret;
   CLog(FG_YELLOW, "Syscall %d finished.", a[0]);
   return NULL;
 }
