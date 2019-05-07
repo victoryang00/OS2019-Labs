@@ -167,7 +167,6 @@ struct task *kmt_sched() {
     }
   }
   Log("===========================");
-  if (ret == get_current_task()) ret = NULL;
   return ret;
 }
 
@@ -226,7 +225,7 @@ uintptr_t kmt_sleep(void *alarm, struct spinlock *lock) {
   }
 
   if (true || already_alarmed) {
-    CLog(FG_YELLOW, "No sleep");
+    set_current_task(kmt_sched());
     return -1;
   } else {
     cur->state = ST_S;
