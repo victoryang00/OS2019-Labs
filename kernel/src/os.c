@@ -140,7 +140,7 @@ static _Context *os_trap(_Event ev, _Context *context) {
       if (next) ret = next;
     }
   }
-  struct task *cur = holding ? NULL : get_current_task();
+  struct task *cur = holding ? NULL : cpu_tasks[_cpu()];
   struct spinlock *lock = NULL;
   if (cur && cur->alarm) {
     lock = cur->lock;
