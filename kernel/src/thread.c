@@ -174,14 +174,14 @@ _Context *kmt_yield(_Event ev, _Context *context) {
 
 _Context *kmt_error(_Event ev, _Context *context) {
   Assert(ev.event = _EVENT_ERROR, "Not an error interrupt");
-  printf("\nError detected: %s\n", ev.msg);
+  printf("\nError detected on CPU %d:\n>>>%s<<<\n", _cpu(), ev.msg);
   printf("EIP was %p\n", context->eip);
   printf("ESP was %p\n", context->esp0);
   printf("RET ADDR %p\n", *((void **) context->esp0));
   printf("====================\n");
   printf("Current tasks:\n");
-  for (int i = 0; i < MAX_CPU; ++i) {
-    printf("[CPU%d]", i);
+  for (int i = 0; i < _ncpu(); ++i) {
+    printf("[CPU%d] ", i);
     if (cpu_tasks[i]) {
       printf("%d: %s", cpu_tasks[i]->pid, cpu_tasks[i]->name);
     } else {
