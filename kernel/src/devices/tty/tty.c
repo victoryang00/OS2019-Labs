@@ -91,7 +91,7 @@ static void tty_render(tty_t *tty) {
   uint8_t *d = tty->dirty;
   printf("[%d] in render, waiting for tty\n", _cpu());
   kmt->sem_wait(&tty->lock);
-  printf("[%d] in render, acquired tty\n", _cpu());
+  printf("[%d] in render, acquired tty (%d left)\n", _cpu(), tty->lock.value);
   for (int y = 0; y < tty->lines; y++) {
     for (int x = 0; x < tty->columns; x++) {
       if (*d) {
