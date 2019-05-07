@@ -29,8 +29,7 @@ void spinlock_acquire(struct spinlock *lk) {
    * that the critical section's memory 
    * references happen after the lock is acquired.
    */
-  while (1) {
-    if (_atomic_xchg((intptr_t *) &lk->locked, 1) == 0) break;
+  while (_atomic_xchg((intptr_t *) &lk->locked, 1)) {
     pause();
   }
   __sync_synchronize();
