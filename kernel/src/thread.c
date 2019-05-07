@@ -225,13 +225,13 @@ uintptr_t kmt_sleep(void *alarm, struct spinlock *lock) {
     ap = an;
   }
 
-  if (already_alarmed) {
+  if (true || already_alarmed) {
     CLog(FG_YELLOW, "No sleep");
     cur->state = ST_W;
     return -1;
   } else {
     cur->state = ST_S;
-    set_current_task(NULL);
+    set_current_task(kmt_sched());
     return 0;
   }
 }
@@ -256,7 +256,7 @@ uintptr_t kmt_wakeup(void *alarm) {
   }
 
   for (struct task *tp = root_task.next; tp != NULL; tp = tp->next) {
-    if (tp->state == ST_S) {
+    if (tp->state == ST_S && tp->alarm == alarm) {
       CLog(FG_YELLOW, "waked up task %d: %s", tp->pid, tp->name);
       tp->state = ST_W; // wake up
     }
