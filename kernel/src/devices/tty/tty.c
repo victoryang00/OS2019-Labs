@@ -90,6 +90,7 @@ static void tty_render(tty_t *tty) {
   struct character *ch = tty->buf;
   uint8_t *d = tty->dirty;
   printf("[%d] in render, waiting for tty\n", _cpu());
+  printf("address of ttylock is %p\n", &tty->lock);
   kmt->sem_wait(&tty->lock);
   printf("[%d] in render, acquired tty (%d left)\n", _cpu(), tty->lock.value);
   for (int y = 0; y < tty->lines; y++) {
