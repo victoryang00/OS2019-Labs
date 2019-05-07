@@ -43,15 +43,20 @@ struct spinlock sprintf_lock;
 void echo_task(void *name) {
   device_t *tty = dev_lookup(name);
   char line[128], text[128];
+  size_t text_len, line_len;
   kmt->spin_lock(&sprintf_lock);
   sprintf(text, "(%s) $ ", name);
+  text_len = strlen(text);
   kmt->spin_unlock(&sprintf_lock);
   while (1) {
-    tty->ops->write(tty, 0, text, strlen(text));
+    tty->ops->write(tty, 0, text, text_len);
 
-    int nread = tty->ops->read(tty, 0, line, sizeof(line));
+    int nread = tty->ops->read(tty, 0, line, 128);
+  kmt->spin_lock(&sprintf_lock);
+  line_len = strlen(line);
+  kmt->spin_unlock(&sprintf_lock);
     line[nread - 1] = '\0';
-    tty->ops->write(tty, 0, line, strlen(line));
+    tty->ops->write(tty, 0, line, line_len;
   }
 }
 
