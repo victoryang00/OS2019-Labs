@@ -116,38 +116,33 @@ static _Context *os_trap(_Event ev, _Context *context) {
             return context;
         }
     }
+
+    for (struct os_handler *hp = root_handler.next, hp != NULL; hp = hp->next) {
+      if (hp->event == ev.event) hp->handler(ev, context);
+    }
+    return context;
   } else {
     spinlock_acquire(&os_trap_lock);
     CLog(FG_PURPLE, ">>>>>> IN TO TRAP");
-  }
-
-  _Context *ret = NULL;
-  for (struct os_handler *hp = root_handler.next; hp != NULL; hp = hp->next) {
-    if (
-      (!holding && hp->event == _EVENT_NULL) 
-      || hp->event == ev.event
-    ) {
-      CLog(FG_CYAN, "Handler seq %d", hp->seq);
-      _Context *next = hp->handler(ev, context);
-      if (next) ret = next;
+    _Context *ret = NULL;
+    for (struct os_handler *hp = root_handler.next; hp != NULL; hp = hp->next) {
+      if (hp->event == _EVENT_NULL || hp->event == ev.event) {
+        _Context *next = hp->handler(ev, context);
+        if (next) ret = next;
+      }
     }
-  }
-
-  struct spinlock *lock = wakeup_reacquire_lock;
-  wakeup_reacquire_lock = NULL;
-  if (holding) {
-    Assert(!lock, "cannot wake up in multi trap");
-  } else {
+    struct spinlock *lock = wakeup_reacquire_lock;
+    wakeup_reacquire_lock = NULL;
     CLog(FG_PURPLE, "<<<<<< OUT OF TRAP");
     spinlock_release(&os_trap_lock);
+
     if (lock) {
       spinlock_acquire(lock);
       //printf("[%d] lock %s reacquired\n", _cpu(), lock->name);
     }
+    Assert(ret, "returning to a null context after trap");
+    return ret;
   }
-
-  Assert(holding || ret, "Returning to a null context after normal trap.");
-  return holding ? context : ret;
 }
 
 static void os_on_irq(int seq, int event, handler_t handler) {
