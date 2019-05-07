@@ -17,9 +17,7 @@ _Context* do_syscall(_Event ev, _Context *context) {
 
   switch (a[0]) {
     case SYS_sleep:
-      printf("[%d], goto sleep\n", _cpu());
       ret = kmt_sleep((void *) a[1], (struct spinlock *) a[2]);
-      printf("[%d], sleeped\n", _cpu());
       break;
     case SYS_wakeup:
       ret = kmt_wakeup((void *) a[1]);
