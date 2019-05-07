@@ -208,16 +208,17 @@ ssize_t tty_read(device_t *dev, off_t offset, void *buf, size_t count) {
 
 ssize_t tty_write(device_t *dev, off_t offset, const void *buf, size_t count) {
   tty_t *tty = dev->ptr;
-  printf("[%d] waiting for tty lock\n", _cpu());
+  printf("[%d] waiting for tty\n", _cpu());
   kmt->sem_wait(&tty->lock);
-  printf("[%d] acquired tty lock\n", _cpu());
+  printf("[%d] acquired tty\n", _cpu());
   for (size_t i = 0; i < count; i++) {
     tty_putc(tty, ((const char *)buf)[i]);
   }
-  printf("[%d] before signaling tty lock\n", _cpu());
+  printf("[%d] before signaling tty\n", _cpu());
   kmt->sem_signal(&tty->lock);
-  printf("[%d] after signaling tty lock\n", _cpu());
+  printf("[%d] after signaling tty\n", _cpu());
   tty_render(tty);
+  printf("[%d] after rendering\n", _cpu());
   return count;
 }
 
