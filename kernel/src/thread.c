@@ -34,8 +34,8 @@ struct task root_task;
 struct alarm_log alarm_head;
 struct spinlock *wakeup_reacquire_lock = NULL;
 
-_Context *null_contexts[MAX_CPU] = {};
-struct task *cpu_tasks[MAX_CPU] = {};
+_Context volatile *null_contexts[MAX_CPU] = {};
+struct task volatile *cpu_tasks[MAX_CPU] = {};
 struct task *get_current_task() {
   Assert(cpu_tasks[_cpu()] != &root_task, "cannot tun as root-task");
   return cpu_tasks[_cpu()];
