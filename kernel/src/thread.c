@@ -150,6 +150,7 @@ _Context *kmt_context_switch(_Event ev, _Context *context) {
     null_contexts[_cpu()] = NULL;
     Assert(ret, "null context is empty");
   }
+  printf("[%d] context at %p\n", _cpu(), ret);
   return ret;
 }
 
