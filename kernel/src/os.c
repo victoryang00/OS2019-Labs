@@ -79,6 +79,10 @@ static void os_init() {
 }
 
 static void os_run() {
+  char line[128] = "";
+  device_t *tty = dev_lookup("tty1");
+  tty->ops->write(tty, 0, "FUCK", 4);
+  tty->ops->read(tty, 0, line, 128);
   _intr_write(1);
   while (1) {
     _yield();
