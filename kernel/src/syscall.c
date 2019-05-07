@@ -8,7 +8,6 @@ void syscall_ret(_Context *c, uintptr_t val) {
 }
 
 _Context* do_syscall(_Context *context) {
-  Assert(ev.event == _EVENT_SYSCALL, "not a syscall");
   Assert(context->GPR1 != -1, "bad eax for syscall");
   
   uintptr_t a[4] = {
