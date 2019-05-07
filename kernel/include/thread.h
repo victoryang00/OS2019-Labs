@@ -50,6 +50,8 @@ struct task {
   struct task *next;
 };
 
+extern struct spinlock *wakeup_reacquire_lock;
+
 void kmt_init();
 int kmt_create(struct task *, const char *, void (*)(void *), void *);
 void kmt_teardown(struct task *);

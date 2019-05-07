@@ -140,20 +140,17 @@ static _Context *os_trap(_Event ev, _Context *context) {
       if (next) ret = next;
     }
   }
-  struct task *cur = holding ? NULL : cpu_tasks[_cpu()];
-  struct spinlock *lock = NULL;
-  if (cur && cur->alarm) {
-    lock = cur->lock;
-    cur->alarm = NULL;
-    cur->lock = NULL;
-  }
 
   if (!holding) {
     CLog(FG_PURPLE, "<<<<<< OUT OF TRAP");
     spinlock_release(&os_trap_lock);
-    if (lock) spinlock_acquire(lock);
+    if (wakeup_reacquire_lock) {
+      spinlock_acquire(wakeup_reacquire_lock);
+      wakeup_reacquire_lock = NULL;
+    }
   }
 
+  Assert(!wakeup_reacquire_lock, "Haven't reacquire the lock after waken up.");
   Assert(holding || ret, "Returning to a null context after normal trap.");
   return holding ? context : ret;
 }
