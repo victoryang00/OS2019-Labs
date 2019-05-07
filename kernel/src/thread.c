@@ -133,6 +133,7 @@ _Context *kmt_context_switch(_Event ev, _Context *context) {
     cur->context = NULL;
     if (cur->alarm) {
       Assert(cur->lock, "No lock to reacquire");
+      CLog(FG_YELLOW, "will reacquire lock %s", cur->lock->name);
       wakeup_reacquire_lock = cur->lock;
       cur->alarm = NULL;
       cur->lock  = NULL;
