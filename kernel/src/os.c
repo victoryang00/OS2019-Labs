@@ -104,7 +104,7 @@ static _Context *os_trap(_Event ev, _Context *context) {
   // important: if this is to sleep, we must
   // release the lock now before acquiring next lock
   if (ev.event == _EVENT_SYSCALL && context->GPR1 == SYS_sleep) {
-    printf("[%d] release lock %s before sleep\n", _cpu(), ((struct spinlock *) context->ecx)->name);
+    //printf("[%d] release lock %s before sleep\n", _cpu(), ((struct spinlock *) context->ecx)->name);
     spinlock_release((struct spinlock *) context->ecx);
   }
   Assert(ev.event != _EVENT_YIELD || cpu_no_spinlock(), "not allowed to yield with lock acquired");
@@ -149,7 +149,7 @@ static _Context *os_trap(_Event ev, _Context *context) {
       wakeup_reacquire_lock = NULL;
       __sync_synchronize();
       spinlock_acquire(lock);
-      printf("[%d] lock %s reacquired\n", _cpu(), lock->name);
+      //printf("[%d] lock %s reacquired\n", _cpu(), lock->name);
     }
   }
 
