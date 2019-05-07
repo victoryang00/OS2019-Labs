@@ -24,7 +24,6 @@ void semaphore_wait(struct semaphore *sem) {
     struct task *cur = get_current_task();
     cur->state = ST_T;
     cur->alarm = sem;
-    spinlock_release(&os_trap_lock);
     _yield();
     spinlock_acquire(&sem->lock);
   }

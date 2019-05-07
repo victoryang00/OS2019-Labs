@@ -101,8 +101,9 @@ static _Context *os_trap(_Event ev, _Context *context) {
       case _EVENT_IRQ_IODEV:
         break;
       case _EVENT_YIELD:
-        Panic("No yield inside trap.\n");
-        return context;
+        struct task *cur = get_current_task();
+        Assert(cur && cur->state == ST_T, "yield when holding the lock, but not going to sleep.");
+        break;
       case _EVENT_ERROR:
         break;
       default:

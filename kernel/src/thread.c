@@ -109,8 +109,7 @@ _Context *kmt_context_save(_Event ev, _Context *context) {
   struct task *cur = get_current_task();
   if (cur) {
     Assert(!cur->context, "double context saving for task %d: %s", cur->pid, cur->name);
-    cur->state   = (cur->state == ST_T && ev.event == _EVENT_YIELD) 
-                    ? ST_S : ST_W;
+    cur->state   = ST_W;
     cur->owner   = -1;
     cur->context = context;
   } else {
@@ -162,7 +161,11 @@ struct task *kmt_sched() {
 _Context *kmt_yield(_Event ev, _Context *context) {
   Assert(spinlock_holding(&os_trap_lock), "not holding os trap lock");
   struct task *cur = get_current_task();
-  if (cur && cur->state == ST_T) return NULL;
+  if (cur && cur->state == ST_T) {
+    cur->state = ST_S;
+    cur->owner = -1;
+    cur->context = context;
+  }
   set_current_task(kmt_sched());
   return NULL;
 }
