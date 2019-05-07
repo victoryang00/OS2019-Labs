@@ -3,7 +3,7 @@
 #include <thread.h>
 #include <syscall.h>
 
-void syscall_ret(_Context *c, int val) {
+void syscall_ret(_Context *c, uintptr_t val) {
   c->GPRx = val;
 }
 
@@ -20,10 +20,10 @@ _Context* do_syscall(_Context *context) {
 
   switch (a[0]) {
     case SYS_sleep:
-      kmt_sleep((void *) a[1], (struct spinlock *) a[2]);
+      sys_sleep((void *) a[1], (struct spinlock *) a[2]);
       break;
     case SYS_wakeup:
-      kmt_wakeup((void *) a[1]);
+      sys_wakeup((void *) a[1]);
       break;
     default: Panic("Unhandled syscall ID = %d", a[0]);
   }
