@@ -118,9 +118,12 @@ _Context *kmt_context_save(_Event ev, _Context *context) {
     cur->state   = ST_W;
     cur->owner   = -1;
     cur->context = context;
+    Assert(context->eip > 0x000010, "bad eip (1) when saving %s", cur->name);
+    Assert(context->eip < 0x200000, "bad eip (2) when saving %s", cur->name);
   } else {
     Assert(!null_contexts[_cpu()], "double context saving for null context");
-    Assert(context->eip > 0x000010, "bad eip");
+    Assert(context->eip > 0x000010, "bad eip (1) when saving null");
+    Assert(context->eip < 0x200000, "bad eip (2) when saving null");
     null_contexts[_cpu()] = context;
   }
   return NULL;
