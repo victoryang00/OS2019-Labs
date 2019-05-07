@@ -145,14 +145,15 @@ static _Context *os_trap(_Event ev, _Context *context) {
     CLog(FG_PURPLE, "<<<<<< OUT OF TRAP");
     spinlock_release(&os_trap_lock);
     if (wakeup_reacquire_lock) {
-      CLog(FG_YELLOW, "in ostrap, will reacquire lock %s", wakeup_reacquire_lock->name);
-      spinlock_acquire(wakeup_reacquire_lock);
-      printf("[%d] lock %s reacquired\n", _cpu(), wakeup_reacquire_lock->name);
+      struct spinlock *lock = wakeup_reacquire_lock;
       wakeup_reacquire_lock = NULL;
+      __sync_synchronize();
+      spinlock_acquire(lock);
+      printf("[%d] lock %s reacquired\n", _cpu(), lock->name);
     }
   }
 
-  Assert(!wakeup_reacquire_lock, "Haven't reacquire the lock after waken up.");
+  Assert(!wakeup_reacquire_lock, "Haven't cleared the lock after waken up and reqacuiring it.");
   Assert(holding || ret, "Returning to a null context after normal trap.");
   return holding ? context : ret;
 }
