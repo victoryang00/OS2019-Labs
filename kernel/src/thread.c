@@ -42,7 +42,6 @@ struct task *get_current_task() {
 }
 void set_current_task(struct task *task) {
   Assert(task != &root_task, "cannot set as root-task");
-  if (task) task->owner = _cpu();
   cpu_tasks[_cpu()] = task;
 }
 
