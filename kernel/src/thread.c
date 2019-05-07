@@ -254,9 +254,9 @@ uintptr_t kmt_wakeup(void *alarm) {
     alarm_head.next = ap;
   }
 
-  for (struct task *tp = &root_task; tp != NULL; tp = tp->next) {
+  for (struct task *tp = root_task.next; tp != NULL; tp = tp->next) {
     if (tp->state == ST_S && tp->alarm == alarm) {
-      CLog(FG_YELLOW, "waked up task pid %d", tp->pid);
+      CLog(FG_YELLOW, "waked up task %d: %s", tp->pid, tp->name);
       tp->state = ST_W; // wake up
     }
   }
