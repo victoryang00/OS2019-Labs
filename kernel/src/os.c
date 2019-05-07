@@ -98,7 +98,6 @@ static _Context *os_trap(_Event ev, _Context *context) {
   if (ev.event == _EVENT_SYSCALL && context->GPR1 == SYS_sleep) {
     spinlock_release((struct spinlock *) context->GPR3);
   }
-  Assert(ev.event != _EVENT_YIELD || cpu_no_spinlock(), "not allowed to yield with lock acquired");
 
   bool holding = spinlock_holding(&os_trap_lock);
   if (holding) {
