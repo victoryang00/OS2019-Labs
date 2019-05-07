@@ -43,18 +43,15 @@ struct spinlock sprintf_lock;
 void echo_task(void *name) {
   device_t *tty = dev_lookup(name);
   char line[128], text[128];
+  kmt->spin_lock(&sprintf_lock);
+  sprintf(text, "(%s) $ ", name);
+  kmt->spin_unlock(&sprintf_lock);
   while (1) {
-    kmt->spin_lock(&sprintf_lock);
-    sprintf(text, "(%s) $ ", name);
-    kmt->spin_unlock(&sprintf_lock);
     tty->ops->write(tty, 0, text, strlen(text));
 
     int nread = tty->ops->read(tty, 0, line, sizeof(line));
     line[nread - 1] = '\0';
-    kmt->spin_lock(&sprintf_lock);
-    sprintf(text, "Echo: %s.\n", line);
-    kmt->spin_unlock(&sprintf_lock);
-    tty->ops->write(tty, 0, text, strlen(text));
+    tty->ops->write(tty, 0, line, strlen(line));
   }
 }
 
@@ -77,19 +74,19 @@ static void os_init() {
   CLog(BG_GREEN, "dev ok");
 
   //create proc here
-  kmt->sem_init(&sem_p, "Producer SEM", 50);
+  kmt->sem_init(&sem_p, "Producer SEM", 5);
   kmt->sem_init(&sem_c, "Customer SEM", 0);
   kmt->sem_init(&mutex, "Producer-Customer MUTEX", 1);
-  for (int i = 0; i < 32; ++i) {
+  for (int i = 0; i < 4; ++i) {
     kmt->create(pmm->alloc(sizeof(task_t)), "Producer Task", producer, NULL);
     kmt->create(pmm->alloc(sizeof(task_t)), "Customer Task", customer, NULL);
   }
 
   kmt->spin_init(&sprintf_lock, "sprintf-lock");
-  /*
   kmt->create(pmm->alloc(sizeof(task_t)), "echo-1", echo_task, "tty1");
   kmt->create(pmm->alloc(sizeof(task_t)), "echo-2", echo_task, "tty2");
   kmt->create(pmm->alloc(sizeof(task_t)), "echo-3", echo_task, "tty3");
+  /*
   kmt->create(pmm->alloc(sizeof(task_t)), "echo-4", echo_task, "tty4");
   */
 }
