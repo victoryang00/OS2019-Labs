@@ -117,7 +117,7 @@ static _Context *os_trap(_Event ev, _Context *context) {
         }
     }
 
-    for (struct os_handler *hp = root_handler.next, hp != NULL; hp = hp->next) {
+    for (struct os_handler *hp = root_handler.next; hp != NULL; hp = hp->next) {
       if (hp->event == ev.event) hp->handler(ev, context);
     }
     return context;
