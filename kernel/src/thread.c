@@ -180,11 +180,6 @@ _Context *kmt_yield(_Event ev, _Context *context) {
   return NULL;
 }
 
-_Context *kmt_syscall(_Event ev, _Context *context) {
-  do_syscall(context);
-  return NULL;
-}
-
 _Context *kmt_error(_Event ev, _Context *context) {
   Assert(ev.event = _EVENT_ERROR, "Not an error interrupt");
   printf("\nError detected on CPU %d:\n>>> %s <<<\n", _cpu(), ev.msg);
