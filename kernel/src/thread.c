@@ -217,6 +217,7 @@ uintptr_t kmt_sleep(void *alarm, struct spinlock *lock) {
     an = ap->next;
     if (ap->alarm == alarm) {
       already_alarmed = true;
+      pmm->free(ap);
     } else {
       ap->next = alarm_head.next;
       alarm_head.next = ap;
@@ -224,7 +225,7 @@ uintptr_t kmt_sleep(void *alarm, struct spinlock *lock) {
     ap = an;
   }
 
-  if (already_alarmed) {
+  if (true || already_alarmed) {
     CLog(FG_YELLOW, "No sleep");
     cur->state = ST_W;
     return -1;
