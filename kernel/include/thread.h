@@ -58,8 +58,7 @@ void kmt_teardown(struct task *);
 void kmt_inspect_fence(struct task *);
 _Context *kmt_context_save(_Event, _Context *);
 _Context *kmt_context_switch(_Event, _Context *);
-struct task *kmt_sched();
-_Context *kmt_yield(_Event, _Context *);
+_Context *kmt_sched(_Event, _Context *);
 _Context *kmt_error(_Event, _Context *);
 
 // ----------------------------------------------------------------------------

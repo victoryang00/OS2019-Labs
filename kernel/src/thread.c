@@ -59,8 +59,8 @@ void kmt_init() {
   // add trap handlers
   os->on_irq(INT_MIN, _EVENT_NULL,      kmt_context_save);
   os->on_irq(-1,      _EVENT_ERROR,     kmt_error);
-  os->on_irq(0,       _EVENT_YIELD,     kmt_yield);
-  os->on_irq(0,       _EVENT_IRQ_TIMER, kmt_yield);
+  os->on_irq(0,       _EVENT_YIELD,     kmt_sched);
+  os->on_irq(0,       _EVENT_IRQ_TIMER, kmt_sched);
   os->on_irq(1,       _EVENT_SYSCALL,   do_syscall);
   os->on_irq(INT_MAX, _EVENT_NULL,      kmt_context_switch);
 }
@@ -149,26 +149,20 @@ _Context *kmt_context_switch(_Event ev, _Context *context) {
   return ret;
 }
 
-struct task *kmt_sched() {
+_Context *kmt_sched(_Event ev, _Context *context) {
   Log("========== TASKS ==========");
   struct task *ret = NULL;
   for (struct task *tp = &root_task; tp != NULL; tp = tp->next) {
     kmt_inspect_fence(tp);
     Log("%d:%s [%s, L%d, C%d]", tp->pid, tp->name, task_states_human[tp->state], tp->owner, tp->count);
     if (tp->state == ST_E || tp->state == ST_W) {
-      if (ret == NULL || tp->count < ret->count) {
+      if (!ret || tp->count < ret->count) {
         ret = tp;
       }
     }
   }
   Log("===========================");
-  return ret;
-}
-
-_Context *kmt_yield(_Event ev, _Context *context) {
-  struct task *cur = get_current_task();
-  if (cur && cur->state == ST_T) return NULL;
-  set_current_task(kmt_sched());
+  set_current_task(ret);
   return NULL;
 }
 
@@ -208,18 +202,20 @@ uintptr_t kmt_sleep(void *alarm, struct spinlock *lock) {
     }
     ap = an;
   }
+
   if (already_alarmed) {
     CLog(FG_YELLOW, "No sleep");
+    cur->state = ST_W;
     return -1;
+  } else {
+    cur->state = ST_S;
+    return 0;
   }
-
-  cur->state = ST_S;
-  set_current_task(kmt_sched());
-  return 0;
 }
 
 uintptr_t kmt_wakeup(void *alarm) {
   struct task* cur = get_current_task();
+  Assert(cur, "NULL task cannot wake up others");
 
   // avoid reinsertion
   bool already_alarmed = false;
