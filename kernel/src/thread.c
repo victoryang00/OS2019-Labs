@@ -159,6 +159,8 @@ struct task *kmt_sched() {
       if (!ret || tp->count < ret->count) {
         ret = tp;
       }
+    } else if (tp->state == ST_S) {
+      tp->state = ST_W;
     }
   }
   Log("===========================");
