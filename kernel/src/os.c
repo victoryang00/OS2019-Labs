@@ -86,9 +86,9 @@ static void os_init() {
 }
 
 static void os_run() {
-  _intr_write(1);
-  while (1) {
   printf("Hello from CPU #%d\n", _cpu());
+  while (1) {
+  _intr_write(1);
     _yield();
   }
 }
