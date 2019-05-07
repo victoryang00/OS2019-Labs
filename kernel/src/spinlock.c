@@ -44,7 +44,7 @@ void spinlock_release(struct spinlock *lk) {
   lk->holder = -1;
 
   __sync_synchronize();
-  lk->locked = 0;
+  _atomic_xchg((intptr_t *) &lk->locked, 0);
   spinlock_popcli();
 }
 
