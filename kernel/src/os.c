@@ -78,12 +78,13 @@ static void os_init() {
     kmt->create(pmm->alloc(sizeof(task_t)), "Producer Task", producer, NULL);
     kmt->create(pmm->alloc(sizeof(task_t)), "Customer Task", customer, NULL);
   }
-/*
+
   kmt->create(pmm->alloc(sizeof(task_t)), "print", echo_task, "tty1");
+  /*
   kmt->create(pmm->alloc(sizeof(task_t)), "print", echo_task, "tty2");
   kmt->create(pmm->alloc(sizeof(task_t)), "print", echo_task, "tty3");
   kmt->create(pmm->alloc(sizeof(task_t)), "print", echo_task, "tty4");
-*/
+  */
 }
 
 static void os_run() {
@@ -103,7 +104,6 @@ static _Context *os_trap(_Event ev, _Context *context) {
   // important: if this is to sleep, we must
   // release the lock now before acquiring next lock
   if (ev.event == _EVENT_SYSCALL && context->GPR1 == SYS_sleep) {
-    //printf("[%d] release lock %s before sleep\n", _cpu(), ((struct spinlock *) context->ecx)->name);
     spinlock_release((struct spinlock *) context->ecx);
   }
   Assert(ev.event != _EVENT_YIELD || cpu_no_spinlock(), "not allowed to yield with lock acquired");
