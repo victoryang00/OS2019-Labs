@@ -94,7 +94,6 @@ static _Context *os_trap(_Event ev, _Context *context) {
 
   bool holding = spinlock_holding(&os_trap_lock);
   if (holding) {
-    Assert(0, "trap in trap");
     switch (ev.event) {
       case _EVENT_IRQ_TIMER:
         printf("No timer interrupt during trap.\n");
