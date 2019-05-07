@@ -145,6 +145,7 @@ static _Context *os_trap(_Event ev, _Context *context) {
     CLog(FG_PURPLE, "<<<<<< OUT OF TRAP");
     spinlock_release(&os_trap_lock);
     if (wakeup_reacquire_lock) {
+      CLog(FG_YELLOW, "in ostrap, will reacquire lock %s", wakeup_reacquire_lock->name);
       spinlock_acquire(wakeup_reacquire_lock);
       printf("[%d] lock %s reacquired\n", _cpu(), wakeup_reacquire_lock->name);
       wakeup_reacquire_lock = NULL;
