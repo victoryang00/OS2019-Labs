@@ -174,7 +174,7 @@ _Context *kmt_yield(_Event ev, _Context *context) {
 
 _Context *kmt_error(_Event ev, _Context *context) {
   Assert(ev.event = _EVENT_ERROR, "Not an error interrupt");
-  printf("\nError detected on CPU %d:\n>>>%s<<<\n", _cpu(), ev.msg);
+  printf("\nError detected on CPU %d:\n>>> %s <<<\n", _cpu(), ev.msg);
   printf("====================\n");
   printf("EIP was %p\n", context->eip);
   printf("ESP was %p\n", context->esp0);
