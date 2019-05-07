@@ -138,7 +138,8 @@ _Context *kmt_context_switch(_Event ev, _Context *context) {
     ret = cur->context;
     cur->context = NULL;
     Assert(ret, "task context is empty");
-    Assert(ret->eip > 0x000010, "bad eip when switching to %s", cur->name);
+    Assert(ret->eip > 0x000010, "bad eip (1) when switching to %s", cur->name);
+    Assert(ret->eip < 0x200000, "bad eip (2) when switching to %s", cur->name);
     if (cur->alarm) {
       Assert(cur->lock, "No lock to reacquire");
       wakeup_reacquire_lock = cur->lock;
@@ -151,7 +152,8 @@ _Context *kmt_context_switch(_Event ev, _Context *context) {
     ret = null_contexts[_cpu()];
     null_contexts[_cpu()] = NULL;
     Assert(ret, "null context is empty");
-    Assert(ret->eip > 0x000010, "bad eip when switching to null");
+    Assert(ret->eip > 0x000010, "bad eip (1) when switching to null");
+    Assert(ret->eip < 0x200000, "bad eip (2) when switching to null");
   }
   return ret;
 }
