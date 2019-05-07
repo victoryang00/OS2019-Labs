@@ -194,7 +194,7 @@ _Context *kmt_error(_Event ev, _Context *context) {
     }
     printf("\n");
   }
-  //Panic("Error detected: %s", ev.msg);
+  Panic("Error detected: %s", ev.msg);
   return NULL;
 }
 
