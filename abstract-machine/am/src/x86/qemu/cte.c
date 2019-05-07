@@ -108,10 +108,12 @@ void irq_handle(TrapFrame *tf) {
       ev.event = _EVENT_IRQ_TIMER; break;
     case IRQ 1: MSG("I/O device IRQ1 (keyboard)")
       ev.event = _EVENT_IRQ_IODEV; break;
-    case EX_SYSCALL: MSG("int $0x80 trap: _yield() or system call")
+    case EX_SYSCALL: 
       if ((int32_t)tf->eax == -1) {
+        MSG("int $0x80 trap: _yield()")
         ev.event = _EVENT_YIELD;
       } else {
+        MSG("int $0x80 trap: system call")
         ev.event = _EVENT_SYSCALL;
       }
       break;
