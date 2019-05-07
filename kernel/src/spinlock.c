@@ -29,10 +29,9 @@ void spinlock_acquire(struct spinlock *lk) {
    * that the critical section's memory 
    * references happen after the lock is acquired.
    */
-  while (_atomic_xchg((intptr_t *) &lk->locked, 1)) {
-    while (lk->locked) {
-      ;
-    }
+  while (1) {
+    if (_atomic_xchg((intptr_t *) &lk->locked, 1) == 0) break;
+    pause();
   }
   __sync_synchronize();
 
@@ -43,7 +42,9 @@ void spinlock_release(struct spinlock *lk) {
   Assert(spinlock_holding(lk), "Releasing lock %s not holded by cpu %d.", lk->name, _cpu());
 
   lk->holder = -1;
-  lk->locked = 0;
+
+  __sync_synchronize();
+  _atomic_xchg((intptr_t *) &lk->locked, 0);
   spinlock_popcli();
 }
 
