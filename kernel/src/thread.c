@@ -106,6 +106,22 @@ void kmt_inspect_fence(struct task *task) {
   Assert(memcmp(const_fence, task->fenceB, sizeof(const_fence)) == 0, "Fence inspection B for task %d (%s) failed.", task->pid, task->name);
 }
 
+struct task *kmt_sched() {
+  Log("========== TASKS ==========");
+  struct task *ret = NULL;
+  for (struct task *tp = &root_task; tp != NULL; tp = tp->next) {
+    kmt_inspect_fence(tp);
+    Log("%d:%s [%s, L%d, C%d]", tp->pid, tp->name, task_states_human[tp->state], tp->owner, tp->count);
+    if (tp->state == ST_E || tp->state == ST_W) {
+      if (!ret || tp->count < ret->count) {
+        ret = tp;
+      }
+    }
+  }
+  Log("===========================");
+  return ret;
+}
+
 _Context *kmt_context_save(_Event ev, _Context *context) {
   Assert(spinlock_holding(&os_trap_lock), "not holding os trap lock");
   struct task *cur = get_current_task();
@@ -144,34 +160,6 @@ _Context *kmt_context_switch(_Event ev, _Context *context) {
   return ret;
 }
 
-struct task *kmt_sched() {
-  Log("========== TASKS ==========");
-  struct task *ret = NULL;
-  for (struct task *tp = &root_task; tp != NULL; tp = tp->next) {
-    kmt_inspect_fence(tp);
-    Log("%d:%s [%s, L%d, C%d]", tp->pid, tp->name, task_states_human[tp->state], tp->owner, tp->count);
-    if (tp->state == ST_E || tp->state == ST_W) {
-      if (!ret || tp->count < ret->count) {
-        ret = tp;
-      }
-    }
-  }
-  Log("===========================");
-  return ret;
-}
-
-_Context *kmt_yield(_Event ev, _Context *context) {
-  Assert(spinlock_holding(&os_trap_lock), "not holding os trap lock");
-  struct task *cur = get_current_task();
-  if (cur && cur->alarm && ev.event == _EVENT_YIELD) {
-    cur->state = ST_S;
-    set_current_task(NULL);
-  } else {
-    set_current_task(kmt_sched());
-  }
-  return NULL;
-}
-
 _Context *kmt_timer(_Event ev, _Context *context) {
   // dead-lock preventor
   ++root_task.count;
@@ -183,6 +171,18 @@ _Context *kmt_timer(_Event ev, _Context *context) {
         tp->alarm = NULL;
       }
     }
+  }
+  return NULL;
+}
+
+_Context *kmt_yield(_Event ev, _Context *context) {
+  Assert(spinlock_holding(&os_trap_lock), "not holding os trap lock");
+  struct task *cur = get_current_task();
+  if (cur && cur->alarm && ev.event == _EVENT_YIELD) {
+    cur->state = ST_S;
+    set_current_task(NULL);
+  } else {
+    set_current_task(kmt_sched());
   }
   return NULL;
 }
