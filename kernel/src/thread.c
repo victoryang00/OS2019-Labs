@@ -121,7 +121,7 @@ _Context *kmt_context_save(_Event ev, _Context *context) {
   } else {
     Assert(!null_contexts[_cpu()], "double context saving for null context");
     Assert(context->eip > 0x000010, "bad eip");
-    Assert(*((void **) context->esp0) > 0x000010, "bad ret addr");
+    Assert(*((void **) (context->esp0)) > 0x000010, "bad ret addr");
     null_contexts[_cpu()] = context;
   }
   return NULL;
