@@ -13,7 +13,7 @@ _Context* do_syscall(_Event ev, _Context *context) {
     context->GPR3,
     context->GPR4
   };
-  uintptr_t ret = 0;
+  uintptr_t ret __attribute__((used)) = 0;
 
   switch (a[0]) {
     case SYS_sleep:
@@ -25,7 +25,6 @@ _Context* do_syscall(_Event ev, _Context *context) {
     default: Panic("Unhandled syscall ID = %d", a[0]);
   }
 
-  context->GPRx = ret;
   CLog(FG_YELLOW, "Syscall %d finished.", a[0]);
   return NULL;
 }
