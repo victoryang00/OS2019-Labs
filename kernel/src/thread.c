@@ -59,8 +59,8 @@ void kmt_init() {
   // add trap handlers
   os->on_irq(INT_MIN, _EVENT_NULL,      kmt_context_save);
   os->on_irq(-1,      _EVENT_ERROR,     kmt_error);
-  os->on_irq(0,       _EVENT_YIELD,     kmt_sched);
-  os->on_irq(0,       _EVENT_IRQ_TIMER, kmt_sched);
+  os->on_irq(0,       _EVENT_YIELD,     kmt_yield);
+  os->on_irq(0,       _EVENT_IRQ_TIMER, kmt_yield);
   os->on_irq(1,       _EVENT_SYSCALL,   do_syscall);
   os->on_irq(INT_MAX, _EVENT_NULL,      kmt_context_switch);
 }
@@ -149,7 +149,7 @@ _Context *kmt_context_switch(_Event ev, _Context *context) {
   return ret;
 }
 
-_Context *kmt_sched(_Event ev, _Context *context) {
+struct task *kmt_sched() {
   Log("========== TASKS ==========");
   struct task *ret = NULL;
   for (struct task *tp = &root_task; tp != NULL; tp = tp->next) {
@@ -162,7 +162,11 @@ _Context *kmt_sched(_Event ev, _Context *context) {
     }
   }
   Log("===========================");
-  set_current_task(ret);
+  return ret;
+}
+
+_Context *kmt_yield(_Event ev, _Context *context) {
+  set_current_task(kmt_sched());
   return NULL;
 }
 
