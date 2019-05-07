@@ -132,19 +132,18 @@ _Context *kmt_context_switch(_Event ev, _Context *context) {
     Log("Next is %d: %s", cur->pid, cur->name);
     kmt_inspect_fence(cur);
     Assert(cur->owner == -1, "switching to an already running task");
-    ret = cur->context;
     cur->state   = ST_R;
     cur->owner   = _cpu();
+    ret = cur->context;
     cur->context = NULL;
+    Assert(ret, "task context is empty");
     if (cur->alarm) {
       Assert(cur->lock, "No lock to reacquire");
-      printf("[%d] will reqacuire lock %s\n", _cpu(), cur->lock->name);
       wakeup_reacquire_lock = cur->lock;
       cur->alarm = NULL;
       cur->lock  = NULL;
     }
     cur->count   = cur->count >= 1000 ? 0 : cur->count + 1;
-    Assert(ret, "task context is empty");
   } else {
     Log("Next is NULL task");
     ret = null_contexts[_cpu()];
@@ -225,7 +224,7 @@ uintptr_t kmt_sleep(void *alarm, struct spinlock *lock) {
   }
 
   if (true || already_alarmed) {
-    set_current_task(kmt_sched());
+    set_current_task(NULL);
     return -1;
   } else {
     cur->state = ST_S;
