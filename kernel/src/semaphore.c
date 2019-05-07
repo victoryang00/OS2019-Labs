@@ -13,13 +13,15 @@ void semaphore_init(struct semaphore *sem, const char *name, int value) {
 
 void semaphore_wait(struct semaphore *sem) {
   spinlock_acquire(&sem->lock);
-  volatile int *pval = &sem->value;
-  while (*pval <= 0) {
-    asm volatile ("int $0x80" 
-        :
-        : "a"(SYS_sleep), "b"(sem), "c"(&sem->lock)
-        : "memory"
-        );
+  if (sem->value <= 0) {
+    while (1) {
+      asm volatile ("int $0x80" 
+          :
+          : "a"(SYS_sleep), "b"(sem), "c"(&sem->lock)
+          : "memory"
+          );
+      if (sem->value > 0) break;
+    }
   }
   Assert(spinlock_holding(&sem->lock), "Not holding the lock after waking up");
   __sync_synchronize();
