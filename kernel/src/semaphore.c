@@ -5,6 +5,7 @@
 #include <semaphore.h>
 #include <debug.h>
 
+extern struct spinlock os_trap_lock;
 extern struct task **cpu_tasks;
 extern struct task root_task;
 
