@@ -89,7 +89,9 @@ static int tty_cook(tty_t *tty, char ch) {
 static void tty_render(tty_t *tty) {
   struct character *ch = tty->buf;
   uint8_t *d = tty->dirty;
+  printf("[%d] in render, waiting for tty\n", _cpu());
   kmt->sem_wait(&tty->lock);
+  printf("[%d] in render, acquired tty\n", _cpu());
   for (int y = 0; y < tty->lines; y++) {
     for (int x = 0; x < tty->columns; x++) {
       if (*d) {
@@ -105,7 +107,9 @@ static void tty_render(tty_t *tty) {
       ch++; d++;
     }
   }
+  printf("[%d] in render, before signaling tty\n", _cpu());
   kmt->sem_signal(&tty->lock);
+  printf("[%d] in render, signaled tty\n", _cpu());
 }
 
 static void tty_mark(tty_t *tty, struct character *ch) {
