@@ -86,8 +86,8 @@ static void os_init() {
 
   kmt->spin_init(&sprintf_lock, "sprintf-lock");
   kmt->create(pmm->alloc(sizeof(task_t)), "echo-1", echo_task, "tty1");
-  /*
   kmt->create(pmm->alloc(sizeof(task_t)), "echo-2", echo_task, "tty2");
+  /*
   kmt->create(pmm->alloc(sizeof(task_t)), "echo-3", echo_task, "tty3");
   kmt->create(pmm->alloc(sizeof(task_t)), "echo-4", echo_task, "tty4");
   */
