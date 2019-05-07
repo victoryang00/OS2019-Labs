@@ -48,6 +48,7 @@ void echo_task(void *name) {
     sprintf(text, "(%s) $ ", name);
     kmt->spin_unlock(&sprintf_lock);
     tty->ops->write(tty, 0, text, strlen(text));
+
     int nread = tty->ops->read(tty, 0, line, sizeof(line));
     line[nread - 1] = '\0';
     kmt->spin_lock(&sprintf_lock);
