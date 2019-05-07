@@ -6,13 +6,10 @@
 #include <spinlock.h>
 #include <semaphore.h>
 
-struct spinlock printf_lock __attribute__((used));
 struct spinlock os_trap_lock;
-
 static struct os_handler root_handler = {
   0, _EVENT_NULL, NULL, NULL
 };
-
 
 sem_t sem_p;
 sem_t sem_c;
@@ -39,7 +36,6 @@ void producer(void *arg) {
     kmt->sem_signal(&sem_c);
   }
 }
-struct spinlock sprintf_lock;
 void echo_task(void *name) {
   device_t *tty = dev_lookup(name);
   char text[128], line[128];
@@ -51,7 +47,6 @@ void echo_task(void *name) {
 }
 
 static void os_init() {
-  spinlock_init(&printf_lock, "Printf SPIN LOCK");
   spinlock_init(&os_trap_lock, "OS TRAP SPIN LOCK");
   CLog(BG_GREEN, "locks ok");
 
@@ -77,7 +72,6 @@ static void os_init() {
     kmt->create(pmm->alloc(sizeof(task_t)), "Customer Task", customer, NULL);
   }
 
-  kmt->spin_init(&sprintf_lock, "sprintf-lock");
   kmt->create(pmm->alloc(sizeof(task_t)), "echo-1", echo_task, "tty1");
   kmt->create(pmm->alloc(sizeof(task_t)), "echo-2", echo_task, "tty2");
   kmt->create(pmm->alloc(sizeof(task_t)), "echo-3", echo_task, "tty3");
