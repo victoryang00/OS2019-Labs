@@ -217,14 +217,14 @@ uintptr_t sys_sleep(void *alarm, struct spinlock *lock) {
   struct task *cur = get_current_task();
   Assert(cur,   "NULL task is going to sleep.");
   Assert(alarm, "Sleep without a alarm (semaphore).");
-  set_current_task(NULL);
-  return 0;
 
   // even if the task does not sleep,
   // the lock must be saved so that it
   // will be reacquired when trap returns
   cur->alarm = alarm;
   cur->lock  = lock;
+  set_current_task(NULL);
+  return 0;
 
   bool already_alarmed = false;
   struct alarm_log *ap = alarm_head.next;
