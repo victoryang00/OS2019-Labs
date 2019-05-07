@@ -39,14 +39,15 @@ void producer(void *arg) {
 void echo_task(void *name) {
   device_t *tty = dev_lookup(name);
   char text[128], line[128];
-  printf("[%d] before write\n", _cpu());
-  tty->ops->write(tty, 0, "FUCK", 4);
-  printf("[%d] after write\n", _cpu());
-  int nread = tty->ops->read(tty, 0, line, 128);
-  line[nread - 1] = '\0';
-  sprintf(text, "Echo: %s.\n(%s) $ ", line, name);
-  tty->ops->write(tty, 0, text, strlen(text));
-  while (1) { pause(); }
+  while (1) {
+    sprintf("(%s) ", name);
+    tty->ops->write(tty, 0, text, sizeof(text));
+    
+    int nread = tty->ops->read(tty, 0, line, sizeof(line));
+    line[nread - 1] = '\0';
+    sprintf("Echo: \"%s\".", line);
+    tty->ops->write(tty, 0, text, sizeof(text));
+  }
 }
 
 static void os_init() {
