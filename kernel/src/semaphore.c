@@ -19,8 +19,8 @@ void semaphore_wait(struct semaphore *sem) {
         : "a"(SYS_sleep), "b"(sem), "c"(&sem->lock)
         : "memory"
         );
+    Assert(spinlock_holding(&sem->lock), "Not holding the lock after waking up");
   }
-  Assert(spinlock_holding(&sem->lock), "Not holding the lock after waking up");
   __sync_synchronize();
   --sem->value;
   spinlock_release(&sem->lock);
