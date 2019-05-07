@@ -103,6 +103,8 @@ static _Context *os_trap(_Event ev, _Context *context) {
       case _EVENT_YIELD:
         Panic("No yield inside trap.\n");
         return context;
+      case _EVENT_ERROR:
+        break;
       default:
         Panic("Other types of trap in trap.\n");
         return context;
