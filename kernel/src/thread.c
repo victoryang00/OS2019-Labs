@@ -269,7 +269,7 @@ uintptr_t sys_wakeup(void *alarm) {
       break;
     }
   }
-  if (!already_alarmed) {
+  if (true || !already_alarmed) {
     struct alarm_log *ap = pmm->alloc(sizeof(struct alarm_log));
     ap->alarm  = alarm;
     ap->issuer = cur;
