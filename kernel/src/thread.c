@@ -197,8 +197,8 @@ uintptr_t kmt_sleep(void *alarm, struct spinlock *lock) {
   alarm_head.next = NULL;
   while (ap) {
     an = ap->next;
-    if (ap->alarm == alarm) already_alarmed = true;
-    if (ap->alarm == alarm && ap->issuer != cur) {
+    if (ap->alarm == alarm) {
+      already_alarmed = true;
       pmm->free(ap);
     } else {
       ap->next = alarm_head.next;
@@ -220,12 +220,11 @@ uintptr_t kmt_sleep(void *alarm, struct spinlock *lock) {
 
 uintptr_t kmt_wakeup(void *alarm) {
   struct task* cur = get_current_task();
-  Assert(cur, "NULL task cannot wake up others");
 
   // avoid reinsertion
   bool already_alarmed = false;
   for (struct alarm_log *ap = alarm_head.next; ap != NULL; ap = ap->next) {
-    if (ap->alarm == alarm && ap->issuer == cur) {
+    if (ap->alarm == alarm) {
       already_alarmed = true;
       break;
     }
