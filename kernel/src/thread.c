@@ -250,10 +250,12 @@ uintptr_t sys_sleep(void *alarm, struct spinlock *lock) {
   }
 
   if (true || already_alarmed) {
+    set_current_task(NULL);
   } else {
     cur->state = ST_S;
     set_current_task(kmt_sched());
   }
+  __sync_synchronize();
   return 0;
 }
 
