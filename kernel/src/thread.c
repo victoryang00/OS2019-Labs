@@ -114,11 +114,8 @@ _Context *kmt_context_save(_Event ev, _Context *context) {
                     ? ST_S : ST_W;
     cur->owner   = -1;
     cur->context = context;
-    Assert(context->eip >= 0x100000, "bad eip (1) when saving %s", cur->name);
-    Assert(context->eip <  0x200000, "bad eip (2) when saving %s", cur->name);
   } else {
     Assert(!null_contexts[_cpu()], "double context saving for null context");
-    Assert(context->eip <  0x200000, "bad eip (2) when saving null");
     null_contexts[_cpu()] = context;
   }
   return NULL;
@@ -136,15 +133,12 @@ _Context *kmt_context_switch(_Event ev, _Context *context) {
     ret = cur->context;
     cur->context = NULL;
     Assert(ret, "task context is empty");
-    Assert(ret->eip >= 0x100000, "bad eip (1) when switching to %s", cur->name);
-    Assert(ret->eip <  0x200000, "bad eip (2) when switching to %s", cur->name);
     cur->count   = cur->count >= 1000 ? 0 : cur->count + 1;
   } else {
     Log("Next is NULL task");
     ret = null_contexts[_cpu()];
     null_contexts[_cpu()] = NULL;
     Assert(ret, "null context is empty");
-    Assert(ret->eip <  0x200000, "bad eip (2) when switching to null");
   }
   return ret;
 }
