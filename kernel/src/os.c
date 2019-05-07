@@ -112,6 +112,7 @@ static _Context *os_trap(_Event ev, _Context *context) {
       case _EVENT_SYSCALL:
         switch(context->eax) {
           case SYS_sleep:
+            printf("error on CPU %d\n", _cpu());
             Panic("No semaphore wait/sleep inside trap.");
         }
     }
