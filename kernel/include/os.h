@@ -8,4 +8,6 @@ struct os_handler {
   struct os_handler *next;
 };
 
+extern struct spinlock *os_trap_lock;
+
 #endif

@@ -8,6 +8,11 @@
  * Semaphore for MT programming.
  */
 
+struct alarm_log {
+  void *alarm;
+  struct alarm_log *next;
+};
+
 struct semaphore {
   struct spinlock lock;
   const char *name;

@@ -1,12 +1,7 @@
 #include <common.h>
 #include <thread.h>
-#include <syscall.h>
 #include <spinlock.h>
 #include <semaphore.h>
-
-/**
- * Kernel Multi-Thread module (KMT, Proc)
- */
 
 static uint32_t next_pid = 1;
 static const char const_fence[32] = { 
@@ -31,15 +26,16 @@ static const char *task_states_human[8] __attribute__((used)) = {
 };
 
 struct task root_task;
-struct alarm_log alarm_head;
 struct spinlock *wakeup_reacquire_lock = NULL;
 
 _Context *null_contexts[MAX_CPU] = {};
 struct task *cpu_tasks[MAX_CPU] = {};
+
 struct task *get_current_task() {
   Assert(cpu_tasks[_cpu()] != &root_task, "cannot tun as root-task");
   return cpu_tasks[_cpu()];
 }
+
 void set_current_task(struct task *task) {
   Assert(task != &root_task, "cannot set as root-task");
   cpu_tasks[_cpu()] = task;
@@ -62,7 +58,6 @@ void kmt_init() {
   os->on_irq(-1,      _EVENT_ERROR,     kmt_error);
   os->on_irq(0,       _EVENT_YIELD,     kmt_yield);
   os->on_irq(0,       _EVENT_IRQ_TIMER, kmt_yield);
-  os->on_irq(1,       _EVENT_SYSCALL,   kmt_syscall);
   os->on_irq(INT_MAX, _EVENT_NULL,      kmt_context_switch);
 }
 
@@ -115,7 +110,8 @@ _Context *kmt_context_save(_Event ev, _Context *context) {
   struct task *cur = get_current_task();
   if (cur) {
     Assert(!cur->context, "double context saving for task %d: %s", cur->pid, cur->name);
-    cur->state   = ST_W;
+    cur->state   = (cur->state == ST_T && ev.event == _EVENT_YIELD) 
+                    ? ST_S : ST_W;
     cur->owner   = -1;
     cur->context = context;
     Assert(context->eip >= 0x100000, "bad eip (1) when saving %s", cur->name);
@@ -178,6 +174,8 @@ struct task *kmt_sched() {
 }
 
 _Context *kmt_yield(_Event ev, _Context *context) {
+  struct task *cur = get_current_task();
+  if (cur && cur->state == ST_T) return NULL;
   set_current_task(kmt_sched());
   return NULL;
 }
@@ -221,66 +219,3 @@ MODULE_DEF(kmt) {
   .sem_wait    = semaphore_wait,
   .sem_signal  = semaphore_signal
 };
-
-uintptr_t sys_sleep(void *alarm, struct spinlock *lock) {
-  struct task *cur = get_current_task();
-  Assert(cur,   "NULL task is going to sleep.");
-  Assert(alarm, "Sleep without a alarm (semaphore).");
-
-  // even if the task does not sleep,
-  // the lock must be saved so that it
-  // will be reacquired when trap returns
-  cur->alarm = alarm;
-  cur->lock  = lock;
-
-  bool already_alarmed = false;
-  struct alarm_log *ap = alarm_head.next;
-  struct alarm_log *an = NULL;
-  alarm_head.next = NULL;
-  while (ap) {
-    an = ap->next;
-    if (ap->alarm == alarm) {
-      already_alarmed = true;
-      pmm->free(ap);
-    } else {
-      ap->next = alarm_head.next;
-      alarm_head.next = ap;
-    }
-    ap = an;
-  }
-
-  if (!already_alarmed) {
-    cur->state = ST_S;
-    set_current_task(kmt_sched());
-  }
-  __sync_synchronize();
-  return 0;
-}
-
-uintptr_t sys_wakeup(void *alarm) {
-  struct task* cur = get_current_task();
-
-  // avoid reinsertion
-  bool already_alarmed = false;
-  for (struct alarm_log *ap = alarm_head.next; ap != NULL; ap = ap->next) {
-    if (ap->alarm == alarm) {
-      already_alarmed = true;
-      break;
-    }
-  }
-  if (!already_alarmed) {
-    struct alarm_log *ap = pmm->alloc(sizeof(struct alarm_log));
-    ap->alarm  = alarm;
-    ap->issuer = cur;
-    ap->next   = alarm_head.next;
-    alarm_head.next = ap;
-  }
-
-  for (struct task *tp = root_task.next; tp != NULL; tp = tp->next) {
-    if (tp->state == ST_S) {
-      CLog(FG_YELLOW, "waked up task %d: %s", tp->pid, tp->name);
-      tp->state = ST_W; // wake up
-    }
-  }
-  return 0;
-}

@@ -23,12 +23,6 @@ enum task_states {
   ST_X  // Special
 };
 
-struct alarm_log {
-  void *alarm;
-  struct task *issuer;
-  struct alarm_log *next;
-};
-
 struct task {
   uint32_t pid;
   const char* name;
@@ -45,12 +39,15 @@ struct task {
   char fenceB[32];
 
   void *alarm;
-  struct spinlock *lock;
 
   struct task *next;
 };
 
-extern struct spinlock *wakeup_reacquire_lock;
+extern struct task **cpu_tasks;
+extern struct task root_task;
+
+struct task *get_current_task();
+void set_current_task(struct task *);
 
 void kmt_init();
 int kmt_create(struct task *, const char *, void (*)(void *), void *);
@@ -60,13 +57,6 @@ _Context *kmt_context_save(_Event, _Context *);
 _Context *kmt_context_switch(_Event, _Context *);
 struct task *kmt_sched();
 _Context *kmt_yield(_Event, _Context *);
-_Context *kmt_syscall(_Event, _Context *);
 _Context *kmt_error(_Event, _Context *);
-
-// ----------------------------------------------------------------------------
-// syscalls
-
-uintptr_t sys_sleep(void *, struct spinlock *);
-uintptr_t sys_wakeup(void *);
 
 #endif

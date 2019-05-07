@@ -104,12 +104,8 @@ static _Context *os_trap(_Event ev, _Context *context) {
       case _EVENT_YIELD:
         printf("No yield inside trap.\n");
         return context;
-      case _EVENT_SYSCALL:
-        switch(context->GPR1) {
-          case SYS_sleep:
-            printf("No semaphore wait/sleep inside trap.\n");
-            return context;
-        }
+      default:
+        break;
     }
 
     for (struct os_handler *hp = root_handler.next; hp != NULL; hp = hp->next) {
@@ -117,10 +113,6 @@ static _Context *os_trap(_Event ev, _Context *context) {
     }
     return context;
   } else {
-    if (ev.event == _EVENT_SYSCALL && context->GPR1 == SYS_sleep) {
-      spinlock_release((struct spinlock *) context->GPR3);
-    }
-
     spinlock_acquire(&os_trap_lock);
     CLog(FG_PURPLE, ">>>>>> IN TO TRAP");
     _Context *ret = NULL;
@@ -130,15 +122,9 @@ static _Context *os_trap(_Event ev, _Context *context) {
         if (next) ret = next;
       }
     }
-    struct spinlock *lock = wakeup_reacquire_lock;
-    wakeup_reacquire_lock = NULL;
     CLog(FG_PURPLE, "<<<<<< OUT OF TRAP");
     spinlock_release(&os_trap_lock);
 
-    if (lock) {
-      spinlock_acquire(lock);
-      //printf("[%d] lock %s reacquired\n", _cpu(), lock->name);
-    }
     Assert(ret, "returning to a null context after trap");
     return ret;
   }
