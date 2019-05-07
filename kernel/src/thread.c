@@ -161,10 +161,8 @@ struct task *kmt_sched() {
 _Context *kmt_yield(_Event ev, _Context *context) {
   Assert(spinlock_holding(&os_trap_lock), "not holding os trap lock");
   struct task *cur = get_current_task();
-  if (cur && cur->state == ST_T) {
+  if (cur && cur->alarm && ev.event == _EVENT_YIELD) {
     cur->state = ST_S;
-    cur->owner = -1;
-    cur->context = context;
   }
   set_current_task(kmt_sched());
   return NULL;
