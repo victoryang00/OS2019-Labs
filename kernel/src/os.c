@@ -146,6 +146,7 @@ static _Context *os_trap(_Event ev, _Context *context) {
     spinlock_release(&os_trap_lock);
     if (wakeup_reacquire_lock) {
       spinlock_acquire(wakeup_reacquire_lock);
+      printf("lock reacquired\n");
       wakeup_reacquire_lock = NULL;
     }
   }
