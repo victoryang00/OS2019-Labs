@@ -89,10 +89,10 @@ static int tty_cook(tty_t *tty, char ch) {
 static void tty_render(tty_t *tty) {
   struct character *ch = tty->buf;
   uint8_t *d = tty->dirty;
-  printf("[%d] in render, waiting for tty\n", _cpu());
+  printf("[%d] in render, waiting for %s\n", _cpu(), tty->name);
   printf("address of ttylock is %p\n", &tty->lock);
   kmt->sem_wait(&tty->lock);
-  printf("[%d] in render, acquired tty (%d left)\n", _cpu(), tty->lock.value);
+  printf("[%d] in render, acquired %s\n", _cpu(), tty->name);
   for (int y = 0; y < tty->lines; y++) {
     for (int x = 0; x < tty->columns; x++) {
       if (*d) {
@@ -108,9 +108,9 @@ static void tty_render(tty_t *tty) {
       ch++; d++;
     }
   }
-  printf("[%d] in render, before signaling tty\n", _cpu());
+  printf("[%d] in render, before signaling %s\n", _cpu(), tty->name);
   kmt->sem_signal(&tty->lock);
-  printf("[%d] in render, signaled tty\n", _cpu());
+  printf("[%d] in render, signaled %s\n", _cpu(), tty->name);
 }
 
 static void tty_mark(tty_t *tty, struct character *ch) {
@@ -213,17 +213,17 @@ ssize_t tty_read(device_t *dev, off_t offset, void *buf, size_t count) {
 
 ssize_t tty_write(device_t *dev, off_t offset, const void *buf, size_t count) {
   tty_t *tty = dev->ptr;
-  printf("[%d] waiting for tty\n", _cpu());
+  printf("[%d] waiting for %s\n", _cpu(), tty->name);
   kmt->sem_wait(&tty->lock);
-  printf("[%d] acquired tty\n", _cpu());
+  printf("[%d] acquired %s\n", _cpu(), tty->name);
   for (size_t i = 0; i < count; i++) {
     tty_putc(tty, ((const char *)buf)[i]);
   }
-  printf("[%d] before signaling tty\n", _cpu());
+  printf("[%d] before signaling %s\n", _cpu(), tty->name);
   kmt->sem_signal(&tty->lock);
-  printf("[%d] after signaling tty\n", _cpu());
+  printf("[%d] after signaling %s\n", _cpu(), tty->name);
   tty_render(tty);
-  printf("[%d] after rendering\n", _cpu());
+  printf("[%d] after rendering %s\n", _cpu(), tty->name);
   return count;
 }
 
