@@ -8,15 +8,6 @@
  * Spinlock modified from XV6.
  */
 
-// If MT-Safe macro is included, then
-// the lock itself cannot use printf to log.
-#ifndef LOCK_Debug 
-#define LOCKLog(...) 
-#else
-#define LOCKLog(...) CLog(__VA_ARGS__)
-#endif
-
-
 struct spinlock {
   const char *name;
   bool locked;
