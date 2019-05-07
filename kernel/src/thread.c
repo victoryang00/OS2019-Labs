@@ -73,6 +73,7 @@ int kmt_create(struct task *task, const char *name, void (*entry)(void *arg), vo
   task->entry = entry;
   task->arg   = arg;
   task->state = ST_E;
+  task->owner = -1;
   task->count = 0;
   memset(task->fenceA, FILL_FENCE, sizeof(task->fenceA));
   memset(task->stack,  FILL_STACK, sizeof(task->stack));
