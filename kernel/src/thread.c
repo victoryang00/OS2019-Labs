@@ -45,6 +45,8 @@ static inline void set_current_task(struct task *task) {
 }
 
 void kmt_init() {
+  wakeup_reacquire_lock = NULL;
+
   root_task.pid   = next_pid++;
   root_task.name  = "Root Task";
   root_task.state = ST_X;
@@ -129,6 +131,12 @@ _Context *kmt_context_switch(_Event ev, _Context *context) {
     ret = cur->context;
     cur->state   = ST_R;
     cur->context = NULL;
+    if (cur->alarm) {
+      Assert(cur->lock, "No lock to reacquire");
+      wakeup_reacquire_lock = cur->lock;
+      cur->alarm = NULL;
+      cur->lock  = NULL;
+    }
     cur->count   = cur->count >= 1000 ? 0 : cur->count + 1;
     Assert(ret, "task context is empty");
   } else {
