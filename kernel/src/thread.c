@@ -25,9 +25,9 @@ static const char *task_states_human[8] __attribute__((used)) = {
   "Special"
 };
 
-struct task root_task;
-struct spinlock *wakeup_reacquire_lock = NULL;
+extern struct spinlock os_trap_lock; 
 
+struct task root_task;
 _Context *null_contexts[MAX_CPU] = {};
 struct task *cpu_tasks[MAX_CPU] = {};
 
@@ -42,8 +42,6 @@ void set_current_task(struct task *task) {
 }
 
 void kmt_init() {
-  wakeup_reacquire_lock = NULL;
-
   root_task.pid   = next_pid++;
   root_task.name  = "Root Task";
   root_task.state = ST_X;
@@ -107,6 +105,7 @@ void kmt_inspect_fence(struct task *task) {
 }
 
 _Context *kmt_context_save(_Event ev, _Context *context) {
+  Assert(spinlock_holding(&os_trap_lock), "not holding os trap lock");
   struct task *cur = get_current_task();
   if (cur) {
     Assert(!cur->context, "double context saving for task %d: %s", cur->pid, cur->name);
@@ -122,6 +121,7 @@ _Context *kmt_context_save(_Event ev, _Context *context) {
 }
 
 _Context *kmt_context_switch(_Event ev, _Context *context) {
+  Assert(spinlock_holding(&os_trap_lock), "not holding os trap lock");
   _Context *ret = NULL;
   struct task *cur = get_current_task();
   if (cur) {
@@ -160,6 +160,7 @@ struct task *kmt_sched() {
 }
 
 _Context *kmt_yield(_Event ev, _Context *context) {
+  Assert(spinlock_holding(&os_trap_lock), "not holding os trap lock");
   struct task *cur = get_current_task();
   if (cur && cur->state == ST_T) return NULL;
   set_current_task(kmt_sched());
@@ -167,6 +168,7 @@ _Context *kmt_yield(_Event ev, _Context *context) {
 }
 
 _Context *kmt_error(_Event ev, _Context *context) {
+  Assert(spinlock_holding(&os_trap_lock), "not holding os trap lock");
   Assert(ev.event = _EVENT_ERROR, "Not an error interrupt");
   printf("\nError detected on CPU %d:\n>>> %s <<<\n", _cpu(), ev.msg);
   printf("====================\n");
