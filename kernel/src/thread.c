@@ -30,12 +30,12 @@ static const char *task_states_human[8] __attribute__((used)) = {
   "Special"
 };
 
-struct task root_task;
-struct alarm_log alarm_head;
-struct spinlock *wakeup_reacquire_lock = NULL;
+volatile struct task root_task;
+volatile struct alarm_log alarm_head;
+volatile struct spinlock *wakeup_reacquire_lock = NULL;
 
-_Context *null_contexts[MAX_CPU] = {};
-struct task *cpu_tasks[MAX_CPU] = {};
+volatile _Context *null_contexts[MAX_CPU] = {};
+volatile struct task *cpu_tasks[MAX_CPU] = {};
 static inline struct task *get_current_task() {
   return cpu_tasks[_cpu()];
 }
