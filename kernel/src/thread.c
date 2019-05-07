@@ -46,6 +46,7 @@ void kmt_init() {
   root_task.name  = "Root Task";
   root_task.state = ST_X;
   root_task.next  = NULL;
+  root_task.count = 0;
   memset(root_task.fenceA, FILL_FENCE, sizeof(root_task.fenceA));
   memset(root_task.stack,  FILL_STACK, sizeof(root_task.stack));
   memset(root_task.fenceB, FILL_FENCE, sizeof(root_task.fenceB));
@@ -53,7 +54,8 @@ void kmt_init() {
 
   // add trap handlers
   os->on_irq(INT_MIN, _EVENT_NULL,      kmt_context_save);
-  os->on_irq(-1,      _EVENT_ERROR,     kmt_error);
+  os->on_irq(INT_MIN, _EVENT_ERROR,     kmt_error);
+  os->on_irq(-1,      _EVENT_IRQ_TIMER, kmt_timer);
   os->on_irq(0,       _EVENT_YIELD,     kmt_yield);
   os->on_irq(0,       _EVENT_IRQ_TIMER, kmt_yield);
   os->on_irq(INT_MAX, _EVENT_NULL,      kmt_context_switch);
@@ -166,6 +168,21 @@ _Context *kmt_yield(_Event ev, _Context *context) {
     set_current_task(NULL);
   } else {
     set_current_task(kmt_sched());
+  }
+  return NULL;
+}
+
+_Context *kmt_timer(_Event ev, _Context *context) {
+  // dead-lock preventor
+  ++root_task.count;
+  if (root_task.count >= 1500) {
+    root_task.count = 0;
+    for (struct task *tp = root_task.next; tp != NULL; tp = tp->next) {
+      if (tp->state == ST_S) {
+        tp->state = ST_W;
+        tp->alarm = NULL;
+      }
+    }
   }
   return NULL;
 }
