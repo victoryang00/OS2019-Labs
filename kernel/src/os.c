@@ -116,6 +116,7 @@ static _Context *os_trap(_Event ev, _Context *context) {
     return context;
   } else {
     spinlock_acquire(&os_trap_lock);
+    TRACE_ENTRY
     CLog(FG_PURPLE, ">>>>>> IN TO TRAP");
     _Context *ret = NULL;
     for (struct os_handler *hp = root_handler.next; hp != NULL; hp = hp->next) {
@@ -125,6 +126,7 @@ static _Context *os_trap(_Event ev, _Context *context) {
       }
     }
     CLog(FG_PURPLE, "<<<<<< OUT OF TRAP");
+    TRACE_EXIT
     spinlock_release(&os_trap_lock);
 
     Assert(ret, "returning to a null context after trap");
