@@ -31,7 +31,7 @@ void spinlock_acquire(struct spinlock *lk) {
    */
   while (1) {
     if (_atomic_xchg((intptr_t *) &lk->locked, 1) == 0) break;
-    //pause();
+    pause();
   }
   __sync_synchronize();
 
