@@ -231,7 +231,7 @@ uintptr_t kmt_sleep(void *alarm, struct spinlock *lock) {
     return -1;
   } else {
     cur->state = ST_S;
-    set_current_task(kmt_sched());
+    set_current_task(NULL);
     return 0;
   }
 }
