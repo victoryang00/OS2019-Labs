@@ -214,6 +214,7 @@ MODULE_DEF(kmt) {
 };
 
 uintptr_t sys_sleep(void *alarm, struct spinlock *lock) {
+    set_current_task(NULL);
   struct task *cur = get_current_task();
   Assert(cur,   "NULL task is going to sleep.");
   Assert(alarm, "Sleep without a alarm (semaphore).");
