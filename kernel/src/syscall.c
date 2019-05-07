@@ -19,7 +19,7 @@ _Context* do_syscall(_Context *context) {
 
   switch (a[0]) {
     case SYS_sleep:
-      Assert(a[2] == &((struct semaphore *)a[1])->lock, "bad semaphore and lock");
+      Assert((struct spinlock *) a[2] == &((struct semaphore *)a[1])->lock, "bad semaphore and lock");
       Assert(!spinlock_holding(&((struct semaphore *) a[1])->lock), "holding spinlock when to sleep");
       sys_sleep((void *) a[1], (struct spinlock *) a[2]);
       break;
