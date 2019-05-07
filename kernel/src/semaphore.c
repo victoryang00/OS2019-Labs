@@ -18,7 +18,7 @@ void semaphore_wait(struct semaphore *sem) {
     uintptr_t res = 0;
     asm volatile ("int $0x80" 
         : "=a"(res) 
-        : "0"(SYS_sleep), "b"(sem), "c"(&sem->lock)
+        : "a"(SYS_sleep), "b"(sem), "c"(&sem->lock)
         );
   }
   Assert(spinlock_holding(&sem->lock), "Not holding the lock after waking up");
@@ -34,7 +34,7 @@ void semaphore_signal(struct semaphore *sem) {
   uintptr_t res = 0;
   asm volatile ("int $0x80" 
       : "=a"(res) 
-      : "0"(SYS_wakeup), "b"(sem)
+      : "a"(SYS_wakeup), "b"(sem)
       );
   spinlock_release(&sem->lock);
 }
