@@ -141,16 +141,14 @@ static _Context *os_trap(_Event ev, _Context *context) {
     }
   }
 
+  struct spinlock *lock = wakeup_reacquire_lock;
   if (!holding) {
     CLog(FG_PURPLE, "<<<<<< OUT OF TRAP");
     spinlock_release(&os_trap_lock);
-    if (wakeup_reacquire_lock) {
-      struct spinlock *lock = wakeup_reacquire_lock;
-      wakeup_reacquire_lock = NULL;
-      __sync_synchronize();
-      spinlock_acquire(lock);
-      //printf("[%d] lock %s reacquired\n", _cpu(), lock->name);
-    }
+  }
+  if (lock) {
+    spinlock_acquire(lock);
+    //printf("[%d] lock %s reacquired\n", _cpu(), lock->name);
   }
 
   Assert(!wakeup_reacquire_lock, "Haven't cleared the lock after waken up and reqacuiring it.");
