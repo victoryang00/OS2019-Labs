@@ -249,9 +249,7 @@ uintptr_t sys_sleep(void *alarm, struct spinlock *lock) {
     ap = an;
   }
 
-  if (true || already_alarmed) {
-    set_current_task(kmt_sched());
-  } else {
+  if (!already_alarmed) {
     cur->state = ST_S;
     set_current_task(kmt_sched());
   }
