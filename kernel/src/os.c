@@ -140,9 +140,18 @@ static _Context *os_trap(_Event ev, _Context *context) {
       if (next) ret = next;
     }
   }
+  struct task *cur = holding ? NULL : get_current_task();
+  struct spinlock *lock = NULL;
+  if (cur && cur->alarm) {
+    lock = cur->lock;
+    cur->alarm = NULL;
+    cur->lock = NULL;
+  }
+
   if (!holding) {
     CLog(FG_PURPLE, "<<<<<< OUT OF TRAP");
     spinlock_release(&os_trap_lock);
+    if (lock) spinlock_acquire(lock);
   }
 
   Assert(holding || ret, "Returning to a null context after normal trap.");
