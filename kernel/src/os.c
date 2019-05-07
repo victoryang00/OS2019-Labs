@@ -45,7 +45,7 @@ void echo_task(void *name) {
     
     int nread = tty->ops->read(tty, 0, line, sizeof(line));
     line[nread - 1] = '\0';
-    sprintf(text, "Echo: \"%s\".", line);
+    sprintf(text, "Echo: %s.\n", line);
     tty->ops->write(tty, 0, text, strlen(text));
   }
 }
