@@ -40,12 +40,12 @@ void echo_task(void *name) {
   device_t *tty = dev_lookup(name);
   char text[128], line[128];
   while (1) {
-    sprintf("(%s) ", name);
+    sprintf(text, "(%s) ", name);
     tty->ops->write(tty, 0, text, strlen(text));
     
     int nread = tty->ops->read(tty, 0, line, sizeof(line));
     line[nread - 1] = '\0';
-    sprintf("Echo: \"%s\".", line);
+    sprintf(text, "Echo: \"%s\".", line);
     tty->ops->write(tty, 0, text, strlen(text));
   }
 }
