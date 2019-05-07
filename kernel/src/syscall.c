@@ -8,8 +8,6 @@ void syscall_ret(_Context *c, uintptr_t val) {
 }
 
 _Context* do_syscall(_Context *context) {
-  Assert(context->GPR1 != -1, "bad eax for syscall");
-  
   uintptr_t a[4] = {
     context->GPR1,
     context->GPR2,
