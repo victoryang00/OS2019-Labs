@@ -191,6 +191,7 @@ _Context *kmt_error(_Event ev, _Context *context) {
   Assert(ev.event = _EVENT_ERROR, "Not an error interrupt");
   printf("\nError detected on CPU %d:\n>>> %s <<<\n", _cpu(), ev.msg);
   printf("====================\n");
+  printf("Context at %p\n", context);
   printf("EIP was %p\n", context->eip);
   printf("ESP was %p\n", context->esp0);
   printf("RET ADDR %p\n", *((void **) context->esp0));
