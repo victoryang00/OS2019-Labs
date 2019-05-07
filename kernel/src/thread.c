@@ -37,9 +37,11 @@ struct spinlock *wakeup_reacquire_lock = NULL;
 _Context *null_contexts[MAX_CPU] = {};
 struct task *cpu_tasks[MAX_CPU] = {};
 static inline struct task *get_current_task() {
+  Assert(cpu_tasks[_cpu()] != &root_task, "cannot tun as root-task");
   return cpu_tasks[_cpu()];
 }
 static inline void set_current_task(struct task *task) {
+  Assert(task != &root_task, "cannot set as root-task");
   if (task) task->owner = _cpu();
   cpu_tasks[_cpu()] = task;
 }
