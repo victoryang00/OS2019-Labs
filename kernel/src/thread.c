@@ -116,6 +116,7 @@ _Context *kmt_context_save(_Event ev, _Context *context) {
   if (cur) {
     Assert(!cur->context, "double context saving for task %d: %s", cur->pid, cur->name);
     cur->state   = ST_W;
+    cur->owner   = -1;
     cur->context = context;
   } else {
     Assert(!null_contexts[_cpu()], "double context saving for null context");
@@ -130,8 +131,10 @@ _Context *kmt_context_switch(_Event ev, _Context *context) {
   if (cur) {
     Log("Next is %d: %s", cur->pid, cur->name);
     kmt_inspect_fence(cur);
+    Assert(cur->owner == -1, "switching to an already running task");
     ret = cur->context;
     cur->state   = ST_R;
+    cur->owner   = _cpu();
     cur->context = NULL;
     if (cur->alarm) {
       Assert(cur->lock, "No lock to reacquire");
