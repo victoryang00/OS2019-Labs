@@ -201,7 +201,19 @@ _Context *kmt_error(_Event ev, _Context *context) {
   return NULL;
 }
 
-uintptr_t kmt_sleep(void *alarm, struct spinlock *lock) {
+MODULE_DEF(kmt) {
+  .init        = kmt_init,
+  .create      = kmt_create,
+  .teardown    = kmt_teardown,
+  .spin_init   = spinlock_init,
+  .spin_lock   = spinlock_acquire,
+  .spin_unlock = spinlock_release,
+  .sem_init    = semaphore_init,
+  .sem_wait    = semaphore_wait,
+  .sem_signal  = semaphore_signal
+};
+
+uintptr_t sys_sleep(void *alarm, struct spinlock *lock) {
   struct task *cur = get_current_task();
   Assert(cur,   "NULL task is going to sleep.");
   Assert(alarm, "Sleep without a alarm (semaphore).");
@@ -237,7 +249,7 @@ uintptr_t kmt_sleep(void *alarm, struct spinlock *lock) {
   return 0;
 }
 
-uintptr_t kmt_wakeup(void *alarm) {
+uintptr_t sys_wakeup(void *alarm) {
   struct task* cur = get_current_task();
 
   // avoid reinsertion
@@ -264,15 +276,3 @@ uintptr_t kmt_wakeup(void *alarm) {
   }
   return 0;
 }
-
-MODULE_DEF(kmt) {
-  .init        = kmt_init,
-  .create      = kmt_create,
-  .teardown    = kmt_teardown,
-  .spin_init   = spinlock_init,
-  .spin_lock   = spinlock_acquire,
-  .spin_unlock = spinlock_release,
-  .sem_init    = semaphore_init,
-  .sem_wait    = semaphore_wait,
-  .sem_signal  = semaphore_signal
-};

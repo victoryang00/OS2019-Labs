@@ -60,12 +60,13 @@ _Context *kmt_context_save(_Event, _Context *);
 _Context *kmt_context_switch(_Event, _Context *);
 struct task *kmt_sched();
 _Context *kmt_yield(_Event, _Context *);
+_Context *kmt_syscall(_Event, _Context *);
 _Context *kmt_error(_Event, _Context *);
 
 // ----------------------------------------------------------------------------
 // syscalls
 
-uintptr_t kmt_sleep(void *, struct spinlock *);
-uintptr_t kmt_wakeup(void *);
+uintptr_t sys_sleep(void *, struct spinlock *);
+uintptr_t sys_wakeup(void *);
 
 #endif

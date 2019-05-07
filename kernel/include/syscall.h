@@ -27,6 +27,7 @@ enum {
   SYS_wakeup
 };
 
-_Context *do_syscall(_Event, _Context *);
+void syscall_ret(_Context *, uintptr_t);
+_Context *do_syscall(_Context *);
 
 #endif
