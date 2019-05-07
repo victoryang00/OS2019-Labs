@@ -50,9 +50,7 @@ ssize_t fb_read(device_t *dev, off_t offset, void *buf, size_t count) {
 
 ssize_t fb_write(device_t *dev, off_t offset, const void *buf, size_t count) {
   fb_t *fb = dev->ptr;
-  printf("[%d] waiting for fb\n", _cpu());
   kmt->sem_wait(&fb_sem);
-  printf("[%d] acquired fb\n", _cpu());
   if (offset == 0) {
     const struct display_info *info = buf;
     if (fb->info->current != info->current) {
@@ -75,9 +73,7 @@ ssize_t fb_write(device_t *dev, off_t offset, const void *buf, size_t count) {
       }
     }
   }
-  printf("[%d] before signal fb\n", _cpu());
   kmt->sem_signal(&fb_sem);
-  printf("[%d] after signal fb\n", _cpu());
   return count;
 }
 
