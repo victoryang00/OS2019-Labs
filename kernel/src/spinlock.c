@@ -21,19 +21,11 @@ void spinlock_init(struct spinlock *lk, const char *name) {
 void spinlock_acquire(struct spinlock *lk) {
   spinlock_pushcli();
   Assert(!spinlock_holding(lk), "Acquiring lock %s when holding it.", lk->name);
-
-  /**
-   * __sync_synchronize is to tell C compiler 
-   * and processer to not move load/store 
-   * instructions past this point, to ensure 
-   * that the critical section's memory 
-   * references happen after the lock is acquired.
-   */
-  while (_atomic_xchg((intptr_t *) &lk->locked, 1)) {
-    pause();
+  while (__sync_lock_test_and_set(&lk->locked, 1)) {
+    while (lk->locked) {
+      ;
+    }
   }
-  __sync_synchronize();
-
   lk->holder = _cpu();
 }
 
@@ -43,7 +35,7 @@ void spinlock_release(struct spinlock *lk) {
   lk->holder = -1;
 
   __sync_synchronize();
-  _atomic_xchg((intptr_t *) &lk->locked, 0);
+  lk->locked = 0;
   spinlock_popcli();
 }
 
