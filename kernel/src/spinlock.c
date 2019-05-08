@@ -8,10 +8,6 @@
 int efif[MAX_CPU] = {};
 int ncli[MAX_CPU] = {};
 
-bool cpu_no_spinlock() {
-  return ncli[_cpu()] == 0;
-}
-
 void spinlock_init(struct spinlock *lk, const char *name) {
   lk->locked = 0;
   lk->holder = -1;
@@ -19,9 +15,7 @@ void spinlock_init(struct spinlock *lk, const char *name) {
 }
 
 void spinlock_acquire(struct spinlock *lk) {
-  //spinlock_pushcli();
-  Assert(!spinlock_holding(lk), "Acquiring lock %s when holding it.", lk->name);
-
+  spinlock_pushcli();
   /**
    * __sync_synchronize is to tell C compiler 
    * and processer to not move load/store 
@@ -39,13 +33,11 @@ void spinlock_acquire(struct spinlock *lk) {
 }
 
 void spinlock_release(struct spinlock *lk) {
-  Assert(spinlock_holding(lk), "Releasing lock %s not holded by cpu %d.", lk->name, _cpu());
-
   lk->holder = -1;
 
   __sync_synchronize();
   _atomic_xchg((intptr_t *) &lk->locked, 0);
-  //spinlock_popcli();
+  spinlock_popcli();
 }
 
 bool spinlock_holding(struct spinlock *lk) {
