@@ -90,6 +90,8 @@ static void os_run() {
 }
 
 static _Context *os_trap(_Event ev, _Context *context) {
+  _Context backup;
+  memcpy(&backup, context, sizeof(_Context));
   CLog(BG_CYAN, "Event %d: %s", ev.event, ev.msg);
 
   bool holding = spinlock_holding(&os_trap_lock);
@@ -114,6 +116,7 @@ static _Context *os_trap(_Event ev, _Context *context) {
     for (struct os_handler *hp = root_handler.next; hp != NULL; hp = hp->next) {
       if (hp->event == ev.event) hp->handler(ev, context);
     }
+    Assert(memcmp(&backup, context, sizeof(_Context)) == 0, "context is modified (1)");
     return context;
   } else {
     spinlock_acquire(&os_trap_lock);
@@ -129,6 +132,7 @@ static _Context *os_trap(_Event ev, _Context *context) {
     spinlock_release(&os_trap_lock);
 
     Assert(ret, "returning to a null context after trap");
+    Assert(memcmp(&backup, context, sizeof(_Context)) == 0, "context is modified (2)");
     return ret;
   }
 }
