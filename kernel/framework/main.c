@@ -1,3 +1,4 @@
+#include <common.h>
 #include <kernel.h>
 #include <klib.h>
 
