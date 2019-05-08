@@ -1,33 +1,18 @@
 #include <kernel.h>
 #include <klib.h>
-#include <devices.h>
 
-sem_t sem_p, sem_c, mutex;
-void producer(void *arg) {
-  device_t *tty = dev_lookup("tty1");
-  char *text = (char *) arg;
+void echo_task(void *arg) {
+  char *name = (char *) arg;
+  char text[128] = "", line[128] = "";
+  device_t *tty = device_lookup(name);
   while (1) {
-    kmt->sem_wait(&sem_p);
-    kmt->sem_wait(&mutex);
+    sprintf(text, "(%s) $ ", name);
     tty->ops->write(tty, 0, text, strlen(text));
-    kmt->sem_signal(&mutex);
-    kmt->sem_signal(&sem_c);
-  }
-}
-void customer(void *arg) {
-  device_t *tty = dev_lookup("tty1");
-  char text[128];
-  int count = 0;
 
-  while (1) {
-    ++count;
-    sprintf(text, "(%d) %s", count, (char *) arg);
-    
-    kmt->sem_wait(&sem_c);
-    kmt->sem_wait(&mutex);
+    int nread = tty->ops->read(tty, 0, line, sizeof(line));
+    line[nread - 1] = '\0';
+    sprintf(text, "Echo: %s.\n", line);
     tty->ops->write(tty, 0, text, strlen(text));
-    kmt->sem_signal(&mutex);
-    kmt->sem_signal(&sem_p);
   }
 }
 
@@ -38,28 +23,10 @@ int main() {
   // call sequential init code
   os->init();
 
-  kmt->sem_init(&sem_p, "producer-sem", 1);
-  kmt->sem_init(&sem_c, "customer-sem", 0);
-  kmt->sem_init(&mutex, "mutex", 1);
-  
-  kmt->create(pmm->alloc(sizeof(task_t)), "p-task", producer, "I like ");
-  kmt->create(pmm->alloc(sizeof(task_t)), "p-task", producer, "I hate ");
-
-  kmt->create(pmm->alloc(sizeof(task_t)), "c-task", customer, "you\n");
-  kmt->create(pmm->alloc(sizeof(task_t)), "c-task", customer, "him\n");
-  kmt->create(pmm->alloc(sizeof(task_t)), "c-task", customer, "her\n");
-  kmt->create(pmm->alloc(sizeof(task_t)), "c-task", customer, "they\n");
-  kmt->create(pmm->alloc(sizeof(task_t)), "c-task", customer, "us\n");
-  kmt->create(pmm->alloc(sizeof(task_t)), "c-task", customer, "it\n");
-  kmt->create(pmm->alloc(sizeof(task_t)), "c-task", customer, "the god\n");
-  kmt->create(pmm->alloc(sizeof(task_t)), "c-task", customer, "american\n");
-  kmt->create(pmm->alloc(sizeof(task_t)), "c-task", customer, "europian\n");
-  kmt->create(pmm->alloc(sizeof(task_t)), "c-task", customer, "japanese\n");
-  kmt->create(pmm->alloc(sizeof(task_t)), "c-task", customer, "russian\n");
-  kmt->create(pmm->alloc(sizeof(task_t)), "c-task", customer, "indian\n");
-  kmt->create(pmm->alloc(sizeof(task_t)), "c-task", customer, "boy next door\n");
-  kmt->create(pmm->alloc(sizeof(task_t)), "c-task", customer, "fucking coming\n");
-  kmt->create(pmm->alloc(sizeof(task_t)), "c-task", customer, "jyy and oslabs (X)\n");
+  kmt->create(pmm->alloc(sizeof(task_t)), "echo-1", echo_task, "tty1");
+  kmt->create(pmm->alloc(sizeof(task_t)), "echo-2", echo_task, "tty2");
+  kmt->create(pmm->alloc(sizeof(task_t)), "echo-3", echo_task, "tty3");
+  kmt->create(pmm->alloc(sizeof(task_t)), "echo-4", echo_task, "tty4");
 
   _mpe_init(os->run); // all cores call os->run()
   return 1;
