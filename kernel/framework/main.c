@@ -3,6 +3,14 @@
 #include <devices.h>
 
 sem_t sem_p, sem_c, mutex;
+void producer(void *arg) {
+  device_t *tty = dev_lookup("tty1");
+  char *text = (char *) text;
+  while (1) {
+    tty->ops->write(tty, 0, text, strlen(text));
+    hlt();
+  }
+}
 void customer(void *arg) {
   device_t *tty = dev_lookup("tty1");
   char text[128];
@@ -12,7 +20,7 @@ void customer(void *arg) {
     ++count;
     sprintf(text, "(%d) %s", count, (char *) arg);
     tty->ops->write(tty, 0, text, strlen(text));
-    _yield();
+    hlt();
   }
 }
 
@@ -26,7 +34,9 @@ int main() {
   kmt->sem_init(&sem_p, "producer-sem", 1);
   kmt->sem_init(&sem_c, "customer-sem", 0);
   kmt->sem_init(&mutex, "mutex", 1);
-
+  
+  kmt->create(pmm->alloc(sizeof(task_t)), "p-task", producer, "I like ");
+  kmt->create(pmm->alloc(sizeof(task_t)), "p-task", producer, "I hate ");
 
   kmt->create(pmm->alloc(sizeof(task_t)), "c-task", customer, "you\n");
   kmt->create(pmm->alloc(sizeof(task_t)), "c-task", customer, "him\n");
