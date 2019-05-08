@@ -1,6 +1,7 @@
 #include <common.h>
 #include <kernel.h>
 #include <klib.h>
+#include <devices.h>
 
 typedef struct{
   int n;
