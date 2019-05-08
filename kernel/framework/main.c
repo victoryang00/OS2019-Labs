@@ -80,7 +80,7 @@ int main() {
 
   // call sequential init code
   os->init();
-  kmt->create(pmm->alloc(sizeof(task_t)), "ff", fib_c, (void *)12l);
+  kmt->create(pmm->alloc(sizeof(task_t)), "ff", fib_c, (void *)13l);
   _mpe_init(os->run); // all cores call os->run()
   return 1;
 }
