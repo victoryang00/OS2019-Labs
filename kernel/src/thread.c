@@ -133,7 +133,7 @@ _Context *kmt_context_save(_Event ev, _Context *context) {
   Assert(spinlock_holding(&os_trap_lock), "not holding os trap lock");
   struct task *cur = get_current_task();
   if (cur) {
-    Assert(cur->state == ST_Z || !cur->context, 
+    Assert(!cur->context, 
         "double context saving for task %d: %s [%s]", 
         cur->pid, cur->name, task_states_human[cur->state]);
 
