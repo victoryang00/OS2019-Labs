@@ -57,6 +57,7 @@ void fib(void *arg){
     pmm->free(f1);
     pmm->free(f2);
   }
+  printf("------------------%d--------------------\n", f->n);
   kmt->sem_signal(&f->sem);
   while(1){ _yield(); }
 }
