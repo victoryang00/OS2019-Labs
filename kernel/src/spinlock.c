@@ -18,9 +18,8 @@ void spinlock_acquire(struct spinlock *lk) {
   spinlock_pushcli();
   Assert(!spinlock_holding(lk), "Acquiring lock %s when holding it.", lk->name);
 
-  while (1) {
-    if (_atomic_xchg((intptr_t *) &lk->locked, 1) == 0) break;
-    pause();
+  while (_atomic_xchg((intptr_t *) &lk->locked, 1)) {
+    ;
   }
   __sync_synchronize();
 
@@ -39,7 +38,9 @@ void spinlock_release(struct spinlock *lk) {
 
 bool spinlock_holding(struct spinlock *lk) {
   bool res = 0;
+  spinlock_pushcli();
   res = lk->locked && lk->holder == _cpu();
+  spinlock_popcli();
   return res;
 }
 
