@@ -54,7 +54,7 @@ void kmt_init() {
 
   // add trap handlers
   os->on_irq(INT_MIN, _EVENT_NULL,      kmt_context_save);
-  os->on_irq(INT_MIN, _EVENT_ERROR,     kmt_error);
+  os->on_irq(0,       _EVENT_ERROR,     kmt_error);
   os->on_irq(0,       _EVENT_IRQ_TIMER, kmt_timer);
   os->on_irq(0,       _EVENT_YIELD,     kmt_yield);
   os->on_irq(INT_MAX, _EVENT_NULL,      kmt_context_switch);

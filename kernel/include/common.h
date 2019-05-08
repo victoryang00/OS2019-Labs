@@ -17,6 +17,11 @@
 //#define MEM_DEBUG
 #include <debug.h>
 
+#include <thread.h>
+#include <devices.h>
+#include <spinlock.h>
+#include <semaphore.h>
+
 #define likely(x)   __builtin_expect(!!(x), 1)
 #define unlikely(x) __builtin_expect(!!(x), 0)
 
