@@ -61,24 +61,23 @@ void kmt_init() {
 }
 
 int kmt_create(struct task *task, const char *name, void (*entry)(void *arg), void *arg) {
-  task->pid   = next_pid++;
-  task->name  = name;
-  task->entry = entry;
-  task->arg   = arg;
-  task->state = ST_E;
-  task->owner = -1;
-  task->count = 0;
+  task->pid     = next_pid++;
+  task->name    = name;
+  task->entry   = entry;
+  task->arg     = arg;
+  task->state   = ST_E;
+  task->owner   = -1;
+  task->count   = 0;
+  task->alarm   = NULL;
+  task->suicide = 0;
+  task->next    = NULL;
+
+  // We cannot create context before initializing the stack
+  // since context will put the context at the begin of stack
   memset(task->fenceA, FILL_FENCE, sizeof(task->fenceA));
   memset(task->stack,  FILL_STACK, sizeof(task->stack));
   memset(task->fenceB, FILL_FENCE, sizeof(task->fenceB));
   kmt_inspect_fence(task);
-  task->alarm = NULL;
-  task->next  = NULL;
-
-  /**
-   * We cannot create context before initializing the stack
-   * because kcontext will put the context at the begin of stack
-   */
   _Area stack = { 
     (void *) task->stack, 
     (void *) task->stack + sizeof(task->stack) 
@@ -98,7 +97,7 @@ int kmt_create(struct task *task, const char *name, void (*entry)(void *arg), vo
 void kmt_teardown(struct task *task) {
   bool holding = spinlock_holding(&os_trap_lock);
   if (!holding) spinlock_acquire(&os_trap_lock);
-  task->state = ST_Z;
+  task->suicide = 1;
   if (!holding) spinlock_release(&os_trap_lock);
 }
 
@@ -108,21 +107,23 @@ void kmt_inspect_fence(struct task *task) {
 }
 
 struct task *kmt_sched() {
+  // zombie task conducts suicide
+  struct task *cur = get_current_task();
+  if (cur->suicide) {
+    struct task *tp = &root_task;
+    while (tp && tp->next != cur) tp = tp->next;
+    Assert(tp, "task not in task list");
+    tp->next = cur->next;
+    pmm->free(cur);
+  }
+
+  // pick a next task
   Log("========== TASKS ==========");
   struct task *ret = NULL;
   for (struct task *tp = &root_task; tp != NULL; tp = tp->next) {
-    // perform fence check
     kmt_inspect_fence(tp);
     Log("%d:%s [%s, L%d, C%d]", tp->pid, tp->name, task_states_human[tp->state], tp->owner, tp->count);
 
-    // kill zombie process
-    while (tp->next && tp->next->state == ST_Z && tp->next->alarm) {
-      struct task *tn = tp->next;
-      tp->next = tn->next;
-      pmm->free(tn);
-    }
-
-    // choose next process
     if (tp->state == ST_E || tp->state == ST_W) {
       if (!ret || tp->count < ret->count) {
         ret = tp;
@@ -141,11 +142,9 @@ _Context *kmt_context_save(_Event ev, _Context *context) {
         "double context saving for task %d: %s [%s]", 
         cur->pid, cur->name, task_states_human[cur->state]);
 
-    if (cur->state != ST_Z) {
-      cur->state   = ST_W;
-      cur->owner   = -1;
-      cur->context = context;
-    }
+    cur->state   = ST_W;
+    cur->owner   = -1;
+    cur->context = context;
   } else {
     Assert(!null_contexts[_cpu()], "double context saving for null context");
     null_contexts[_cpu()] = context;
@@ -196,14 +195,7 @@ _Context *kmt_yield(_Event ev, _Context *context) {
   Assert(spinlock_holding(&os_trap_lock), "not holding os trap lock");
   struct task *cur = get_current_task();
   if (cur && cur->alarm) {
-    // state was goto sleep
-    if (cur->state == ST_Z) {
-      // clear alarm and destroy in sched()
-      cur->alarm = NULL;
-    } else {
-      // fall sleep safely
-      cur->state = ST_S;  
-    }
+    cur->state = ST_S;  
   }
   set_current_task(kmt_sched());
   return NULL;

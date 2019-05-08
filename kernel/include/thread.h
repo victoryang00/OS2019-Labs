@@ -39,6 +39,7 @@ struct task {
   char fenceB[32];
 
   void *alarm;
+  bool suicide;
 
   struct task *next;
 };
