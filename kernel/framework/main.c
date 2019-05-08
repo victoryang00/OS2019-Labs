@@ -8,7 +8,7 @@ void producer(void *arg) {
   while (1) {
     kmt->sem_wait(&sem_p);
     kmt->sem_wait(&mutex);
-    tty->ops->write(tty, 0, "fuck ", 5);
+    tty->ops->write(tty, 0, "I love ", 7);
     kmt->sem_signal(&mutex);
     kmt->sem_signal(&sem_c);
   }
@@ -50,6 +50,8 @@ int main() {
   kmt->create(pmm->alloc(sizeof(task_t)), "c-task", customer, "russian\n");
   kmt->create(pmm->alloc(sizeof(task_t)), "c-task", customer, "indian\n");
   kmt->create(pmm->alloc(sizeof(task_t)), "c-task", customer, "boy next door\n");
+  kmt->create(pmm->alloc(sizeof(task_t)), "c-task", customer, "fucking coming\n");
+  kmt->create(pmm->alloc(sizeof(task_t)), "c-task", customer, "jyy and oslabs (X)\n");
 
   _mpe_init(os->run); // all cores call os->run()
   return 1;
