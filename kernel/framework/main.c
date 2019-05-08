@@ -11,7 +11,7 @@ void customer(void *arg) {
   while (1) {
     ++count;
     sprintf(text, "(%d) %s", count, (char *) arg);
-    tty->ops->write(tty, 0, text, strlen(text);
+    tty->ops->write(tty, 0, text, strlen(text));
     _yield();
   }
 }
