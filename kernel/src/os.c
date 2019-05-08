@@ -90,7 +90,7 @@ static void os_run() {
 
   _yield();
   while (1) {
-    _halt();
+    _hlt();
   }
   Panic("os run cannot return");
 }
