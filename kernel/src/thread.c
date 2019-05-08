@@ -114,7 +114,7 @@ struct task *kmt_sched() {
   for (struct task *tp = &root_task; tp != NULL; tp = tp->next) {
     kmt_inspect_fence(tp);
     Log("%d:%s [%s, L%d, C%d]", tp->pid, tp->name, task_states_human[tp->state], tp->owner, tp->count);
-    if (tp->next && tp->next->state == ST_Z) {
+    if (tp->next && tp->next->state == ST_Z && tp->next->alarm) {
       struct task *tn = tp->next;
       tp->next = tn->next;
       pmm->free(tn);
@@ -138,7 +138,7 @@ _Context *kmt_context_save(_Event ev, _Context *context) {
         cur->pid, cur->name, task_states_human[cur->state]);
 
     if (cur->state != ST_Z) {
-      cur->state = ST_W;
+      cur->state   = ST_W;
       cur->owner   = -1;
       cur->context = context;
     }
@@ -191,7 +191,11 @@ _Context *kmt_yield(_Event ev, _Context *context) {
   Assert(spinlock_holding(&os_trap_lock), "not holding os trap lock");
   struct task *cur = get_current_task();
   if (cur && cur->alarm && ev.event == _EVENT_YIELD) {
-    if (cur->state != ST_Z) cur->state = ST_S;
+    if (cur->state == ST_Z) {
+      cur->alarm = NULL;
+    } else {
+      cur->state = ST_S;  
+    }
   }
   set_current_task(kmt_sched());
   return NULL;
