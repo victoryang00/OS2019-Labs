@@ -134,7 +134,9 @@ _Context *kmt_context_save(_Event ev, _Context *context) {
   struct task *cur = get_current_task();
   if (cur) {
     Assert(!cur->context, "double context saving for task %d: %s", cur->pid, cur->name);
+    // if is a zombie task, no need to save it
     if (cur->state != ST_Z) {
+      // if is going to sleep, don't change state
       if (cur->state != ST_T) cur->state = ST_W;
       cur->owner   = -1;
       cur->context = context;
@@ -217,7 +219,15 @@ _Context *kmt_error(_Event ev, _Context *context) {
     }
     printf("\n");
   }
-  Panic("Error detected: %s", ev.msg);
+  
+  struct task *cur = get_current_task();
+  if (cur) {
+    cur->state = ST_Z;
+    printf("Task %d: %s is force killed.\n", cur->pid, cur->name);
+    set_current_task(NULL);
+  } else {
+    Panic("Fatal error detected in null task. OS halted.");
+  }
   return NULL;
 }
 
