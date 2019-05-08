@@ -16,8 +16,8 @@ void semaphore_init(struct semaphore *sem, const char *name, int value) {
 }
 
 void semaphore_wait(struct semaphore *sem) {
+  Assert(!spinlock_holding(&os_trap_lock), "no semaphore wait in trap");
   spinlock_acquire(&sem->lock);
-  Assert(!spinlock_holding(&os_trap_lock), "sleep in trap");
   while (sem->value <= 0) {
     Assert(!spinlock_holding(&os_trap_lock), "sleep in trap");
     spinlock_release(&sem->lock);
