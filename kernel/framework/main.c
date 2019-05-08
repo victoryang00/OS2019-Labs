@@ -5,7 +5,7 @@
 sem_t sem_p, sem_c, mutex;
 void producer(void *arg) {
   device_t *tty = dev_lookup("tty1");
-  char *text = (char *) text;
+  char *text = (char *) arg;
   while (1) {
     tty->ops->write(tty, 0, text, strlen(text));
     hlt();
