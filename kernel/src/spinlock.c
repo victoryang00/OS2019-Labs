@@ -39,9 +39,7 @@ void spinlock_release(struct spinlock *lk) {
 
 bool spinlock_holding(struct spinlock *lk) {
   bool res = 0;
-  spinlock_pushcli();
   res = lk->locked && lk->holder == _cpu();
-  spinlock_popcli();
   return res;
 }
 
