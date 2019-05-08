@@ -32,7 +32,7 @@ void spinlock_release(struct spinlock *lk) {
   lk->holder = -1;
 
   __sync_synchronize();
-  _atomic_xchg((intptr_t *) &lk->locked, 0);
+  asm volatile ("movl $0, %0" : "+m"(lk->locked) : );
   spinlock_popcli();
 }
 
@@ -47,8 +47,7 @@ bool spinlock_holding(struct spinlock *lk) {
 void spinlock_pushcli() {
   int eflags = get_efl();
   
-  cli();
-  Assert((get_efl() & FL_IF) == 0, "cli() failed to turn off interrupt.");
+  _intr_write(0);
   if (ncli[_cpu()] == 0) {
     efif[_cpu()] = eflags & FL_IF;
   }
@@ -56,12 +55,10 @@ void spinlock_pushcli() {
 }
 
 void spinlock_popcli() {
-  Assert((get_efl() & FL_IF) == 0, "Interruptable in popcli.");
-
   ncli[_cpu()] -= 1;
   Assert(ncli[_cpu()] >= 0, "Cli level is negative.");
 
   if (ncli[_cpu()] == 0 && efif[_cpu()]) {
-    sti();
+    _intr_write(1);
   }
 }
