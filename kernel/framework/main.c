@@ -5,8 +5,13 @@
 sem_t sem_p, sem_c, mutex;
 void customer(void *arg) {
   device_t *tty = dev_lookup("tty1");
+  char text[128];
+  int count = 0;
+
   while (1) {
-    tty->ops->write(tty, 0, (char *) arg, strlen((char *) arg));
+    ++count;
+    sprintf(text, "(%d) %s", count, (char *) arg);
+    tty->ops->write(tty, 0, text, strlen(text);
     _yield();
   }
 }
