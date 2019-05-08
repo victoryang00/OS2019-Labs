@@ -215,7 +215,7 @@ _Context *kmt_error(_Event ev, _Context *context) {
     if (cpu_tasks[i]) {
       printf("%d: %s", cpu_tasks[i]->pid, cpu_tasks[i]->name);
     } else {
-      printf("NULL");
+      printf("(no task)");
     }
     printf("\n");
   }
@@ -226,7 +226,7 @@ _Context *kmt_error(_Event ev, _Context *context) {
     printf("Task %d: %s is force killed.\n", cur->pid, cur->name);
     set_current_task(NULL);
   } else {
-    Panic("Fatal error detected in null task. OS halted.");
+    Panic("Fatal error detected in null task.");
   }
   return NULL;
 }
