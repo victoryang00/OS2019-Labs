@@ -85,9 +85,9 @@ static void os_init() {
 
 static void os_run() {
   _intr_write(1);
-
-  _yield();
   while (1) {
+    // in order to save CPU,
+    // do not _yield, just wait for timer.
     hlt();
   }
   Panic("os run cannot return");
