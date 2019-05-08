@@ -7,8 +7,11 @@ void producer(void *arg) {
   device_t *tty = dev_lookup("tty1");
   char *text = (char *) arg;
   while (1) {
+    kmt->sem_wait(&sem_p);
+    kmt->sem_wait(&mutex);
     tty->ops->write(tty, 0, text, strlen(text));
-    hlt();
+    kmt->sem_signal(&mutex);
+    kmt->sem_signal(&sem_c);
   }
 }
 void customer(void *arg) {
@@ -19,8 +22,12 @@ void customer(void *arg) {
   while (1) {
     ++count;
     sprintf(text, "(%d) %s", count, (char *) arg);
+    
+    kmt->sem_wait(&sem_c);
+    kmt->sem_wait(&mutex);
     tty->ops->write(tty, 0, text, strlen(text));
-    hlt();
+    kmt->sem_signal(&mutex);
+    kmt->sem_signal(&sem_p);
   }
 }
 
