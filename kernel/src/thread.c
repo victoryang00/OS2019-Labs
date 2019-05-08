@@ -114,15 +114,15 @@ struct task *kmt_sched() {
   for (struct task *tp = &root_task; tp != NULL; tp = tp->next) {
     kmt_inspect_fence(tp);
     Log("%d:%s [%s, L%d, C%d]", tp->pid, tp->name, task_states_human[tp->state], tp->owner, tp->count);
-    if (tp->state == ST_E || tp->state == ST_W) {
-      if (!ret || tp->count < ret->count) {
-        ret = tp;
-      }
-    }
     if (tp->next && tp->next->state == ST_Z) {
       struct task *tn = tp->next;
       tp->next = tn->next;
       pmm->free(tn);
+    }
+    if (tp->state == ST_E || tp->state == ST_W) {
+      if (!ret || tp->count < ret->count) {
+        ret = tp;
+      }
     }
   }
   Log("===========================");
@@ -224,7 +224,7 @@ _Context *kmt_error(_Event ev, _Context *context) {
   if (cur) {
     cur->state = ST_Z;
     printf("Task %d: %s is force killed.\n", cur->pid, cur->name);
-    set_current_task(NULL);
+    set_current_task(kmt_sched());
   } else {
     Panic("Fatal error detected in null task.");
   }
