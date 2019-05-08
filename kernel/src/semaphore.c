@@ -20,8 +20,8 @@ void semaphore_wait(struct semaphore *sem) {
   Assert(!spinlock_holding(&os_trap_lock), "sleep in trap");
   while (sem->value <= 0) {
     Assert(!spinlock_holding(&os_trap_lock), "sleep in trap");
-    spinlock_acquire(&os_trap_lock);
     spinlock_release(&sem->lock);
+    spinlock_acquire(&os_trap_lock);
     struct task *cur = get_current_task();
     cur->alarm = sem;
     spinlock_release(&os_trap_lock);
@@ -36,7 +36,8 @@ void semaphore_wait(struct semaphore *sem) {
 void semaphore_signal(struct semaphore *sem) {
   spinlock_acquire(&sem->lock);
   ++sem->value;
-  __sync_synchronize();
+  spinlock_release(&sem->lock);
+
   bool holding = spinlock_holding(&os_trap_lock);
   if (!holding) spinlock_acquire(&os_trap_lock);
   for (struct task *tp = root_task.next; tp != NULL; tp = tp->next) {
@@ -46,5 +47,4 @@ void semaphore_signal(struct semaphore *sem) {
     }
   }
   if (!holding) spinlock_release(&os_trap_lock);
-  spinlock_release(&sem->lock);
 }
