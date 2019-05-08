@@ -3,24 +3,11 @@
 #include <devices.h>
 
 sem_t sem_p, sem_c, mutex;
-void producer(void *arg) {
-  device_t *tty = dev_lookup("tty1");
-  while (1) {
-    kmt->sem_wait(&sem_p);
-    kmt->sem_wait(&mutex);
-    tty->ops->write(tty, 0, (char *) arg, strlen((char *) arg));
-    kmt->sem_signal(&mutex);
-    kmt->sem_signal(&sem_c);
-  }
-}
 void customer(void *arg) {
   device_t *tty = dev_lookup("tty1");
   while (1) {
-    kmt->sem_wait(&sem_c);
-    kmt->sem_wait(&mutex);
     tty->ops->write(tty, 0, (char *) arg, strlen((char *) arg));
-    kmt->sem_signal(&mutex);
-    kmt->sem_signal(&sem_p);
+    _yield();
   }
 }
 
@@ -35,8 +22,6 @@ int main() {
   kmt->sem_init(&sem_c, "customer-sem", 0);
   kmt->sem_init(&mutex, "mutex", 1);
 
-  kmt->create(pmm->alloc(sizeof(task_t)), "p-task", producer, "I love ");
-  kmt->create(pmm->alloc(sizeof(task_t)), "p-task", producer, "I hate ");
 
   kmt->create(pmm->alloc(sizeof(task_t)), "c-task", customer, "you\n");
   kmt->create(pmm->alloc(sizeof(task_t)), "c-task", customer, "him\n");
