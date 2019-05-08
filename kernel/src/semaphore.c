@@ -19,13 +19,7 @@ void semaphore_wait(struct semaphore *sem) {
   spinlock_acquire(&sem->lock);
   Assert(!spinlock_holding(&os_trap_lock), "sleep in trap");
   while (sem->value <= 0) {
-    Assert(!spinlock_holding(&os_trap_lock), "sleep in trap");
     spinlock_release(&sem->lock);
-    spinlock_acquire(&os_trap_lock);
-    struct task *cur = get_current_task();
-    cur->alarm = sem;
-    spinlock_release(&os_trap_lock);
-    _yield();
     spinlock_acquire(&sem->lock);
   }
   __sync_synchronize();
