@@ -130,10 +130,11 @@ static _Context *os_trap(_Event ev, _Context *context) {
       Assert(memcmp(&backup, context, sizeof(_Context)) == 0, "context is modified (2) after hanlder seq %d", hp->seq);
     }
     CLog(FG_PURPLE, "<<<<<< OUT OF TRAP");
+    Assert(memcmp(&backup, context, sizeof(_Context)) == 0, "context is modified (2) before lock release");
     spinlock_release(&os_trap_lock);
 
     Assert(ret, "returning to a null context after trap");
-    Assert(memcmp(&backup, context, sizeof(_Context)) == 0, "context is modified (2)");
+    Assert(memcmp(&backup, context, sizeof(_Context)) == 0, "context is modified (2) after lock release");
     return ret;
   }
 }
