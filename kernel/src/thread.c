@@ -134,10 +134,8 @@ _Context *kmt_context_save(_Event ev, _Context *context) {
   struct task *cur = get_current_task();
   if (cur) {
     Assert(!cur->context, "double context saving for task %d: %s", cur->pid, cur->name);
-    // if is a zombie task, no need to save it
     if (cur->state != ST_Z) {
-      // if is going to sleep, don't change state
-      if (cur->state != ST_T) cur->state = ST_W;
+      cur->state = ST_W;
       cur->owner   = -1;
       cur->context = context;
     }
@@ -189,11 +187,8 @@ _Context *kmt_timer(_Event ev, _Context *context) {
 _Context *kmt_yield(_Event ev, _Context *context) {
   Assert(spinlock_holding(&os_trap_lock), "not holding os trap lock");
   struct task *cur = get_current_task();
-  if (cur 
-      && cur->state == ST_T 
-      && cur->alarm 
-      && ev.event == _EVENT_YIELD) {
-    cur->state = ST_S;
+  if (cur && cur->alarm && ev.event == _EVENT_YIELD) {
+    if (cur->state != ST_Z) cur->state = ST_S;
   }
   set_current_task(kmt_sched());
   return NULL;
