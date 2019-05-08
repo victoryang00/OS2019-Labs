@@ -86,6 +86,7 @@ static void os_run() {
   while (1) {
     _yield();
   }
+  Panic("os run cannot return");
 }
 
 static _Context *os_trap(_Event ev, _Context *context) {
