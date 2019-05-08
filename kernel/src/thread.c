@@ -220,14 +220,7 @@ _Context *kmt_error(_Event ev, _Context *context) {
     printf("\n");
   }
   
-  struct task *cur = get_current_task();
-  if (cur) {
-    cur->state = ST_Z;
-    printf("Task %d: %s is force killed.\n", cur->pid, cur->name);
-    set_current_task(kmt_sched());
-  } else {
-    Panic("Fatal error detected in null task.");
-  }
+  Panic("Fatal error detected: %s.", ev.msg);
   return NULL;
 }
 
