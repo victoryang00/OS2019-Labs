@@ -94,9 +94,11 @@ int kmt_create(struct task *task, const char *name, void (*entry)(void *arg), vo
 }
 
 void kmt_teardown(struct task *task) {
+  Assert(task != get_current_task(), "cannot delete itself");
+  Assert(task->state != ST_R, "cannot delete a running task");
   struct task *tp = &root_task;
   while (tp->next && tp->next != task) tp = tp->next;
-  Assert(tp->next && tp->next == task, "Task is not in linked list!");
+  Assert(tp->next && tp->next == task, "not a valid task");
   tp->next = task->next;
   pmm->free(task);
 }
