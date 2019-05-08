@@ -10,7 +10,6 @@ static struct os_handler root_handler = {
   0, _EVENT_NULL, NULL, NULL
 };
 
-/*
 sem_t sem_p;
 sem_t sem_c;
 sem_t mutex;
@@ -49,7 +48,6 @@ void echo_task(void *name) {
     tty->ops->write(tty, 0, text, strlen(text));
   }
 }
-*/
 
 static void os_init() {
   spinlock_init(&os_trap_lock, "OS TRAP SPIN LOCK");
@@ -69,7 +67,6 @@ static void os_init() {
   CLog(BG_GREEN, "dev ok");
 
   //create proc here
-  /*
   kmt->sem_init(&sem_p, "Producer SEM", 5);
   kmt->sem_init(&sem_c, "Customer SEM", 0);
   kmt->sem_init(&mutex, "Producer-Customer MUTEX", 1);
@@ -82,7 +79,6 @@ static void os_init() {
   kmt->create(pmm->alloc(sizeof(task_t)), "echo-2", echo_task, "tty2");
   kmt->create(pmm->alloc(sizeof(task_t)), "echo-3", echo_task, "tty3");
   kmt->create(pmm->alloc(sizeof(task_t)), "echo-4", echo_task, "tty4");
-  */
 }
 
 static void os_run() {
