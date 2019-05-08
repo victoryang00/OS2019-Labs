@@ -123,6 +123,7 @@ static _Context *os_trap(_Event ev, _Context *context) {
     CLog(FG_PURPLE, ">>>>>> IN TO TRAP");
     _Context *ret = NULL;
     for (struct os_handler *hp = root_handler.next; hp != NULL; hp = hp->next) {
+      Assert(hp->seq == INT_MIN || hp->seq == INT_MAX || hp->seq >= -5 || hp->seq <= 5, "invalid handler, seq = %d", hp->seq);
       if (hp->event == _EVENT_NULL || hp->event == ev.event) {
         _Context *next = hp->handler(ev, context);
         if (next) ret = next;
