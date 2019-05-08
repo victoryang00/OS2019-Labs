@@ -55,9 +55,8 @@ void kmt_init() {
   // add trap handlers
   os->on_irq(INT_MIN, _EVENT_NULL,      kmt_context_save);
   os->on_irq(INT_MIN, _EVENT_ERROR,     kmt_error);
-  os->on_irq(-1,      _EVENT_IRQ_TIMER, kmt_timer);
+  os->on_irq(0,       _EVENT_IRQ_TIMER, kmt_timer);
   os->on_irq(0,       _EVENT_YIELD,     kmt_yield);
-  os->on_irq(0,       _EVENT_IRQ_TIMER, kmt_yield);
   os->on_irq(INT_MAX, _EVENT_NULL,      kmt_context_switch);
 }
 
@@ -112,13 +111,18 @@ struct task *kmt_sched() {
   Log("========== TASKS ==========");
   struct task *ret = NULL;
   for (struct task *tp = &root_task; tp != NULL; tp = tp->next) {
+    // perform fence check
     kmt_inspect_fence(tp);
     Log("%d:%s [%s, L%d, C%d]", tp->pid, tp->name, task_states_human[tp->state], tp->owner, tp->count);
-    if (tp->next && tp->next->state == ST_Z && tp->next->alarm) {
+
+    // kill zombie process
+    while (tp->next && tp->next->state == ST_Z && tp->next->alarm) {
       struct task *tn = tp->next;
       tp->next = tn->next;
       pmm->free(tn);
     }
+
+    // choose next process
     if (tp->state == ST_E || tp->state == ST_W) {
       if (!ret || tp->count < ret->count) {
         ret = tp;
@@ -173,7 +177,7 @@ _Context *kmt_context_switch(_Event ev, _Context *context) {
 }
 
 _Context *kmt_timer(_Event ev, _Context *context) {
-  // dead-lock preventor
+  // stupid, simple deadlock preventor
   ++root_task.count;
   if (root_task.count >= 1500) {
     root_task.count = 0;
@@ -184,13 +188,14 @@ _Context *kmt_timer(_Event ev, _Context *context) {
       }
     }
   }
+  set_current_task(kmt_sched());
   return NULL;
 }
 
 _Context *kmt_yield(_Event ev, _Context *context) {
   Assert(spinlock_holding(&os_trap_lock), "not holding os trap lock");
   struct task *cur = get_current_task();
-  if (cur && cur->alarm && ev.event == _EVENT_YIELD) {
+  if (cur && cur->alarm) {
     // state was goto sleep
     if (cur->state == ST_Z) {
       // clear alarm and destroy in sched()
@@ -225,6 +230,7 @@ _Context *kmt_error(_Event ev, _Context *context) {
     printf("\n");
   }
   
+  // kernel threads cannot be killed
   Panic("Fatal error detected: %s.", ev.msg);
   return NULL;
 }
