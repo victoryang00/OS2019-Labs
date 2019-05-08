@@ -67,6 +67,7 @@ static void os_init() {
   CLog(BG_GREEN, "dev ok");
 
   //create proc here
+  /*
   kmt->sem_init(&sem_p, "Producer SEM", 5);
   kmt->sem_init(&sem_c, "Customer SEM", 0);
   kmt->sem_init(&mutex, "Producer-Customer MUTEX", 1);
@@ -74,6 +75,7 @@ static void os_init() {
     kmt->create(pmm->alloc(sizeof(task_t)), "Producer Task", producer, NULL);
     kmt->create(pmm->alloc(sizeof(task_t)), "Customer Task", customer, NULL);
   }
+  */
 
   kmt->create(pmm->alloc(sizeof(task_t)), "echo-1", echo_task, "tty1");
   kmt->create(pmm->alloc(sizeof(task_t)), "echo-2", echo_task, "tty2");
