@@ -135,7 +135,7 @@ _Context *kmt_context_save(_Event ev, _Context *context) {
   if (cur) {
     Assert(!cur->context, "double context saving for task %d: %s", cur->pid, cur->name);
     if (cur->state != ST_Z) {
-      cur->state = ST_W;
+      if (cur->state != ST_T) cur->state = ST_W;
       cur->owner   = -1;
       cur->context = context;
     }
