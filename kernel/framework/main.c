@@ -5,7 +5,7 @@
 void echo_task(void *arg) {
   char *name = (char *) arg;
   char text[128] = "", line[128] = "";
-  device_t *tty = device_lookup(name);
+  device_t *tty = dev_lookup(name);
   while (1) {
     sprintf(text, "(%s) $ ", name);
     tty->ops->write(tty, 0, text, strlen(text));
