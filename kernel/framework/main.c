@@ -47,8 +47,8 @@ void fib(void *arg){
     kmt->sem_init(&f1->sem, f_name[f->n - 1], 0);
     kmt->sem_init(&f2->sem, f_name[f->n - 2], 0);
 
-    task_t t1 = pmm->alloc(sizeof(task_t));
-    task_t t2 = pmm->alloc(sizeof(task_t));
+    task_t *t1 = pmm->alloc(sizeof(task_t));
+    task_t *t2 = pmm->alloc(sizeof(task_t));
     kmt->create(t1, f_name[f->n - 1], fib, f1);
     kmt->create(t2, f_name[f->n - 2], fib, f2);
 
@@ -73,7 +73,7 @@ void fib_c(void *arg){
   fib_t *f = pmm->alloc(sizeof(fib_t));
   f->n = n;
   kmt->sem_init(&f->sem, "f", 0);
-  task_t task = pmm->alloc(sizeof(task_t));
+  task_t *task = pmm->alloc(sizeof(task_t));
   kmt->create(task, "", fib, f);
   kmt->sem_wait(&f->sem);
   kmt->teardown(task);
