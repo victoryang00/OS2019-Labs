@@ -19,7 +19,7 @@ static void *kalloc(size_t size) {
   Assert(ret >= _heap.start && ret <= _heap.end, "MALLOC NOT IN HEAP AREA");
   Assert(((struct kmem_item *) (ret - sizeof(struct kmem_item)))->used, "item is not marked as used!!");
   spinlock_release(&kmm_lock);
-  memset(ret, 0x00, ret + size);
+  memset(ret, 0x00, size);
   return ret;
 }
 
