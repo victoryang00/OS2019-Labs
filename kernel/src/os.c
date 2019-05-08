@@ -127,6 +127,7 @@ static _Context *os_trap(_Event ev, _Context *context) {
         _Context *next = hp->handler(ev, context);
         if (next) ret = next;
       }
+      Assert(memcmp(&backup, context, sizeof(_Context)) == 0, "context is modified (2) after hanlder seq %d", hp->seq);
     }
     CLog(FG_PURPLE, "<<<<<< OUT OF TRAP");
     spinlock_release(&os_trap_lock);
