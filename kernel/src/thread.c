@@ -134,10 +134,11 @@ _Context *kmt_context_save(_Event ev, _Context *context) {
   struct task *cur = get_current_task();
   if (cur) {
     Assert(!cur->context, "double context saving for task %d: %s", cur->pid, cur->name);
-    // other types: ST_T, ST_Z
-    if (cur->state == ST_R) cur->state = ST_W;
-    cur->owner   = -1;
-    cur->context = context;
+    if (cur->state != ST_Z) {
+      cur->state = ST_W;
+      cur->owner   = -1;
+      cur->context = context;
+    }
   } else {
     Assert(!null_contexts[_cpu()], "double context saving for null context");
     null_contexts[_cpu()] = context;
