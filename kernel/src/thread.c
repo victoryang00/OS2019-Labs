@@ -134,8 +134,8 @@ _Context *kmt_context_save(_Event ev, _Context *context) {
   struct task *cur = get_current_task();
   if (cur) {
     Assert(cur->state == ST_Z || !cur->context, 
-        "double context saving for task %d: %s", 
-        cur->pid, cur->name);
+        "double context saving for task %d: %s [%s]", 
+        cur->pid, cur->name, task_states_human[cur->state]);
 
     if (cur->state != ST_Z) {
       cur->state = ST_W;
