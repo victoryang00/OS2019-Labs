@@ -19,7 +19,7 @@ void spinlock_init(struct spinlock *lk, const char *name) {
 }
 
 void spinlock_acquire(struct spinlock *lk) {
-  spinlock_pushcli();
+  //spinlock_pushcli();
   Assert(!spinlock_holding(lk), "Acquiring lock %s when holding it.", lk->name);
 
   /**
@@ -42,8 +42,10 @@ void spinlock_release(struct spinlock *lk) {
   Assert(spinlock_holding(lk), "Releasing lock %s not holded by cpu %d.", lk->name, _cpu());
 
   lk->holder = -1;
-  lk->locked = 0;
-  spinlock_popcli();
+
+  __sync_synchronize();
+  _atomic_xchg((intptr_t *) &lk->locked, 0);
+  //spinlock_popcli();
 }
 
 bool spinlock_holding(struct spinlock *lk) {
