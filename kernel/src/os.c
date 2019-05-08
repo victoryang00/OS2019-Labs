@@ -87,8 +87,10 @@ static void os_init() {
 
 static void os_run() {
   _intr_write(1);
+
+  _yield();
   while (1) {
-    _yield();
+    _halt();
   }
   Panic("os run cannot return");
 }
