@@ -86,21 +86,21 @@ int kmt_create(struct task *task, const char *name, void (*entry)(void *arg), vo
   };
   task->context = _kcontext(stack, entry, arg);
 
+  bool holding = spinlock_holding(&os_trap_lock);
+  if (!holding) spinlock_acquire(&os_trap_lock);
   struct task *tp = &root_task;
   while (tp->next) tp = tp->next;
   tp->next = task;
+  if (!holding) spinlock_release(&os_trap_lock);
 
   return task->pid;
 }
 
 void kmt_teardown(struct task *task) {
-  Assert(task != get_current_task(), "cannot delete itself");
-  Assert(task->state != ST_R, "cannot delete a running task");
-  struct task *tp = &root_task;
-  while (tp->next && tp->next != task) tp = tp->next;
-  Assert(tp->next && tp->next == task, "not a valid task");
-  tp->next = task->next;
-  pmm->free(task);
+  bool holding = spinlock_holding(&os_trap_lock);
+  if (!holding) spinlock_acquire(&os_trap_lock);
+  task->state = ST_Z;
+  if (!holding) spinlock_release(&os_trap_lock);
 }
 
 void kmt_inspect_fence(struct task *task) {
@@ -119,6 +119,11 @@ struct task *kmt_sched() {
         ret = tp;
       }
     }
+    if (tp->next && tp->next->state == ST_Z) {
+      struct task *tn = tp->next;
+      tp->next = tn->next;
+      pmm->free(tn);
+    }
   }
   Log("===========================");
   return ret;
@@ -129,7 +134,8 @@ _Context *kmt_context_save(_Event ev, _Context *context) {
   struct task *cur = get_current_task();
   if (cur) {
     Assert(!cur->context, "double context saving for task %d: %s", cur->pid, cur->name);
-    cur->state   = ST_W;
+    // other types: ST_T, ST_Z
+    if (cur->state == ST_R) cur->state = ST_W;
     cur->owner   = -1;
     cur->context = context;
   } else {
