@@ -191,9 +191,12 @@ _Context *kmt_yield(_Event ev, _Context *context) {
   Assert(spinlock_holding(&os_trap_lock), "not holding os trap lock");
   struct task *cur = get_current_task();
   if (cur && cur->alarm && ev.event == _EVENT_YIELD) {
+    // state was goto sleep
     if (cur->state == ST_Z) {
+      // clear alarm and destroy in sched()
       cur->alarm = NULL;
     } else {
+      // fall sleep safely
       cur->state = ST_S;  
     }
   }
