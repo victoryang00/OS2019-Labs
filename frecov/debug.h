@@ -41,10 +41,11 @@
   do { \
     if (!(cond)) { \
       CLog(BG_RED, format, ## __VA_ARGS__); \
-      CLog(BG_RED, "If compatible, errno=%d (%s)", errno, strerror(errno)); \
+      if (errno) CLog(BG_RED, "If compatible, errno=%d (%s)", errno, strerror(errno)); \
       assert(cond); \
     } \
-  } while (0)
+  } while (0); \
+  errno = 0
 
 #define Panic(format, ...) \
   CLog(BG_RED, format, ## __VA_ARGS__); \
