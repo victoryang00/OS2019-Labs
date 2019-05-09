@@ -3,7 +3,8 @@
 
 struct MBR {
   struct __attribute__((packed)) {
-    char useless1[0x0a];    // 00
+    char jmp_instr[3];      // 00
+    char oem_name[8];       // 03
     uint16_t byts_per_sec;  // 0B
     uint8_t sec_per_clus;   // 0D
     uint16_t rsvd_sec_cnt;  // 0E
@@ -11,8 +12,8 @@ struct MBR {
     char useless2[0x13];    // 11
     uint32_t fat_sz_32;     // 24
     char useless3[0x04];    // 28
-    uint32_t root_clus;     // 2c
-    char useless4[0x18f];   // xx
+    uint32_t root_clus;     // 2C
+    char useless4[0x18f];   // XX
   } boot_code;
   struct __attribute__((packed)) {
     char useless[16];
