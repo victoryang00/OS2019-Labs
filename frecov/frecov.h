@@ -1,6 +1,12 @@
 #ifndef __COMMON_H__
 #define __COMMON_H__
 
+#ifdef __i386__
+#define LU "%lu"
+#else
+#define LU "%llu"
+#endif
+
 #include <fcntl.h>
 #include <unistd.h>
 #include <stdbool.h>
