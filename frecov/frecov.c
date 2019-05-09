@@ -76,7 +76,7 @@ static inline void move_name(struct FDT *f) {
 void handle_fdt(void *c, int nr) {
   struct FDT *f = (struct FDT *) c;
   for (int i = 0; i < nr; ++i) {
-    if (f[i].type == ATTR_LONG_NAME) {
+    if (f[i].attr == ATTR_LONG_NAME) {
       move_name(f + i);
     } else {
       printf("%s\n", file_name + pos);
