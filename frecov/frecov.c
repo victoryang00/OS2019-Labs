@@ -77,6 +77,7 @@ void handle_fdt(void *c, int nr) {
     } else {
       printf("%s\n", file_name + pos);
       pos = 128;
+      file_name[pos] = '\0';
     }
   }
 }
