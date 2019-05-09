@@ -1,10 +1,10 @@
 #ifndef __COMMON_H__
 #define __COMMON_H__
 
-#ifdef __i386__
-#define LU "%lu"
-#else
-#define LU "%llu"
+#if defined (__i386__)
+  #define FMT_LU "%lu"
+#elif defined (__x86_64__)
+  #define FMT_LU "%llu"
 #endif
 
 #include <fcntl.h>
