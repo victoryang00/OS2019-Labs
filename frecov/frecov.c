@@ -35,7 +35,7 @@ unsigned char chksum = 0;
 bool cluster_is_fdt(void *c, int nr) {
   struct FDT *f = (struct FDT *) c;
   for (int i = 0; i < nr; ++i) {
-    if (f[i].name[0] == 0x2e) continue;
+    if (!f[i].file_size) continue;
     if (!f[i].attr) return false;
     if (f[i].attr == ATTR_LONG_NAME) {
       if (f[i].fst_clus) return false;
@@ -76,7 +76,7 @@ void handle_fdt(void *c, int nr) {
   for (int i = 0; i < nr; ++i) {
     if (f[i].attr == ATTR_LONG_NAME) {
       copy_name(f + i);
-    } else {
+    } else if (f[i].file_size) {
       printf("%s\n", file_name + pos);
       pos = 128;
       file_name[pos] = '\0';
