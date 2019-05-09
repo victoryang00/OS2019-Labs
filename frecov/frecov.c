@@ -48,7 +48,10 @@ bool cluster_is_fdt(void *c, int nr) {
       }
     } else {
       if (fdt_count != 0) return false;
-      if (chksum != check_sum((unsigned char *) f[i].name)) return false;
+      if (chksum != check_sum((unsigned char *) f[i].name)) {
+      Log("checksum mismatch: %u vs %u", checksum, check_sum((unsigned char *) f[i].name));
+      return false;
+      }
     }
   }
   return true;
