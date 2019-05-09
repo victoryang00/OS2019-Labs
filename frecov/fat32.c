@@ -1,4 +1,4 @@
-#include "fat32.h"
+#include "frecov.h"
 
 void *fat_load(const char *file) {
   int fd = open(file, O_RDONLY);
