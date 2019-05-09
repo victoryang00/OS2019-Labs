@@ -10,6 +10,7 @@ struct Disk *disk_load_fat(const char *file) {
   Assert(!fstat(fd, &sb), "fstat failed");
 
   ret->head = mmap(NULL, sb.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
+  ret->tail = ret->head + (size_t) sb.st_size;
   Assert(ret->head != MAP_FAILED, "mmap failed");
 
   disk_get_sections(ret);

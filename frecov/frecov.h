@@ -14,7 +14,8 @@
 
 #define DEBUG
 #include "debug.h"
-
 #include "fat32.h"
+
+void recover_images(struct Disk *);
 
 #endif

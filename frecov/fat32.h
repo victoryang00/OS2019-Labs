@@ -100,6 +100,7 @@ struct FDT {
 
 struct Disk {
   void *head;
+  void *tail;
   struct MBR *mbr;
   struct FSInfo *fsinfo;
   struct FAT *fat[2];
