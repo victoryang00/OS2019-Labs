@@ -1,7 +1,7 @@
 #include "fat32.h"
 
 void *fat_load(const char *file) {
-  int fd = find(file, O_RDONLY);
+  int fd = open(file, O_RDONLY);
   Assert(fd, "failed to open file.");
 
   struct stat sb;
