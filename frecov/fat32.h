@@ -13,10 +13,10 @@ struct MBR {
     char useless3[0x04];    // 28
     uint32_t root_clus;     // 2c
     char useless4[0x18c];   // xx
-  } boot_code;
+  } boot_code __attribute__((packed));
   struct {
     char useless[16];
-  } partition[4];
+  } partition[4] __attribute__((packed));
   uint16_t signature;
 } __attribute__((packed));
 
