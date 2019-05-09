@@ -38,7 +38,7 @@ bool cluster_is_bmp(void *c, int nr) {
   for (int i = 0; i < nr; ++i) {
     if (f[i].type == ATTR_LONG_NAME) {
       if (f[i].fst_clus) return false;
-      if (!chksum) {
+      if (!fdt_count) {
         if (!(f[i].order & LAST_LONG_ENTRY)) return false;
         fdt_count = f[i].order & ATTR_LONG_NAME;
         chksum = f[i].chk_sum;
@@ -49,7 +49,6 @@ bool cluster_is_bmp(void *c, int nr) {
     } else {
       if (fdt_count != 0) return false;
       if (chksum != check_sum((unsigned char *) f[i].name)) return false;
-      chksum = 0;
     }
   }
   return true;
