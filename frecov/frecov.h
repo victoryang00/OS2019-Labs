@@ -2,11 +2,9 @@
 #define __COMMON_H__
 
 #if defined (__i386__)
-  #define FMT_U  "%lu"
-  #define FMT_LU "%llu"
+#define LONG "%lu"
 #elif defined (__x86_64__)
-  #define FMT_U  "%u"
-  #define FMT_LU "%lu"
+#define LONG "%u"
 #endif
 
 #include <errno.h>
