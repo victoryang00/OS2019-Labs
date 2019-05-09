@@ -40,8 +40,8 @@ void disk_get_sections(struct Disk *disk) {
 
 unsigned char check_sum(unsigned char *c) {
   unsigned char sum = 0;
-  for (short len = 11; len >= 0; --len) {
-    sum = ((sum & 1) ? 0x80 : 0) + (sum >> 1) + *(c++);
+  for (int i = 0; i < 11; ++i) {
+    sum = ((sum & 1) ? 0x80 : 0) + (sum >> 1) + c[i];
   }
   return sum;
 }
