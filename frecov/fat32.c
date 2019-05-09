@@ -12,12 +12,6 @@ void *fat_load(const char *file) {
   Assert(ret != MAP_FAILED, "mmap failed");
 
   struct MBR *mbr = (struct MBR *) ret;
-
-  Log("offset of OEM is 0x%x", (int) ((void *) &mbr->BS_OEMName - (void *) mbr));
-  Log("offset of Heads is 0x%x", (int) ((void *) &mbr->BPB_NumHeads - (void *) mbr));
-  Log("offset of EXBPB is 0x%x", (int) ((void *) &mbr->BPB_FATSz32 - (void *) mbr));
-  Log("offset of empty space is 0x%x", (int) ((void *) &mbr->EMPTY - (void *) mbr));
-  Log("offset of signature is 0x%x", (int) ((void *) &mbr->SignatureWord - (void *) mbr));
-  Assert(mbr->SignatureWord == 0x55AA, "bad signature: read 0x%x, expect 0x55AA", mbr->SignatureWord);
+  Assert(mbr->SignatureWord == 0xAA55, "bad signature: read 0x%x, expect 0xAA55", mbr->SignatureWord);
   return ret;
 }
