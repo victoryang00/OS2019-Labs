@@ -13,6 +13,7 @@ void *fat_load(const char *file) {
 
   struct MBR *mbr = (struct MBR *) ret;
 
+  Log("offset of EXBPB is 0x%x", (int) ((void *) &mbr->BPB_FATSz32 - (void *) mbr));
   Log("offset of empty space is 0x%x", (int) ((void *) &mbr->EMPTY - (void *) mbr));
   Log("offset of signature is 0x%x", (int) ((void *) &mbr->SignatureWord - (void *) mbr));
   Assert(mbr->SignatureWord == 0x55AA, "bad signature: read 0x%x, expect 0x55AA", mbr->SignatureWord);
