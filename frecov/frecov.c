@@ -21,19 +21,19 @@ void recover_images(struct Disk *disk) {
   int nr_clu = clusz / 32;
 
   for (void *p = disk->data; p < disk->tail; p += clusz) {
-    if (cluster_is_bmp(p, nr_clu)) {
-      Log("%p -> bmp", p);
-      handle_bmp(p);
-    } else {
+    if (cluster_is_fdt(p, nr_clu)) {
       Log("%p -> fdt", p);
       handle_fdt(p, nr_clu);
+    } else {
+      Log("%p -> bmp", p);
+      handle_bmp(p);
     }
   }
 }
 
 int fdt_count = 0;
 unsigned char chksum = 0;
-bool cluster_is_bmp(void *c, int nr) {
+bool cluster_is_fdt(void *c, int nr) {
   struct FDT *f = (struct FDT *) c;
   for (int i = 0; i < nr; ++i) {
     if (f[i].type == ATTR_LONG_NAME) {

@@ -33,7 +33,7 @@ struct Image {
 };
 
 void recover_images(struct Disk *);
-bool cluster_is_bmp(void *, int);
+bool cluster_is_fdt(void *, int);
 void handle_bmp(void *);
 void handle_fdt(void *, int);
 
