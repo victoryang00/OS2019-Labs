@@ -1,12 +1,6 @@
 #ifndef __COMMON_H__
 #define __COMMON_H__
 
-#if defined (__i386__)
-#define LONG "%lu"
-#elif defined (__x86_64__)
-#define LONG "%u"
-#endif
-
 #include <errno.h>
 #include <fcntl.h>
 #include <unistd.h>
