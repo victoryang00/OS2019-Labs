@@ -44,6 +44,9 @@ static _Context *os_trap(_Event ev, _Context *context) {
   if (holding) {
     printf("[%d] trap in trap: %s\n", _cpu(), ev.msg);
     switch (ev.event) {
+      case _EVENT_NULL:
+        Panic("Null interrupt not allowed.\n");
+        return context;
       case _EVENT_IRQ_TIMER:
         Panic("No timer interrupt during trap.\n");
         return context;
