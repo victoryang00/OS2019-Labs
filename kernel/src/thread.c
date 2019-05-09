@@ -141,6 +141,9 @@ _Context *kmt_context_save(_Event ev, _Context *context) {
     Assert(!cur->context, 
         "double context saving for task %d: %s [%s]", 
         cur->pid, cur->name, task_states_human[cur->state]);
+    Assert(context->esp0 >= (uintptr_t) cur->stack
+        && context->esp0 <= ((uintptr_t) cur->stack) + sizeof(cur->stack),
+        "ESP not in stack area");
 
     cur->state   = ST_W;
     cur->owner   = -1;
@@ -166,6 +169,9 @@ _Context *kmt_context_switch(_Event ev, _Context *context) {
     cur->context = NULL;
     Assert(ret, "task context is empty");
     cur->count   = cur->count >= 1000 ? 0 : cur->count + 1;
+    Assert(ret->esp0 >= (uintptr_t) cur->stack
+        && ret->esp0 <= ((uintptr_t) cur->stack) + sizeof(cur->stack),
+        "ESP not in stack area");
   } else {
     Log("Next is NULL task");
     ret = null_contexts[_cpu()];

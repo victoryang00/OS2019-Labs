@@ -1,5 +1,10 @@
 #include <kernel.h>
 #include <klib.h>
+#include <common.h>
+
+void fuck(void *arg) {
+  while (1) { _yield(); }
+}
 
 int main() {
   _ioe_init();
@@ -7,6 +12,11 @@ int main() {
 
   // call sequential init code
   os->init();
+
+  for (int i = 0; i < 10; ++i) {
+    kmt->create(pmm->alloc(sizeof(task_t)), "FUCK", fuck, NULL);
+  }
+
   _mpe_init(os->run); // all cores call os->run()
   return 1;
 }
