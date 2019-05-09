@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-struct __attribute__((packed, aligned(1))) MBR {
+struct MBR {
   // common BPB structure
   char     BS_jmpBoot[3];    // 0x00 - 0x02
   char     BS_OEMName[8];    // 0x03 - 0x0A
@@ -36,7 +36,7 @@ struct __attribute__((packed, aligned(1))) MBR {
   char     BS_FilSysTyle[8]; // 0x52 - 0x59
   char     EMPTY[420];       // 0x5A
   uint16_t SignatureWord;    // 0x1FE
-};
+} __attribute__((packed, aligned(1)));
 
 void *fat_load(const char *);
 
