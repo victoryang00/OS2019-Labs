@@ -31,22 +31,23 @@ void recover_images(struct Disk *disk) {
   }
 }
 
+int fdt_count = 0;
+unsigned char chksum = 0;
 bool cluster_is_bmp(void *c, int nr) {
   struct FDT *f = (struct FDT *) c;
-  int count = 0;
-  unsigned char chksum = 0;
   for (int i = 0; i < nr; ++i) {
     if (f[i].type == ATTR_LONG_NAME) {
       if (f[i].fst_clus) return false;
       if (!chksum) {
-        count = f[i].order & 0x0f;
+        if (!(f[i].order & LAST_LONG_ENTRY)) return false;
+        fdt_count = f[i].order & ATTR_LONG_NAME;
         chksum = f[i].chk_sum;
       } else {
         if (f[i].chk_sum != chksum) return false;
-        if (f[i].order != --count) return false;
+        if (f[i].order != --fdt_count) return false;
       }
     } else {
-      if (count != 0) return false;
+      if (fdt_count != 0) return false;
       if (chksum != check_sum((unsigned char *) f[i].name)) return false;
       chksum = 0;
     }
@@ -55,7 +56,7 @@ bool cluster_is_bmp(void *c, int nr) {
 }
 
 void handle_bmp(void *p) {
-
+  // TODO
 }
 
 static int pos = 128;
