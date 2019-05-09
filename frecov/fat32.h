@@ -1,8 +1,6 @@
 #ifndef __FAT32_H__
 #define __FAT32_H__
 
-#include "frecov.h"
-
 struct MBR {
   struct {
     char useless1[0x0a];    // 00
