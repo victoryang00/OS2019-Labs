@@ -12,15 +12,13 @@ struct Disk *disk_load_fat(const char *file) {
   ret->head = mmap(NULL, sb.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
   Assert(ret->head != MAP_FAILED, "mmap failed");
 
-  struct MBR *mbr = (struct MBR *) ret;
-  Assert(mbr->SignatureWord == 0xAA55, "bad signature: read 0x%x, expect 0xAA55", mbr->SignatureWord);
-
   disk_get_sections(ret);
   return ret;
 }
 
 void disk_get_sections(struct Disk *disk) {
   disk->mbr = (struct MBR *) disk;
+  Assert(disk->mbr->SignatureWord == 0xaa55, "Expecting signature 0xaa55, got 0x%x", disk->mbr->SignatureWord);
 
   size_t offst = (size_t) disk->mbr->BPB_BytsPerSec * disk->mbr->BPB_RsvdSecCnt;
   size_t fatsz = (size_t) disk->mbr->BPB_BytsPerSec * disk->mbr->BPB_RsvdSecCnt;
