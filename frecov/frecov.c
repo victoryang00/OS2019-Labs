@@ -40,8 +40,8 @@ bool cluster_is_fdt(void *c, int nr) {
     if (f[i].attr == ATTR_LONG_NAME) {
       if (f[i].fst_clus) return false;
       if (f[i].type) return false;
-      if (!fdt_count) {
-        if (!(f[i].order & LAST_LONG_ENTRY)) return false;
+      if (!i || !fdt_count) {
+        if (!i || !(f[i].order & LAST_LONG_ENTRY)) return false;
         fdt_count = f[i].order & ATTR_LONG_NAME;
         chksum = f[i].chk_sum;
       } else {
@@ -50,10 +50,7 @@ bool cluster_is_fdt(void *c, int nr) {
       }
     } else {
       if (--fdt_count) return false;
-      if (chksum != check_sum((unsigned char *) f[i].name)) {
-        Log("checksum mismatch: %u vs %u", chksum, check_sum((unsigned char *) f[i].name));
-        return false;
-      }
+      if (chksum != check_sum((unsigned char *) f[i].name)) return false;
     }
   }
   return true;
@@ -65,7 +62,7 @@ void handle_bmp(void *p) {
 
 static int pos = 128;
 static char file_name[128] = "";
-static inline void move_name(struct FDT *f) {
+static inline void copy_name(struct FDT *f) {
   file_name[--pos] = f->name3[0];
   for (int i = 10; i >= 0; i -= 2) {
     file_name[--pos] = f->name2[i];
@@ -78,7 +75,7 @@ void handle_fdt(void *c, int nr) {
   struct FDT *f = (struct FDT *) c;
   for (int i = 0; i < nr; ++i) {
     if (f[i].attr == ATTR_LONG_NAME) {
-      move_name(f + i);
+      copy_name(f + i);
     } else {
       printf("%s\n", file_name + pos);
       pos = 128;
