@@ -2,7 +2,7 @@
 #define __FAT32_H__
 
 struct MBR {
-  struct {
+  __packed struct {
     char useless1[0x0a];    // 00
     uint16_t byts_per_sec;  // 0B
     uint8_t sec_per_clus;   // 0D
@@ -13,10 +13,10 @@ struct MBR {
     char useless3[0x04];    // 28
     uint32_t root_clus;     // 2c
     char useless4[0x18c];   // xx
-  } boot_code __attribute__((packed));
-  struct {
+  } boot_code;
+  __packed struct {
     char useless[16];
-  } partition[4] __attribute__((packed));
+  } partition[4];
   uint16_t signature;
 } __attribute__((packed));
 
