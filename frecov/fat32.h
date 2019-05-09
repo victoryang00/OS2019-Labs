@@ -9,7 +9,7 @@ struct MBR {
   char     BS_jmpBoot[3];    // 0x00 - 0x02
   char     BS_OEMName[8];    // 0x03 - 0x0A
   uint16_t BPB_BytePerSec;   // 0x0B - 0x0C
-  uint8_t  BPB_SecPerClus;   // 0x0D
+  int8_t  BPB_SecPerClus;   // 0x0D
   uint16_t BPB_RsvdSecCnt;   // 0x0E - 0x0F
   uint8_t  BPB_NumFATs;      // 0x10
   uint16_t BPB_RootEntCnt;   // 0x11 - 0x12
