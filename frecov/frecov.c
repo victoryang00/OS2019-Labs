@@ -8,7 +8,7 @@ int main(int argc, char *argv[]) {
     printf("Check your input and try again.\n");
     exit(EXIT_FAILURE);
   } else {
-    disk = fat_load(argv[1]);
+    disk = disk_load_fat(argv[1]);
     Log("image loaded at %p", disk->head);
   }
   return 0;
