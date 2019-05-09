@@ -55,26 +55,47 @@ struct FSInfo {
   uint32_t FSI_TrailSig;       // 0x1FE
 } __attribute__((packed));
 
-#define ATTR_READ_ONLY 0x01
-#define ATTR_HIDDEN    0x02
-#define ATTR_SYSTEM    0x04
-#define ATTR_VOLUME_ID 0x08
-#define ATTR_DIRECTORY 0x10
-#define ATTR_ARCHIVE   0x20
+#define ATTR_READ_ONLY      0x01
+#define ATTR_HIDDEN         0x02
+#define ATTR_SYSTEM         0x04
+#define ATTR_VOLUME_ID      0x08
+#define ATTR_DIRECTORY      0x10
+#define ATTR_ARCHIVE        0x20
+#define ATTR_LONG_NAME      0x0f
+#define ATTR_LONG_NAME_MASK 0x3f
+#define LAST_LONG_EMTRY     0x40
 
 struct FDT {
-  char     DIR_Name[11];     // 0x00 - 0x0A
-  uint8_t  DIR_Attr;         // 0x0B
-  uint8_t  DIR_NTRes;        // 0x0C
-  uint8_t  DIR_CrtTimeTenth; // 0x0D
-  uint16_t DIR_CrtTime;      // 0x0E - 0x0F
-  uint16_t DIR_CrtDate;      // 0x10 - 0x11
-  uint16_t DIR_LstAccDate;   // 0x12 - 0x13
-  uint16_t DIR_FstClusHI;    // 0x14 - 0x15
-  uint16_t DIR_WrtTime;      // 0x16 - 0x17
-  uint16_t DIR_WrtDate;      // 0x18 - 0x19
-  uint16_t DIR_FstClusLO;    // 0x1A - 0x1B
-  uint32_t DIR_FileSize;     // 0x1C - 0x1F
+  union {
+    struct {
+      union {
+        uint8_t state;
+        char    name[8];
+      };                     // 0x00 - 0x07
+      char     ext[3];       // 0x08 - 0x0A
+      uint8_t  attr;         // 0x0B
+      uint8_t  reserved;     // 0x0C
+      uint8_t  crt_time_10;  // 0x0D
+      uint16_t crt_time;     // 0x0E - 0x0F
+      uint16_t crt_date;     // 0x10 - 0x11
+      uint16_t acc_date;     // 0x12 - 0x13
+      uint16_t fst_clus_HI;  // 0x14 - 0x15
+      uint16_t wrt_time;     // 0x16 - 0x17
+      uint16_t wrt_date;     // 0x18 - 0x19
+      uint16_t fst_clus_LO;  // 0x1A - 0x1B
+      uint32_t file_size;    // 0x1C - 0x1F
+    };
+    struct {
+      uint8_t  order;        // 0x00
+      char     name1[10];    // 0x01 - 0x0A
+      uint8_t  attr_long;    // 0x0B
+      uint8_t  type;         // 0x0C
+      uint8_t  chk_sum;      // 0x0D
+      char     name2[12];    // 0x0E - 0x19
+      uint16_t fst_clus;     // 0x1A - 0x1B
+      char     name3[4];     // 0x1C - 0x1F
+    };
+  };
 } __attribute__((packed));
 
 struct Disk {
@@ -87,5 +108,6 @@ struct Disk {
 
 struct Disk *disk_load_fat(const char *);
 void disk_get_sections(struct Disk *);
+unsigned char check_sum(unsigned char *);
 
 #endif

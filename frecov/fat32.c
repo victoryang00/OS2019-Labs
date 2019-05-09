@@ -19,13 +19,26 @@ struct Disk *disk_load_fat(const char *file) {
 void disk_get_sections(struct Disk *disk) {
   disk->mbr = (struct MBR *) disk->head;
   Assert(disk->mbr->SignatureWord == 0xaa55, "Expecting signature 0xaa55, got 0x%x", disk->mbr->SignatureWord);
+  Log("MBR at %p", disk->mbr);
 
   disk->fsinfo = (struct FSInfo *) ((void *) disk->mbr + 512);
+  Log("FSInfo at %p", disk->fsinfo);
 
   size_t offst = (size_t) disk->mbr->BPB_BytsPerSec * disk->mbr->BPB_RsvdSecCnt;
   size_t fatsz = (size_t) disk->mbr->BPB_BytsPerSec * disk->mbr->BPB_RsvdSecCnt;
   disk->fat[1] = (struct FAT **) (((void *) disk) + offst);
   disk->fat[2] = (struct FAT **) (((void *) disk->fat[1]) + fatsz);
+  Log("FAT1 at %p", disk->fat[1]);
+  Log("FAT2 at %p", disk->fat[2]);
 
   disk->fdt = (struct FDT **) (((void *) disk->fat[1]) + fatsz * disk->mbr->BPB_NumFATs);
+  Log("DATA at %p", disk->fdt);
+}
+
+unsigned char check_sum(unsigned char *c) {
+  unsigned char sum = 0;
+  for (short len = 11; len >= 0; --len) {
+    sum = ((sum & 1) ? 0x80 : 0) + (sum >> 1) + *(c++);
+  }
+  return sum;
 }
