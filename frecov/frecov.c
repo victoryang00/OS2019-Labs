@@ -25,7 +25,6 @@ void recover_images(struct Disk *disk) {
       Log("%p -> fdt", p);
       handle_fdt(p, nr_clu);
     } else {
-      Log("%p -> bmp", p);
       handle_bmp(p);
     }
   }
