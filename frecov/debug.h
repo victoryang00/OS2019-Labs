@@ -41,9 +41,7 @@
   do { \
     if (!(cond)) { \
       CLog(BG_RED, format, ## __VA_ARGS__); \
-      if (errno) { \
-        CLog(BG_RED, "If compatible, errno=%d (%s)", errno, strerror(errno)); \
-      } \
+      CLog(BG_RED, "If compatible, errno=%d (%s)", errno, strerror(errno)); \
       assert(cond); \
       errno = 0; \
     } \
