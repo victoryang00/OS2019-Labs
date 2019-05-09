@@ -25,7 +25,7 @@ void disk_get_sections(struct Disk *disk) {
   Log("FSInfo at %p, offset 0x%x", disk->fsinfo, (int) ((void *) disk->fsinfo - disk->head));
 
   size_t offst = (size_t) disk->mbr->BPB_BytsPerSec * disk->mbr->BPB_RsvdSecCnt;
-  size_t fatsz = (size_t) disk->mbr->BPB_FATSz32;
+  size_t fatsz = (size_t) disk->mbr->BPB_BytsPerSec * disk->mbr->BPB_FATSz32;
   disk->fat[1] = (struct FAT *) (((void *) disk->head) + offst);
   disk->fat[2] = (struct FAT *) (((void *) disk->fat[1]) + fatsz);
   Log("FAT1   at %p, offset 0x%x", disk->fat[1], (int) ((void *) disk->fat[1] - disk->head));
