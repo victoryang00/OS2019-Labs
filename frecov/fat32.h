@@ -13,7 +13,7 @@ struct MBR {
   uint32_t fat_sz_32;     // 24
   char useless3[0x04];    // 28
   uint32_t root_clus;     // 2C
-  char useless4[0x18f];   // XX
+  char useless4[0x18d];   // XX
 
   struct __attribute__((packed)) {
     char useless[16];
