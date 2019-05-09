@@ -28,11 +28,13 @@ void disk_get_sections(struct Disk *disk) {
   size_t offst = (size_t) disk->mbr->BPB_BytsPerSec * disk->mbr->BPB_RsvdSecCnt;
   size_t fatsz = (size_t) disk->mbr->BPB_BytsPerSec * disk->mbr->BPB_FATSz32;
   disk->fat[1] = (struct FAT *) (((void *) disk->head) + offst);
-  disk->fat[2] = (struct FAT *) (((void *) disk->fat[1]) + fatsz);
+  disk->fat[2] = (struct FAT *) (((void *) disk->head) + offst + fatsz * (disk->mbr->BPB_NumFATs - 1));
   Log("FAT1   at %p, offset 0x%x", disk->fat[1], (int) ((void *) disk->fat[1] - disk->head));
   Log("FAT2   at %p, offset 0x%x", disk->fat[2], (int) ((void *) disk->fat[2] - disk->head));
 
-  disk->fdt = (struct FDT *) (((void *) disk->fat[1]) + fatsz * disk->mbr->BPB_NumFATs);
+  offst += (size_t) disk->mbr->BPB_BytsPerSec * disk->mbr->BPB_NumFATs;
+  offst += (size_t) disk->mbr->BPB_BytsPerSec * (disk->mbr->BPB_RootClus - 2) * disk->mbr->BPB_SecPerClus;
+  disk->fdt = (struct FDT *) (((void *) disk->head) + offst);
   Log("DATA   at %p, offset 0x%x", disk->fdt, (int) ((void *) disk->fdt - disk->head));
 }
 

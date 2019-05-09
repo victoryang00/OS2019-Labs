@@ -16,6 +16,22 @@
 #include "debug.h"
 #include "fat32.h"
 
+struct DataSeg {
+  void *head;
+  void *tail;
+  struct DataSeg *prev;
+  struct DataSeg *next;
+};
+
+struct Image {
+  char name[128];
+  char ext[8];
+  struct BMP bmp;
+  struct Image *next;
+};
+
 void recover_images(struct Disk *);
+struct Image *read_image(struct FDT *);
+void output_image(struct Image *);
 
 #endif
