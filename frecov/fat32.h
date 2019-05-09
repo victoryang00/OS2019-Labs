@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-struct __attribute__((packed)) MBR {
+struct __attribute__((packed, aligned(1))) MBR {
   // common BPB structure
   char     BS_jmpBoot[3];    // 0x00 - 0x02
   char     BS_OEMName[8];    // 0x03 - 0x0A
