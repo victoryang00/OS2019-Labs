@@ -18,7 +18,7 @@ struct MBR {
     char useless[16];
   } partition[4];
   uint16_t signature;
-};
+} __attribute__((packed));
 
 void *fat_load(const char *);
 
