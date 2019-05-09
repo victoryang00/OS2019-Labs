@@ -62,6 +62,7 @@ void handle_bmp(void *p) {
 static int pos = 128;
 static char file_name[128] = "";
 static inline void copy_name(struct FDT *f) {
+  file_name[--pos] = f->name3[2];
   file_name[--pos] = f->name3[0];
   for (int i = 10; i >= 0; i -= 2) {
     file_name[--pos] = f->name2[i];
