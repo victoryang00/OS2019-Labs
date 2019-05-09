@@ -41,7 +41,7 @@
   do { \
     if (!(cond)) { \
       CLog(BG_RED, format, ## __VA_ARGS__); \
-      CLog(BG_RED, "ERRNO = %d: %s", errno, strerror(errno)); \
+      CLog(BG_RED, "ERRNO = %d (%s)", errno, strerror(errno)); \
       assert(cond); \
     } \
   } while (0)
