@@ -141,9 +141,13 @@ _Context *kmt_context_save(_Event ev, _Context *context) {
     Assert(!cur->context, 
         "double context saving for task %d: %s [%s]", 
         cur->pid, cur->name, task_states_human[cur->state]);
-    Assert(context->esp0 >= (uintptr_t) cur->stack
-        && context->esp0 <= ((uintptr_t) cur->stack) + sizeof(cur->stack),
-        "ESP not in stack area");
+    if (context->esp0 < (uintptr_t) cur->stack
+        || context->esp0 > ((uintptr_t) cur->stack) + sizeof(cur->stack)) {
+      printf("ESP not in stack area when saving it.\n");
+      printf("ESP is %p\n", context->esp);
+      printf("stack for %d: %s is [%p, %p]\n", cur->pid, cur->name, cur->stack, cur->stack + sizeof(cur->stack));
+      Panic("ESP not in stack area when saving it.");
+    }
 
     cur->state   = ST_W;
     cur->owner   = -1;
@@ -169,9 +173,13 @@ _Context *kmt_context_switch(_Event ev, _Context *context) {
     cur->context = NULL;
     Assert(ret, "task context is empty");
     cur->count   = cur->count >= 1000 ? 0 : cur->count + 1;
-    Assert(ret->esp0 >= (uintptr_t) cur->stack
-        && ret->esp0 <= ((uintptr_t) cur->stack) + sizeof(cur->stack),
-        "ESP not in stack area");
+    if (ret->esp0 < (uintptr_t) cur->stack
+        || ret->esp0 > ((uintptr_t) cur->stack) + sizeof(cur->stack)) {
+      printf("ESP not in stack area when loading it.\n");
+      printf("ESP is %p\n", ret->esp);
+      printf("stack for %d: %s is [%p, %p]\n", cur->pid, cur->name, cur->stack, cur->stack + sizeof(cur->stack));
+      Panic("ESP not in stack area when loading it.");
+    }
   } else {
     Log("Next is NULL task");
     ret = null_contexts[_cpu()];
