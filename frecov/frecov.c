@@ -76,8 +76,10 @@ void handle_fdt(void *c, int nr) {
   for (int i = 0; i < nr; ++i) {
     if (f[i].attr == ATTR_LONG_NAME) {
       copy_name(f + i);
-    } else if (f[i].file_size) {
-      printf("%s\n", file_name + pos);
+    } else {
+      if (f[i].file_size) {
+        printf("%s\n", file_name + pos);
+      }
       pos = 128;
       file_name[pos] = '\0';
     }
