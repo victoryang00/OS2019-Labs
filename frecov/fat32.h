@@ -80,6 +80,7 @@ struct FDT {
 struct Disk {
   void *head;
   struct MBR *mbr;
+  struct FSInfo *fsinfo;
   struct FAT **fat[2];
   struct FDT **fdt;
 };
