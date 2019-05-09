@@ -7,6 +7,7 @@ int main(int argc, char *argv[]) {
     exit(EXIT_FAILURE);
   } else {
     void *fat = fat_load(argv[1]);
+    Log("image loaded at %p", fat);
   }
   return 0;
 }
