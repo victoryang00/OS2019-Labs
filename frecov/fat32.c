@@ -1,12 +1,12 @@
 #include "frecov.h"
 
 struct Disk *disk_load_fat(const char *file) {
+  int fd = 0;
+  struct stat sb = {};
   struct Disk *ret = malloc(sizeof(struct Disk));
 
-  int fd = open(file, O_RDONLY);
+  fd = open(file, O_RDONLY);
   Assert(fd, "failed to open file");
-
-  struct stat sb;
   Assert(!fstat(fd, &sb), "fstat failed");
 
   ret->head = mmap(NULL, sb.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
