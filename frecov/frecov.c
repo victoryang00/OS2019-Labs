@@ -49,7 +49,7 @@ bool cluster_is_fdt(void *c, int nr) {
         if (f[i].order != --fdt_count) return false;
       }
     } else {
-      if (fdt_count) return false;
+      if (--fdt_count) return false;
       if (chksum != check_sum((unsigned char *) f[i].name)) {
         Log("checksum mismatch: %u vs %u", chksum, check_sum((unsigned char *) f[i].name));
         return false;
