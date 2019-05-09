@@ -14,6 +14,7 @@ void *fat_load(const char *file) {
   struct MBR *mbr = (struct MBR *) ret;
 
   Log("offset of OEM is 0x%x", (int) ((void *) &mbr->BS_OEMName - (void *) mbr));
+  Log("offset of Rsvd is 0x%x", (int) ((void *) &mbr->BPB_RsvdSecCnt - (void *) mbr));
   Log("offset of EXBPB is 0x%x", (int) ((void *) &mbr->BPB_FATSz32 - (void *) mbr));
   Log("offset of empty space is 0x%x", (int) ((void *) &mbr->EMPTY - (void *) mbr));
   Log("offset of signature is 0x%x", (int) ((void *) &mbr->SignatureWord - (void *) mbr));
