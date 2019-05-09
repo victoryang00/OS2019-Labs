@@ -29,18 +29,18 @@ void recover_images(struct Disk *disk) {
   }
 }
 
-int fdt_count = 0;
-unsigned char chksum = 0;
 bool cluster_is_fdt(void *c, int nr) {
   struct FDT *f = (struct FDT *) c;
+  int fdt_count = 0;
+  unsigned char chksum = 0;
   for (int i = 0; i < nr; ++i) {
     if (!f[i].file_size) continue;
     if (!f[i].attr) return false;
     if (f[i].attr == ATTR_LONG_NAME) {
       if (f[i].fst_clus) return false;
       if (f[i].type) return false;
-      if (!i || !fdt_count) {
-        if (!i || !(f[i].order & LAST_LONG_ENTRY)) return false;
+      if (!fdt_count) {
+        if (i && !(f[i].order & LAST_LONG_ENTRY)) return false;
         fdt_count = f[i].order & ATTR_LONG_NAME;
         chksum = f[i].chk_sum;
       } else {
