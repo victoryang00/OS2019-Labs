@@ -230,7 +230,8 @@ _Context *kmt_error(_Event ev, _Context *context) {
   for (int i = 0; i < _ncpu(); ++i) {
     printf("[CPU%d] ", i);
     if (cpu_tasks[i]) {
-      printf("%d: %s", cpu_tasks[i]->pid, cpu_tasks[i]->name);
+      printf("%d: %s ", cpu_tasks[i]->pid, cpu_tasks[i]->name);
+      printf("stack [%p, %p]", cpu_tasks[i]->stack, cpu_tasks[i]->stack + sizeof(cpu_tasks[i]->stack));
     } else {
       printf("(no task)");
     }
