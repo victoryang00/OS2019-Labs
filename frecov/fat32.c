@@ -6,7 +6,7 @@ void *fat_load(const char *file) {
 
   struct stat sb;
   Assert(!fstat(fd, &sb), "fstat failed");
-  Log("FILE SIZE IS %d", sb.st_size);
+  Log("FILE SIZE IS " FMT_U, sb.st_size);
 
   void *ret = mmap(NULL, sb.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
   Assert(ret != MAP_FAILED, "mmap failed");
