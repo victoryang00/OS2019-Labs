@@ -17,9 +17,64 @@ int main(int argc, char *argv[]) {
 }
 
 void recover_images(struct Disk *disk) {
-  struct FDT *fp = disk->fdt;
-  size_t clusz = (size_t) disk->BPB_BytsPerSec * disk->BPB_SecPerClus;
-  while ((void *) fp < disk->tail) {
-    // TODO: ??
+  size_t clusz = (size_t) disk->mbr->BPB_BytsPerSec * disk->mbr->BPB_SecPerClus;
+  int nr_clu = clusz / 32;
+
+  for (void *p = disk->data; p < disk->tail; p += clusz) {
+    if (cluster_is_bmp(p, nr_clu)) {
+      handle_bmp(p);
+    } else {
+      handle_fdt(p, nr_clu);
+    }
+  }
+}
+
+bool cluster_is_bmp(void *c, int nr) {
+  struct FDT *f = (struct FDT *) c;
+  int count = 0;
+  unsigned char chksum = 0;
+  for (int i = 0; i < nr; ++i) {
+    if (f[i].type == ATTR_LONG_NAME) {
+      if (f[i].fst_clus) return false;
+      if (!chksum) {
+        count = f[i].order & 0x0f;
+        chksum = f[i].chk_sum;
+      } else {
+        if (f[i].chk_sum != chksum) return false;
+        if (f[i].order != --count) return false;
+      }
+    } else {
+      if (count != 0) return false;
+      if (chksum != check_sum((unsigned char *) f[i].name)) return false;
+      chksum = 0;
+    }
+  }
+  return true;
+}
+
+void handle_bmp(void *p) {
+
+}
+
+static int pos = 128;
+static char file_name[128] = "";
+static inline void move_name(struct FDT *f) {
+  file_name[--pos] = f->name3[0];
+  for (int i = 10; i >= 0; i -= 2) {
+    file_name[--pos] = f->name2[i];
+  }
+  for (int i = 8; i >= 0; i -= 2) {
+    file_name[--pos] = f->name1[i];
+  }
+}
+void handle_fdt(void *c, int nr) {
+  struct FDT *f = (struct FDT *) c;
+  for (int i = 0; i < nr; ++i) {
+    if (f[i].type == ATTR_LONG_NAME) {
+      move_name(f + i);
+    } else {
+      printf("%s\n", file_name + pos);
+      pos = 128;
+    }
   }
 }

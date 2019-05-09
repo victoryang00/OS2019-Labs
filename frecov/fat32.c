@@ -34,8 +34,8 @@ void disk_get_sections(struct Disk *disk) {
 
   offst += (size_t) disk->mbr->BPB_BytsPerSec * disk->mbr->BPB_NumFATs;
   offst += (size_t) disk->mbr->BPB_BytsPerSec * (disk->mbr->BPB_RootClus - 2) * disk->mbr->BPB_SecPerClus;
-  disk->fdt = (struct FDT *) (((void *) disk->head) + offst);
-  Log("DATA   at %p, offset 0x%x", disk->fdt, (int) ((void *) disk->fdt - disk->head));
+  disk->data = (((void *) disk->head) + offst);
+  Log("DATA   at %p, offset 0x%x", disk->data, (int) ((void *) disk->data - disk->head));
 }
 
 unsigned char check_sum(unsigned char *c) {

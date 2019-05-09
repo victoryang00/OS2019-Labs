@@ -63,16 +63,15 @@ struct FSInfo {
 #define ATTR_ARCHIVE        0x20
 #define ATTR_LONG_NAME      0x0f
 #define ATTR_LONG_NAME_MASK 0x3f
-#define LAST_LONG_EMTRY     0x40
+#define LAST_LONG_ENTRY     0x40
 
 struct FDT {
   union {
     struct {
       union {
         uint8_t state;
-        char    name[8];
+        char    name[11];
       };                     // 0x00 - 0x07
-      char     ext[3];       // 0x08 - 0x0A
       uint8_t  attr;         // 0x0B
       uint8_t  reserved;     // 0x0C
       uint8_t  crt_time_10;  // 0x0D
@@ -104,7 +103,7 @@ struct Disk {
   struct MBR *mbr;
   struct FSInfo *fsinfo;
   struct FAT *fat[2];
-  struct FDT *fdt;
+  void *data;
 };
 
 struct Disk *disk_load_fat(const char *);

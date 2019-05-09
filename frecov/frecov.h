@@ -26,13 +26,15 @@ struct DataSeg {
 
 struct Image {
   char name[128];
-  char ext[8];
+  uint32_t cluster;
+  size_t size;
   struct BMP bmp;
   struct Image *next;
 };
 
 void recover_images(struct Disk *);
-struct Image *read_image(struct FDT *);
-void output_image(struct Image *);
+bool cluster_is_bmp(void *, int);
+void handle_bmp(void *);
+void handle_fdt(void *, int);
 
 #endif
