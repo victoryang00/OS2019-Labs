@@ -10,7 +10,7 @@ struct Disk *disk_load_fat(const char *file) {
   Assert(!fstat(fd, &sb), "fstat failed");
 
   ret->head = mmap(NULL, sb.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
-  Assert(ret->head = MAP_FAILED, "mmap failed");
+  Assert(ret->head == MAP_FAILED, "mmap failed");
 
   struct MBR *mbr = (struct MBR *) ret;
   Assert(mbr->SignatureWord == 0xAA55, "bad signature: read 0x%x, expect 0xAA55", mbr->SignatureWord);
