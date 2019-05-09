@@ -8,7 +8,7 @@ struct MBR {
   char     BS_jmpBoot[3];    // 0x00 - 0x02
   char     BS_OEMName[8];    // 0x03 - 0x0A
   uint16_t BPB_BytePerSec;   // 0x0B - 0x0C
-  uint8_t  BPB_SecPerClus:8;   // 0x0D
+  uint8_t  BPB_SecPerClus;   // 0x0D
   uint16_t BPB_RsvdSecCnt;   // 0x0E - 0x0F
   uint8_t  BPB_NumFATs;      // 0x10
   uint16_t BPB_RootEntCnt;   // 0x11 - 0x12
@@ -36,7 +36,7 @@ struct MBR {
   char     BS_FilSysTyle[8]; // 0x52 - 0x59
   char     EMPTY[420];       // 0x5A
   uint16_t SignatureWord;    // 0x1FE
-} __attribute__((packed, aligned(1)));
+} __attribute__((aligned(1)));
 
 void *fat_load(const char *);
 
