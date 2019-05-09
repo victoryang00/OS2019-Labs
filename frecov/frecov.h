@@ -3,7 +3,9 @@
 
 #include <fcntl.h>
 #include <unistd.h>
+#include <stdbool.h>
 #include <stdint.h>
+#include <stdlib.h>
 #include <sys/mman.h>
 #include <sys/types.h>
 #include <sys/stat.h>
