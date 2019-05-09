@@ -1,7 +1,7 @@
 #include "frecov.h"
 
 static struct Disk *disk;
-static struct DataSeg *data_list;
+//static struct DataSeg *data_list;
 
 int main(int argc, char *argv[]) {
   if (argc != 2) {
