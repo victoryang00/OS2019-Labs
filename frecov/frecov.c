@@ -35,6 +35,7 @@ unsigned char chksum = 0;
 bool cluster_is_fdt(void *c, int nr) {
   struct FDT *f = (struct FDT *) c;
   for (int i = 0; i < nr; ++i) {
+    if (f[i].name[0] == 0x2e) continue;
     if (!f[i].attr) return false;
     if (f[i].attr == ATTR_LONG_NAME) {
       if (f[i].fst_clus) return false;
