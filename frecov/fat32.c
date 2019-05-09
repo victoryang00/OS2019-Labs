@@ -12,7 +12,7 @@ void *fat_load(const char *file) {
   Assert(ret != MAP_FAILED, "mmap failed");
 
   struct MBR *mbr = (struct MBR *) ret;
-  Log("offset of signature is %x", (int) ((char *) &mbr->signature - (char *) mbr));
-  Assert(mbr->signature == 0xaa55, "bad MBR signature %x, should be 0xaa55", mbr->signature);
+  Log("offset of signature is %x", (int) ((char *) &mbr->boot_code->signature - (char *) mbr));
+  Assert(mbr->boot_code->signature == 0xaa55, "bad MBR signature %x, should be 0xaa55", mbr->signature);
   return ret;
 }
