@@ -25,6 +25,7 @@ void disk_get_sections(struct Disk *disk) {
   Log("FSInfo at %p, offset 0x%x", disk->fsinfo, (int) ((void *) disk->fsinfo - disk->head));
 
   Log("has %d hidden sectors", disk->mbr->BPB_RsvdSecCnt);
+  Log("each is %d bytes", disk->mbr->BPB_BytsPerSec);
 
   size_t offst = (size_t) disk->mbr->BPB_BytsPerSec * disk->mbr->BPB_RsvdSecCnt;
   size_t fatsz = (size_t) disk->mbr->BPB_BytsPerSec * disk->mbr->BPB_RsvdSecCnt;
