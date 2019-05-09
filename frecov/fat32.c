@@ -31,7 +31,7 @@ void disk_get_sections(struct Disk *disk) {
   Log("FAT1   at %p, offset 0x%x", disk->fat[1], (int) ((void *) disk->fat[1] - disk->head));
   Log("FAT2   at %p, offset 0x%x", disk->fat[2], (int) ((void *) disk->fat[2] - disk->head));
 
-  disk->fdt = (struct FDT **) (((void *) disk->fat[1]) + fatsz * disk->mbr->BPB_NumFATs);
+  disk->fdt = (struct FDT *) (((void *) disk->fat[1]) + fatsz * disk->mbr->BPB_NumFATs);
   Log("DATA   at %p, offset 0x%x", disk->fdt, (int) ((void *) disk->fdt - disk->head));
 }
 
