@@ -2,9 +2,9 @@
 #define __COMMON_H__
 
 #if defined (__i386__)
-  #define FMT_LU "%lu"
-#elif defined (__x86_64__)
   #define FMT_LU "%llu"
+#elif defined (__x86_64__)
+  #define FMT_LU "%lu"
 #endif
 
 #include <fcntl.h>
