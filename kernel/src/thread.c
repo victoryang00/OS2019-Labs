@@ -124,6 +124,7 @@ struct task *kmt_sched() {
     kmt_inspect_fence(tp);
     Log("%d:%s [%s, L%d, C%d]", tp->pid, tp->name, task_states_human[tp->state], tp->owner, tp->count);
 
+    if (tp->owner != _cpu()) continue;
     if (tp->state == ST_E || tp->state == ST_W) {
       if (!ret || tp->count < ret->count) {
         ret = tp;
@@ -131,6 +132,7 @@ struct task *kmt_sched() {
     }
   }
   Log("===========================");
+  ret->owner = _cpu();
   return ret;
 }
 
@@ -151,7 +153,6 @@ _Context *kmt_context_save(_Event ev, _Context *context) {
     }
 
     cur->state   = ST_W;
-    cur->owner   = -1;
     cur->context = context;
   } else {
     Assert(!null_contexts[_cpu()], "double context saving for null context");
@@ -167,9 +168,7 @@ _Context *kmt_context_switch(_Event ev, _Context *context) {
   if (cur) {
     Log("Next is %d: %s", cur->pid, cur->name);
     kmt_inspect_fence(cur);
-    Assert(cur->owner == -1, "switching to an already running task");
     cur->state   = ST_R;
-    cur->owner   = _cpu();
     ret = cur->context;
     cur->context = NULL;
     Assert(ret, "task context is empty");
