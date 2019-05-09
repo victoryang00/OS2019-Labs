@@ -48,6 +48,7 @@ bool cluster_is_bmp(void *c, int nr) {
       }
     } else {
       if (fdt_count != 0) return false;
+      Log("checksums: %u == %u", chksum, check_sum((unsigned char *) f[i].name));
       if (chksum != check_sum((unsigned char *) f[i].name)) return false;
     }
   }
