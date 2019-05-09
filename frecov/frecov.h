@@ -7,6 +7,7 @@
   #define FMT_LU "%lu"
 #endif
 
+#include <errno.h>
 #include <fcntl.h>
 #include <unistd.h>
 #include <stdbool.h>
