@@ -14,6 +14,7 @@
 
 #define DEBUG
 #include "debug.h"
+#include "bmp.h"
 #include "fat32.h"
 
 struct DataSeg {
