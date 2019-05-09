@@ -36,7 +36,7 @@ struct MBR {
   char     BS_FilSysTyle[8]; // 0x52 - 0x59
   char     EMPTY[420];       // 0x5A
   uint16_t SignatureWord;    // 0x1FE
-} __attribute__((packed));
+} __attribute__((__packed__));
 
 void *fat_load(const char *);
 
