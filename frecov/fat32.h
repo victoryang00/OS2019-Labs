@@ -12,7 +12,7 @@ struct MBR {
     uint32_t fat_sz_32;     // 24
     char useless3[0x04];    // 28
     uint32_t root_clus;     // 2c
-    char useless4[0x1ce];   // xx
+    char useless4[0x8e];   // xx
   } boot_code;
   struct {
     char useless[16];
