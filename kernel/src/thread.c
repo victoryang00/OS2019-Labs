@@ -124,7 +124,7 @@ struct task *kmt_sched() {
     kmt_inspect_fence(tp);
     Log("%d:%s [%s, L%d, C%d]", tp->pid, tp->name, task_states_human[tp->state], tp->owner, tp->count);
 
-    if (tp->owner != _cpu()) continue;
+    if (tp->owner != -1 && tp->owner != _cpu()) continue;
     if (tp->state == ST_E || tp->state == ST_W) {
       if (!ret || tp->count < ret->count) {
         ret = tp;
