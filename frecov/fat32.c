@@ -19,20 +19,20 @@ struct Disk *disk_load_fat(const char *file) {
 void disk_get_sections(struct Disk *disk) {
   disk->mbr = (struct MBR *) disk->head;
   Assert(disk->mbr->SignatureWord == 0xaa55, "Expecting signature 0xaa55, got 0x%x", disk->mbr->SignatureWord);
-  Log("MBR at %p", disk->mbr);
+  Log("MBR    at %p, offset %p", disk->mbr, (void *) disk->mbr - disk->head);
 
   disk->fsinfo = (struct FSInfo *) ((void *) disk->mbr + 512);
-  Log("FSInfo at %p", disk->fsinfo);
+  Log("FSInfo at %p, offset %p", disk->fsinfo, (void *) disk->fsinfo - disk->head);
 
   size_t offst = (size_t) disk->mbr->BPB_BytsPerSec * disk->mbr->BPB_RsvdSecCnt;
   size_t fatsz = (size_t) disk->mbr->BPB_BytsPerSec * disk->mbr->BPB_RsvdSecCnt;
   disk->fat[1] = (struct FAT **) (((void *) disk) + offst);
   disk->fat[2] = (struct FAT **) (((void *) disk->fat[1]) + fatsz);
-  Log("FAT1 at %p", disk->fat[1]);
-  Log("FAT2 at %p", disk->fat[2]);
+  Log("FAT1   at %p, offset %p", disk->fat[1], (void *) disk->fat[1] - disk->head);
+  Log("FAT2   at %p, offset %p", disk->fat[2], (void *) disk->fat[2] - disk->head);
 
   disk->fdt = (struct FDT **) (((void *) disk->fat[1]) + fatsz * disk->mbr->BPB_NumFATs);
-  Log("DATA at %p", disk->fdt);
+  Log("DATA   at %p, offset %p", disk->fdt, (void *) disk->fdt - disk->head);
 }
 
 unsigned char check_sum(unsigned char *c) {
