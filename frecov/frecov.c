@@ -49,6 +49,9 @@ void recover_images() {
         Log("bmp");
         handle_bmp(p);
         break;
+      default:
+        Log("empty");
+        break;
     }
   }
 }
