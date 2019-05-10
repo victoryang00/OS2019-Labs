@@ -86,7 +86,7 @@ void handle_bmp(void *p) {
 }
 
 static int pos = 128;
-static char file_name[128] = "";
+static char file_name[128] = {};
 static unsigned char chk_sum = 0;
 static inline void copy_name(struct FDT *f) {
   file_name[--pos] = f->name3[2];
