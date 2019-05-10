@@ -113,7 +113,7 @@ bool handle_fdt(void *c, int nr) {
     } else {
       if (f[i].file_size) {
         int clus = f[i].fst_clus_HI << 16 | f[i].fst_clus_LO;
-        printf("%x -> %s, clus = %d\n", (int) ((void *) f[i] - disk->head), file_name + pos, clus);
+        printf("%x -> %s, clus = %d\n", (int) ((void *) (f + i) - disk->head), file_name + pos, clus);
       }
       pos = 128;
       file_name[pos] = '\0';
