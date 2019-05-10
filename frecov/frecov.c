@@ -25,7 +25,7 @@ void recover_images() {
   for (void *p = disk->data; p < disk->tail; p += clusz) {
     switch (get_cluster_type(p, nr_clu)) {
       case TYPE_FDT:
-        Log("fdt found at offset %x", (int) (p - disk->head));
+        //Log("fdt found at offset %x", (int) (p - disk->head));
         for (struct DataSeg *d = fdt_list.next; d != &fdt_list; d = d->next) {
           if (handle_fdt(d->head, nr_clu)) {
             CLog(FG_GREEN, "fdt at %x is handled!", (int) (d->head - disk->head));
@@ -54,7 +54,6 @@ void recover_images() {
 
 const char empty_entry[32] = {};
 int get_cluster_type(void *c, int nr) {
-  if (!memcmp(c, empty_entry, 32)) return TYPE_EMP;
 
   struct FDT *f = (struct FDT *) c;
   int fdt_count = 0;
