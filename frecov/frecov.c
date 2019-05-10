@@ -25,23 +25,7 @@ void recover_images() {
   for (void *p = disk->data; p < disk->tail; p += clusz) {
     switch (get_cluster_type(p, nr_clu)) {
       case TYPE_FDT:
-        CLog(FG_BLUE, "fdt found at offset %x", (int) (p - disk->head));
-        struct DataSeg *d = malloc(sizeof(struct DataSeg));
-        d->head = p;
-        d->tail = NULL;
-        d->next = fdt_list.next;
-        d->prev = &fdt_list;
-        fdt_list.next = d;
-        d->next->prev = d;
-        for (struct DataSeg *d = fdt_list.next; d != &fdt_list; d = d->next) {
-          if (handle_fdt(d->head, nr_clu)) {
-            CLog(FG_GREEN, "fdt at %x is handled!", (int) (d->head - disk->head));
-            d->prev->next = d->next;
-            d->next->prev = d->prev;
-            free(d);
-          }
-        }
-        break;
+        handle_fdt(p, nr_clu, false);
       case TYPE_BMP:
         handle_bmp(p);
         break;
@@ -49,6 +33,7 @@ void recover_images() {
         break;
     }
   }
+  handle_fdt(NULL, nr_clu, true);
 }
 
 const char empty_entry[32] = {};
@@ -81,10 +66,6 @@ int get_cluster_type(void *c, int nr) {
   return TYPE_FDT;
 }
 
-void handle_bmp(void *p) {
-  // TODO
-}
-
 static int pos = 127;
 static char file_name[128] = {};
 static unsigned char chk_sum = 0;
@@ -98,7 +79,31 @@ static inline void copy_name(struct FDT *f) {
     file_name[--pos] = f->name1[i];
   }
 }
-bool handle_fdt(void *c, int nr) {
+void handle_fdt(void *c, int nr, bool force) {
+  if (c) {
+    CLog(FG_BLUE, "fdt found at offset %x", (int) (c - disk->head));
+    struct DataSeg *d = malloc(sizeof(struct DataSeg));
+    d->head = c;
+    d->tail = NULL;
+    d->next = fdt_list.next;
+    d->prev = &fdt_list;
+    fdt_list.next = d;
+    d->next->prev = d;
+  }
+
+  for (struct DataSeg *d = fdt_list.next; d != &fdt_list; d = d->next) {
+    if (force) {
+      pos = 127;
+    }
+    if (handle_fdt_aux(d->head, nr)) {
+      CLog(FG_GREEN, "fdt at %x is handled!", (int) (d->head - disk->head));
+      d->prev->next = d->next;
+      d->next->prev = d->prev;
+      free(d);
+    }
+  }
+}
+bool handle_fdt_aux(void *c, int nr) {
   struct FDT *f = (struct FDT *) c;
   if (pos == 127) {
     file_name[pos] = '\0';
@@ -124,4 +129,8 @@ bool handle_fdt(void *c, int nr) {
     }
   }
   return true;
+}
+
+void handle_bmp(void *p) {
+  // TODO
 }
