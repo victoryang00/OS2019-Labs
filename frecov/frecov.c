@@ -1,7 +1,9 @@
 #include "frecov.h"
 
 static struct Disk *disk;
-//static struct DataSeg *data_list;
+static struct DataSeg fdt_list = {
+  NULL, NULL, &fdt_list, &fdt_list
+};
 
 int main(int argc, char *argv[]) {
   if (argc != 2) {
@@ -23,7 +25,22 @@ void recover_images(struct Disk *disk) {
   for (void *p = disk->data; p < disk->tail; p += clusz) {
     if (cluster_is_fdt(p, nr_clu)) {
       //Log("fdt found at offset %x", (int) (p - disk->head));
-      handle_fdt(p, nr_clu);
+      for (struct DataSeg *d = fdt_list.next; d != &fdt_list; d = d->next) {
+        if (handle_fdt(d->head, nr_clu)) {
+          d->prev->next = d->next;
+          d->next->prev = d->prev;
+          free(d);
+        }
+      }
+      if (!handle_fdt(p, nr_clu)) {
+        struct DataSeg *d = malloc(sizeof(struct DataSeg));
+        d->head = p;
+        d->tail = NULL;
+        d->next = fdt_list.next;
+        d->prev = &fdt_list;
+        fdt_list.next = d;
+        d->next->prev = d;
+      }
     } else {
       handle_bmp(p);
     }
@@ -33,7 +50,7 @@ void recover_images(struct Disk *disk) {
 bool cluster_is_fdt(void *c, int nr) {
   struct FDT *f = (struct FDT *) c;
   int fdt_count = 0;
-  unsigned char chksum = 0;
+  unsigned char chk_sum = 0;
   for (int i = 0; i < nr; ++i) {
     if (!f[i].file_size) continue;    // dir entry
     if (f[i].state == 0xe5) continue; // deleted
@@ -44,14 +61,14 @@ bool cluster_is_fdt(void *c, int nr) {
       if (!fdt_count) {
         if (i && !(f[i].order & LAST_LONG_ENTRY)) return false;
         fdt_count = f[i].order & ATTR_LONG_NAME;
-        chksum = f[i].chk_sum;
+        chk_sum = f[i].chk_sum;
       } else {
-        if (f[i].chk_sum != chksum) return false;
+        if (f[i].chk_sum != chk_sum) return false;
         if (f[i].order != --fdt_count) return false;
       }
     } else {
       if (--fdt_count) return false;
-      if (chksum != check_sum((unsigned char *) f[i].name)) return false;
+      if (chk_sum != check_sum((unsigned char *) f[i].name)) return false;
     }
   }
   return true;
@@ -63,6 +80,7 @@ void handle_bmp(void *p) {
 
 static int pos = 128;
 static char file_name[128] = "";
+static unsigned char chk_sum = 0;
 static inline void copy_name(struct FDT *f) {
   file_name[--pos] = f->name3[2];
   file_name[--pos] = f->name3[0];
@@ -73,10 +91,16 @@ static inline void copy_name(struct FDT *f) {
     file_name[--pos] = f->name1[i];
   }
 }
-void handle_fdt(void *c, int nr) {
+bool handle_fdt(void *c, int nr) {
   struct FDT *f = (struct FDT *) c;
+  if (pos != 128 && f[0].attr != ATTR_LONG_NAME
+      && f[0].chk_sum != chk_sum) {
+    return false;
+  }
+
   for (int i = 0; i < nr; ++i) {
     if (f[i].attr == ATTR_LONG_NAME) {
+      if (pos == 128) chk_sum = f[i].chk_sum;
       copy_name(f + i);
     } else {
       if (f[i].file_size) {
@@ -86,4 +110,5 @@ void handle_fdt(void *c, int nr) {
       file_name[pos] = '\0';
     }
   }
+  return true;
 }
