@@ -103,7 +103,7 @@ static inline void copy_name(struct FDT *f) {
 }
 bool handle_fdt(void *c, int nr) {
   struct FDT *f = (struct FDT *) c;
-  if (pos != 128 && (f[0].attr != ATTR_LONG_NAME || f[0].chk_sum != chk_sum)) {
+  if (pos != 128 && f[0].attr == ATTR_LONG_NAME && f[0].chk_sum != chk_sum) {
     return false;
   }
 
