@@ -130,9 +130,7 @@ bool handle_fdt_aux(void *c, int nr) {
     } else {
       if (f[i].state != 0xe5 && f[i].file_size && pos != 127) {
         size_t len = strlen(file_name + pos);
-        printf("%d\n", (int) len);
-        printf("%s\n", file_name + len - 4);
-        if (!strncmp(file_name + len - 4, ".bmp", 4)) {
+        if (!strncmp(file_name + pos + len - 4, ".bmp", 4)) {
           uint32_t clus = ((uint32_t) f[i].fst_clus_HI << 16) | f[i].fst_clus_LO;
           printf("%x -> ", (int) ((void *) (f + i) - disk->head));
           printf("%s, ", file_name + pos);
