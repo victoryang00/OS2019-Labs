@@ -59,6 +59,7 @@ int get_cluster_type(void *c, int nr) {
         if (f[i].order != fdt_count--) return TYPE_BMP;
       }
     } else {
+      has_long_name = false;
       if (fdt_count) return TYPE_BMP;
       if (__builtin_popcount(f[i].attr) != 1) return TYPE_BMP;
       if (f[i].state != 0xe5) {
