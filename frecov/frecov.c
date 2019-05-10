@@ -85,7 +85,7 @@ void handle_bmp(void *p) {
   // TODO
 }
 
-static int pos = 128;
+static int pos = 127;
 static char file_name[128] = {};
 static unsigned char chk_sum = 0;
 static inline void copy_name(struct FDT *f) {
@@ -100,8 +100,12 @@ static inline void copy_name(struct FDT *f) {
 }
 bool handle_fdt(void *c, int nr) {
   struct FDT *f = (struct FDT *) c;
-  if (pos != 128 && f[0].attr == ATTR_LONG_NAME && f[0].chk_sum != chk_sum) {
-    return false;
+  if (pos == 127) {
+    file_name[pos] = '\0';
+  } else {
+    if (f[0].attr == ATTR_LONG_NAME && f[0].chk_sum != chk_sum) {
+      return false;
+    }
   }
 
   for (int i = 0; i < nr; ++i) {
@@ -113,7 +117,7 @@ bool handle_fdt(void *c, int nr) {
         printf("%x -> ", (int) ((void *) (f + i) - disk->head));
         printf("%s\n", file_name + pos);
       }
-      pos = 128;
+      pos = 127;
       file_name[pos] = '\0';
     }
   }
