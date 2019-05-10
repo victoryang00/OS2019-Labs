@@ -22,6 +22,7 @@ void recover_images(struct Disk *disk) {
 
   for (void *p = disk->data; p < disk->tail; p += clusz) {
     if (cluster_is_fdt(p, nr_clu)) {
+      Log("fdt found at offset %x", (int) (p - disk->head));
       handle_fdt(p, nr_clu);
     } else {
       handle_bmp(p);
