@@ -104,10 +104,8 @@ static inline void copy_name(struct FDT *f) {
   }
 }
 bool handle_fdt(void *c, int nr) {
-  return true;
   struct FDT *f = (struct FDT *) c;
-  if (pos != 128 && f[0].attr != ATTR_LONG_NAME
-      && f[0].chk_sum != chk_sum) {
+  if (pos != 128 && (f[0].attr != ATTR_LONG_NAME || f[0].chk_sum != chk_sum)) {
     return false;
   }
 
@@ -117,7 +115,7 @@ bool handle_fdt(void *c, int nr) {
       copy_name(f + i);
     } else {
       if (f[i].file_size) {
-        uint32_t clus = f[i].fst_clus_HI << 16 | f[i].fst_clus_LO;
+        uint32_t clus = ((uint32_t) f[i].fst_clus_HI) << 16 | f[i].fst_clus_LO;
         printf("%x -> %s, clus = %d\n", (int) ((void *) (f + i) - disk->head), file_name + pos, clus);
       }
       pos = 128;
