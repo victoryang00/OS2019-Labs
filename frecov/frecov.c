@@ -42,19 +42,18 @@ int get_cluster_type(void *c, int nr) {
   if (!memcmp(c, empty_entry, 32)) return TYPE_EMP;
 
   struct FDT *f = (struct FDT *) c;
+  bool has_long_name = false;
   int fdt_count = 0;
   unsigned char chk_sum = 0;
   for (int i = 0; i < nr; ++i) {
     if (f[i].attr == ATTR_DIRECTORY && !f[i].file_size) continue;
-    if (f[i].state == 0xe5) continue; // deleted
-    if (!f[i].attr) return TYPE_BMP;  // bad: no attr
     if (f[i].attr == ATTR_LONG_NAME) {
-      if (f[i].fst_clus) return TYPE_BMP; // bad: clus not 0
-      if (f[i].type) return TYPE_BMP;     // bad: type not 0
-      if (!fdt_count) {
-        if (i && !(f[i].order & LAST_LONG_ENTRY)) return TYPE_BMP;
+      if (f[i].fst_clus) return TYPE_BMP;
+      if (f[i].type) return TYPE_BMP;
+      if (!has_long_name) {
         fdt_count = (f[i].order & ATTR_LONG_NAME) - 1;
         chk_sum = f[i].chk_sum;
+        has_long_name = true;
       } else {
         if (f[i].chk_sum != chk_sum) return TYPE_BMP;
         if (f[i].order != fdt_count--) return TYPE_BMP;
@@ -62,7 +61,8 @@ int get_cluster_type(void *c, int nr) {
     } else {
       if (fdt_count) return TYPE_BMP;
       if (__builtin_popcount(f[i].attr) != 1) return TYPE_BMP;
-      if (chk_sum != check_sum((unsigned char *) f[i].name)) return TYPE_BMP;
+      unsigned char cs = check_sum((unsigned char *) f[i].name);
+      if (chk_sum != cs) return TYPE_BMP;
     }
   }
   return TYPE_FDT;
