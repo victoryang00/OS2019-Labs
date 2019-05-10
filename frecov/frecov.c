@@ -130,7 +130,7 @@ bool handle_fdt_aux(void *c, int nr) {
       if (pos == 127) chk_sum = f[i].chk_sum;
       copy_name(f + i);
     } else {
-      if (f[i].file_size) {
+      if (f[i].file_size && pos != 127) {
         uint32_t clus = ((uint32_t) f[i].fst_clus_HI << 16) | f[i].fst_clus_LO;
         printf("%x -> ", (int) ((void *) (f + i) - disk->head));
         printf("%s, ", file_name + pos);
