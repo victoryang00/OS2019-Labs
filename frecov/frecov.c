@@ -44,14 +44,14 @@ void recover_images() {
           fdt_list.next = d;
           d->next->prev = d;
         }
-        continue;
+        break;
       case TYPE_BMP:
         Log("bmp");
         handle_bmp(p);
-        continue;
+        break;
       default:
         Log("empty");
-        continue;
+        break;
     }
   }
 }
