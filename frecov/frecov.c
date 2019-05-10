@@ -117,7 +117,7 @@ bool handle_fdt(void *c, int nr) {
         uint32_t clus = ((uint32_t) f[i].fst_clus_HI << 16) | f[i].fst_clus_LO;
         printf("%x -> ", (int) ((void *) (f + i) - disk->head));
         printf("%s, ", file_name + pos);
-        printf("clus = %u", clus);
+        printf("clus = %u\n", clus);
       }
       pos = 127;
       file_name[pos] = '\0';
