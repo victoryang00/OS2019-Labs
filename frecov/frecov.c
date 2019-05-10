@@ -59,13 +59,13 @@ int get_cluster_type(void *c, int nr) {
         if (f[i].order != fdt_count--) return TYPE_BMP;
       }
     } else {
-      has_long_name = false;
       if (fdt_count) return TYPE_BMP;
       if (__builtin_popcount(f[i].attr) != 1) return TYPE_BMP;
-      if (f[i].state != 0xe5) {
+      if (has_long_name && f[i].state != 0xe5) {
         unsigned char cs = check_sum((unsigned char *) f[i].name);
         if (chk_sum != cs) return TYPE_BMP;
       }
+      has_long_name = false;
     }
   }
   return TYPE_FDT;
