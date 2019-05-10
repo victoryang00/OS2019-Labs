@@ -33,7 +33,7 @@ void recover_images(struct Disk *disk) {
         }
       }
       if (!handle_fdt(p, nr_clu)) {
-        Log("%p is not handled now", p);
+        Log("fdt at %x is not handled now", (int) (p - disk->head));
         struct DataSeg *d = malloc(sizeof(struct DataSeg));
         d->head = p;
         d->tail = NULL;
