@@ -119,6 +119,7 @@ bool handle_fdt_aux(void *c, int nr) {
     if (f[0].attr == ATTR_LONG_NAME) {
       if (chk_sum != f[0].chk_sum) return false;
     } else {
+      if (f[0].state == 0xe5) return false;
       unsigned char cs = check_sum((unsigned char *) f[0].name);
       if (chk_sum != cs) return false;
     }
@@ -126,7 +127,7 @@ bool handle_fdt_aux(void *c, int nr) {
 
   for (int i = 0; i < nr; ++i) {
     if (f[i].attr == ATTR_LONG_NAME) {
-      if (pos == 128) chk_sum = f[i].chk_sum;
+      if (pos == 127) chk_sum = f[i].chk_sum;
       copy_name(f + i);
     } else {
       if (f[i].file_size) {
@@ -136,6 +137,7 @@ bool handle_fdt_aux(void *c, int nr) {
         printf("clus = %u\n", clus);
       }
       pos = 127;
+      chk_sum = 0;
       file_name[pos] = '\0';
     }
   }
