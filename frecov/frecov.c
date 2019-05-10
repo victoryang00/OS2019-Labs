@@ -45,7 +45,7 @@ int get_cluster_type(void *c, int nr) {
   int fdt_count = 0;
   unsigned char chk_sum = 0;
   for (int i = 0; i < nr; ++i) {
-    if (f[i].attr == ATTR_DIRECTORY && f[i].file_size) continue;
+    if (f[i].attr == ATTR_DIRECTORY && !f[i].file_size) continue;
     if (f[i].state == 0xe5) continue; // deleted
     if (!f[i].attr) return TYPE_BMP;  // bad: no attr
     if (f[i].attr == ATTR_LONG_NAME) {
