@@ -110,7 +110,8 @@ bool handle_fdt(void *c, int nr) {
       copy_name(f + i);
     } else {
       if (f[i].file_size) {
-        printf("%x\n", (int) ((void *) (f + i) - disk->head));
+        printf("%x -> ", (int) ((void *) (f + i) - disk->head));
+        printf("%s\n", file_name + pos);
       }
       pos = 128;
       file_name[pos] = '\0';
