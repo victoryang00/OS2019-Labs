@@ -32,8 +32,14 @@ struct Image {
   struct Image *next;
 };
 
+enum ClusterTypes {
+  TYPE_FDT, // file entry
+  TYPE_BMP, // bmp image
+  TYPE_EMP  // empty entry
+};
+
 void recover_images(struct Disk *);
-bool cluster_is_fdt(void *, int);
+int get_cluster_type(void *, int);
 void handle_bmp(void *);
 bool handle_fdt(void *, int);
 

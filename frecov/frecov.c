@@ -23,57 +23,65 @@ void recover_images(struct Disk *disk) {
   int nr_clu = clusz / 32;
 
   for (void *p = disk->data; p < disk->tail; p += clusz) {
-    if (cluster_is_fdt(p, nr_clu)) {
-      //Log("fdt found at offset %x", (int) (p - disk->head));
-      for (struct DataSeg *d = fdt_list.next; d != &fdt_list; d = d->next) {
-        if (handle_fdt(d->head, nr_clu)) {
-          CLog(FG_GREEN, "fdt at %x is handled!", (int) (d->head - disk->head));
-          d->prev->next = d->next;
-          d->next->prev = d->prev;
-          free(d);
+    switch (get_cluster_type(p, nr_clu)) {
+      case TYPE_FDT:
+        //Log("fdt found at offset %x", (int) (p - disk->head));
+        for (struct DataSeg *d = fdt_list.next; d != &fdt_list; d = d->next) {
+          if (handle_fdt(d->head, nr_clu)) {
+            CLog(FG_GREEN, "fdt at %x is handled!", (int) (d->head - disk->head));
+            d->prev->next = d->next;
+            d->next->prev = d->prev;
+            free(d);
+          }
         }
-      }
-      if (!handle_fdt(p, nr_clu)) {
-        CLog(FG_YELLOW, "fdt at %x is not handled now", (int) (p - disk->head));
-        struct DataSeg *d = malloc(sizeof(struct DataSeg));
-        d->head = p;
-        d->tail = NULL;
-        d->next = fdt_list.next;
-        d->prev = &fdt_list;
-        fdt_list.next = d;
-        d->next->prev = d;
-      }
-    } else {
-      handle_bmp(p);
+        if (!handle_fdt(p, nr_clu)) {
+          CLog(FG_YELLOW, "fdt at %x is not handled now", (int) (p - disk->head));
+          struct DataSeg *d = malloc(sizeof(struct DataSeg));
+          d->head = p;
+          d->tail = NULL;
+          d->next = fdt_list.next;
+          d->prev = &fdt_list;
+          fdt_list.next = d;
+          d->next->prev = d;
+        }
+        break;
+      case TYPE_BMP:
+        handle_bmp(p);
+        break;
+      default:
+        // nothing happens to an empty cluster
     }
   }
 }
 
-bool cluster_is_fdt(void *c, int nr) {
+const char empty_entry[32] = {};
+int get_cluster_type(void *c, int nr) {
+  if (!memcmp(c, empty_entry, 32)) return TYPE_EMP;
+
   struct FDT *f = (struct FDT *) c;
   int fdt_count = 0;
   unsigned char chk_sum = 0;
   for (int i = 0; i < nr; ++i) {
     if (!f[i].file_size) continue;    // dir entry
     if (f[i].state == 0xe5) continue; // deleted
-    if (!f[i].attr) return false;     // bad: no attr
+    if (!f[i].attr) return TYPE_BMP;  // bad: no attr
     if (f[i].attr == ATTR_LONG_NAME) {
-      if (f[i].fst_clus) return false; // bad: clus not 0
-      if (f[i].type) return false;     // bad: type not 0
+      if (f[i].fst_clus) return TYPE_BMP; // bad: clus not 0
+      if (f[i].type) return TYPE_BMP;     // bad: type not 0
       if (!fdt_count) {
-        if (i && !(f[i].order & LAST_LONG_ENTRY)) return false;
+        if (i && !(f[i].order & LAST_LONG_ENTRY)) return TYPE_BMP;
         fdt_count = f[i].order & ATTR_LONG_NAME;
         chk_sum = f[i].chk_sum;
       } else {
-        if (f[i].chk_sum != chk_sum) return false;
-        if (f[i].order != --fdt_count) return false;
+        if (f[i].chk_sum != chk_sum) return TYPE_BMP;
+        if (f[i].order != --fdt_count) return TYPE_BMP;
       }
     } else {
-      if (--fdt_count) return false;
-      if (chk_sum != check_sum((unsigned char *) f[i].name)) return false;
+      if (--fdt_count) return TYPE_BMP;
+      if (chk_sum != check_sum((unsigned char *) f[i].name)) return TYPE_BMP;
     }
   }
-  return true;
+  return TYPE_FDT;
 }
 
 void handle_bmp(void *p) {
