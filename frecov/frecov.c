@@ -42,7 +42,7 @@ int get_cluster_type(void *c, int nr) {
   if (!memcmp(c, empty_entry, 32)) return TYPE_EMP;
 
   struct FDT *f = (struct FDT *) c;
-  int fdt_count = 0;
+  int fdt_count = 1;
   unsigned char chk_sum = 0;
   for (int i = 0; i < nr; ++i) {
     if (f[i].attr == ATTR_DIRECTORY && !f[i].file_size) continue;
