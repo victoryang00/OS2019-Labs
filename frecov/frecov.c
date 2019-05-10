@@ -53,14 +53,14 @@ int get_cluster_type(void *c, int nr) {
       if (f[i].type) return TYPE_BMP;     // bad: type not 0
       if (!fdt_count) {
         if (i && !(f[i].order & LAST_LONG_ENTRY)) return TYPE_BMP;
-        fdt_count = f[i].order & ATTR_LONG_NAME;
+        fdt_count = (f[i].order & ATTR_LONG_NAME) - 1;
         chk_sum = f[i].chk_sum;
       } else {
         if (f[i].chk_sum != chk_sum) return TYPE_BMP;
-        if (f[i].order != --fdt_count) return TYPE_BMP;
+        if (f[i].order != fdt_count--) return TYPE_BMP;
       }
     } else {
-      if (!i && --fdt_count) return TYPE_BMP;
+      if (fdt_count != 0) return TYPE_BMP;
       if (chk_sum != check_sum((unsigned char *) f[i].name)) return TYPE_BMP;
     }
   }
