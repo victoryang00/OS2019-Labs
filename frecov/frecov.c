@@ -60,8 +60,8 @@ int get_cluster_type(void *c, int nr) {
         if (f[i].order != fdt_count--) return TYPE_BMP;
       }
     } else {
-      if (fdt_count != 0) return TYPE_BMP;
-      if (chk_sum != check_sum((unsigned char *) f[i].name)) return TYPE_BMP;
+      if (fdt_count) return TYPE_BMP;
+      if (chk_sum && chk_sum != check_sum((unsigned char *) f[i].name)) return TYPE_BMP;
     }
   }
   return TYPE_FDT;
