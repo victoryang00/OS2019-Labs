@@ -48,8 +48,6 @@ void recover_images(struct Disk *disk) {
       case TYPE_BMP:
         handle_bmp(p);
         break;
-      default:
-        // nothing happens to an empty cluster
     }
   }
 }
