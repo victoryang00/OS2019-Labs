@@ -46,11 +46,9 @@ void recover_images() {
         }
         break;
       case TYPE_BMP:
-        Log("bmp");
         handle_bmp(p);
         break;
       default:
-        Log("empty");
         break;
     }
   }
