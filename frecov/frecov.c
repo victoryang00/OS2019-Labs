@@ -54,6 +54,7 @@ void recover_images() {
 
 const char empty_entry[32] = {};
 int get_cluster_type(void *c, int nr) {
+  if (!memcmp(c, empty_entry, 32)) return TYPE_EMP;
 
   struct FDT *f = (struct FDT *) c;
   int fdt_count = 0;
