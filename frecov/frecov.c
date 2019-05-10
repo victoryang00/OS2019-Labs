@@ -23,30 +23,35 @@ void recover_images() {
   int nr_clu = clusz / 32;
 
   for (void *p = disk->data; p < disk->tail; p += clusz) {
-    int type = get_cluster_type(p, nr_clu);
-    if (type == TYPE_FDT) {
-      Log("fdt found at offset %x", (int) (p - disk->head));
-      for (struct DataSeg *d = fdt_list.next; d != &fdt_list; d = d->next) {
-        if (handle_fdt(d->head, nr_clu)) {
-          CLog(FG_GREEN, "fdt at %x is handled!", (int) (d->head - disk->head));
-          d->prev->next = d->next;
-          d->next->prev = d->prev;
-          free(d);
+    switch (get_cluster_type(p, nr_clu)) {
+      case TYPE_FDT:
+        Log("fdt found at offset %x", (int) (p - disk->head));
+        for (struct DataSeg *d = fdt_list.next; d != &fdt_list; d = d->next) {
+          if (handle_fdt(d->head, nr_clu)) {
+            CLog(FG_GREEN, "fdt at %x is handled!", (int) (d->head - disk->head));
+            d->prev->next = d->next;
+            d->next->prev = d->prev;
+            free(d);
+          }
         }
-      }
-      if (!handle_fdt(p, nr_clu)) {
-        CLog(FG_YELLOW, "fdt at %x is not handled now", (int) (p - disk->head));
-        struct DataSeg *d = malloc(sizeof(struct DataSeg));
-        d->head = p;
-        d->tail = NULL;
-        d->next = fdt_list.next;
-        d->prev = &fdt_list;
-        fdt_list.next = d;
-        d->next->prev = d;
-      }
-    } else if (type == TYPE_BMP) {
-      Log("bmp");
-      handle_bmp(p);
+        if (!handle_fdt(p, nr_clu)) {
+          CLog(FG_YELLOW, "fdt at %x is not handled now", (int) (p - disk->head));
+          struct DataSeg *d = malloc(sizeof(struct DataSeg));
+          d->head = p;
+          d->tail = NULL;
+          d->next = fdt_list.next;
+          d->prev = &fdt_list;
+          fdt_list.next = d;
+          d->next->prev = d;
+        }
+        break;
+      case TYPE_BMP:
+        Log("bmp");
+        handle_bmp(p);
+        break;
+      default:
+        Log("empty");
+        break;
     }
   }
 }
@@ -99,6 +104,7 @@ static inline void copy_name(struct FDT *f) {
   }
 }
 bool handle_fdt(void *c, int nr) {
+  return true;
   struct FDT *f = (struct FDT *) c;
   if (pos != 128 && f[0].attr != ATTR_LONG_NAME
       && f[0].chk_sum != chk_sum) {
