@@ -56,7 +56,9 @@ int get_cluster_type(void *c, int nr) {
         has_long_name = true;
       } else {
         if (f[i].chk_sum != chk_sum) return TYPE_BMP;
-        if (f[i].order != fdt_count--) return TYPE_BMP;
+        if (f[i].order != 0xe5
+            && f[i].order != fdt_count) return TYPE_BMP;
+        fdt_count--;
       }
     } else {
       if (fdt_count) return TYPE_BMP;
