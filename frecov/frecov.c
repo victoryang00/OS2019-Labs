@@ -27,13 +27,14 @@ void recover_images(struct Disk *disk) {
       //Log("fdt found at offset %x", (int) (p - disk->head));
       for (struct DataSeg *d = fdt_list.next; d != &fdt_list; d = d->next) {
         if (handle_fdt(d->head, nr_clu)) {
+          CLog(FG_GREEN, "fdt at %x is handled!", (int) (d->head - disk->head));
           d->prev->next = d->next;
           d->next->prev = d->prev;
           free(d);
         }
       }
       if (!handle_fdt(p, nr_clu)) {
-        Log("fdt at %x is not handled now", (int) (p - disk->head));
+        CLog(FG_YELLOW, "fdt at %x is not handled now", (int) (p - disk->head));
         struct DataSeg *d = malloc(sizeof(struct DataSeg));
         d->head = p;
         d->tail = NULL;
