@@ -33,6 +33,7 @@ void recover_images() {
         break;
     }
   }
+  handle_fdt(NULL, nr_clu, false);
   handle_fdt(NULL, nr_clu, true);
 }
 
