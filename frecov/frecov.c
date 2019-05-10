@@ -45,6 +45,7 @@ int get_cluster_type(void *c, int nr) {
   bool has_long_name = false;
   unsigned char chk_sum = 0;
   for (int i = 0; i < nr; ++i) {
+    if (i && !f[i].state && !f[i].attr) break;
     if (f[i].state == 0xe5) continue;
     if (f[i].attr == ATTR_DIRECTORY && !f[i].file_size) continue;
     if (f[i].attr == ATTR_LONG_NAME) {
