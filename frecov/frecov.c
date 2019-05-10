@@ -35,11 +35,12 @@ bool cluster_is_fdt(void *c, int nr) {
   int fdt_count = 0;
   unsigned char chksum = 0;
   for (int i = 0; i < nr; ++i) {
-    if (!f[i].file_size) continue;
-    if (!f[i].attr) return false;
+    if (!f[i].file_size) continue;    // dir entry
+    if (f[i].state == 0xe5) continue; // deleted
+    if (!f[i].attr) return false;     // bad: no attr
     if (f[i].attr == ATTR_LONG_NAME) {
-      if (f[i].fst_clus) return false;
-      if (f[i].type) return false;
+      if (f[i].fst_clus) return false; // bad: clus not 0
+      if (f[i].type) return false;     // bad: type not 0
       if (!fdt_count) {
         if (i && !(f[i].order & LAST_LONG_ENTRY)) return false;
         fdt_count = f[i].order & ATTR_LONG_NAME;
