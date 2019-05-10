@@ -32,9 +32,11 @@ struct Image {
   struct Image *next;
 };
 
-#define TYPE_EMP 0
-#define TYPE_FDT 1
-#define TYPE_BMP 2
+enum ClusterTypes {
+  TYPE_FDT, // file entry
+  TYPE_BMP, // bmp image
+  TYPE_EMP  // empty entry
+};
 
 void recover_images();
 int get_cluster_type(void *, int);
