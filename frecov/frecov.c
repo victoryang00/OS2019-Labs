@@ -45,6 +45,7 @@ int get_cluster_type(void *c, int nr) {
   bool has_long_name = false;
   unsigned char chk_sum = 0;
   for (int i = 0; i < nr; ++i) {
+    if (f[i].state == 0xe5) continue;
     if (f[i].attr == ATTR_DIRECTORY && !f[i].file_size) continue;
     if (f[i].attr == ATTR_LONG_NAME) {
       if (f[i].fst_clus) return TYPE_BMP;
@@ -57,7 +58,7 @@ int get_cluster_type(void *c, int nr) {
       }
     } else {
       if (__builtin_popcount(f[i].attr) != 1) return TYPE_BMP;
-      if (has_long_name && f[i].state != 0xe5) {
+      if (has_long_name) {
         unsigned char cs = check_sum((unsigned char *) f[i].name);
         if (chk_sum != cs) return TYPE_BMP;
       }
@@ -126,7 +127,7 @@ bool handle_fdt_aux(void *c, int nr) {
       if (pos == 127) chk_sum = f[i].chk_sum;
       copy_name(f + i);
     } else {
-      if (f[i].file_size && pos != 127) {
+      if (f[i].state != 0xe5 && f[i].file_size && pos != 127) {
         uint32_t clus = ((uint32_t) f[i].fst_clus_HI << 16) | f[i].fst_clus_LO;
         printf("%x -> ", (int) ((void *) (f + i) - disk->head));
         printf("%s, ", file_name + pos);
