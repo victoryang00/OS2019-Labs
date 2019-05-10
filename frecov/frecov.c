@@ -61,8 +61,10 @@ int get_cluster_type(void *c, int nr) {
     } else {
       if (fdt_count) return TYPE_BMP;
       if (__builtin_popcount(f[i].attr) != 1) return TYPE_BMP;
-      unsigned char cs = check_sum((unsigned char *) f[i].name);
-      if (chk_sum != cs) return TYPE_BMP;
+      if (f[i].state != 0xe5) {
+        unsigned char cs = check_sum((unsigned char *) f[i].name);
+        if (chk_sum != cs) return TYPE_BMP;
+      }
     }
   }
   return TYPE_FDT;
