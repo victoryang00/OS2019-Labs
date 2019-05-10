@@ -38,7 +38,7 @@ enum ClusterTypes {
   TYPE_EMP  // empty entry
 };
 
-void recover_images(struct Disk *);
+void recover_images();
 int get_cluster_type(void *, int);
 void handle_bmp(void *);
 bool handle_fdt(void *, int);

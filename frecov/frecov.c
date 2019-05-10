@@ -13,12 +13,12 @@ int main(int argc, char *argv[]) {
   } else {
     disk = disk_load_fat(argv[1]);
     Log("image loaded at [%p, %p]", disk->head, disk->tail);
-    recover_images(disk);
+    recover_images();
   }
   return 0;
 }
 
-void recover_images(struct Disk *disk) {
+void recover_images() {
   size_t clusz = (size_t) disk->mbr->BPB_BytsPerSec * disk->mbr->BPB_SecPerClus;
   int nr_clu = clusz / 32;
 
