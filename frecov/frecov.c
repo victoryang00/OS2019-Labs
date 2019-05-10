@@ -116,8 +116,11 @@ bool handle_fdt_aux(void *c, int nr) {
   if (pos == 127) {
     file_name[pos] = '\0';
   } else {
-    if (f[0].attr == ATTR_LONG_NAME && f[0].chk_sum != chk_sum) {
-      return false;
+    if (f[0].attr == ATTR_LONG_NAME) {
+      if (chk_sum != f[0].chk_sum) return false;
+    } else {
+      unsigned char cs = check_sum((unsigned char *) f[0].name);
+      if (chk_sum != cs) return false;
     }
   }
 
