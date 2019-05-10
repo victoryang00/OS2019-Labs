@@ -23,7 +23,8 @@ void recover_images() {
   int nr_clu = clusz / 32;
 
   for (void *p = disk->data; p < disk->tail; p += clusz) {
-    switch (get_cluster_type(p, nr_clu)) {
+    int type = get_cluster_type(p, nr_clu);
+    switch (type) {
       case TYPE_FDT:
         Log("fdt found at offset %x", (int) (p - disk->head));
         for (struct DataSeg *d = fdt_list.next; d != &fdt_list; d = d->next) {
