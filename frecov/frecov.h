@@ -42,6 +42,6 @@ void recover_images();
 int get_cluster_type(void *, int);
 void handle_bmp(void *);
 void handle_fdt(void *, int, bool);
-bool handle_fdt_aux(void *, int);
+bool handle_fdt_aux(void *, int, bool);
 
 #endif
