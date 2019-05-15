@@ -84,7 +84,7 @@ static inline void copy_name(struct FDT *f) {
 }
 void handle_fdt(void *c, int nr, bool force) {
   if (c) {
-    CLog(FG_BLUE, "fdt found at offset %x", (int) (c - disk->head));
+    //CLog(FG_BLUE, "fdt found at offset %x", (int) (c - disk->head));
     struct DataSeg *d = malloc(sizeof(struct DataSeg));
     d->head = c;
     d->tail = NULL;
@@ -99,7 +99,7 @@ void handle_fdt(void *c, int nr, bool force) {
     succ = false;
     for (struct DataSeg *d = fdt_list.next; d != &fdt_list; d = d->next) {
       if (handle_fdt_aux(d->head, nr, force)) {
-        CLog(FG_GREEN, "fdt at %x is handled!", (int) (d->head - disk->head));
+        //CLog(FG_GREEN, "fdt at %x is handled!", (int) (d->head - disk->head));
         d->prev->next = d->next;
         d->next->prev = d->prev;
         free(d);
