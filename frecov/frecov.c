@@ -112,6 +112,7 @@ void handle_fdt(void *c, int nr, bool force) {
 bool handle_fdt_aux(void *c, int nr) {
   struct FDT *f = (struct FDT *) c;
   if (pos == 127) {
+    CLog(FG_PURPLE, "new name");
     file_name[pos] = '\0';
   } else {
     if (f[0].attr == ATTR_LONG_NAME) {
