@@ -115,6 +115,7 @@ bool handle_fdt_aux(void *c, int nr) {
     file_name[pos] = '\0';
   } else {
     if (f[0].attr == ATTR_LONG_NAME) {
+      CLog(FG_PURPLE, "fdt begins with a long name entry");
       if (chk_sum != f[0].chk_sum) return false;
     } else {
       if (f[0].state == 0xe5) return false;
