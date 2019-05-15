@@ -113,10 +113,14 @@ bool handle_fdt_aux(void *c, int nr, bool force) {
   if (force) {
     pos = 127;
   } else {
+    if (f[0].state == 0xe5) return false;
     if (f[0].attr == ATTR_LONG_NAME) {
-      if (chk_sum != f[0].chk_sum) return false;
+      if (f[0].state & LAST_LONG_ENTRY) {
+        chk_sum = f[0].chk_sum;
+      } else {
+        if (chk_sum != f[0].chk_sum) return false;
+      }
     } else {
-      if (f[0].state == 0xe5) return false;
       if (f[0].attr != ATTR_DIRECTORY && pos != 127) {
         unsigned char cs = check_sum((unsigned char *) f[0].name);
         if (chk_sum != cs) return false;
