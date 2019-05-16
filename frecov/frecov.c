@@ -134,13 +134,17 @@ bool handle_fdt_aux(void *c, int nr, bool force) {
       copy_name(f + i);
     } else {
       if (f[i].attr != ATTR_DIRECTORY && pos != 127) {
-        //size_t len = strlen(file_name + pos);
-        //if (!strncmp(file_name + pos + len - 4, ".bmp", 4)) {
+        size_t len = strlen(file_name + pos);
+        if (!strncmp(file_name + pos + len - 4, ".bmp", 4)) {
           uint32_t clus = ((uint32_t) f[i].fst_clus_HI << 16) | f[i].fst_clus_LO;
           printf("%x -> ", (int) ((void *) (f + i) - disk->head));
           printf("%s, ", file_name + pos);
-          printf("clus = %u\n", clus);
-        //}
+          if (clus) {
+            printf("clus = %u\n", clus);
+          } else {
+            printf("deleted.\n");
+          }
+        }
       }
       pos = 127;
       chk_sum = 0;
