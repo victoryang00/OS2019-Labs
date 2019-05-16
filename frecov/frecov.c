@@ -145,7 +145,7 @@ bool handle_fdt_aux(void *c, int nr, bool force) {
           if (clus) {
             CLog(FG_GREEN, "%x -> %s, clus = %u", (int) ((void *) (f + i) - disk->head), file_name + pos, clus);
             struct Image *image = malloc(sizeof(struct Image));
-            sprintf(image->name, "recov/%s", file_name + pos);
+            sprintf(image->name, "./recov/%s", file_name + pos);
             image->size = f[i].file_size;
             image->clus = clus;
             image->file = fopen(image->name, "w+");
