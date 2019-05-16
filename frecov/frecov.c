@@ -185,9 +185,10 @@ bool handle_fdt_aux(void *c, int nr, bool force) {
 
 void handle_bmp(void *p) {
   if (!strncpy((char *)p, "BM", 2)) return;
-  int i = ((int8_t *)p)[0] / 16;
-  int j = ((int8_t *)p)[1] / 16;
-  int k = ((int8_t *)p)[2] / 16;
+  Log("bmp seg at offset %x", (int) (p - disk->head));
+  int i = ((int8_t *)p)[0] >> 4;
+  int j = ((int8_t *)p)[1] >> 4;
+  int k = ((int8_t *)p)[2] >> 4;
 
   struct DataSeg *d = malloc(sizeof(struct DataSeg));
   d->head = p;
@@ -210,9 +211,9 @@ void handle_image(struct Image *image, size_t sz) {
     int32_t best_diff = 300; // maximum threshold
 
     int8_t *rgb_last = ((int8_t *) (clus + sz)) - 3;
-    int i = rgb_last[0] / 16;
-    int j = rgb_last[1] / 16;
-    int k = rgb_last[2] / 16;
+    int i = rgb_last[0] >> 4;
+    int j = rgb_last[1] >> 4;
+    int k = rgb_last[2] >> 4;
     for (struct DataSeg *dp = bmp_list[i][j][k].next; dp != &bmp_list[i][j][k]; dp = dp->next) {
       int8_t *rgb_next = (int8_t *) dp->head;
       int32_t diff = 0;
