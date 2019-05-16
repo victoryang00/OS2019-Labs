@@ -117,6 +117,7 @@ void handle_fdt(void *c, int nr, bool force) {
         d->next->prev = d->prev;
         free(d);
         succ = true;
+        break;
       }
     }
   }
@@ -194,6 +195,7 @@ void handle_bmp(void *p, size_t sz) {
         d->next->prev = d->prev;
         free(d);
         succ = true;
+        break;
       }
     }
   }
@@ -205,9 +207,6 @@ bool handle_bmp_aux(void *p, size_t sz) {
   fwrite(p, sz, 1, image->file);
   if (image->size <= sz) {
     output_image(image);
-    image->prev->next = image->next;
-    image->next->prev = image->prev;
-    free(image);
   } else {
     image->size -= sz;
     image->chk = ((int16_t *) (p + sz)) - 3;
@@ -238,6 +237,9 @@ struct Image *find_best_match(void *p, size_t sz) {
   return ret;
 }
 void output_image(struct Image *image) {
-  CLog(FG_YELLOW, "File %s OK!\n", image->name);
+  CLog(FG_YELLOW, "File %s OK!", image->name);
   fclose(image->file);
+  image->prev->next = image->next;
+  image->next->prev = image->prev;
+  free(image);
 }
