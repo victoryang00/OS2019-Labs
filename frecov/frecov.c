@@ -206,8 +206,8 @@ bool handle_bmp_aux(void *p, size_t sz) {
   return true;
 }
 struct Image *find_best_match(void *p, size_t sz) {
-  CLog(FG_BLUE, "offset %x", (int) (p - disk->data));
   int clus = (size_t) (p - disk->data) / sz;
+  CLog(FG_BLUE, "clus %d", clus);
   int16_t *chk = (int16_t *) p;
   int32_t best_diff = 0x3f3f3f3f;
   struct Image *ret = NULL;
