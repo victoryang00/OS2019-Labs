@@ -184,7 +184,7 @@ bool handle_fdt_aux(void *c, int nr, bool force) {
 }
 
 void handle_bmp(void *p) {
-  if (!strncpy((char *)p, "BM", 2)) return;
+  if (!strncmp((char *)p, "BM", 2)) return;
   Log("bmp seg at offset %x", (int) (p - disk->head));
   int i = ((int8_t *)p)[0] >> 4;
   int j = ((int8_t *)p)[1] >> 4;
