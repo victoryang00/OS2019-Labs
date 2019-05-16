@@ -208,6 +208,8 @@ void handle_bmp(void *p, size_t sz) {
 void handle_image(struct Image *image, size_t sz) {
   image->file = fopen(image->name, "w+");
   Assert(image->file, "fopen failed for image %s", image->name);
+  
+  CLog(FG_GREEN, "Start searching for %s, total size %d", image->name, (int) image->size);
 
   void *clus = disk->data + sz * (image->clus - disk->mbr->BPB_RootClus);
   fwrite(clus, sz, 1, image->file);
@@ -263,6 +265,6 @@ void handle_image(struct Image *image, size_t sz) {
   if (image->size <= sz) {
     CLog(FG_YELLOW, "Image %s ready", image->name);
   } else {
-    CLog(FG_RED, "Image %s failed", image->name);
+    CLog(FG_RED, "Image %s failed, %d size left", image->name, (int) image->size - sz);
   }
 }
