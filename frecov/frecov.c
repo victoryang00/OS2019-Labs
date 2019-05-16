@@ -265,6 +265,6 @@ void handle_image(struct Image *image, size_t sz) {
   if (image->size <= sz) {
     CLog(FG_YELLOW, "Image %s ready", image->name);
   } else {
-    CLog(FG_RED, "Image %s failed, %d size left", image->name, (int) image->size - sz);
+    CLog(FG_RED, "Image %s failed, %d size left", image->name, (int) (image->size - sz));
   }
 }
