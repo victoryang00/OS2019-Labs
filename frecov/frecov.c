@@ -183,7 +183,7 @@ void handle_bmp(void *p, size_t sz) {
   while (succ) {
     succ = false;
     for (struct DataSeg *d = bmp_list.next; d != &bmp_list; d = d->next) {
-      if (handle_bmp_aux(d)) {
+      if (handle_bmp_aux(d, sz)) {
         d->prev->next = d->next;
         d->next->prev = d->prev;
         free(d);
