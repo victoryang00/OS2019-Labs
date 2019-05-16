@@ -148,7 +148,7 @@ bool handle_fdt_aux(void *c, int nr, bool force) {
             sprintf(image->name, "recov/%s", file_name + pos);
             image->size = f[i].file_size;
             image->clus = clus;
-            image->file = fopen(image->name, "w");
+            image->file = fopen(image->name, "w+");
             Assert(image->file, "fopen failed for image %s", image->name);
             image->chk  = NULL;
 
