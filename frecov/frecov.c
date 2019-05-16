@@ -142,10 +142,8 @@ bool handle_fdt_aux(void *c, int nr, bool force) {
         size_t len = strlen(file_name + pos);
         if (!strncmp(file_name + pos + len - 4, ".bmp", 4)) {
           uint32_t clus = ((uint32_t) f[i].fst_clus_HI << 16) | f[i].fst_clus_LO;
-          CLog(FG_GREEN, "%x -> ", (int) ((void *) (f + i) - disk->head));
-          CLog(FG_GREEN, "%s, ", file_name + pos);
           if (clus) {
-            CLog(FG_GREEN, "clus = %u\n", clus);
+            CLog(FG_GREEN, "%x -> %s, clus = %u", (int) ((void *) (f + i) - disk->head), file_name + pos, clus);
             struct Image *image = malloc(sizeof(struct Image));
             sprintf(image->name, "recov/%s", file_name + pos);
             image->size = f[i].file_size;
@@ -156,8 +154,6 @@ bool handle_fdt_aux(void *c, int nr, bool force) {
             image->prev = &image_list;
             image_list.next = image;
             image->next->prev = image;
-          } else {
-            CLog(FG_GREEN, "deleted.\n");
           }
         }
       }
@@ -225,6 +221,6 @@ struct Image *find_best_match(void *p, size_t sz) {
   return ret;
 }
 void output_image(struct Image *image) {
-  printf("File %s OK!\n", image->name);
+  CLog(FG_YELLOW, "File %s OK!\n", image->name);
   fclose(image->file);
 }
