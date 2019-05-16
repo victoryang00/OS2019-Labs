@@ -251,9 +251,9 @@ void handle_image(struct Image *image, size_t sz) {
 
     if (!next) break;
     clus = next->head;
-    //next->prev->next = next->next;
-    //next->next->prev = next->prev;
-    //free(next);
+    next->prev->next = next->next;
+    next->next->prev = next->prev;
+    free(next);
 
     image->size -= sz;
     fwrite(clus, sz, 1, image->file);
