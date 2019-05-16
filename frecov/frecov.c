@@ -149,6 +149,7 @@ bool handle_fdt_aux(void *c, int nr, bool force) {
             image->size = f[i].file_size;
             image->clus = clus;
             image->file = fopen(image->name, "wb");
+            image->chk  = NULL;
 
             image->next = image_list.next;
             image->prev = &image_list;
@@ -173,7 +174,6 @@ void handle_bmp(void *p, size_t sz) {
     d->prev = &bmp_list;
     bmp_list.next = d;
     d->next->prev = d;
-    CLog(FG_RED, "bmp added!");
   }
 
   bool succ = true;
@@ -205,11 +205,13 @@ bool handle_bmp_aux(void *p, size_t sz) {
   return true;
 }
 struct Image *find_best_match(void *p, size_t sz) {
+  int clus = (p - disk->data) / sz;
   int16_t *chk = ((int16_t *) (p + sz)) - 3;
   int32_t best_diff = 0;
   struct Image *ret = NULL;
   for (struct Image *image = image_list.next; image != &image_list; image = image->next) {
-    if (image->chk == NULL && image->clus == (p - disk->data) / sz) return image;
+    if (!image->chk && image->clus == clus) return image;
+    
     int32_t diff = 0;
     for (int i = 0; i < 3; ++i) {
       diff += (chk[i] - image->chk[i]) * (chk[i] - image->chk[i]);
