@@ -195,8 +195,10 @@ void handle_bmp(void *p, size_t sz) {
 bool handle_bmp_aux(void *p, size_t sz) {
   struct Image *image = find_best_match(p, sz);
   if (!image) return false;
+
   fwrite(p, sz, 1, image->file);
   image->size -= sz;
+  image->chk = ((int16_t *) (p + sz)) - 3;
   if (image->size < 0) {
     output_image(image);
     image->prev->next = image->next;
@@ -206,9 +208,19 @@ bool handle_bmp_aux(void *p, size_t sz) {
   return true;
 }
 struct Image *find_best_match(void *p, size_t sz) {
+  int16_t *chk = ((int16_t *) (p + sz)) - 3;
+  int32_t best_diff = 0;
   struct Image *ret = NULL;
-  for (struct Image *i = image_list.next; i != &image_list; i = i->next) {
-    if (i->chk == NULL && i->clus == (p - disk->data) / sz) return i;
+  for (struct Image *image = image_list.next; image != &image_list; image = image->next) {
+    if (image->chk == NULL && image->clus == (p - disk->data) / sz) return image;
+    int32_t diff = 0;
+    for (int i = 0; i < 3; ++i) {
+      diff += (chk[i] - image->chk[i]) * (chk[i] - image->chk[i]);
+    }
+    if (diff < best_diff) {
+      best_diff = diff;
+      ret = image;
+    }
   }
   return ret;
 }
