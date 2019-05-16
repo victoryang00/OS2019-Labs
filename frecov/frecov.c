@@ -133,7 +133,7 @@ bool handle_fdt_aux(void *c, int nr, bool force) {
       if (pos == 127) chk_sum = f[i].chk_sum;
       copy_name(f + i);
     } else {
-      if (f[i].file_size && pos != 127) {
+      if (f[i].attr != ATTR_DIRECTORY && pos != 127) {
         //size_t len = strlen(file_name + pos);
         //if (!strncmp(file_name + pos + len - 4, ".bmp", 4)) {
           uint32_t clus = ((uint32_t) f[i].fst_clus_HI << 16) | f[i].fst_clus_LO;
