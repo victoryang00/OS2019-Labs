@@ -168,10 +168,10 @@ bool handle_fdt_aux(void *c, int nr, bool force) {
             image->size = f[i].file_size;
             image->clus = clus;
 
-            image->next = image_list.next;
-            image->prev = &image_list;
-            image_list.next = image;
-            image->next->prev = image;
+            image->prev = image_list.prev;
+            image->next = &image_list;
+            image_list.prev = image;
+            image->prev->next = image;
           }
         }
       }
