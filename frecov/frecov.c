@@ -195,6 +195,7 @@ bool handle_bmp_aux(void *p, size_t sz) {
   CLog(FG_RED, "Image %s is best match", image->name);
 
   fwrite(p, sz, 1, image->file);
+  CLog(FG_RED, "Write OKOK");
   image->size -= sz;
   image->chk = ((int16_t *) (p + sz)) - 3;
   CLog(FG_RED, "Image %s has size %d left", image->name, (int) image->size);
