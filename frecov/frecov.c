@@ -207,7 +207,7 @@ void handle_image(struct Image *image, size_t sz) {
   // be careful: size_t is unsigned!
   while (image->size > sz) {
     struct DataSeg *next = NULL;
-    uint32_t best_diff = 300; // maximum threshold
+    uint32_t best_diff = 60; // maximum threshold
 
     uint8_t *rgb_last = ((uint8_t *) (clus + sz)) - 3;
     uint8_t i = rgb_last[0] >> 4;
