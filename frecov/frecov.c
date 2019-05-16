@@ -221,16 +221,31 @@ void handle_image(struct Image *image, size_t sz) {
     uint8_t i = rgb_last[0] >> 4;
     uint8_t j = rgb_last[1] >> 4;
     uint8_t k = rgb_last[2] >> 4;
-    for (struct DataSeg *dp = bmp_list[i][j][k].next; dp != &bmp_list[i][j][k]; dp = dp->next) {
-      if (image->size > (sz << 1) && dp->mark) continue;
-      uint8_t *rgb_next = (uint8_t *) dp->head;
-      uint32_t diff = 0;
-      for (int i = 0; i < 3; ++i) {
-        diff += (rgb_last[i] - rgb_next[i]) * (rgb_last[i] - rgb_next[i]);
-      }
-      if (diff < best_diff) {
-        best_diff = diff;
-        next = dp;
+
+    uint8_t il = i == 0 ? i : i - 1;
+    uint8_t jl = j == 0 ? j : j - 1;
+    uint8_t kl = k == 0 ? k : k - 1;
+    uint8_t ir = i == 15 ? i : i + 1;
+    uint8_t jr = j == 15 ? j : j + 1;
+    uint8_t kr = k == 15 ? k : k + 1;
+
+    for (i = il; i <= ir; ++i) {
+      for (j = jl; j <= jr; ++j) {
+        for (k = kl; k <= kr; ++j) {
+          for (struct DataSeg *dp = bmp_list[i][j][k].next; dp != &bmp_list[i][j][k]; dp = dp->next) {
+            if (image->size > (sz << 1) && dp->mark) continue;
+
+            uint8_t *rgb_next = (uint8_t *) dp->head;
+            uint32_t diff = 0;
+            for (int i = 0; i < 3; ++i) {
+              diff += (rgb_last[i] - rgb_next[i]) * (rgb_last[i] - rgb_next[i]);
+            }
+            if (diff < best_diff) {
+              best_diff = diff;
+              next = dp;
+            }
+          }
+        }
       }
     }
 
