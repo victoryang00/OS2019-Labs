@@ -149,6 +149,7 @@ bool handle_fdt_aux(void *c, int nr, bool force) {
             image->size = f[i].file_size;
             image->clus = clus;
             image->file = fopen(image->name, "w");
+            Assert(image->file, "fopen failed for image %s", image->name);
             image->chk  = NULL;
 
             image->next = image_list.next;
@@ -192,10 +193,8 @@ void handle_bmp(void *p, size_t sz) {
 bool handle_bmp_aux(void *p, size_t sz) {
   struct Image *image = find_best_match(p, sz);
   if (!image) return false;
-  CLog(FG_RED, "Image %s is best match", image->name);
 
   fwrite(p, sz, 1, image->file);
-  CLog(FG_RED, "Write OKOK");
   image->size -= sz;
   image->chk = ((int16_t *) (p + sz)) - 3;
   CLog(FG_RED, "Image %s has size %d left", image->name, (int) image->size);
