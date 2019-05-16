@@ -210,7 +210,7 @@ struct Image *find_best_match(void *p, size_t sz) {
   int32_t best_diff = 0;
   struct Image *ret = NULL;
   for (struct Image *image = image_list.next; image != &image_list; image = image->next) {
-    CLog(FG_RED, "image at %x", (int) ((void *)image - disk->head));
+    CLog(FG_RED, "image %s", image->name);
     if (!image->chk && image->clus == clus) return image;
     
     int32_t diff = 0;
