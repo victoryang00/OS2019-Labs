@@ -38,6 +38,7 @@ void recover_images() {
   }
   image_list.prev = &image_list;
   image_list.next = &image_list;
+  Log("init ok");
 
   size_t clusz = (size_t) disk->mbr->BPB_BytsPerSec * disk->mbr->BPB_SecPerClus;
   int nr_clu = clusz / 32;
