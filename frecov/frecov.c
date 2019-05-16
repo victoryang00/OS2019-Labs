@@ -185,10 +185,10 @@ bool handle_fdt_aux(void *c, int nr, bool force) {
 
 void handle_bmp(void *p) {
   if (!strncmp((char *)p, "BM", 2)) return;
-  Log("bmp seg at offset %x", (int) (p - disk->head));
   int i = ((int8_t *)p)[0] >> 4;
   int j = ((int8_t *)p)[1] >> 4;
   int k = ((int8_t *)p)[2] >> 4;
+  Log("belongs to %d %d %d", i, j, k);
 
   struct DataSeg *d = malloc(sizeof(struct DataSeg));
   d->head = p;
