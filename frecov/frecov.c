@@ -202,11 +202,11 @@ void handle_image(struct Image *image, size_t sz) {
   Assert(image->file, "fopen failed for image %s", image->name);
 
   void *clus = disk->data + sz * (image->clus - disk->mbr->BPB_RootClus);
+  Log("clus at %x", (int) (clus - disk->head));
   fwrite(image->file, sz, 1, clus);
 
   // be careful: size_t is unsigned!
   while (image->size > sz) {
-    Log("image %s has %d left", image->name, (int) image->size);
     struct DataSeg *next = NULL;
     uint32_t best_diff = 300; // maximum threshold
 
