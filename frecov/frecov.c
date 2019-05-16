@@ -28,16 +28,14 @@ int main(int argc, char *argv[]) {
 void recover_images() {
   fdt_list.prev = &fdt_list;
   fdt_list.next = &fdt_list;
-  Log("init ok");
   for (int i = 0; i < 16; ++i) {
     for (int j = 0; j < 16; ++j) {
-      for (int k = 0; j < 16; ++k) {
+      for (int k = 0; k < 16; ++k) {
         bmp_list[i][j][k].prev = &bmp_list[i][j][k];
         bmp_list[i][j][k].next = &bmp_list[i][j][k];
       }
     }
   }
-  Log("init ok");
   image_list.prev = &image_list;
   image_list.next = &image_list;
 
