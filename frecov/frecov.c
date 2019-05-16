@@ -213,6 +213,7 @@ struct Image *find_best_match(void *p, size_t sz) {
     CLog(FG_RED, "image %s", image->name);
     if (!image->chk && image->clus == clus) return image;
     
+    CLog(FG_RED, "NOT PERFECT");
     int32_t diff = 0;
     for (int i = 0; i < 3; ++i) {
       diff += (chk[i] - image->chk[i]) * (chk[i] - image->chk[i]);
@@ -221,6 +222,7 @@ struct Image *find_best_match(void *p, size_t sz) {
       best_diff = diff;
       ret = image;
     }
+    CLog(FG_RED, "end");
   }
   return ret;
 }
