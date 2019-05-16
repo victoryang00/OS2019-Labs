@@ -47,7 +47,7 @@ void recover_images() {
       case TYPE_FDT:
         handle_fdt(p, nr_clu, false);
       case TYPE_BMP:
-        handle_bmp(p);
+        handle_bmp(p, clusz);
         break;
       default:
         break;
@@ -111,6 +111,7 @@ void handle_fdt(void *c, int nr, bool force) {
     //CLog(FG_BLUE, "fdt found at offset %x", (int) (c - disk->head));
     struct DataSeg *d = malloc(sizeof(struct DataSeg));
     d->head = c;
+    d->mark = false;
     d->next = fdt_list.next;
     d->prev = &fdt_list;
     fdt_list.next = d;
@@ -183,7 +184,7 @@ bool handle_fdt_aux(void *c, int nr, bool force) {
   return true;
 }
 
-void handle_bmp(void *p) {
+void handle_bmp(void *p, size_t sz) {
   if (!strncmp((char *)p, "BM", 2)) return;
   uint8_t i = ((uint8_t *)p)[0] >> 4;
   uint8_t j = ((uint8_t *)p)[1] >> 4;
@@ -191,6 +192,13 @@ void handle_bmp(void *p) {
 
   struct DataSeg *d = malloc(sizeof(struct DataSeg));
   d->head = p;
+  d->mark = true;
+  for (int i = 0; i < 3; ++i) {
+    if ((((uint8_t *)(p + sz) - 3))[i] != 0) {
+      d->mark = false;
+      break;
+    }
+  }
   d->next = bmp_list[i][j][k].next;
   d->prev = &bmp_list[i][j][k];
   bmp_list[i][j][k].next = d;
@@ -214,6 +222,7 @@ void handle_image(struct Image *image, size_t sz) {
     uint8_t j = rgb_last[1] >> 4;
     uint8_t k = rgb_last[2] >> 4;
     for (struct DataSeg *dp = bmp_list[i][j][k].next; dp != &bmp_list[i][j][k]; dp = dp->next) {
+      if (image->size > (sz << 1) && dp->mark) continue;
       uint8_t *rgb_next = (uint8_t *) dp->head;
       uint32_t diff = 0;
       for (int i = 0; i < 3; ++i) {

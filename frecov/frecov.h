@@ -22,6 +22,7 @@
 
 struct DataSeg {
   void *head;
+  bool mark;
   struct DataSeg *prev;
   struct DataSeg *next;
 };
@@ -46,7 +47,7 @@ void recover_images();
 int get_cluster_type(void *, int);
 void handle_fdt(void *, int, bool);
 bool handle_fdt_aux(void *, int, bool);
-void handle_bmp(void *);
+void handle_bmp(void *, size_t);
 void handle_image(struct Image *, size_t);
 
 #endif
