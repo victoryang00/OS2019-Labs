@@ -28,6 +28,7 @@ int main(int argc, char *argv[]) {
 void recover_images() {
   fdt_list.prev = &fdt_list;
   fdt_list.next = &fdt_list;
+  Log("init ok");
   for (int i = 0; i < 16; ++i) {
     for (int j = 0; j < 16; ++j) {
       for (int k = 0; j < 16; ++k) {
@@ -36,9 +37,9 @@ void recover_images() {
       }
     }
   }
+  Log("init ok");
   image_list.prev = &image_list;
   image_list.next = &image_list;
-  Log("init ok");
 
   size_t clusz = (size_t) disk->mbr->BPB_BytsPerSec * disk->mbr->BPB_SecPerClus;
   int nr_clu = clusz / 32;
