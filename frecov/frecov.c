@@ -192,6 +192,7 @@ void handle_bmp(void *p, size_t sz) {
 bool handle_bmp_aux(void *p, size_t sz) {
   struct Image *image = find_best_match(p, sz);
   if (!image) return false;
+  CLog(FG_RED, "Image %s is best match", image->name);
 
   fwrite(p, sz, 1, image->file);
   image->size -= sz;
