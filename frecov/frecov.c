@@ -185,10 +185,9 @@ bool handle_fdt_aux(void *c, int nr, bool force) {
 
 void handle_bmp(void *p) {
   if (!strncmp((char *)p, "BM", 2)) return;
-  int i = ((int8_t *)p)[0] >> 4;
-  int j = ((int8_t *)p)[1] >> 4;
-  int k = ((int8_t *)p)[2] >> 4;
-  Log("belongs to %d %d %d", i, j, k);
+  uint8_t i = ((uint8_t *)p)[0] >> 4;
+  uint8_t j = ((uint8_t *)p)[1] >> 4;
+  uint8_t k = ((uint8_t *)p)[2] >> 4;
 
   struct DataSeg *d = malloc(sizeof(struct DataSeg));
   d->head = p;
@@ -208,15 +207,15 @@ void handle_image(struct Image *image, size_t sz) {
   // be careful: size_t is unsigned!
   while (image->size > sz) {
     struct DataSeg *next = NULL;
-    int32_t best_diff = 300; // maximum threshold
+    uint32_t best_diff = 300; // maximum threshold
 
-    int8_t *rgb_last = ((int8_t *) (clus + sz)) - 3;
-    int i = rgb_last[0] >> 4;
-    int j = rgb_last[1] >> 4;
-    int k = rgb_last[2] >> 4;
+    uint8_t *rgb_last = ((uint8_t *) (clus + sz)) - 3;
+    uint8_t i = rgb_last[0] >> 4;
+    uint8_t j = rgb_last[1] >> 4;
+    uint8_t k = rgb_last[2] >> 4;
     for (struct DataSeg *dp = bmp_list[i][j][k].next; dp != &bmp_list[i][j][k]; dp = dp->next) {
-      int8_t *rgb_next = (int8_t *) dp->head;
-      int32_t diff = 0;
+      uint8_t *rgb_next = (uint8_t *) dp->head;
+      uint32_t diff = 0;
       for (int i = 0; i < 3; ++i) {
         diff += (rgb_last[i] - rgb_next[i]) * (rgb_last[i] - rgb_next[i]);
       }
