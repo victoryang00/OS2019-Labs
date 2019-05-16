@@ -210,7 +210,6 @@ bool handle_bmp_aux(void *p, size_t sz) {
   } else {
     image->size -= sz;
     image->chk = ((int16_t *) (p + sz)) - 3;
-    CLog(FG_RED, "Image %s has size %d left", image->name, (int) image->size);
   }
   return true;
 }
