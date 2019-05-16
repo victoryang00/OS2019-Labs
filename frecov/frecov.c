@@ -173,6 +173,7 @@ void handle_bmp(void *p, size_t sz) {
     d->prev = &bmp_list;
     bmp_list.next = d;
     d->next->prev = d;
+    CLog(FG_RED, "bmp added!");
   }
 
   bool succ = true;
