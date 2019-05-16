@@ -202,8 +202,7 @@ void handle_image(struct Image *image, size_t sz) {
   Assert(image->file, "fopen failed for image %s", image->name);
 
   void *clus = disk->data + sz * (image->clus - disk->mbr->BPB_RootClus);
-  Log("clus at %x", (int) (clus - disk->head));
-  fwrite(image->file, sz, 1, clus);
+  fwrite(clus, sz, 1, image->file);
 
   // be careful: size_t is unsigned!
   while (image->size > sz) {
@@ -233,7 +232,7 @@ void handle_image(struct Image *image, size_t sz) {
     free(next);
 
     image->size -= sz;
-    fwrite(image->file, sz, 1, clus);
+    fwrite(clus, sz, 1, image->file);
   }
   fclose(image->file);
 
