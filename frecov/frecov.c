@@ -2,7 +2,13 @@
 
 static struct Disk *disk;
 static struct DataSeg fdt_list = {
-  NULL, NULL, &fdt_list, &fdt_list
+  NULL, &fdt_list, &fdt_list
+};
+static struct DataSeg bmp_list = {
+  NULL, &bmp_list, &bmp_list
+};
+static struct Image image_list = {
+  "", 0, 0, NULL, NULL, &image_list, &image_list
 };
 
 int main(int argc, char *argv[]) {
@@ -27,7 +33,7 @@ void recover_images() {
       case TYPE_FDT:
         handle_fdt(p, nr_clu, false);
       case TYPE_BMP:
-        handle_bmp(p);
+        handle_bmp(p, clusz);
         break;
       default:
         break;
@@ -87,7 +93,6 @@ void handle_fdt(void *c, int nr, bool force) {
     //CLog(FG_BLUE, "fdt found at offset %x", (int) (c - disk->head));
     struct DataSeg *d = malloc(sizeof(struct DataSeg));
     d->head = c;
-    d->tail = NULL;
     d->next = fdt_list.next;
     d->prev = &fdt_list;
     fdt_list.next = d;
@@ -137,12 +142,22 @@ bool handle_fdt_aux(void *c, int nr, bool force) {
         size_t len = strlen(file_name + pos);
         if (!strncmp(file_name + pos + len - 4, ".bmp", 4)) {
           uint32_t clus = ((uint32_t) f[i].fst_clus_HI << 16) | f[i].fst_clus_LO;
-          printf("%x -> ", (int) ((void *) (f + i) - disk->head));
-          printf("%s, ", file_name + pos);
+          CLog(FG_GREEN, "%x -> ", (int) ((void *) (f + i) - disk->head));
+          CLog(FG_GREEN, "%s, ", file_name + pos);
           if (clus) {
-            printf("clus = %u\n", clus);
+            CLog(FG_GREEN, "clus = %u\n", clus);
+            struct Image *image = malloc(sizeof(struct Image));
+            sprintf(image->name, "recov/%s", file_name + pos);
+            image->size = f[i].file_size;
+            image->clus = clus;
+            image->file = fopen(image->name, "wb");
+
+            image->next = image_list.next;
+            image->prev = &image_list;
+            image_list.next = image;
+            image->next->prev = image;
           } else {
-            printf("deleted.\n");
+            CLog(FG_GREEN, "deleted.\n");
           }
         }
       }
@@ -154,6 +169,50 @@ bool handle_fdt_aux(void *c, int nr, bool force) {
   return true;
 }
 
-void handle_bmp(void *p) {
-  // TODO
+void handle_bmp(void *p, size_t sz) {
+  if (p) {
+    struct DataSeg *d = malloc(sizeof(struct DataSeg));
+    d->head = p;
+    d->next = bmp_list.next;
+    d->prev = &bmp_list;
+    bmp_list.next = d;
+    d->next->prev = d;
+  }
+
+  bool succ = true;
+  while (succ) {
+    succ = false;
+    for (struct DataSeg *d = bmp_list.next; d != &bmp_list; d = d->next) {
+      if (handle_bmp_aux(d)) {
+        d->prev->next = d->next;
+        d->next->prev = d->prev;
+        free(d);
+        succ = true;
+      }
+    }
+  }
+}
+bool handle_bmp_aux(void *p, size_t sz) {
+  struct Image *image = find_best_match(p, sz);
+  if (!image) return false;
+  fwrite(p, sz, 1, image->file);
+  image->size -= sz;
+  if (image->size < 0) {
+    output_image(image);
+    image->prev->next = image->next;
+    image->next->prev = image->prev;
+    free(image);
+  }
+  return true;
+}
+struct Image *find_best_match(void *p, size_t sz) {
+  struct Image *ret = NULL;
+  for (struct Image *i = image_list.next; i != &image_list; i = i->next) {
+    if (i->chk == NULL && i->clus == (p - disk->data) / sz) return i;
+  }
+  return ret;
+}
+void output_image(struct Image *image) {
+  printf("File %s OK!\n", image->name);
+  fclose(image->file);
 }

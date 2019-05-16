@@ -1,7 +1,9 @@
 #ifndef __FAT32_H__
 #define __FAT32_H__
 
+#include "frecov.h"
 #include <stdint.h>
+#include <stdio.h>
 
 struct MBR {
   // common BPB structure

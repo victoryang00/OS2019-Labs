@@ -6,6 +6,7 @@
 #include <unistd.h>
 #include <stdbool.h>
 #include <stdint.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/mman.h>
@@ -19,16 +20,17 @@
 
 struct DataSeg {
   void *head;
-  void *tail;
   struct DataSeg *prev;
   struct DataSeg *next;
 };
 
 struct Image {
   char name[128];
-  uint32_t cluster;
   size_t size;
-  struct BMP bmp;
+  int clus;
+  FILE *file;
+  int16_t *chk;
+  struct Image *prev;
   struct Image *next;
 };
 
@@ -40,8 +42,11 @@ enum ClusterTypes {
 
 void recover_images();
 int get_cluster_type(void *, int);
-void handle_bmp(void *);
 void handle_fdt(void *, int, bool);
 bool handle_fdt_aux(void *, int, bool);
+void handle_bmp(void *, size_t);
+bool handle_bmp_aux(void *, size_t);
+struct Image *find_best_match(void *, size_t);
+void output_image(struct Image *);
 
 #endif
