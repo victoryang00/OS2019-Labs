@@ -148,7 +148,7 @@ bool handle_fdt_aux(void *c, int nr, bool force) {
             sprintf(image->name, "recov/%s", file_name + pos);
             image->size = f[i].file_size;
             image->clus = clus;
-            image->file = fopen(image->name, "wb");
+            image->file = fopen(image->name, "w");
             image->chk  = NULL;
 
             image->next = image_list.next;
@@ -210,7 +210,7 @@ struct Image *find_best_match(void *p, size_t sz) {
   int32_t best_diff = 0;
   struct Image *ret = NULL;
   for (struct Image *image = image_list.next; image != &image_list; image = image->next) {
-    CLog(FG_RED, "image %s", image->name);
+    //CLog(FG_RED, "image %s", image->name);
     if (!image->chk) {
       if (image->clus == clus) return image;
       else continue;
