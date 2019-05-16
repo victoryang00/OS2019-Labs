@@ -48,6 +48,7 @@ void recover_images() {
   }
   handle_fdt(NULL, nr_clu, false);
   handle_fdt(NULL, nr_clu, true);
+  handle_bmp(NULL, clusz);
 }
 
 const char empty_entry[32] = {};
