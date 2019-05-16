@@ -19,6 +19,13 @@ int main(int argc, char *argv[]) {
   } else {
     disk = disk_load_fat(argv[1]);
     Log("image loaded at [%p, %p]", disk->head, disk->tail);
+
+    struct stat st = {};
+    if (stat(FOLDER, &st) == -1) {
+      mkdir(FOLDER, 0700);
+    }
+    Assert(stat(FOLDER, &st) != -1, "create recovery folder failed.");
+
     recover_images();
   }
   return 0;
@@ -145,7 +152,7 @@ bool handle_fdt_aux(void *c, int nr, bool force) {
           if (clus) {
             CLog(FG_GREEN, "%x -> %s, clus = %u", (int) ((void *) (f + i) - disk->head), file_name + pos, clus);
             struct Image *image = malloc(sizeof(struct Image));
-            sprintf(image->name, "./recov/%s", file_name + pos);
+            sprintf(image->name, FOLDER "/%s", file_name + pos);
             image->size = f[i].file_size;
             image->clus = clus;
             image->file = fopen(image->name, "w+");

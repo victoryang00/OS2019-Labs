@@ -18,6 +18,8 @@
 #include "bmp.h"
 #include "fat32.h"
 
+#define FOLDER "./recov"
+
 struct DataSeg {
   void *head;
   struct DataSeg *prev;
