@@ -206,7 +206,7 @@ void handle_image(struct Image *image, size_t sz) {
 
   // be careful: size_t is unsigned!
   while (image->size > sz) {
-    Log("image %s has %d left", image->name, image->size);
+    Log("image %s has %d left", image->name, (int) image->size);
     struct DataSeg *next = NULL;
     uint32_t best_diff = 300; // maximum threshold
 
