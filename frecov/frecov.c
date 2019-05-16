@@ -233,7 +233,6 @@ void handle_image(struct Image *image, size_t sz) {
       for (j = jl; j <= jr; ++j) {
         for (k = kl; k <= kr; ++k) {
           for (struct DataSeg *dp = bmp_list[i][j][k].next; dp != &bmp_list[i][j][k]; dp = dp->next) {
-            if (image->size > (sz << 1) && dp->mark) continue;
 
             uint8_t *rgb_next = (uint8_t *) dp->head;
             uint32_t diff = 0;
