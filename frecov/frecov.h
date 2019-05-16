@@ -46,9 +46,7 @@ void recover_images();
 int get_cluster_type(void *, int);
 void handle_fdt(void *, int, bool);
 bool handle_fdt_aux(void *, int, bool);
-void handle_bmp(void *, size_t);
-bool handle_bmp_aux(void *, size_t);
-struct Image *find_best_match(void *, size_t);
-void output_image(struct Image *);
+void handle_bmp(void *);
+void handle_image(struct Image *, size_t);
 
 #endif

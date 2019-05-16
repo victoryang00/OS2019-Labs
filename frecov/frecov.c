@@ -1,15 +1,9 @@
 #include "frecov.h"
 
 static struct Disk *disk;
-static struct DataSeg fdt_list = {
-  NULL, &fdt_list, &fdt_list
-};
-static struct DataSeg bmp_list = {
-  NULL, &bmp_list, &bmp_list
-};
-static struct Image image_list = {
-  "", 0, 0, NULL, NULL, &image_list, &image_list
-};
+static struct DataSeg fdt_list;
+static struct DataSeg bmp_list[16][16][16];
+static struct Image image_list;
 
 int main(int argc, char *argv[]) {
   if (argc != 2) {
@@ -32,6 +26,19 @@ int main(int argc, char *argv[]) {
 }
 
 void recover_images() {
+  fdt_list.prev = &fdt_list;
+  fdt_list.next = &fdt_list;
+  for (int i = 0; i < 16; ++i) {
+    for (int j = 0; j < 16; ++j) {
+      for (int k = 0; j < 16; ++k) {
+        bmp_list[i][j][k].prev = &bmp_list[i][j][k];
+        bmp_list[i][j][k].next = &bmp_list[i][j][k];
+      }
+    }
+  }
+  image_list.prev = &image_list;
+  image_list.next = &image_list;
+
   size_t clusz = (size_t) disk->mbr->BPB_BytsPerSec * disk->mbr->BPB_SecPerClus;
   int nr_clu = clusz / 32;
 
@@ -40,7 +47,7 @@ void recover_images() {
       case TYPE_FDT:
         handle_fdt(p, nr_clu, false);
       case TYPE_BMP:
-        handle_bmp(p, clusz);
+        handle_bmp(p);
         break;
       default:
         break;
@@ -48,7 +55,10 @@ void recover_images() {
   }
   handle_fdt(NULL, nr_clu, false);
   handle_fdt(NULL, nr_clu, true);
-  handle_bmp(NULL, clusz);
+
+  for (struct Image *image = image_list.next; image != &image_list; image = image->next) {
+    handle_image(image, clusz);
+  }
 }
 
 const char empty_entry[32] = {};
@@ -157,9 +167,6 @@ bool handle_fdt_aux(void *c, int nr, bool force) {
             sprintf(image->name, FOLDER "/%s", file_name + pos);
             image->size = f[i].file_size;
             image->clus = clus;
-            image->file = fopen(image->name, "w+");
-            Assert(image->file, "fopen failed for image %s", image->name);
-            image->chk  = NULL;
 
             image->next = image_list.next;
             image->prev = &image_list;
@@ -176,70 +183,62 @@ bool handle_fdt_aux(void *c, int nr, bool force) {
   return true;
 }
 
-void handle_bmp(void *p, size_t sz) {
-  if (p) {
-    struct DataSeg *d = malloc(sizeof(struct DataSeg));
-    d->head = p;
-    d->next = bmp_list.next;
-    d->prev = &bmp_list;
-    bmp_list.next = d;
-    d->next->prev = d;
-  }
+void handle_bmp(void *p) {
+  if (!strncpy((char *)p, "BM", 2)) return;
+  int i = ((int8_t *)p)[0] / 16;
+  int j = ((int8_t *)p)[1] / 16;
+  int k = ((int8_t *)p)[2] / 16;
 
-  bool succ = true;
-  while (succ) {
-    succ = false;
-    for (struct DataSeg *d = bmp_list.next; d != &bmp_list; d = d->next) {
-      if (handle_bmp_aux(d->head, sz)) {
-        d->prev->next = d->next;
-        d->next->prev = d->prev;
-        free(d);
-        succ = true;
-        break;
+  struct DataSeg *d = malloc(sizeof(struct DataSeg));
+  d->head = p;
+  d->next = bmp_list[i][j][k].next;
+  d->prev = &bmp_list[i][j][k];
+  bmp_list[i][j][k].next = d;
+  d->next->prev = d;
+}
+
+void handle_image(struct Image *image, size_t sz) {
+  image->file = fopen(image->name, "w+");
+  Assert(image->file, "fopen failed for image %s", image->name);
+
+  void *clus = disk->data + sz * (image->clus - disk->mbr->BPB_RootClus);
+  fwrite(image->file, sz, 1, clus);
+
+  // be careful: size_t is unsigned!
+  while (image->size > sz) {
+    struct DataSeg *next = NULL;
+    int32_t best_diff = 300; // maximum threshold
+
+    int8_t *rgb_last = ((int8_t *) (clus + sz)) - 3;
+    int i = rgb_last[0] / 16;
+    int j = rgb_last[1] / 16;
+    int k = rgb_last[2] / 16;
+    for (struct DataSeg *dp = bmp_list[i][j][k].next; dp != &bmp_list[i][j][k]; dp = dp->next) {
+      int8_t *rgb_next = (int8_t *) dp->head;
+      int32_t diff = 0;
+      for (int i = 0; i < 3; ++i) {
+        diff += (rgb_last[i] - rgb_next[i]) * (rgb_last[i] - rgb_next[i]);
+      }
+      if (diff < best_diff) {
+        best_diff = diff;
+        next = dp;
       }
     }
-  }
-}
-bool handle_bmp_aux(void *p, size_t sz) {
-  struct Image *image = find_best_match(p, sz);
-  if (!image) return false;
 
-  fwrite(p, sz, 1, image->file);
-  if (image->size <= sz) {
-    output_image(image);
-  } else {
+    if (!next) break;
+    clus = next->head;
+    next->prev->next = next->next;
+    next->next->prev = next->prev;
+    free(next);
+
     image->size -= sz;
-    image->chk = ((int16_t *) (p + sz)) - 3;
+    fwrite(image->file, sz, 1, clus);
   }
-  return true;
-}
-struct Image *find_best_match(void *p, size_t sz) {
-  int clus = (p - disk->data) / sz + disk->mbr->BPB_RootClus;
-  int16_t *chk = (int16_t *) p;
-  int32_t best_diff = 300; // maximum threshold
-  struct Image *ret = NULL;
-  for (struct Image *image = image_list.next; image != &image_list; image = image->next) {
-    //CLog(FG_RED, "image %s", image->name);
-    if (!image->chk) {
-      if (image->clus == clus) return image;
-      else continue;
-    }
-    
-    int32_t diff = 0;
-    for (int i = 0; i < 3; ++i) {
-      diff += (chk[i] - image->chk[i]) * (chk[i] - image->chk[i]);
-    }
-    if (diff < best_diff) {
-      best_diff = diff;
-      ret = image;
-    }
-  }
-  return ret;
-}
-void output_image(struct Image *image) {
-  CLog(FG_YELLOW, "File %s OK!", image->name);
   fclose(image->file);
-  image->prev->next = image->next;
-  image->next->prev = image->prev;
-  free(image);
+
+  if (image->size <= sz) {
+    CLog(FG_YELLOW, "Image %s ready", image->name);
+  } else {
+    CLog(FG_RED, "Image %s failed", image->name);
+  }
 }
