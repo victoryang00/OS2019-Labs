@@ -231,7 +231,7 @@ void handle_image(struct Image *image, size_t sz) {
 
     for (i = il; i <= ir; ++i) {
       for (j = jl; j <= jr; ++j) {
-        for (k = kl; k <= kr; ++j) {
+        for (k = kl; k <= kr; ++k) {
           for (struct DataSeg *dp = bmp_list[i][j][k].next; dp != &bmp_list[i][j][k]; dp = dp->next) {
             if (image->size > (sz << 1) && dp->mark) continue;
 
