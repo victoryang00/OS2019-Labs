@@ -42,7 +42,6 @@ static _Context *os_trap(_Event ev, _Context *context) {
 
   bool holding = spinlock_holding(&os_trap_lock);
   if (holding) {
-    printf("[%d] trap in trap: %s\n", _cpu(), ev.msg);
     switch (ev.event) {
       case _EVENT_NULL:
         Panic("Null interrupt not allowed.\n");
