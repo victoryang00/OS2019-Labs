@@ -250,8 +250,8 @@ void handle_image(struct Image *image, size_t sz, int nr) {
 
   size_t cnt = (image->size - 1) / sz;
   for (size_t t = 0; t < cnt; ++t) {
-    uint8_t *rgb_down = y == 0 ? NULL : head + (y - 1) * w + x * 3;
-    uint8_t *rgb_left = (x == 0 || x >= info->width * 3) ? NULL : head + y * w + (x - 1) * 3;
+    uint8_t *rgb_down = y == 0 ? NULL : head + (y - 1) * w + x;
+    uint8_t *rgb_left = (x == 0 || x >= info->width * 3) ? NULL : head + y * w + x - 3;
     
     bool sequent_ok = false;
     if (get_cluster_type(clus, nr) == TYPE_BMP) {
