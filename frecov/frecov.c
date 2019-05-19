@@ -215,9 +215,8 @@ void handle_image(struct Image *image, size_t sz) {
   CLog(FG_GREEN, "Start searching for %s, total size %d", image->name, (int) image->size);
 
   void *clus = disk->data + sz * (image->clus - disk->mbr->BPB_RootClus);
-  struct BMP_Info *info = (struct BMP_Info *) (clus + sizeof(struct BMP_Header));
-  image->width = (int) info->width;
-  image->height = (int) info->height;
+  image->width = *((int32_t *) clus + 0x12);
+  image->height = *((int32_t *) clus + 0x16);
   Log("size: %d times %d", image->width, image->height);
   fwrite(clus, sz, 1, image->file);
 
