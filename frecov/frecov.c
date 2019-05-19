@@ -212,6 +212,8 @@ void handle_bmp(void *p, size_t sz) {
 }
 
 static inline uint32_t rgb_diff(uint8_t *a, uint8_t *b) {
+  Log("a: %x", (int)((void *) a - disk->head));
+  Log("b: %x", (int)((void *) b - disk->head));
   uint32_t ret = 0;
   for (int i = 0; i < 3; ++i) {
     // caution: a, b are unsigned.
