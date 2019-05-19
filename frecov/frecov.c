@@ -222,18 +222,7 @@ void handle_image(struct Image *image, size_t sz) {
   int row_cnt = ((24 * image->width + 31) >> 5) << 2;
 
   size_t complete_sz = 0;
-  do {
-    fwrite(clus, sz, 1, image->file);
-    complete_sz += sz;
-    clus += sz;
-  } while (complete_sz < image->size && get_cluster_type(clus, 32) == TYPE_BMP);
-
-  uint8_t *rgb_last = NULL;
-  if (complete_sz == sz) {
-    rgb_last = (uint8_t *) clus - 3;
-  } else {
-    rgb_last = (uint8_t *) clus - row_cnt;
-  }
+  uint8_t *rgb_last = rgb_last = (uint8_t *) clus - 3;
 
   while (complete_sz < image->size) {
     struct DataSeg *next = NULL;
