@@ -272,12 +272,12 @@ void handle_image(struct Image *image, size_t sz) {
     //next->next->prev = next->prev;
     //free(next);
 
-    image->size -= sz;
     fwrite(clus, sz, 1, image->file);
+    complete_sz += sz;
   }
   fclose(image->file);
 
-  if (image->size <= sz) {
+  if (complete_sz <= image->size) {
     CLog(FG_YELLOW, "Image %s ready", image->name);
   } else {
     CLog(FG_RED, "Image %s failed, %d size left", image->name, (int) (image->size - sz));
