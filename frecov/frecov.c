@@ -243,15 +243,15 @@ void handle_image(struct Image *image, size_t sz, int nr) {
   ptr += sz;
   clus += sz;
 
-  uint8_t *data = (uint8_t *) (bmp + offset);
-  size_t delta = (sz - offset) / 8;
+  uint8_t *data = (uint8_t *)bmp + offset;
+  size_t delta = sz / 8 - offset;
   size_t x = delta % w;
   size_t y = delta / w;
 
   size_t cnt = (image->size - 1) / sz;
   for (size_t t = 0; t < cnt; ++t) {
     uint8_t *rgb_down = y == 0 ? NULL : data + (y - 1) * w + x;
-    uint8_t *rgb_left = (x < 3 || x >= info->width * 3) ? NULL : (uint8_t *) (bmp + sz) - 3;
+    uint8_t *rgb_left = (x < 3 || x >= info->width * 3) ? NULL : data + y * w + x - 3;
     
     bool sequent_ok = false;
     if (get_cluster_type(clus, nr) == TYPE_BMP) {
