@@ -216,7 +216,6 @@ static inline uint32_t rgb_diff(uint8_t *a, uint8_t *b) {
   for (int i = 0; i < 3; ++i) {
     // caution: a, b are unsigned.
     uint8_t d = a[i] > b[i] ? a[i] - b[i] : b[i] - a[i];
-    CLog(FG_BLUE, "%d: (%x - %x) = %d", i, (int)a[i], (int)b[i], (int)d);
     ret += (uint32_t) d * (uint32_t) d;
   }
   return ret;
@@ -309,7 +308,7 @@ void handle_image(struct Image *image, size_t sz, int nr) {
         memcpy(ptr, clus, sz);
         ptr += sz;
         clus += sz;
-        x += sz / 8;
+        x += sz;
         while (x > w) x -= w, y += 1;
       }
     }
