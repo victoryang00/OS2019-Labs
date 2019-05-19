@@ -297,6 +297,7 @@ void handle_image(struct Image *image, size_t sz, int nr) {
 
     if (!clus) {
       CLog(FG_RED, "image %s failed", image->name);
+      break;
     } else {
       if (t == cnt - 1) {
         memcpy(ptr, clus, image->size - cnt * sz);
@@ -304,8 +305,11 @@ void handle_image(struct Image *image, size_t sz, int nr) {
         memcpy(ptr, clus, sz);
         ptr += sz;
         clus += sz;
-        x = (x + sz / 8) % w;
-        y = y + sz / 8 / w;
+        x += sz / 8;
+        while (x > w) {
+          x -= w;
+          y += 1;
+        }
       }
     }
   }
