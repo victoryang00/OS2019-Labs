@@ -245,9 +245,10 @@ void handle_image(struct Image *image, size_t sz) {
       int32_t d = (int8_t) rgb_last[i] - (int8_t) rgb_seqt[i];
       diff_seqt += d * d;
     }
-    if (diff_seqt < 50) {
+    if (get_cluster_type(clus + sz, 1) == TYPE_BMP && diff_seqt < 50) {
       clus += sz; 
     } else {
+      CLog(FG_RED, "disconnected data segment at offset %x", (int) (clus + sz - disk->head));
       uint8_t i = rgb_last[0] >> 4;
       uint8_t j = rgb_last[1] >> 4;
       uint8_t k = rgb_last[2] >> 4;
