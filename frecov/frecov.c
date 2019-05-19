@@ -255,14 +255,12 @@ void handle_image(struct Image *image, size_t sz, int nr) {
   for (size_t t = 0; t < cnt; ++t) {
     uint8_t *rgb_down = y == 0 ? NULL : data + (y - 1) * w + x;
     uint8_t *rgb_left = (x < 3 || x >= info->width * 3 - 3) ? NULL : data + y * w + x - 3;
-    uint8_t *rgb_both = (rgb_down && rgb_left) ? data + (y - 1) * w + x - 3 : NULL;
     
     bool sequent_ok = false;
     if (get_cluster_type(clus, nr) == TYPE_BMP) {
       uint32_t diff_down = rgb_down ? rgb_diff(rgb_down, (uint8_t *)clus) : 0;
       uint32_t diff_left = rgb_left ? rgb_diff(rgb_left, (uint8_t *)clus) : 0;
-      uint32_t diff_both = rgb_both ? rgb_diff(rgb_left, (uint8_t *)clus) : 0;
-      if (diff_down <= 300 && diff_left <= 300 && diff_both <= 450) {
+      if (diff_down <= 900 && diff_left <= 300) {
         sequent_ok = true;
 
         uint8_t i = ((uint8_t *)clus)[0] >> 4;
@@ -285,7 +283,6 @@ void handle_image(struct Image *image, size_t sz, int nr) {
       clus = NULL;
       uint32_t best_diff_down = 3000; // maximum threshold
       uint32_t best_diff_left = 3000;
-      uint32_t best_diff_both = 3000;
       struct DataSeg *next = NULL;
 
       uint8_t il = 0x0, jl = 0x0, kl = 0x0;
@@ -299,12 +296,9 @@ void handle_image(struct Image *image, size_t sz, int nr) {
 
               uint32_t diff_down = rgb_down ? rgb_diff(rgb_down, (uint8_t *)dp->head) : 0;
               uint32_t diff_left = rgb_left ? rgb_diff(rgb_left, (uint8_t *)dp->head) : 0;
-              uint32_t diff_both = rgb_both ? rgb_diff(rgb_both, (uint8_t *)dp->head) : 0;
-              if (diff_down <= best_diff_down && diff_left <= best_diff_left
-                  && diff_both <= best_diff_both) {
+              if (diff_down <= best_diff_down && diff_left <= best_diff_left) {
                 best_diff_down = diff_down;
                 best_diff_left = diff_left;
-                best_diff_both = diff_both;
                 next = dp;
               }
             }
