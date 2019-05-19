@@ -308,6 +308,6 @@ void handle_image(struct Image *image, size_t sz, int nr) {
 #endif
 
   free(data);
-  CLog(FD_GREEN, "<<< finished processing image %s", image->name);
+  CLog(FG_GREEN, "<<< finished processing image %s", image->name);
 }
 
