@@ -301,5 +301,6 @@ void handle_image(struct Image *image, size_t sz, int nr) {
   fwrite(data, image->size, 1, image->file);
   fclose(image->file);
 #endif
+  free(data);
 }
 
