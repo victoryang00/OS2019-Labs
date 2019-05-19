@@ -302,9 +302,7 @@ void handle_image(struct Image *image, size_t sz, int nr) {
 
               uint32_t diff_score = 0;
               if (rgb_down) {
-                int lim = 10;
-                if (w / 3 < lim) lim = w / 3;
-                for (int dx = 0; dx < lim; ++dx) {
+                for (int dx = 0; dx < 3; ++dx) {
                   diff_score += rgb_diff(rgb_down + dx * 3, (uint8_t *)clus + dx * 3);
                 }
               } else {
