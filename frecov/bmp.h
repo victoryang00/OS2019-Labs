@@ -10,7 +10,7 @@ struct BMP_Header {
   uint16_t reserved1;
   uint16_t reserved2;
   uint32_t offset;
-};
+} __attribute__((packed));
 
 struct BMP_Info {
   uint32_t size;
@@ -24,7 +24,7 @@ struct BMP_Info {
   int32_t  resolution_y;
   uint32_t color_used;
   uint32_t color_important;
-};
+} __attribute__((packed));
 
 struct BMP {
   struct BMP_Header header;
