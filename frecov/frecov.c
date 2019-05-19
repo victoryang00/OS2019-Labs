@@ -292,11 +292,15 @@ void handle_image(struct Image *image, size_t sz, int nr) {
     if (!clus) {
       CLog(FG_RED, "image %s failed", image->name);
     } else {
-      memcpy(ptr, clus, sz);
-      ptr += sz;
-      clus += sz;
-      x = (x + sz) % w;
-      y = y + sz / w;
+      if (t == cnt - 1) {
+        memcpy(ptr, clus, image->size - cnt * sz);
+      } else {
+        memcpy(ptr, clus, sz);
+        ptr += sz;
+        clus += sz;
+        x = (x + sz) % w;
+        y = y + sz / w;
+      }
     }
   }
   
