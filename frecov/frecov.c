@@ -221,12 +221,19 @@ void handle_image(struct Image *image, size_t sz) {
   if (image->height < 0) image->height = -image->height;
   int row_cnt = ((24 * image->width + 31) >> 5) << 2;
 
-  fwrite(clus, sz, 1, image->file);
-  size_t complete_sz = sz;
-  uint8_t *rgb_last = (uint8_t *) (clus + sz) - 3;
+  size_t complete_sz = 0;
+  while (get_cluster_type(clus, 1) == TYPE_BMP) {
+    fwrite(clus, sz, 1, image->file);
+    complete_sz += sz;
+    clus += sz;
+  }
 
-  fclose(image->file);
-  exit(0);
+  uint8_t *rgb_last = NULL;
+  if (complete_sz == sz) {
+    rgb_last = (uint8_t *) (clus + sz) - 3;
+  } else {
+    rgb_last = (uint8_t *) (clus + sz) - row_cnt;
+  }
 
   while (complete_sz < image->size) {
     struct DataSeg *next = NULL;
