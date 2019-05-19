@@ -238,11 +238,12 @@ void handle_image(struct Image *image, size_t sz) {
         for (k = kl; k <= kr; ++k) {
           for (struct DataSeg *dp = bmp_list[i][j][k].next; dp != &bmp_list[i][j][k]; dp = dp->next) {
             if (dp->holder == image) continue;
+            if (image->size > (sz << 1) && dp->eof) continue;
 
             uint8_t *rgb_next = (uint8_t *) dp->head;
             uint32_t diff = 0;
             for (int i = 0; i < 3; ++i) {
-              diff += (rgb_last[i] - rgb_next[i]) * (rgb_last[i] - rgb_next[i]);
+              diff += ((int) rgb_last[i] - rgb_next[i]) * ((int) rgb_last[i] - rgb_next[i]);
             }
             if (diff <= best_diff) {
               best_diff = diff;
