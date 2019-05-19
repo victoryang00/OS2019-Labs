@@ -241,7 +241,7 @@ void handle_image(struct Image *image, size_t sz, int nr) {
   ptr += sz;
   clus += sz;
 
-  uint8_t *head = (uint8_t *) (head + offset);
+  uint8_t *head = (uint8_t *) (data + offset);
   size_t delta = (sz - offset) / 8;
   size_t x = delta % w;
   size_t y = delta / w;
