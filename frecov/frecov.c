@@ -111,7 +111,8 @@ void handle_fdt(void *c, int nr, bool force) {
     //CLog(FG_BLUE, "fdt found at offset %x", (int) (c - disk->head));
     struct DataSeg *d = malloc(sizeof(struct DataSeg));
     d->head = c;
-    d->mark = false;
+    d->eof = false;
+    d->holder = NULL;
     d->next = fdt_list.next;
     d->prev = &fdt_list;
     fdt_list.next = d;
@@ -192,10 +193,11 @@ void handle_bmp(void *p, size_t sz) {
 
   struct DataSeg *d = malloc(sizeof(struct DataSeg));
   d->head = p;
-  d->mark = true;
+  d->eof  = true;
+  d->holder = NULL;
   for (int i = 0; i < 3; ++i) {
     if ((((uint8_t *)(p + sz) - 3))[i] != 0) {
-      d->mark = false;
+      d->eof = false;
       break;
     }
   }
@@ -235,7 +237,8 @@ void handle_image(struct Image *image, size_t sz) {
       for (j = jl; j <= jr; ++j) {
         for (k = kl; k <= kr; ++k) {
           for (struct DataSeg *dp = bmp_list[i][j][k].next; dp != &bmp_list[i][j][k]; dp = dp->next) {
-            if (image->size > (sz << 1) && dp->mark) continue;
+            if (dp->holder == image) continue;
+            if (image->size > (sz << 1) && dp->eof) continue;
 
             uint8_t *rgb_next = (uint8_t *) dp->head;
             uint32_t diff = 0;
@@ -252,6 +255,7 @@ void handle_image(struct Image *image, size_t sz) {
     }
 
     if (!next) break;
+    next->holder = image;
     clus = next->head;
     //next->prev->next = next->next;
     //next->next->prev = next->prev;

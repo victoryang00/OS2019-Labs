@@ -22,7 +22,8 @@
 
 struct DataSeg {
   void *head;
-  bool mark;
+  bool eof;
+  struct Image *holder;
   struct DataSeg *prev;
   struct DataSeg *next;
 };
