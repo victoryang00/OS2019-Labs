@@ -300,6 +300,7 @@ void handle_image(struct Image *image, size_t sz, int nr) {
               if (dp->holder == image) continue;
               if ((t == cnt - 1) ^ dp->eof) continue;
 
+              Log("before");
               uint32_t diff_score = 0;
               if (rgb_down) {
                 int cnt = 10;
@@ -310,6 +311,8 @@ void handle_image(struct Image *image, size_t sz, int nr) {
               } else {
                 diff_score = rgb_left ? rgb_diff(rgb_left, (uint8_t *)clus) : 0;
               }
+Log("OK");
+
               if (diff_score <= best_diff_score) {
                 best_diff_score = diff_score;
                 next = dp;
