@@ -216,8 +216,10 @@ static inline uint32_t rgb_diff(uint8_t *a, uint8_t *b) {
   for (int i = 0; i < 3; ++i) {
     // caution: a, b are unsigned.
     uint8_t d = a[i] > b[i] ? a[i] - b[i] : b[i] - a[i];
+    CLog(FG_BLUE, "%d: (%x - %x) = %d", i, (int)a[i], (int)b[i], (int)d);
     ret += (uint32_t) d * (uint32_t) d;
   }
+  exit(0);
   return ret;
 }
 void handle_image(struct Image *image, size_t sz, int nr) {
@@ -248,8 +250,8 @@ void handle_image(struct Image *image, size_t sz, int nr) {
 
   size_t cnt = (image->size - 1) / sz;
   for (size_t t = 0; t < cnt; ++t) {
-    uint8_t *rgb_down = y == 0 ? NULL : head + (y - 1) * w + x;
-    uint8_t *rgb_left = (x == 0 || x >= info->width * 3) ? NULL : head + y * w + x - 3;
+    uint8_t *rgb_down = y == 0 ? NULL : head + (y - 1) * w + x * 3;
+    uint8_t *rgb_left = (x == 0 || x >= info->width * 3) ? NULL : head + y * w + (x - 1) * 3;
     
     bool sequent_ok = false;
     if (get_cluster_type(clus, nr) == TYPE_BMP) {
