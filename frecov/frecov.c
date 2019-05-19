@@ -307,9 +307,11 @@ void handle_image(struct Image *image, size_t sz, int nr) {
         }
       }
 
-      clus = next->head;
-      CLog(FG_YELLOW, "picked up segment at %x", (int) (clus - disk->head));
-      next->holder = image;
+      if (next) {
+        clus = next->head;
+        CLog(FG_YELLOW, "picked up segment at %x", (int) (clus - disk->head));
+        next->holder = image;
+      }
     }
 
     if (!clus) {
