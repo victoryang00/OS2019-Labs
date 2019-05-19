@@ -293,6 +293,7 @@ void handle_image(struct Image *image, size_t sz, int nr) {
             for (struct DataSeg *dp = bmp_list[i][j][k].next; dp != &bmp_list[i][j][k]; dp = dp->next) {
               if (dp->holder == image) continue;
               if ((t == cnt - 1) ^ dp->eof) continue;
+              if (w % 3 && w - x < sz && ((uint8_t *)dp->head)[w - x]) continue;
 
               uint32_t diff_down = rgb_down ? rgb_diff(rgb_down, (uint8_t *)dp->head) : 0;
               uint32_t diff_left = rgb_left ? rgb_diff(rgb_left, (uint8_t *)dp->head) : 0;
