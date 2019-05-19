@@ -233,6 +233,8 @@ void handle_image(struct Image *image, size_t sz, int nr) {
   size_t w = (size_t) (((24 * info->width + 31) >> 5) << 2);
 
   void *data = malloc(image->size);
+  Assert(data, "malloc failed");
+
   void *ptr = data;
   memcpy(ptr, clus, sz);
   ptr += sz;
