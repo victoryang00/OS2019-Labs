@@ -196,8 +196,8 @@ void handle_bmp(void *p, size_t sz) {
   d->head = p;
   d->eof  = true;
   d->holder = NULL;
-  for (int i = 0; i < 3; ++i) {
-    if ((((uint8_t *)(p + sz) - 3))[i] != 0) {
+  for (int i = 0; i < 4; ++i) {
+    if ((((uint8_t *)(p + sz) - 4))[i] != 0) {
       d->eof = false;
       break;
     }
