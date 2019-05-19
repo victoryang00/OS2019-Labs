@@ -46,6 +46,7 @@ void recover_images() {
     switch (get_cluster_type(p, nr_clu)) {
       case TYPE_FDT:
         handle_fdt(p, nr_clu, false);
+        break;
       case TYPE_BMP:
         handle_bmp(p, clusz);
         break;
@@ -214,6 +215,10 @@ void handle_image(struct Image *image, size_t sz) {
   CLog(FG_GREEN, "Start searching for %s, total size %d", image->name, (int) image->size);
 
   void *clus = disk->data + sz * (image->clus - disk->mbr->BPB_RootClus);
+  struct BMP_Info *info = (struct BMP_Info *) (clus + sizeof(struct BMP_Header));
+  image->width = (int) info->width;
+  image->height = (int) info->height;
+  Log("size: %d times %d", image->width, image->height);
   fwrite(clus, sz, 1, image->file);
 
   // be careful: size_t is unsigned!
