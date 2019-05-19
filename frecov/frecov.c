@@ -260,9 +260,6 @@ void handle_image(struct Image *image, size_t sz, int nr) {
     if (get_cluster_type(clus, nr) == TYPE_BMP) {
       uint32_t diff_down = rgb_down ? rgb_diff(rgb_down, (uint8_t *)clus) : 0;
       uint32_t diff_left = rgb_left ? rgb_diff(rgb_left, (uint8_t *)clus) : 0;
-      Log("pos x=%d, y=%d", (int)x, (int)y);
-      Log("rgb down=%p, left=%p", rgb_down, rgb_left);
-      Log("diffs are %d %d", (int)diff_down, (int)diff_left);
       if (diff_down <= 300 && diff_left <= 300) {
         sequent_ok = true;
 
@@ -276,6 +273,8 @@ void handle_image(struct Image *image, size_t sz, int nr) {
           dp->next->prev = dp->prev;
           free(dp);
         }
+      } else {
+        CLog(FG_YELLOW, "diffs are %d %d", (int)diff_down, (int)diff_left);
       }
     }
 
