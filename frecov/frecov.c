@@ -263,7 +263,20 @@ void handle_image(struct Image *image, size_t sz, int nr) {
       Log("pos x=%d, y=%d", (int)x, (int)y);
       Log("rgb down=%p, left=%p", rgb_down, rgb_left);
       Log("diffs are %d %d", (int)diff_down, (int)diff_left);
-      sequent_ok = diff_down <= 300 && diff_left <= 300;
+      if (diff_down <= 300 && diff_left <= 300) {
+        sequent_ok = true;
+
+        uint8_t i = ((uint8_t *)clus)[0] >> 4;
+        uint8_t j = ((uint8_t *)clus)[1] >> 4;
+        uint8_t k = ((uint8_t *)clus)[2] >> 4;
+        struct DataSeg *dp = bmp_list[i][j][k].next;
+        while (dp != &bmp_list[i][j][k] && dp->head != clus) dp = dp->next;
+        if (dp != &bmp_list[i][j][k]) {
+          dp->prev->next = dp->next;
+          dp->next->prev = dp->prev;
+          free(dp);
+        }
+      }
     }
 
     if (!sequent_ok) {
@@ -294,6 +307,7 @@ void handle_image(struct Image *image, size_t sz, int nr) {
         }
       }
 
+      CLog(FG_GREEN, "next is %p")
       clus = next->head;
       next->holder = image;
     }
