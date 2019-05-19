@@ -219,7 +219,7 @@ void handle_image(struct Image *image, size_t sz) {
   image->height = (int) *((int32_t *) (clus + 0x16));
   if (image->width  < 0) image->width  = -image->width;
   if (image->height < 0) image->height = -image->height;
-  int row_cnt = (3 * image->width - 1) / 4 + 1;
+  int row_cnt = ((3 * image->width - 1) / 4 + 1) * 4;
 
   fwrite(clus, sz, 1, image->file);
 
