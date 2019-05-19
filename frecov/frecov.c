@@ -239,55 +239,59 @@ void handle_image(struct Image *image, size_t sz) {
     struct DataSeg *next = NULL;
     uint32_t best_diff = 500; // maximum threshold
 
-    uint8_t i = rgb_last[0] >> 4;
-    uint8_t j = rgb_last[1] >> 4;
-    uint8_t k = rgb_last[2] >> 4;
+    uint8_t *rgb_seqt = (uint8_t *) (clus + sz);
+    uint32_t diff_seqt = 0;
+    for (int i = 0; i < 3; ++i) {
+      int32_t d = (int8_t) rgb_last[i] - (int8_t) rgb_seqt[i];
+      diff_seqt += d * d;
+    }
+    if (diff_seqt < 50) {
+      clus += sz; 
+    } else {
+      uint8_t i = rgb_last[0] >> 4;
+      uint8_t j = rgb_last[1] >> 4;
+      uint8_t k = rgb_last[2] >> 4;
 
-    //uint8_t il = ((rgb_last[0] & 0xf) < 0x9 && i > 0x0) ? i - 1 : i;
-    //uint8_t jl = ((rgb_last[1] & 0xf) < 0x9 && j > 0x0) ? j - 1 : j;
-    //uint8_t kl = ((rgb_last[2] & 0xf) < 0x9 && k > 0x0) ? k - 1 : k;
-    //uint8_t ir = ((rgb_last[0] & 0xf) > 0x7 && i < 0xf) ? i + 1 : i;
-    //uint8_t jr = ((rgb_last[1] & 0xf) > 0x7 && j < 0xf) ? j + 1 : j;
-    //uint8_t kr = ((rgb_last[2] & 0xf) > 0x7 && k < 0xf) ? k + 1 : k;
-    uint8_t il = 0x0, jl = 0x0, kl = 0x0;
-    uint8_t ir = 0xf, jr = 0xf, kr = 0xf;
+      uint8_t il = ((rgb_last[0] & 0xf) < 0x9 && i > 0x0) ? i - 1 : i;
+      uint8_t jl = ((rgb_last[1] & 0xf) < 0x9 && j > 0x0) ? j - 1 : j;
+      uint8_t kl = ((rgb_last[2] & 0xf) < 0x9 && k > 0x0) ? k - 1 : k;
+      uint8_t ir = ((rgb_last[0] & 0xf) > 0x7 && i < 0xf) ? i + 1 : i;
+      uint8_t jr = ((rgb_last[1] & 0xf) > 0x7 && j < 0xf) ? j + 1 : j;
+      uint8_t kr = ((rgb_last[2] & 0xf) > 0x7 && k < 0xf) ? k + 1 : k;
 
-    for (i = il; i <= ir; ++i) {
-      for (j = jl; j <= jr; ++j) {
-        for (k = kl; k <= kr; ++k) {
-          for (struct DataSeg *dp = bmp_list[i][j][k].next; dp != &bmp_list[i][j][k]; dp = dp->next) {
-            if (dp->holder == image) continue;
-            if ((image->size - complete_sz <= sz) && !dp->eof) continue;
-            if ((image->size - complete_sz > sz) && dp->eof) continue;
+      for (i = il; i <= ir; ++i) {
+        for (j = jl; j <= jr; ++j) {
+          for (k = kl; k <= kr; ++k) {
+            for (struct DataSeg *dp = bmp_list[i][j][k].next; dp != &bmp_list[i][j][k]; dp = dp->next) {
+              if (dp->holder == image) continue;
+              if ((image->size - complete_sz <= sz) && !dp->eof) continue;
+              if ((image->size - complete_sz > sz) && dp->eof) continue;
 
-            uint8_t *rgb_next = (uint8_t *) dp->head;
-            uint32_t diff = 0;
-            for (int i = 0; i < 3; ++i) {
-              int32_t d = (int8_t) rgb_last[i] - (int8_t) rgb_next[i];
-              diff += d * d;
-            }
-            if (diff <= best_diff) {
-              best_diff = diff;
-              next = dp;
+              uint8_t *rgb_next = (uint8_t *) dp->head;
+              uint32_t diff = 0;
+              for (int i = 0; i < 3; ++i) {
+                int32_t d = (int8_t) rgb_last[i] - (int8_t) rgb_next[i];
+                diff += d * d;
+              }
+              if (diff <= best_diff) {
+                best_diff = diff;
+                next = dp;
+              }
             }
           }
         }
       }
+      if (!next) break;
+      next->holder = image;
+      clus = next->head;
     }
-
-    if (!next) break;
-    next->holder = image;
-    clus = next->head;
-    rgb_last = ((uint8_t *) (clus + sz)) - row_cnt;
-    //next->prev->next = next->next;
-    //next->next->prev = next->prev;
-    //free(next);
 
     fwrite(clus, sz, 1, image->file);
     complete_sz += sz;
+    rgb_last = ((uint8_t *) (clus + sz)) - row_cnt;
   }
-  fclose(image->file);
 
+  fclose(image->file);
   if (complete_sz >= image->size) {
     CLog(FG_YELLOW, "Image %s ready", image->name);
   } else {

@@ -52,5 +52,6 @@ void handle_fdt(void *, int, bool);
 bool handle_fdt_aux(void *, int, bool);
 void handle_bmp(void *, size_t);
 void handle_image(struct Image *, size_t);
+void *get_next_cluster(uint8_t *);
 
 #endif
