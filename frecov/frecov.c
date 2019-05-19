@@ -217,7 +217,10 @@ void handle_image(struct Image *image, size_t sz) {
   void *clus = disk->data + sz * (image->clus - disk->mbr->BPB_RootClus);
   image->width  = (int) *((int32_t *) (clus + 0x12));
   image->height = (int) *((int32_t *) (clus + 0x16));
-  Log("size: %d times %d", image->width, image->height);
+  if (image->width  < 0) image->width  = -image->width;
+  if (image->height < 0) image->height = -image->height;
+  int row_cnt = (3 * image->width - 1) / 4 + 1;
+
   fwrite(clus, sz, 1, image->file);
 
   // be careful: size_t is unsigned!
@@ -225,7 +228,7 @@ void handle_image(struct Image *image, size_t sz) {
     struct DataSeg *next = NULL;
     uint32_t best_diff = 500; // maximum threshold
 
-    uint8_t *rgb_last = ((uint8_t *) (clus + sz)) - 3 * image->width;
+    uint8_t *rgb_last = ((uint8_t *) (clus + sz)) - row_cnt;
     uint8_t i = rgb_last[0] >> 4;
     uint8_t j = rgb_last[1] >> 4;
     uint8_t k = rgb_last[2] >> 4;
