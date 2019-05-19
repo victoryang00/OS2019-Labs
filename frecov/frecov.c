@@ -229,12 +229,12 @@ void handle_image(struct Image *image, size_t sz, int nr) {
     return;
   }
 
-  size_t offset = (size_t) header->offset;
-  size_t w = (size_t) (((24 * info->width + 31) >> 5) << 2);
-
-  Log("size is %d", (int)image->size);
+  CLog(FG_GREEN, ">>> start processing image %s", image->name);
   void *data = malloc(image->size);
   Assert(data, "malloc failed");
+
+  size_t offset = (size_t) header->offset;
+  size_t w = (size_t) (((24 * info->width + 31) >> 5) << 2);
 
   void *ptr = data;
   memcpy(ptr, clus, sz);
@@ -295,6 +295,8 @@ void handle_image(struct Image *image, size_t sz, int nr) {
       memcpy(ptr, clus, sz);
       ptr += sz;
       clus += sz;
+      x = (x + sz) % w;
+      y = y + sz / w;
     }
   }
   
@@ -304,6 +306,8 @@ void handle_image(struct Image *image, size_t sz, int nr) {
   fwrite(data, image->size, 1, image->file);
   fclose(image->file);
 #endif
+
   free(data);
+  CLog(FD_GREEN, "<<< finished processing image %s", image->name);
 }
 
