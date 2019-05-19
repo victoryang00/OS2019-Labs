@@ -225,6 +225,9 @@ void handle_image(struct Image *image, size_t sz) {
   size_t complete_sz = sz;
   uint8_t *rgb_last = (uint8_t *) (clus + sz) - 3;
 
+  fclose(image->file);
+  exit(0);
+
   while (complete_sz < image->size) {
     struct DataSeg *next = NULL;
     uint32_t best_diff = 500; // maximum threshold
