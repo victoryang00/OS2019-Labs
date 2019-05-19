@@ -223,7 +223,7 @@ void handle_image(struct Image *image, size_t sz) {
 
   size_t complete_sz = sz;
   fwrite(clus, sz, 1, image->file);
-  uint8_t *rgb_last = rgb_last = (uint8_t *) clus - 3;
+  uint8_t *rgb_last = rgb_last = (uint8_t *) (clus + sz) - 3;
 
   while (complete_sz < image->size) {
     struct DataSeg *next = NULL;
