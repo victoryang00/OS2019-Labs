@@ -223,6 +223,7 @@ void handle_image(struct Image *image, size_t sz) {
 
   size_t complete_sz = 0;
   do {
+    Log("sequent");
     fwrite(clus, sz, 1, image->file);
     complete_sz += sz;
     clus += sz;
