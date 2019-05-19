@@ -30,12 +30,10 @@ struct DataSeg {
 
 struct Image {
   char name[128];
-  int width;
-  int height;
   size_t size;
   int clus;
   FILE *file;
-  int16_t *chk;
+  struct BMP *bmp;
   struct Image *prev;
   struct Image *next;
 };
@@ -51,7 +49,7 @@ int get_cluster_type(void *, int);
 void handle_fdt(void *, int, bool);
 bool handle_fdt_aux(void *, int, bool);
 void handle_bmp(void *, size_t);
-void handle_image(struct Image *, size_t);
+void handle_image(struct Image *, size_t, int);
 void *get_next_cluster(uint8_t *);
 
 #endif

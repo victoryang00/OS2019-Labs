@@ -27,9 +27,9 @@ struct BMP_Info {
 };
 
 struct BMP {
-  struct BMP_Header *header;
-  struct BMP_Info *info;
-  struct DataSeg  *data;
+  struct BMP_Header header;
+  struct BMP_Info info;
+  void* data;
 };
 
 #endif

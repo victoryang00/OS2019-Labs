@@ -58,7 +58,7 @@ void recover_images() {
   handle_fdt(NULL, nr_clu, true);
 
   for (struct Image *image = image_list.next; image != &image_list; image = image->next) {
-    handle_image(image, clusz);
+    handle_image(image, clusz, nr_clu);
   }
 }
 
@@ -171,6 +171,9 @@ bool handle_fdt_aux(void *c, int nr, bool force) {
             image->size = f[i].file_size;
             image->clus = clus;
 
+            image->file = NULL;
+            image->bmp  = malloc(sizeof(struct BMP));
+
             image->prev = image_list.prev;
             image->next = &image_list;
             image_list.prev = image;
@@ -208,84 +211,95 @@ void handle_bmp(void *p, size_t sz) {
   d->next->prev = d;
 }
 
-void handle_image(struct Image *image, size_t sz) {
-  image->file = fopen(image->name, "w+");
-  Assert(image->file, "fopen failed for image %s", image->name);
-  
-  CLog(FG_GREEN, "Start searching for %s, total size %d", image->name, (int) image->size);
+static inline uint32_t rgb_diff(uint8_t *a, uint8_t *b) {
+  uint32_t ret = 0;
+  for (int i = 0; i < 3; ++i) {
+    // caution: a, b are unsigned.
+    uint8_t d = a[i] > b[i] ? a[i] - b[i] : b[i] - a[i];
+    ret += (uint32_t) d * (uint32_t) d;
+  }
+  return ret;
+}
+void handle_image(struct Image *image, size_t sz, int nr) {
+  void *clus = disk->head + sz * (image->clus - disk->mbr->BPB_RootClus);
+  struct BMP_Header *header = (struct BMP_Header *) clus;
+  struct BMP_Info *info = (struct BMP_Info *) (header + 1);
+  if (image->size != header->size) {
+    CLog(FG_RED, "bad file size");
+    return;
+  }
 
-  void *clus = disk->data + sz * (image->clus - disk->mbr->BPB_RootClus);
-  image->width  = (int) *((int32_t *) (clus + 0x12));
-  image->height = (int) *((int32_t *) (clus + 0x16));
-  if (image->width  < 0) image->width  = -image->width;
-  if (image->height < 0) image->height = -image->height;
-  int row_cnt = ((24 * image->width + 31) >> 5) << 2;
+  size_t offset = (size_t) header->offset;
+  size_t w = (size_t) (((24 * info->width + 31) >> 5) << 2);
 
-  size_t complete_sz = sz;
-  fwrite(clus, sz, 1, image->file);
-  uint8_t *rgb_last = rgb_last = (uint8_t *) (clus + sz) - 3;
+  void *data = malloc(image->size);
+  void *ptr = data;
+  memcpy(ptr, clus, sz);
+  ptr += sz;
+  clus += sz;
 
-  while (complete_sz < image->size) {
-    struct DataSeg *next = NULL;
-    uint32_t best_diff = 7500; // maximum threshold
+  uint8_t *head = (uint8_t *) (head + offset);
+  size_t delta = (sz - offset) / 24;
+  size_t x = delta % w;
+  size_t y = delta / w;
 
-    uint8_t *rgb_seqt = (uint8_t *) (clus + sz);
-    uint32_t diff_seqt = 0;
-    for (int i = 0; i < 3; ++i) {
-      int32_t d = (int8_t) rgb_last[i] - (int8_t) rgb_seqt[i];
-      diff_seqt += d * d;
+  size_t cnt = (image->size - 1) / sz;
+  for (size_t t = 0; t < cnt; ++t) {
+    uint8_t *rgb_down = y == 0 ? NULL : head + (y - 1) * w + x * 3;
+    uint8_t *rgb_left = x == 0 ? NULL : head + y * w + (x - 1) * 3;
+    
+    bool sequent_ok = false;
+    if (get_cluster_type(clus, nr) == TYPE_BMP) {
+      uint32_t diff_down = rgb_down ? rgb_diff(rgb_down, (uint8_t *)clus) : 0;
+      uint32_t diff_left = rgb_left ? rgb_diff(rgb_left, (uint8_t *)clus) : 0;
+      sequent_ok = diff_down <= 300 && diff_left <= 300;
     }
-    if (get_cluster_type(clus + sz, 32) == TYPE_BMP && diff_seqt < 15000) {
-      clus += sz; 
-    } else {
-      CLog(FG_RED, "disconnected data segment at offset %x", (int) (clus + sz - disk->head));
-      uint8_t i = rgb_last[0] >> 4;
-      uint8_t j = rgb_last[1] >> 4;
-      uint8_t k = rgb_last[2] >> 4;
 
-      uint8_t il = 0x0;// ((rgb_last[0] & 0xf) < 0x9 && i > 0x0) ? i - 1 : i;
-      uint8_t jl = 0x0;//((rgb_last[1] & 0xf) < 0x9 && j > 0x0) ? j - 1 : j;
-      uint8_t kl = 0x0;//((rgb_last[2] & 0xf) < 0x9 && k > 0x0) ? k - 1 : k;
-      uint8_t ir = 0xf;//((rgb_last[0] & 0xf) > 0x7 && i < 0xf) ? i + 1 : i;
-      uint8_t jr = 0xf;//((rgb_last[1] & 0xf) > 0x7 && j < 0xf) ? j + 1 : j;
-      uint8_t kr = 0xf;//((rgb_last[2] & 0xf) > 0x7 && k < 0xf) ? k + 1 : k;
+    if (!sequent_ok) {
+      clus = NULL;
+      uint32_t best_diff_down = 30000; // maximum threshold
+      uint32_t best_diff_left = 30000;
+      struct DataSeg *next = NULL;
 
-      for (i = il; i <= ir; ++i) {
-        for (j = jl; j <= jr; ++j) {
-          for (k = kl; k <= kr; ++k) {
+      uint8_t il = 0x0, jl = 0x0, kl = 0x0;
+      uint8_t ir = 0xf, jr = 0xf, kr = 0xf;
+      for (uint8_t i = il; i <= ir; ++i) {
+        for (uint8_t j = jl; j <= jr; ++j) {
+          for (uint8_t k = kl; k <= kr; ++k) {
             for (struct DataSeg *dp = bmp_list[i][j][k].next; dp != &bmp_list[i][j][k]; dp = dp->next) {
               if (dp->holder == image) continue;
-              if ((image->size - complete_sz <= sz) && !dp->eof) continue;
-              if ((image->size - complete_sz > sz) && dp->eof) continue;
+              if ((t == cnt - 1) ^ dp->eof) continue;
 
-              uint8_t *rgb_next = (uint8_t *) dp->head;
-              uint32_t diff = 0;
-              for (int i = 0; i < 3; ++i) {
-                int32_t d = (int8_t) rgb_last[i] - (int8_t) rgb_next[i];
-                diff += d * d;
-              }
-              if (diff <= best_diff) {
-                best_diff = diff;
+              uint32_t diff_down = rgb_down ? rgb_diff(rgb_down, (uint8_t *)dp->head) : 0;
+              uint32_t diff_left = rgb_left ? rgb_diff(rgb_left, (uint8_t *)dp->head) : 0;
+              if (diff_down <= best_diff_down && diff_left <= best_diff_left) {
+                best_diff_down = diff_down;
+                best_diff_left = diff_left;
                 next = dp;
               }
             }
           }
         }
       }
-      if (!next) break;
-      next->holder = image;
+
       clus = next->head;
+      next->holder = image;
     }
 
-    fwrite(clus, sz, 1, image->file);
-    complete_sz += sz;
-    rgb_last = ((uint8_t *) (clus + sz)) - row_cnt;
+    if (!clus) {
+      CLog(FG_RED, "image %s failed", image->name);
+    } else {
+      memcpy(ptr, clus, sz);
+      ptr += sz;
+      clus += sz;
+    }
   }
-
+  
+#ifdef DEBUG
+  image->file = fopen(image->name, "w+");
+  Assert(image->file, "fopen failed for image %s", image->name);
+  fwrite(data, image->size, 1, image->file);
   fclose(image->file);
-  if (complete_sz >= image->size) {
-    CLog(FG_YELLOW, "Image %s ready", image->name);
-  } else {
-    CLog(FG_RED, "Image %s failed, %d size left", image->name, (int) (image->size - sz));
-  }
+#endif
 }
+
