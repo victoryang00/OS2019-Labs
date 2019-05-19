@@ -225,7 +225,7 @@ void handle_image(struct Image *image, size_t sz) {
     struct DataSeg *next = NULL;
     uint32_t best_diff = 500; // maximum threshold
 
-    uint8_t *rgb_last = ((uint8_t *) (clus + sz)) - 3;
+    uint8_t *rgb_last = ((uint8_t *) (clus + sz)) - 3 * image->width;
     uint8_t i = rgb_last[0] >> 4;
     uint8_t j = rgb_last[1] >> 4;
     uint8_t k = rgb_last[2] >> 4;
