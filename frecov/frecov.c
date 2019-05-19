@@ -232,6 +232,7 @@ void handle_image(struct Image *image, size_t sz, int nr) {
   size_t offset = (size_t) header->offset;
   size_t w = (size_t) (((24 * info->width + 31) >> 5) << 2);
 
+  Log("size is %d", (int)image->size);
   void *data = malloc(image->size);
   Assert(data, "malloc failed");
 
