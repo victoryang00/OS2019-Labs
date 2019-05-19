@@ -215,6 +215,7 @@ void handle_image(struct Image *image, size_t sz) {
   CLog(FG_GREEN, "Start searching for %s, total size %d", image->name, (int) image->size);
 
   void *clus = disk->data + sz * (image->clus - disk->mbr->BPB_RootClus);
+  printf("first characters are %c%c\n", *(char *)clus, *((char *) clus + 1));
   image->width = *((int32_t *) clus + 0x12);
   image->height = *((int32_t *) clus + 0x16);
   Log("size: %d times %d", image->width, image->height);
