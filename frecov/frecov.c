@@ -217,7 +217,7 @@ void handle_image(struct Image *image, size_t sz) {
   void *clus = disk->data + sz * (image->clus - disk->mbr->BPB_RootClus);
   image->width  = (int) *((int32_t *) (clus + 0x12));
   image->height = (int) *((int32_t *) (clus + 0x16));
-  Log("size: %x times %x", image->width, image->height);
+  Log("size: %d times %d", image->width, image->height);
   fwrite(clus, sz, 1, image->file);
 
   // be careful: size_t is unsigned!
