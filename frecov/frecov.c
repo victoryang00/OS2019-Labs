@@ -221,7 +221,8 @@ void handle_image(struct Image *image, size_t sz) {
   if (image->height < 0) image->height = -image->height;
   int row_cnt = ((24 * image->width + 31) >> 5) << 2;
 
-  size_t complete_sz = 0;
+  size_t complete_sz = sz;
+  fwrite(clus, sz, 1, image->file);
   uint8_t *rgb_last = rgb_last = (uint8_t *) clus - 3;
 
   while (complete_sz < image->size) {
