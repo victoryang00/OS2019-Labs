@@ -259,7 +259,7 @@ void handle_image(struct Image *image, size_t sz, int nr) {
     }
 
     if (!sequent_ok) {
-      CLog(FG_YELLOW, "sequent data segment fails");
+      CLog(FG_YELLOW, "sequent data segment at %x fails", (int) (clus - disk->head));
       clus = NULL;
       uint32_t best_diff_down = 30000; // maximum threshold
       uint32_t best_diff_left = 30000;
