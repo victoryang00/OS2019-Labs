@@ -224,12 +224,12 @@ void handle_image(struct Image *image, size_t sz, int nr) {
   void *clus = disk->data + sz * (image->clus - disk->mbr->BPB_RootClus);
   struct BMP_Header *header = (struct BMP_Header *) clus;
   struct BMP_Info *info = (struct BMP_Info *) (header + 1);
-  if (image->size != header->size) {
+  if (image->size != header->size || image->size < 32) {
     CLog(FG_RED, "bad file size, should be %d, get %d", (int)image->size, (int)header->size);
     return;
   }
 
-  CLog(FG_GREEN, ">>> start processing image %s", image->name);
+  CLog(FG_GREEN, ">>>    start processing image %s", image->name);
   void *data = malloc(image->size);
   Assert(data, "malloc failed");
 
