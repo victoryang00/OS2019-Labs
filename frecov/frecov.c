@@ -256,6 +256,8 @@ void handle_image(struct Image *image, size_t sz, int nr) {
       uint32_t diff_down = rgb_down ? rgb_diff(rgb_down, (uint8_t *)clus) : 0;
       uint32_t diff_left = rgb_left ? rgb_diff(rgb_left, (uint8_t *)clus) : 0;
       if (!strcmp(image->name, "./recov/fuli.bmp")) {
+        Log("pos x=%d, y=%d", (int)x, (int)y);
+        Log("rgb down=%p, left=%p", (void *)rgb_down, (void *)rgb_left);
         Log("diffs are %d %d", (int)diff_down, (int)diff_left);
       }
       sequent_ok = diff_down <= 300 && diff_left <= 300;
