@@ -260,7 +260,7 @@ void handle_image(struct Image *image, size_t sz, int nr) {
     if (get_cluster_type(clus, nr) == TYPE_BMP) {
       uint32_t diff_score = 0;
       if (rgb_down) {
-        for (int dx = 0; dx < w / 3; ++dx) {
+        for (size_t dx = 0; dx < w / 3; ++dx) {
           diff_score += rgb_diff(rgb_down + dx * 3, (uint8_t *)clus + dx * 3);
         }
       } else {
@@ -303,10 +303,10 @@ void handle_image(struct Image *image, size_t sz, int nr) {
               uint32_t diff_score = 0;
               if (rgb_down) {
                 for (size_t dx = 0; dx < 3; ++dx) {
-                  diff_score += rgb_diff(rgb_down + dx * 3, (uint8_t *)clus + dx * 3);
+                  diff_score += rgb_diff(rgb_down + dx * 3, (uint8_t *)dp->head + dx * 3);
                 }
               } else {
-                diff_score = rgb_left ? rgb_diff(rgb_left, (uint8_t *)clus) : 0;
+                diff_score = rgb_left ? rgb_diff(rgb_left, (uint8_t *)dp->head) : 0;
               }
 
               if (diff_score <= best_diff_score) {
