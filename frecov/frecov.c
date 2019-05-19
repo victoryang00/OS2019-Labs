@@ -244,6 +244,11 @@ void handle_image(struct Image *image, size_t sz, int nr) {
   clus += sz;
 
   uint8_t *data = (uint8_t *)bmp + offset;
+  if (sz / 8 < offset) {
+    CLog(FG_RED, "too big header for bmp");
+    return;
+  }
+
   size_t delta = sz / 8 - offset;
   size_t x = delta % w;
   size_t y = delta / w;
