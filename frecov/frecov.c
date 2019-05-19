@@ -289,7 +289,7 @@ void handle_image(struct Image *image, size_t sz) {
   }
   fclose(image->file);
 
-  if (complete_sz <= image->size) {
+  if (complete_sz >= image->size) {
     CLog(FG_YELLOW, "Image %s ready", image->name);
   } else {
     CLog(FG_RED, "Image %s failed, %d size left", image->name, (int) (image->size - sz));
