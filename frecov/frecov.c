@@ -267,7 +267,7 @@ void handle_image(struct Image *image, size_t sz, int nr) {
         diff_score = rgb_left ? rgb_diff(rgb_left, (uint8_t *)clus) : 0;
       }
 
-      if (diff_score <= (rgb_down ? 100 * w : 300)) {
+      if (diff_score <= (rgb_down ? 300 * w : 300)) {
         sequent_ok = true;
 
         uint8_t i = ((uint8_t *)clus)[0] >> 4;
