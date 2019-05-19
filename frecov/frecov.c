@@ -308,6 +308,7 @@ void handle_image(struct Image *image, size_t sz, int nr) {
       }
 
       clus = next->head;
+      CLog(FG_YELLOW, "picked up segment at %x", (int) (clus - disk->head));
       next->holder = image;
     }
 
@@ -315,7 +316,6 @@ void handle_image(struct Image *image, size_t sz, int nr) {
       CLog(FG_RED, "image %s failed", image->name);
       break;
     } else {
-      CLog(FG_YELLOW, "picked up segment at %x", (int) (clus - disk->head));
       if (t == cnt - 1) {
         memcpy(ptr, clus, image->size - cnt * sz);
       } else {
