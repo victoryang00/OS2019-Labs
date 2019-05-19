@@ -235,6 +235,7 @@ void handle_image(struct Image *image, size_t sz) {
       int32_t d = (int8_t) rgb_last[i] - (int8_t) rgb_seqt[i];
       diff_seqt += d * d;
     }
+    Log("diff is %d", diff_seqt);
     if (get_cluster_type(clus + sz, 32) == TYPE_BMP && diff_seqt < 500) {
       clus += sz; 
     } else {
