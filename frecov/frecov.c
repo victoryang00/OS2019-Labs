@@ -268,7 +268,7 @@ void handle_image(struct Image *image, size_t sz, int nr) {
         uint8_t k = ((uint8_t *)clus)[2] >> 4;
 
 #ifdef DEBUG
-        ((uint8_t *)clus)[0] = 0xff;
+        ((uint8_t *)clus)[0] = 0x00;
         ((uint8_t *)clus)[1] = 0x00;
         ((uint8_t *)clus)[2] = 0x00;
 #endif
