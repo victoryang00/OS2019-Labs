@@ -218,7 +218,6 @@ static inline uint32_t rgb_diff(uint8_t *a, uint8_t *b) {
     uint8_t d = a[i] > b[i] ? a[i] - b[i] : b[i] - a[i];
     ret += (uint32_t) d * (uint32_t) d;
   }
-  exit(0);
   return ret;
 }
 void handle_image(struct Image *image, size_t sz, int nr) {
