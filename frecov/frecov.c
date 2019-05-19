@@ -307,7 +307,7 @@ void handle_image(struct Image *image, size_t sz, int nr) {
         }
       }
 
-      CLog(FG_GREEN, "next is %p")
+      CLog(FG_GREEN, "next is %p");
       clus = next->head;
       next->holder = image;
     }
