@@ -230,9 +230,9 @@ void handle_image(struct Image *image, size_t sz) {
 
   uint8_t *rgb_last = NULL;
   if (complete_sz == sz) {
-    rgb_last = (uint8_t *) (clus + sz) - 3;
+    rgb_last = (uint8_t *) clus - 3;
   } else {
-    rgb_last = (uint8_t *) (clus + sz) - row_cnt;
+    rgb_last = (uint8_t *) clus - row_cnt;
   }
 
   while (complete_sz < image->size) {
