@@ -222,13 +222,13 @@ void handle_image(struct Image *image, size_t sz) {
   int row_cnt = ((24 * image->width + 31) >> 5) << 2;
 
   fwrite(clus, sz, 1, image->file);
+  size_t complete_sz = sz;
+  uint8_t *rgb_last = (uint8_t *) (clus + sz) - 3;
 
-  // be careful: size_t is unsigned!
-  while (image->size > sz) {
+  while (complete_sz < image->size) {
     struct DataSeg *next = NULL;
     uint32_t best_diff = 500; // maximum threshold
 
-    uint8_t *rgb_last = ((uint8_t *) (clus + sz)) - row_cnt;
     uint8_t i = rgb_last[0] >> 4;
     uint8_t j = rgb_last[1] >> 4;
     uint8_t k = rgb_last[2] >> 4;
@@ -267,6 +267,7 @@ void handle_image(struct Image *image, size_t sz) {
     if (!next) break;
     next->holder = image;
     clus = next->head;
+    rgb_last = ((uint8_t *) (clus + sz)) - row_cnt;
     //next->prev->next = next->next;
     //next->next->prev = next->prev;
     //free(next);
