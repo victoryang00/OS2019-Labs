@@ -280,8 +280,8 @@ void handle_image(struct Image *image, size_t sz, int nr) {
 
     if (!sequent_ok) {
       clus = NULL;
-      uint32_t best_diff_down = 3000; // maximum threshold
-      uint32_t best_diff_left = 3000;
+      uint32_t best_diff_down = 300; // maximum threshold
+      uint32_t best_diff_left = 300;
       struct DataSeg *next = NULL;
 
       uint8_t il = 0x0, jl = 0x0, kl = 0x0;
