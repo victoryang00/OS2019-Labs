@@ -222,7 +222,7 @@ void handle_image(struct Image *image, size_t sz) {
   int row_cnt = ((24 * image->width + 31) >> 5) << 2;
 
   size_t complete_sz = 0;
-  while (get_cluster_type(clus, 1) == TYPE_BMP) {
+  while (get_cluster_type(clus, 32) == TYPE_BMP) {
     fwrite(clus, sz, 1, image->file);
     complete_sz += sz;
     clus += sz;
