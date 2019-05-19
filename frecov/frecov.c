@@ -225,6 +225,7 @@ void handle_image(struct Image *image, size_t sz, int nr) {
   struct BMP_Header *header = (struct BMP_Header *) clus;
   struct BMP_Info *info = (struct BMP_Info *) (header + 1);
   if (image->size != header->size) {
+    CLog(FG_PURPLE, "offset at %x", (int) ((void *) header - disk->head));
     CLog(FG_RED, "bad file size, should be %d, get %d", (int)image->size, (int)header->size);
     return;
   }
