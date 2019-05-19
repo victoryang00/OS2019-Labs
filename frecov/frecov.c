@@ -258,9 +258,16 @@ void handle_image(struct Image *image, size_t sz, int nr) {
     
     bool sequent_ok = false;
     if (get_cluster_type(clus, nr) == TYPE_BMP) {
-      uint32_t diff_down = rgb_down ? rgb_diff(rgb_down, (uint8_t *)clus) : 0;
-      uint32_t diff_left = rgb_left ? rgb_diff(rgb_left, (uint8_t *)clus) : 0;
-      if (diff_down * diff_down + diff_left * diff_left <= 180000) {
+      uint32_t diff_score = 0;
+      if (rgb_down) {
+        for (int i = 0; i < w / 3; ++i) {
+          diff_score += rgb_diff(rgb_down + i * 3, (uint8_t *) clus + i * 3);
+        }
+      } else {
+        diff_score = rgb_left ? rgb_diff(rgb_left, (uint8_t *)clus) : 0;
+      }
+
+      if (diff_score <= (rgb_down ? 100 * w : 300)) {
         sequent_ok = true;
 
         uint8_t i = ((uint8_t *)clus)[0] >> 4;
@@ -275,7 +282,7 @@ void handle_image(struct Image *image, size_t sz, int nr) {
           free(dp);
         }
       } else {
-        CLog(FG_YELLOW, "sequent failed, diffs are %d %d", (int)diff_down, (int)diff_left);
+        CLog(FG_YELLOW, "sequent failed, diff score are %d", (int)diff_score);
       }
     }
 
