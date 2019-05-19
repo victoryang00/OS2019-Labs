@@ -260,9 +260,9 @@ void handle_image(struct Image *image, size_t sz, int nr) {
     if (get_cluster_type(clus, nr) == TYPE_BMP) {
       uint32_t diff_down = rgb_down ? rgb_diff(rgb_down, (uint8_t *)clus) : 0;
       uint32_t diff_left = rgb_left ? rgb_diff(rgb_left, (uint8_t *)clus) : 0;
-        Log("pos x=%d, y=%d", (int)x, (int)y);
-        Log("rgb down=%p, left=%p", rgb_down, rgb_left);
-        Log("diffs are %d %d", (int)diff_down, (int)diff_left);
+      Log("pos x=%d, y=%d", (int)x, (int)y);
+      Log("rgb down=%p, left=%p", rgb_down, rgb_left);
+      Log("diffs are %d %d", (int)diff_down, (int)diff_left);
       sequent_ok = diff_down <= 300 && diff_left <= 300;
     }
 
@@ -302,6 +302,7 @@ void handle_image(struct Image *image, size_t sz, int nr) {
       CLog(FG_RED, "image %s failed", image->name);
       break;
     } else {
+      CLog(FG_YELLOW, "picked up segment at %x", (int) (clus - disk->head));
       if (t == cnt - 1) {
         memcpy(ptr, clus, image->size - cnt * sz);
       } else {
