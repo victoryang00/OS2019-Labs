@@ -300,18 +300,16 @@ void handle_image(struct Image *image, size_t sz, int nr) {
               if (dp->holder == image) continue;
               if ((t == cnt - 1) ^ dp->eof) continue;
 
-              Log("before");
               uint32_t diff_score = 0;
               if (rgb_down) {
-                int cnt = 10;
-                if (w / 3 < cnt) cnt = w / 3;
-                for (int dx = 0; dx < cnt; ++dx) {
+                int lim = 10;
+                if (w / 3 < lim) lim = w / 3;
+                for (int dx = 0; dx < lim; ++dx) {
                   diff_score += rgb_diff(rgb_down + dx * 3, (uint8_t *)clus + dx * 3);
                 }
               } else {
                 diff_score = rgb_left ? rgb_diff(rgb_left, (uint8_t *)clus) : 0;
               }
-Log("OK");
 
               if (diff_score <= best_diff_score) {
                 best_diff_score = diff_score;
