@@ -306,10 +306,7 @@ void handle_image(struct Image *image, size_t sz, int nr) {
         ptr += sz;
         clus += sz;
         x += sz / 8;
-        while (x > w) {
-          x -= w;
-          y += 1;
-        }
+        while (x > w) x -= w, y += 1;
       }
     }
   }
