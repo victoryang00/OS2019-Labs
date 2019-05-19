@@ -244,12 +244,12 @@ void handle_image(struct Image *image, size_t sz) {
       uint8_t j = rgb_last[1] >> 4;
       uint8_t k = rgb_last[2] >> 4;
 
-      uint8_t il = ((rgb_last[0] & 0xf) < 0x9 && i > 0x0) ? i - 1 : i;
-      uint8_t jl = ((rgb_last[1] & 0xf) < 0x9 && j > 0x0) ? j - 1 : j;
-      uint8_t kl = ((rgb_last[2] & 0xf) < 0x9 && k > 0x0) ? k - 1 : k;
-      uint8_t ir = ((rgb_last[0] & 0xf) > 0x7 && i < 0xf) ? i + 1 : i;
-      uint8_t jr = ((rgb_last[1] & 0xf) > 0x7 && j < 0xf) ? j + 1 : j;
-      uint8_t kr = ((rgb_last[2] & 0xf) > 0x7 && k < 0xf) ? k + 1 : k;
+      uint8_t il = 0x0;// ((rgb_last[0] & 0xf) < 0x9 && i > 0x0) ? i - 1 : i;
+      uint8_t jl = 0x0;//((rgb_last[1] & 0xf) < 0x9 && j > 0x0) ? j - 1 : j;
+      uint8_t kl = 0x0;//((rgb_last[2] & 0xf) < 0x9 && k > 0x0) ? k - 1 : k;
+      uint8_t ir = 0xf;//((rgb_last[0] & 0xf) > 0x7 && i < 0xf) ? i + 1 : i;
+      uint8_t jr = 0xf;//((rgb_last[1] & 0xf) > 0x7 && j < 0xf) ? j + 1 : j;
+      uint8_t kr = 0xf;//((rgb_last[2] & 0xf) > 0x7 && k < 0xf) ? k + 1 : k;
 
       for (i = il; i <= ir; ++i) {
         for (j = jl; j <= jr; ++j) {
