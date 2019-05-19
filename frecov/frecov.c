@@ -236,7 +236,7 @@ void handle_image(struct Image *image, size_t sz) {
       diff_seqt += d * d;
     }
     Log("diff is %d", diff_seqt);
-    if (get_cluster_type(clus + sz, 32) == TYPE_BMP && diff_seqt < 7500) {
+    if (get_cluster_type(clus + sz, 32) == TYPE_BMP && diff_seqt < 75000) {
       clus += sz; 
     } else {
       CLog(FG_RED, "disconnected data segment at offset %x", (int) (clus + sz - disk->head));
