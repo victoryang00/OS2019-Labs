@@ -242,7 +242,7 @@ void handle_image(struct Image *image, size_t sz, int nr) {
   clus += sz;
 
   uint8_t *head = (uint8_t *) (head + offset);
-  size_t delta = (sz - offset) / 24;
+  size_t delta = (sz - offset) / 8;
   size_t x = delta % w;
   size_t y = delta / w;
 
@@ -304,8 +304,8 @@ void handle_image(struct Image *image, size_t sz, int nr) {
         memcpy(ptr, clus, sz);
         ptr += sz;
         clus += sz;
-        x = (x + sz) % w;
-        y = y + sz / w;
+        x = (x + sz / 8) % w;
+        y = y + sz / 8 / w;
       }
     }
   }
