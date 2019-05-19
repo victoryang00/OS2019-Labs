@@ -288,8 +288,7 @@ void handle_image(struct Image *image, size_t sz, int nr) {
 
     if (!sequent_ok) {
       clus = NULL;
-      uint32_t best_diff_down = 3000; // maximum threshold
-      uint32_t best_diff_left = 3000;
+      uint32_t best_diff_score = 1145141919; // maximum threshold
       struct DataSeg *next = NULL;
 
       uint8_t il = 0x0, jl = 0x0, kl = 0x0;
@@ -301,11 +300,16 @@ void handle_image(struct Image *image, size_t sz, int nr) {
               if (dp->holder == image) continue;
               if ((t == cnt - 1) ^ dp->eof) continue;
 
-              uint32_t diff_down = rgb_down ? rgb_diff(rgb_down, (uint8_t *)dp->head) : 0;
-              uint32_t diff_left = rgb_left ? rgb_diff(rgb_left, (uint8_t *)dp->head) : 0;
-              if (diff_down <= best_diff_down && diff_left <= best_diff_left) {
-                best_diff_down = diff_down;
-                best_diff_left = diff_left;
+              uint32_t diff_score = 0;
+              if (rgb_down) {
+                for (int i = 0; i < 10; ++i) {
+                  diff_score += rgb_diff(rgb_down + i * 3, (uint8_t *)clus + i * 3);
+                }
+              } else {
+                diff_score = rgb_left ? rgb_diff(rgb_left, (uint8_t *)clus) : 0;
+              }
+              if (diff_score <= best_diff_score) {
+                best_diff_score = diff_score;
                 next = dp;
               }
             }
