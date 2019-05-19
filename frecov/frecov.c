@@ -242,7 +242,7 @@ void handle_image(struct Image *image, size_t sz) {
             for (int i = 0; i < 3; ++i) {
               diff += (rgb_last[i] - rgb_next[i]) * (rgb_last[i] - rgb_next[i]);
             }
-            if (diff < best_diff) {
+            if (diff <= best_diff) {
               best_diff = diff;
               next = dp;
             }
