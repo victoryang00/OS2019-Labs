@@ -232,26 +232,26 @@ void handle_image(struct Image *image, size_t sz, int nr) {
   }
 
   CLog(FG_GREEN, ">>>    start processing image %s", image->name);
-  void *data = malloc(image->size);
-  Assert(data, "malloc failed");
+  void *bmp = malloc(image->size);
+  Assert(bmp, "malloc failed");
 
   size_t offset = (size_t) header->offset;
   size_t w = (size_t) (((24 * info->width + 31) >> 5) << 2);
 
-  void *ptr = data;
+  void *ptr = bmp;
   memcpy(ptr, clus, sz);
   ptr += sz;
   clus += sz;
 
-  uint8_t *head = (uint8_t *) (data + offset);
+  uint8_t *data = (uint8_t *) (bmp + offset);
   size_t delta = (sz - offset) / 8;
   size_t x = delta % w;
   size_t y = delta / w;
 
   size_t cnt = (image->size - 1) / sz;
   for (size_t t = 0; t < cnt; ++t) {
-    uint8_t *rgb_down = y == 0 ? NULL : head + (y - 1) * w + x;
-    uint8_t *rgb_left = (x < 3 || x >= info->width * 3) ? NULL : head + y * w + x - 1;
+    uint8_t *rgb_down = y == 0 ? NULL : data + (y - 1) * w + x;
+    uint8_t *rgb_left = (x < 3 || x >= info->width * 3) ? NULL : data + y * w + x - 1;
     
     bool sequent_ok = false;
     if (get_cluster_type(clus, nr) == TYPE_BMP) {
@@ -314,11 +314,11 @@ void handle_image(struct Image *image, size_t sz, int nr) {
 #ifdef DEBUG
   image->file = fopen(image->name, "w+");
   Assert(image->file, "fopen failed for image %s", image->name);
-  fwrite(data, image->size, 1, image->file);
+  fwrite(bmp, image->size, 1, image->file);
   fclose(image->file);
 #endif
 
-  free(data);
+  free(bmp);
   CLog(FG_GREEN, "<<< finished processing image %s", image->name);
 }
 
