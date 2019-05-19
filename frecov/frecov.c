@@ -258,16 +258,9 @@ void handle_image(struct Image *image, size_t sz, int nr) {
     
     bool sequent_ok = false;
     if (get_cluster_type(clus, nr) == TYPE_BMP) {
-      uint32_t diff_score = 0;
-      if (rgb_down) {
-        for (size_t dx = 0; dx < w / 3; ++dx) {
-          diff_score += rgb_diff(rgb_down + dx * 3, (uint8_t *)clus + dx * 3);
-        }
-      } else {
-        diff_score = rgb_left ? rgb_diff(rgb_left, (uint8_t *)clus) : 0;
-      }
-
-      if (diff_score <= (rgb_down ? 300 * w : 300)) {
+      uint32_t diff_down = rgb_down ? rgb_diff(rgb_down, (uint8_t *)clus) : 0;
+      uint32_t diff_left = rgb_left ? rgb_diff(rgb_left, (uint8_t *)clus) : 0;
+      if (diff_down <= 300 && diff_left <= 300) {
         sequent_ok = true;
 
         uint8_t i = ((uint8_t *)clus)[0] >> 4;
@@ -282,13 +275,14 @@ void handle_image(struct Image *image, size_t sz, int nr) {
           free(dp);
         }
       } else {
-        CLog(FG_YELLOW, "sequent failed, diff score are %d", (int)diff_score);
+        CLog(FG_YELLOW, "sequent failed, diffs are %d %d", (int)diff_down, (int)diff_left);
       }
     }
 
     if (!sequent_ok) {
       clus = NULL;
-      uint32_t best_diff_score = 1145141919; // maximum threshold
+      uint32_t best_diff_down = 3000; // maximum threshold
+      uint32_t best_diff_left = 3000;
       struct DataSeg *next = NULL;
 
       uint8_t il = 0x0, jl = 0x0, kl = 0x0;
@@ -300,17 +294,11 @@ void handle_image(struct Image *image, size_t sz, int nr) {
               if (dp->holder == image) continue;
               if ((t == cnt - 1) ^ dp->eof) continue;
 
-              uint32_t diff_score = 0;
-              if (rgb_down) {
-                for (size_t dx = 0; dx < 10; ++dx) {
-                  diff_score += rgb_diff(rgb_down + dx * 3, (uint8_t *)dp->head + dx * 3);
-                }
-              } else {
-                diff_score = rgb_left ? rgb_diff(rgb_left, (uint8_t *)dp->head) : 0;
-              }
-
-              if (diff_score <= best_diff_score) {
-                best_diff_score = diff_score;
+              uint32_t diff_down = rgb_down ? rgb_diff(rgb_down, (uint8_t *)dp->head) : 0;
+              uint32_t diff_left = rgb_left ? rgb_diff(rgb_left, (uint8_t *)dp->head) : 0;
+              if (diff_down <= best_diff_down && diff_left <= best_diff_left) {
+                best_diff_down = diff_down;
+                best_diff_left = diff_left;
                 next = dp;
               }
             }
