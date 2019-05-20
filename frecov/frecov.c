@@ -283,7 +283,7 @@ void handle_image(struct Image *image, size_t sz, int nr) {
     close(fd[0]);
     dup2(fd[1], 0);
 
-    char* const args[] = { "sha1sum" };
+    char* const args[] = { "sha1sum", NULL };
     execvp(args[0], args);
     Panic("execvp returned (failed)");
   } else {
