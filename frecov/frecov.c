@@ -241,7 +241,7 @@ void handle_image(struct Image *image, size_t sz, int nr) {
   ptr += sz;
   clus += sz;
 
-  uint8_t *data = (uint8_t *)bmp + offset;
+  //uint8_t *data = (uint8_t *)bmp + offset;
   if (sz < offset) {
     CLog(FG_RED, "too big header for bmp");
     return;
@@ -253,86 +253,12 @@ void handle_image(struct Image *image, size_t sz, int nr) {
 
   size_t cnt = (image->size - 1) / sz;
   for (size_t t = 0; t < cnt; ++t) {
-    uint8_t *rgb_down = y == 0 ? NULL : data + (y - 1) * w + x;
-    uint8_t *rgb_left = (x < 3 || x >= info->width * 3 - 3) ? NULL : data + y * w + x - 3;
-    
-    bool sequent_ok = false;
-    if (get_cluster_type(clus, nr) == TYPE_BMP) {
-      uint32_t diff_down = rgb_down ? rgb_diff(rgb_down, (uint8_t *)clus) : 0;
-      uint32_t diff_left = rgb_left ? rgb_diff(rgb_left, (uint8_t *)clus) : 0;
-      if (diff_down <= 900 && diff_left <= 900) {
-        sequent_ok = true;
-
-        uint8_t i = ((uint8_t *)clus)[0] >> 4;
-        uint8_t j = ((uint8_t *)clus)[1] >> 4;
-        uint8_t k = ((uint8_t *)clus)[2] >> 4;
-
-        struct DataSeg *dp = bmp_list[i][j][k].next;
-        while (dp != &bmp_list[i][j][k] && dp->head != clus) dp = dp->next;
-        if (dp != &bmp_list[i][j][k]) {
-          dp->prev->next = dp->next;
-          dp->next->prev = dp->prev;
-          free(dp);
-        }
-      } else {
-        CLog(FG_YELLOW, "sequent failed at (%d, %d), diffs are %d %d", (int)x / 3, (int)y, (int)diff_down, (int)diff_left);
-      }
-    }
-
-    if (!sequent_ok) {
-      clus = NULL;
-      uint32_t best_diff_down = 3000; // maximum threshold
-      uint32_t best_diff_left = 3000;
-      struct DataSeg *next = NULL;
-
-      uint8_t il = 0x0, jl = 0x0, kl = 0x0;
-      uint8_t ir = 0xf, jr = 0xf, kr = 0xf;
-      for (uint8_t i = il; i <= ir; ++i) {
-        for (uint8_t j = jl; j <= jr; ++j) {
-          for (uint8_t k = kl; k <= kr; ++k) {
-            for (struct DataSeg *dp = bmp_list[i][j][k].next; dp != &bmp_list[i][j][k]; dp = dp->next) {
-              if (dp->holder == image) continue;
-              if ((t == cnt - 1) ^ dp->eof) continue;
-              if (w % 3 && x + sz >= w && ((uint8_t *)dp->head)[w - 1 - x]) continue;
-
-              uint32_t diff_down = rgb_down ? rgb_diff(rgb_down, (uint8_t *)dp->head) : 0;
-              uint32_t diff_left = rgb_left ? rgb_diff(rgb_left, (uint8_t *)dp->head) : 0;
-              if (diff_down <= best_diff_down && diff_left <= best_diff_left) {
-                best_diff_down = diff_down;
-                best_diff_left = diff_left;
-                next = dp;
-              }
-            }
-          }
-        }
-      }
-
-      if (next) {
-        clus = next->head;
-        CLog(FG_YELLOW, "picked up segment at %x", (int) (clus - disk->head));
-        next->holder = image;
-      } else {
-        CLog(FG_RED, "failed! rgb_down was %p, rgb_left was %p", rgb_down, rgb_left);
-      }
-    }
-
-    if (!clus) {
-      CLog(FG_RED, "image %s failed", image->name);
-      break;
-    } else {
-      if (t == cnt - 1) {
-        memcpy(ptr, clus, image->size - cnt * sz);
-      } else {
-        memcpy(ptr, clus, sz);
-#ifdef DEBUG
-        memset(ptr, 0xff, 3);
-#endif
-        ptr += sz;
-        clus += sz;
-        x += sz;
-        while (x >= w) x -= w, y += 1;
-      }
-    }
+    while (get_cluster_type(clus, nr) != TYPE_BMP) clus += sz;
+    memcpy(ptr, clus, sz);
+    ptr += sz;
+    clus += sz;
+    x += sz;
+    while (x >= w) x -= w, y += 1;
   }
   
 #ifdef DEBUG
