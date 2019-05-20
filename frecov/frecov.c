@@ -172,7 +172,7 @@ bool handle_fdt_aux(void *c, int nr, bool force) {
           if (clus) {
             CLog(FG_GREEN, "%x -> %s, clus = %u", (int) ((void *) (f + i) - disk->head), file_name + pos, clus);
             struct Image *image = malloc(sizeof(struct Image));
-            sprintf(image->name, saving_files ? FOLDER "/%s" : "%s", file_name + pos);
+            sprintf(image->name, "%s", file_name + pos);
             image->size = f[i].file_size;
             image->clus = clus;
 
@@ -271,7 +271,9 @@ void handle_image(struct Image *image, size_t sz, int nr) {
   }
   
   if (saving_files) {
-    image->file = fopen(image->name, "w+");
+    char save_name[128] = "";
+    sprintf(save_name, FOLFER "/%s", image->name);
+    image->file = fopen(save_name, "w+");
     Assert(image->file, "fopen failed for image %s", image->name);
     fwrite(bmp, image->size, 1, image->file);
     fclose(image->file);
