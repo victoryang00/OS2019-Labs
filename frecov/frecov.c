@@ -272,29 +272,36 @@ void handle_image(struct Image *image, size_t sz, int nr) {
   fclose(image->file);
 #endif
 
-  int fd[2] = {};
+  int fd0[2] = {};
+  int fd1[2] = {};
   int wstatus = 0;
-  Assert(pipe(fd) != -1, "pipe failed");
+  Assert(pipe(fd0) != -1, "pipe failed");
+  Assert(pipe(fd1) != -1, "pipe failed");
   pid_t pid = fork();
   Assert(pid != -1, "fork failed");
   
   if (pid == 0) {
     // child process
-    close(fd[1]);
-    dup2(fd[0], 0);
+    close(fd0[1]);
+    close(fd1[0]);
+    dup2(fd0[0], 0);
+    dup2(fd1[1], 1);
 
     char* const args[] = { "sha1sum", "-b", NULL };
     execvp(args[0], args);
     Panic("execvp returned (failed)");
   } else {
     // parent process
-    write(fd[1], bmp, image->size);
-    close(fd[1]);
+    close(fd0[0]);
+    close(fd1[1]);
+
+    write(fd0[1], bmp, image->size);
+    close(fd0[1]);
     wait(&wstatus);
 
     char buf[256] = "";
-    read(fd[0], buf, 10);
-    close(fd[0]);
+    read(fd1[0], buf, 10);
+    close(fd1[0]);
     sscanf(buf, "%s", image->sha1);
     printf("%s %s\n", image->sha1, image->name);
   }
