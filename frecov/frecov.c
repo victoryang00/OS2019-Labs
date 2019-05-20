@@ -281,7 +281,7 @@ void handle_image(struct Image *image, size_t sz, int nr) {
   if (pid == 0) {
     // child process
     close(fd[0]);
-    dup2(fd[1], 0);
+    dup2(fd[1], 1);
 
     char* const args[] = { "sha1sum", "-b", NULL };
     execvp(args[0], args);
