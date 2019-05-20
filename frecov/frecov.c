@@ -272,9 +272,6 @@ void handle_image(struct Image *image, size_t sz, int nr) {
   fclose(image->file);
 #endif
 
-  free(bmp);
-  CLog(FG_GREEN, "<<< finished processing image %s", image->name);
-
   int fd[2] = {};
   int wstatus = 0;
   Assert(pipe(fd) != -1, "pipe failed");
@@ -284,12 +281,20 @@ void handle_image(struct Image *image, size_t sz, int nr) {
   if (pid == 0) {
     // child process
     close(fd[0]);
-    write(fd[1], head, image->size);
-    close(fd[1]);
-    exit(EXIT_SUCCESS);
+    dup2(fd[1], 0);
+
+    char* const args[] = { "sha1sum" };
+    execvp(args[0], args);
+    Panic("execvp returned (failed)");
   } else {
     // parent process
+    close(fd[1]);
+    write(fd[0], bmp, image->size);
+    close(fd[1]);
     wait(&wstatus);
   }
+
+  free(bmp);
+  CLog(FG_GREEN, "<<< finished processing image %s", image->name);
 }
 
