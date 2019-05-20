@@ -280,17 +280,17 @@ void handle_image(struct Image *image, size_t sz, int nr) {
   
   if (pid == 0) {
     // child process
-    close(fd[0]);
-    dup2(fd[1], 1);
+    close(fd[1]);
+    dup2(fd[0], 0);
 
     char* const args[] = { "sha1sum", "-b", NULL };
     execvp(args[0], args);
     Panic("execvp returned (failed)");
   } else {
     // parent process
-    close(fd[1]);
-    write(fd[0], bmp, image->size);
     close(fd[0]);
+    write(fd[1], bmp, image->size);
+    close(fd[1]);
     wait(&wstatus);
   }
 
