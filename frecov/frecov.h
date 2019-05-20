@@ -31,6 +31,7 @@ struct DataSeg {
 
 struct Image {
   char name[128];
+  char sha1[128];
   size_t size;
   int clus;
   FILE *file;
