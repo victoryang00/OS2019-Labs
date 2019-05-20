@@ -7,7 +7,7 @@ static struct DataSeg bmp_list[16][16][16];
 static struct Image image_list;
 
 int main(int argc, char *argv[]) {
-  if (argc <= 2) {
+  if (argc < 2) {
     printf("Usage: frecov FILE [--save]\n");
     printf("Check your input and try again.\n");
     exit(EXIT_FAILURE);
