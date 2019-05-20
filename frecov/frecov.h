@@ -14,7 +14,7 @@
 #include <sys/stat.h>
 #include <sys/wait.h>
 
-#define DEBUG
+//#define DEBUG
 #include "debug.h"
 #include "bmp.h"
 #include "fat32.h"
