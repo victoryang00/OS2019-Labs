@@ -274,5 +274,22 @@ void handle_image(struct Image *image, size_t sz, int nr) {
 
   free(bmp);
   CLog(FG_GREEN, "<<< finished processing image %s", image->name);
+
+  int fd[2] = {};
+  int wstatus = 0;
+  Assert(pipe(fd) != -1, "pipe failed");
+  pid_t pid = fork();
+  Assert(pid != -1, "fork failed");
+  
+  if (pid == 0) {
+    // child process
+    close(fd[0]);
+    write(fd[1], head, image->size);
+    close(fd[1]);
+    exit(EXIT_SUCCESS);
+  } else {
+    // parent process
+    wait(&wstatus);
+  }
 }
 
