@@ -290,7 +290,9 @@ void handle_image(struct Image *image, size_t sz, int nr) {
     // parent process
     write(fd[1], bmp, image->size);
     close(fd[1]);
+    Log("waiting");
     wait(&wstatus);
+    Log("finished");
 
     char buf[256] = "";
     read(fd[0], buf, 10);
