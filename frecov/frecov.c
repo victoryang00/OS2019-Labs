@@ -310,7 +310,7 @@ void handle_image(struct Image *image, size_t sz, int nr) {
     read(fd1[0], buf, sizeof(buf));
     close(fd1[0]);
     sscanf(buf, "%s", image->sha1);
-    printf("%s %s\n", image->sha1, image->name);
+    printf("%s  %s\n", image->sha1, image->name);
   }
 
   free(bmp);
