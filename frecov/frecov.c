@@ -272,7 +272,7 @@ void handle_image(struct Image *image, size_t sz, int nr) {
   
   if (saving_files) {
     char save_name[128] = "";
-    sprintf(save_name, FOLFER "/%s", image->name);
+    sprintf(save_name, FOLDER "/%s", image->name);
     image->file = fopen(save_name, "w+");
     Assert(image->file, "fopen failed for image %s", image->name);
     fwrite(bmp, image->size, 1, image->file);
