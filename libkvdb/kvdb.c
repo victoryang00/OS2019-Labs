@@ -2,11 +2,13 @@
 
 int kvdb_open(kvdb_t *db, const char *filename) {
   db->filename = filename;
-  db->fd = open(filename, O_CREAT);
+  db->fd = open(filename, O_CREAT | O_RDWR);
+  Log("%s opened", db->filename);
   return db->fd == -1 ? -1 : 0;
 }
 
 int kvdb_close(kvdb_t *db) {
+  Log("%s closed", db->filename);
   return close(db->fd) ? -1 : 0;
 }
 

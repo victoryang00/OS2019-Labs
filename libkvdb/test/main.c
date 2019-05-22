@@ -6,7 +6,10 @@ int main() {
   const char *key = "operating-systems";
   //char *value;
 
-  kvdb_open(&db, "a.db"); // BUG: should check for errors
+  int ret = 0;
+  
+  ret = kvdb_open(&db, "a.db"); // BUG: should check for errors
+  printf("ret is %d\n", ret);
   kvdb_put(&db, key, "three-easy-pieces");
   //value = kvdb_get(&db, key);
   kvdb_close(&db);
