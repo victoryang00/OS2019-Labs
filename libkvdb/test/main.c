@@ -4,16 +4,16 @@
 int main() {
   kvdb_t db;
   const char *key = "operating-systems";
-  //char *value;
+  char *value;
 
   int ret = 0;
   
   ret = kvdb_open(&db, "a.db"); // BUG: should check for errors
   printf("ret is %d\n", ret);
   kvdb_put(&db, key, "three-easy-pieces");
-  //value = kvdb_get(&db, key);
+  value = kvdb_get(&db, key);
   kvdb_close(&db);
-  //printf("[%s]: [%s]\n", key, value);
-  //free(value);
+  printf("[%s]: [%s]\n", key, value);
+  free(value);
   return 0;
 }

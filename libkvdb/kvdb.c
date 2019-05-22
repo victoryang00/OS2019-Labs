@@ -39,7 +39,7 @@ char *kvdb_get(kvdb_t *db, const char *key) {
   char key_read[256] = "";
   while (read(db->fd, buf, sizeof(buf))) {
     sscanf(buf, "%d%d%s", &len1, &len2, key_read);
-    offset += len1 + len2 + 1;
+    Log("key_read = %s", key_read);
     if (!strcmp(key_read, key)) {
       if (value) free(value);
       value = malloc(len2 + 1);
