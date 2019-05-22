@@ -4,7 +4,7 @@
 int main() {
   kvdb_t db;
   int ret = 0;
-  const char *key = "operating-system";
+  const char *key = "operating-systems";
   char *value;
   
   ret = kvdb_open(&db, "a.db"); // BUG: should check for errors
