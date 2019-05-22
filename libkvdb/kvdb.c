@@ -33,17 +33,21 @@ char *kvdb_get(kvdb_t *db, const char *key) {
   if (flock(db->fd, LOCK_SH)) return NULL;
 
   off_t offset = 0;
-  char buf[2048] = "";
-  char key_read[1024] = "";
-  char value_read[1024] = ""; 
+  int len1 = 0;
+  int len2 = 0;
+  char buf[512] = "";
+  char key_read[256] = "";
   while (read(db->fd, buf, sizeof(buf))) {
-    sscanf(buf, " %s %s", key_read, value_read);
-    offset += strlen(key_read) + strlen(value_read) + 2;
+    sscanf(buf, "%d%d%s", &len1, &len2, key_read);
+    offset += len1 + len2 + 1;
     if (!strcmp(key_read, key)) {
       if (value) free(value);
-      value = malloc(strlen(value_read) + 5);
-      strcpy(value, value_read);
+      value = malloc(len2 + 1);
+      lseek(db->fd, offset + 16 + len1, SEEK_SET);
+      read(db->fd, value, sizeof(value));
     }
+    offset += 16 + len1 + len2 + 1;
+    lseek(db->fd, offset, SEEK_SET);
   }
 
   if (flock(db->fd, LOCK_UN)) return NULL;
