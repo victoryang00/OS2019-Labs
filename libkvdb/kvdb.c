@@ -49,8 +49,7 @@ char *kvdb_get(kvdb_t *db, const char *key) {
       if (value) free(value);
       value = malloc(len2 + 1);
       lseek(db->fd, offset + 16 + len1 + 2, SEEK_SET);
-      int x = read(db->fd, value, len2);
-      Log("read bytes: %d", x);
+      read(db->fd, value, len2);
       value[len2] = '\0';
       Log("value updated: %s", value);
     }
