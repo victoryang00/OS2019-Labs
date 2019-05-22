@@ -37,7 +37,9 @@ char *kvdb_get(kvdb_t *db, const char *key) {
   int len2 = 0;
   char buf[512] = "";
   char key_read[256] = "";
+  
   Log("reading from file");
+  lseek(db->fd, 0, SEEK_SET);
   while (read(db->fd, buf, sizeof(buf))) {
     sscanf(buf, "%d%d%s", &len1, &len2, key_read);
     Log("key_read = %s", key_read);
