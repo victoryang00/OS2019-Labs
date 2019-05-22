@@ -50,6 +50,7 @@ char *kvdb_get(kvdb_t *db, const char *key) {
       value = malloc(len2 + 1);
       lseek(db->fd, offset + 16 + len1 + 2, SEEK_SET);
       read(db->fd, value, sizeof(value));
+      Log("value updated: %s", value);
     }
     offset += 16 + len1 + len2 + 3;
     lseek(db->fd, offset, SEEK_SET);
