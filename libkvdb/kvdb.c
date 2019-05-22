@@ -49,13 +49,17 @@ char *kvdb_get(kvdb_t *db, const char *key) {
       if (value) free(value);
       value = malloc((len2 + 1) * 2 * sizeof(char));
       lseek(db->fd, offset + 16 + len1 + 2, SEEK_SET);
-      read(db->fd, value, sizeof(value));
+      int x = read(db->fd, value, sizeof(value));
+      Log("read bytes: %d", x);
       Log("value updated: %s", value);
     }
     offset += 16 + len1 + len2 + 3;
     lseek(db->fd, offset, SEEK_SET);
   }
 
-  if (flock(db->fd, LOCK_UN)) return NULL;
+  if (flock(db->fd, LOCK_UN)) {
+    if (value) free(value);
+    return NULL;
+  };
   return value;
 }
