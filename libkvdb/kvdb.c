@@ -44,7 +44,7 @@ char *kvdb_get(kvdb_t *db, const char *key) {
   lseek(db->fd, 0, SEEK_SET);
   while (read(db->fd, buf, sizeof(buf))) {
     sscanf(buf, "%8d%8d%s", &len1, &len2, key_read);
-    Log("key_read = %s", key_read);
+    Log("read = (%d, %d, %s)", len1, len2, key_read);
     if (!strcmp(key_read, key)) {
       if (value) free(value);
       value = malloc(len2 + 1);
