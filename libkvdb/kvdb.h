@@ -1,8 +1,21 @@
 #ifndef __KVDB_H__
 #define __KVDB_H__
 
+#include <fcntl.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/file.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <unistd.h>
+
+#define DEBUG
+#include "debug.h"
 
 struct kvdb {
+  const char *filename;
+  int fd;
 };
 typedef struct kvdb kvdb_t;
 
