@@ -21,7 +21,9 @@ int kvdb_put(kvdb_t *db, const char *key, const char *value) {
   sprintf(len2, "%08d", (int)strlen(value));
   write(db->fd, len1, strlen(len1));
   write(db->fd, len2, strlen(len2));
+  write(db->fd, "\n", 1);
   write(db->fd, key, strlen(key));
+  write(db->fd, "\n", 1);
   write(db->fd, value, strlen(value));
   write(db->fd, "\n", 1);
   if (flock(db->fd, LOCK_UN)) return -1;
@@ -46,10 +48,10 @@ char *kvdb_get(kvdb_t *db, const char *key) {
     if (!strcmp(key_read, key)) {
       if (value) free(value);
       value = malloc(len2 + 1);
-      lseek(db->fd, offset + 16 + len1, SEEK_SET);
+      lseek(db->fd, offset + 16 + len1 + 2, SEEK_SET);
       read(db->fd, value, sizeof(value));
     }
-    offset += 16 + len1 + len2 + 1;
+    offset += 16 + len1 + len2 + 3;
     lseek(db->fd, offset, SEEK_SET);
   }
 
