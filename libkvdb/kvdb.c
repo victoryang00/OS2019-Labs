@@ -47,10 +47,11 @@ char *kvdb_get(kvdb_t *db, const char *key) {
     Log("read = (%d, %d, %s)", len1, len2, key_read);
     if (!strcmp(key_read, key)) {
       if (value) free(value);
-      value = malloc((len2 + 1) * 2 * sizeof(char));
+      value = malloc(len2 + 1);
       lseek(db->fd, offset + 16 + len1 + 2, SEEK_SET);
-      int x = read(db->fd, value, sizeof(value));
+      int x = read(db->fd, value, len2);
       Log("read bytes: %d", x);
+      value[len2] = '\0';
       Log("value updated: %s", value);
     }
     offset += 16 + len1 + len2 + 3;
