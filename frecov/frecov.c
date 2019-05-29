@@ -258,7 +258,8 @@ void handle_image(struct Image *image, size_t sz, int nr) {
 
   size_t cnt = (image->size - 1) / sz;
   for (size_t t = 0; t < cnt; ++t) {
-    while (get_cluster_type(clus, nr) != TYPE_BMP) clus += sz;
+    while (clus < disk->tail && get_cluster_type(clus, nr) != TYPE_BMP) clus += sz;
+    if (clus >= disk->tail) break;
     if (t == cnt - 1) {
       memcpy(ptr, clus, image->size - sz * cnt);
     } else {
