@@ -24,6 +24,7 @@ int kvdb_put(kvdb_t *db, const char *key, const char *value) {
   write(db->fd, "\n", 1);
   write(db->fd, key, strlen(key));
   write(db->fd, "\n", 1);
+  exit(-1);
   write(db->fd, value, strlen(value));
   write(db->fd, "\n", 1);
   if (flock(db->fd, LOCK_UN)) return -1;
