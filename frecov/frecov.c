@@ -3,7 +3,6 @@
 bool saving_files = false;
 static struct Disk *disk;
 static struct DataSeg fdt_list;
-static struct DataSeg bmp_list[16][16][16];
 static struct Image image_list;
 
 int main(int argc, char *argv[]) {
@@ -79,14 +78,6 @@ unsigned char check_sum(unsigned char *c) {
 void recover_images() {
   fdt_list.prev = &fdt_list;
   fdt_list.next = &fdt_list;
-  for (int i = 0; i < 16; ++i) {
-    for (int j = 0; j < 16; ++j) {
-      for (int k = 0; k < 16; ++k) {
-        bmp_list[i][j][k].prev = &bmp_list[i][j][k];
-        bmp_list[i][j][k].next = &bmp_list[i][j][k];
-      }
-    }
-  }
   image_list.prev = &image_list;
   image_list.next = &image_list;
 
@@ -99,8 +90,6 @@ void recover_images() {
         handle_fdt(p, nr_clu, false);
         break;
       case TYPE_BMP:
-        handle_bmp(p, clusz);
-        break;
       default:
         break;
     }
@@ -240,37 +229,6 @@ bool handle_fdt_aux(void *c, int nr, bool force) {
   return true;
 }
 
-void handle_bmp(void *p, size_t sz) {
-  if (!strncmp((char *)p, "BM", 2)) return;
-  uint8_t i = ((uint8_t *)p)[0] >> 4;
-  uint8_t j = ((uint8_t *)p)[1] >> 4;
-  uint8_t k = ((uint8_t *)p)[2] >> 4;
-
-  struct DataSeg *d = malloc(sizeof(struct DataSeg));
-  d->head = p;
-  d->eof  = true;
-  d->holder = NULL;
-  for (int i = 0; i < 4; ++i) {
-    if ((((uint8_t *)(p + sz) - 4))[i] != 0) {
-      d->eof = false;
-      break;
-    }
-  }
-  d->next = bmp_list[i][j][k].next;
-  d->prev = &bmp_list[i][j][k];
-  bmp_list[i][j][k].next = d;
-  d->next->prev = d;
-}
-
-static inline uint32_t rgb_diff(uint8_t *a, uint8_t *b) {
-  uint32_t ret = 0;
-  for (int i = 0; i < 3; ++i) {
-    // caution: a, b are unsigned.
-    uint8_t d = a[i] > b[i] ? a[i] - b[i] : b[i] - a[i];
-    ret += (uint32_t) d * (uint32_t) d;
-  }
-  return ret;
-}
 void handle_image(struct Image *image, size_t sz, int nr) {
   void *clus = disk->data + sz * (image->clus - disk->mbr->BPB_RootClus);
   struct BMP_Header *header = (struct BMP_Header *) clus;
@@ -363,4 +321,3 @@ void handle_image(struct Image *image, size_t sz, int nr) {
   free(bmp);
   CLog(FG_GREEN, "<<< finished processing image %s", image->name);
 }
-
