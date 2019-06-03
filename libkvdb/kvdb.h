@@ -16,9 +16,9 @@
 #include "debug.h"
 
 #if defined __i386__
-#define NFORM "%32lld"
+#define NFORM "%032lld"
 #elif defined __x86_64__
-#define NFORM "%32ld"
+#define NFORM "%032ld"
 #endif
 
 struct kvdb {
