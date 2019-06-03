@@ -58,9 +58,10 @@ int journal_write(kvdb_t *db, const char *key, const char *value) {
   if (db->jd == -1) return -1;
   while (true) {
     if (flock(db->jd, LOCK_EX)) return -1;
-    Log("before check");
     journal_check(db, true);
-    Log("after  check");
+
+    off_t journal_size = lseek(db->jd, 0, SEEK_END);
+    if ((int)journal_size < 20) break;
 
     char buf[8] = "";
     lseek(db->jd, 0, SEEK_SET);
