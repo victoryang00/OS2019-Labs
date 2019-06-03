@@ -41,9 +41,9 @@ char *kvdb_get(kvdb_t *db, const char *key) {
       lseek(db->fd, offset + 19 + len1, SEEK_SET);
       read(db->fd, value, len2);
       value[len2] = '\0';
-      //Log("value updated: %s", value);
+      Log("value updated: %s", value);
     }
-    offset += 16 + len1 + len2 + 3;
+    offset += 20 + len1 + len2;
     lseek(db->fd, offset, SEEK_SET);
   }
 
