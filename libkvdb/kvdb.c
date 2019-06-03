@@ -34,14 +34,14 @@ char *kvdb_get(kvdb_t *db, const char *key) {
   lseek(db->fd, 0, SEEK_SET);
   while (read(db->fd, buf, sizeof(buf))) {
     sscanf(buf, "%d %d %s", &len1, &len2, key_read);
-    Log("read = (%d, %d, %s)", len1, len2, key_read);
+    //Log("read = (%d, %d, %s)", len1, len2, key_read);
     if (!strcmp(key_read, key)) {
       if (value) free(value);
       value = malloc(len2 + 1);
       lseek(db->fd, offset + 19 + len1, SEEK_SET);
       read(db->fd, value, len2);
       value[len2] = '\0';
-      Log("value updated: %s", value);
+      //Log("value updated: %s", value);
     }
     offset += 20 + len1 + len2;
     lseek(db->fd, offset, SEEK_SET);
@@ -99,6 +99,7 @@ int journal_check(kvdb_t *db, bool already_open) {
   if (!already_open || flock(db->jd, LOCK_EX)) return -1;
 
   char buf[32] = "";
+  lseek(db->jd, 0, SEEK_SET);
   read(db->jd, buf, sizeof(buf));
   if (buf[0] != '1') {
     if (!already_open) flock(db->jd, LOCK_UN);
