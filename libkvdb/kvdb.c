@@ -79,10 +79,10 @@ int journal_write(kvdb_t *db, const char *key, const char *value) {
   lseek(db->jd, 2, SEEK_SET);
   write(db->jd, buf, sizeof(buf));
 
-  lseek(db->jd, 20, SEEK_SET);
+  lseek(db->jd, 29, SEEK_SET);
   write(db->jd, key, strlen(key));
   write(db->jd, "\n", 1);
-  lseek(db->jd, 21 + strlen(key), SEEK_SET);
+  lseek(db->jd, 30 + strlen(key), SEEK_SET);
   write(db->jd, value, strlen(value));
   write(db->jd, "\n", 1);
 
