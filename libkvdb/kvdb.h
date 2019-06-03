@@ -15,6 +15,12 @@
 #define DEBUG
 #include "debug.h"
 
+#if defined __i386__
+#define NFORM "%32lld"
+#elif defined __x86_64__
+#define NFORM "%32ld"
+#endif
+
 struct kvdb {
   const char *filename;
   char journal[64];
