@@ -136,8 +136,9 @@ int journal_check(kvdb_t *db, bool already_open) {
   lseek(db->jd, 0, SEEK_SET);
   write(db->jd, "0\n", 2);
 
-  syncfs(db->jd);
-  syncfs(db->fd);
+  sync();
+  //syncfs(db->jd);
+  //syncfs(db->fd);
 
   if (!already_open) flock(db->jd, LOCK_UN);
   if (!already_open) flock(db->fd, LOCK_UN);
