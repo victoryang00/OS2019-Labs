@@ -2,6 +2,7 @@
 #define __KVDB_H__
 
 #include <fcntl.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -19,6 +20,7 @@ struct kvdb {
   char journal[64];
   sem_t sem;
   int fd;
+  int jd;
 };
 typedef struct kvdb kvdb_t;
 

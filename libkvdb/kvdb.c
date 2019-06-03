@@ -14,9 +14,7 @@ int kvdb_close(kvdb_t *db) {
 }
 
 int kvdb_put(kvdb_t *db, const char *key, const char *value) {
-  if (flock(db->fd, LOCK_EX)) return -1;
-  lseek(db->fd, 0, SEEK_END);
-  if (flock(db->fd, LOCK_UN)) return -1;
+  journal_write(db, key, value);
   return 0;
 }
 
@@ -54,21 +52,60 @@ char *kvdb_get(kvdb_t *db, const char *key) {
 }
 
 int journal_write(kvdb_t *db, const char *key, const char *value) {
+  db->jd = open(db->journal, O_RDWR | O_CREAT);
+  if (db->jd == -1) return -1;
+  while (true) {
+    if (flock(db->jd, LOCK_EX)) return -1;
+    journal_check(db);
+
+    char buf[8] = "";
+    lseek(db->jd, 0, SEEK_SET);
+    read(db->jd, buf, sizeof(buf));
+    if (buf[0] == '0') break;
+    
+    if (flock(db->jd, LOCK_UN)) return -1;
+  }
+
+  char buf[32] = "";
+  sprintf(buf, "%08d %08d\n", (int)strlen(key), (int)strlen(value));
+  lseek(db->jd, 2, SEEK_SET);
+  write(db->jd, buf, sizeof(buf));
+
+  lseek(db->jd, 20, SEEK_SET);
+  write(db->jd, key, strlen(key));
+  write(db->jd, "\n", 1);
+  lseek(db->jd, 21 + strlen(key), SEEK_SET);
+  write(db->jd, value, strlen(value));
+  write(db->jd, "\n", 1);
+
+  lseek(db->jd, 0, SEEK_SET);
+  write(db->jd, "1", 1);
+
   journal_check(db);
-  
+  if (flock(db->jd, LOCK_UN)) return -1;
+  close(db->jd);
+  db->jd = -1;
+  return 0;
 }
 
 int journal_check(kvdb_t *db) {
-  int jd = open(db->journal, O_RDWR);
-  if (jd == -1) return 0;
-  if (flock(jd, LOCK_EX)) return -1;
+  bool already_open = db->jd != -1;
+  if (!already_open) {
+    db->jd = open(db->journal, O_RDWR | O_CREAT);
+    if (db->jd == -1) return -1;
+  }
+  if (flock(db->jd, LOCK_EX)) return -1;
 
   char buf[32] = "";
   int is_valid = 0;
-  read(jd, buf, sizeof(buf));
+  read(db->jd, buf, sizeof(buf));
   sscanf(buf, "%d", &is_valid);
   if (!is_valid) {
-    flock(jd, LOCK_UN);
+    if (!already_open) {
+      flock(db->jd, LOCK_UN);
+      close(db->jd);
+      db->jd = -1;
+    }
     return 0;
   }
 
@@ -76,16 +113,16 @@ int journal_check(kvdb_t *db) {
   int offset = 0;
   int len1 = 0;
   int len2 = 0;
-  lseek(jd, 2, SEEK_SET);
-  read(jd, buf, sizeof(buf));
+  lseek(db->jd, 2, SEEK_SET);
+  read(db->jd, buf, sizeof(buf));
   sscanf(buf, "%d %d %d", &offset, &len1, &len2);
 
   char *key = malloc((size_t)len1);
   char *value = malloc((size_t)len2);
-  lseek(jd, 20, SEEK_SET);
-  read(jd, key, (size_t)len1);
-  lseek(jd, 20 + len1 + 1, SEEK_SET);
-  read(jd, value, (size_t)len2);
+  lseek(db->jd, 20, SEEK_SET);
+  read(db->jd, key, (size_t)len1);
+  lseek(db->jd, 20 + len1 + 1, SEEK_SET);
+  read(db->jd, value, (size_t)len2);
 
   char len1_str[16] = "";
   char len2_str[16] = "";
@@ -101,8 +138,12 @@ int journal_check(kvdb_t *db) {
   
   flock(db->fd, LOCK_UN);
 
-  lseek(jd, 0, SEEK_SET);
-  write(jd, "0", 1);
-  flock(jd, LOCK_UN);
+  lseek(db->jd, 0, SEEK_SET);
+  write(db->jd, "0", 1);
+  if (!already_open) {
+    flock(db->jd, LOCK_UN);
+    close(db->jd);
+    db->jd = -1;
+  }
   return 0;
 }
