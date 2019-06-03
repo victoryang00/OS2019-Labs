@@ -112,14 +112,13 @@ int journal_check(kvdb_t *db, bool already_open) {
   lseek(db->jd, 2, SEEK_SET);
   read(db->jd, buf, sizeof(buf));
   sscanf(buf, "%d %d %d", &offset, &len1, &len2);
-  Log("%d %d %d", offset, len1, len2);
 
   char *key = malloc((size_t)len1);
   char *value = malloc((size_t)len2);
 
-  lseek(db->jd, 20, SEEK_SET);
+  lseek(db->jd, 29, SEEK_SET);
   read(db->jd, key, (size_t)len1);
-  lseek(db->jd, 20 + len1 + 1, SEEK_SET);
+  lseek(db->jd, 30 + len1, SEEK_SET);
   read(db->jd, value, (size_t)len2);
 
   lseek(db->fd, (off_t)offset, SEEK_SET);
