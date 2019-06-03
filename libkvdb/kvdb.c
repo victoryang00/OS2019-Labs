@@ -75,7 +75,7 @@ int journal_write(kvdb_t *db, const char *key, const char *value) {
 
   char buf[32] = "";
   off_t offset = lseek(db->fd, 0, SEEK_END);
-  sprintf(buf, "%08d %08d %08d\n", (int)offset, (int)strlen(key), (int)strlen(value));
+  sprintf(buf, "%032ld %032ld %032ld\n", (int64_t)offset, (int64_t)strlen(key), (int64_t)strlen(value));
   lseek(db->jd, 2, SEEK_SET);
   write(db->jd, buf, sizeof(buf));
 
