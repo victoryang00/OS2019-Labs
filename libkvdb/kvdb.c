@@ -117,9 +117,9 @@ int journal_check(kvdb_t *db, bool already_open) {
   char *key = malloc((size_t)len1);
   char *value = malloc((size_t)len2);
 
-  lseek(db->jd, 29, SEEK_SET);
+  lseek(db->jd, 101, SEEK_SET);
   read(db->jd, key, (size_t)len1);
-  lseek(db->jd, 30 + len1, SEEK_SET);
+  lseek(db->jd, 102 + len1, SEEK_SET);
   read(db->jd, value, (size_t)len2);
 
   sprintf(buf, NFORM "\n" NFORM "\n", len1, len2);
