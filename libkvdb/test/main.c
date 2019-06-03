@@ -1,22 +1,26 @@
 #include "../kvdb.h"
 #include <stdlib.h>
 
+#define DEBUG
+#include "../debug.h"
+
 int main() {
   kvdb_t db;
   int ret = 0;
   const char *key = "operating-systems";
   char *value;
   
+  Log(">>> Open");
   ret = kvdb_open(&db, "a.db"); // BUG: should check for errors
-  printf("ret is %d\n", ret);
 
+  Log(">>> Put");
   ret = kvdb_put(&db, key, "thard-pieces");
-  printf("ret is %d\n", ret);
 
+  Log(">>> Get");
   value = kvdb_get(&db, key);
 
+  Log(">>> Close");
   ret = kvdb_close(&db);
-  printf("ret is %d\n", ret);
 
   printf("[%s]: [%s]\n", key, value);
   free(value);
