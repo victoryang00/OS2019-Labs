@@ -84,7 +84,7 @@ int journal_write(kvdb_t *db, const char *key, const char *value) {
   write(db->jd, "\n", 1);
 
   lseek(db->jd, 0, SEEK_SET);
-  write(db->jd, "1", 1);
+  write(db->jd, "1\n", 2);
 
   journal_check(db, true);
   if (flock(db->jd, LOCK_UN)) return -1;
@@ -133,7 +133,7 @@ int journal_check(kvdb_t *db, bool already_open) {
   flock(db->fd, LOCK_UN);
 
   lseek(db->jd, 0, SEEK_SET);
-  write(db->jd, "0", 1);
+  write(db->jd, "0\n", 2);
   if (!already_open) flock(db->jd, LOCK_UN);
   return 0;
 }
