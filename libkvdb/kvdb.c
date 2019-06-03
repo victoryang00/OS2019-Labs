@@ -121,8 +121,9 @@ int journal_check(kvdb_t *db, bool already_open) {
   lseek(db->jd, 30 + len1, SEEK_SET);
   read(db->jd, value, (size_t)len2);
 
+  sprintf(buf, "%08d %08d\n", len1, len2);
   lseek(db->fd, (off_t)offset, SEEK_SET);
-  write(db->fd, buf, sizeof(buf));
+  write(db->fd, buf, strlen(buf));
 
   lseek(db->fd, (off_t)offset + 18, SEEK_SET);
   write(db->fd, key, strlen(key));
@@ -135,10 +136,6 @@ int journal_check(kvdb_t *db, bool already_open) {
 
   lseek(db->jd, 0, SEEK_SET);
   write(db->jd, "0\n", 2);
-
-  sync();
-  //syncfs(db->jd);
-  //syncfs(db->fd);
 
   if (!already_open) flock(db->jd, LOCK_UN);
   if (!already_open) flock(db->fd, LOCK_UN);
