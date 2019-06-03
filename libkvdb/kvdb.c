@@ -71,8 +71,11 @@ int journal_write(kvdb_t *db, const char *key, const char *value) {
     if (flock(db->jd, LOCK_UN)) return -1;
   }
 
+  if (flock(db->jd, LOCK_EX)) return -1;
+
   char buf[32] = "";
-  sprintf(buf, "%08d %08d\n", (int)strlen(key), (int)strlen(value));
+  off_t offset = lseek(db->fd, 0, SEEK_END);
+  sprintf(buf, "%08d %08d %08d\n", (int)offset, (int)strlen(key), (int)strlen(value));
   lseek(db->jd, 2, SEEK_SET);
   write(db->jd, buf, sizeof(buf));
 
@@ -88,6 +91,7 @@ int journal_write(kvdb_t *db, const char *key, const char *value) {
 
   journal_check(db, true);
   if (flock(db->jd, LOCK_UN)) return -1;
+  if (flock(db->fd, LOCK_UN)) return -1;
   return 0;
 }
 
@@ -101,14 +105,13 @@ int journal_check(kvdb_t *db, bool already_open) {
     return 0;
   }
 
-  if (flock(db->fd, LOCK_EX)) return -1;
+  if (!already_open || flock(db->fd, LOCK_EX)) return -1;
   int offset = 0;
   int len1 = 0;
   int len2 = 0;
   lseek(db->jd, 2, SEEK_SET);
   read(db->jd, buf, sizeof(buf));
   sscanf(buf, "%d %d %d", &offset, &len1, &len2);
-  Log("%s", buf);
 
   char *key = malloc((size_t)len1);
   char *value = malloc((size_t)len2);
@@ -128,10 +131,10 @@ int journal_check(kvdb_t *db, bool already_open) {
   
   free(key);
   free(value);
-  flock(db->fd, LOCK_UN);
 
   lseek(db->jd, 0, SEEK_SET);
   write(db->jd, "0\n", 2);
   if (!already_open) flock(db->jd, LOCK_UN);
+  if (!already_open) flock(db->fd, LOCK_UN);
   return 0;
 }
