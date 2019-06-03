@@ -30,6 +30,6 @@ int kvdb_put(kvdb_t *db, const char *key, const char *value);
 char *kvdb_get(kvdb_t *db, const char *key);
 
 int journal_write(kvdb_t *db, const char *key, const char *value);
-int journal_check(kvdb_t *db);
+int journal_check(kvdb_t *db, bool already_open);
 
 #endif

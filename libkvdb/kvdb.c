@@ -8,13 +8,12 @@ int kvdb_open(kvdb_t *db, const char *filename) {
 
   if (db->fd == -1 || db->jd == -1) return -1;
   Log("%s opened", db->filename);
-  close(db->jd);
   return 0;
 }
 
 int kvdb_close(kvdb_t *db) {
   Log("%s closed", db->filename);
-  return close(db->fd) ? -1 : 0;
+  return (close(db->fd) || close(db->jd)) ? -1 : 0;
 }
 
 int kvdb_put(kvdb_t *db, const char *key, const char *value) {
@@ -56,11 +55,10 @@ char *kvdb_get(kvdb_t *db, const char *key) {
 }
 
 int journal_write(kvdb_t *db, const char *key, const char *value) {
-  db->jd = open(db->journal, O_RDWR);
   if (db->jd == -1) return -1;
   while (true) {
     if (flock(db->jd, LOCK_EX)) return -1;
-    journal_check(db);
+    journal_check(db, true);
 
     char buf[8] = "";
     lseek(db->jd, 0, SEEK_SET);
@@ -85,31 +83,20 @@ int journal_write(kvdb_t *db, const char *key, const char *value) {
   lseek(db->jd, 0, SEEK_SET);
   write(db->jd, "1", 1);
 
-  journal_check(db);
+  journal_check(db, true);
   if (flock(db->jd, LOCK_UN)) return -1;
-  close(db->jd);
-  db->jd = -1;
   return 0;
 }
 
-int journal_check(kvdb_t *db) {
-  bool already_open = db->jd != -1;
-  if (!already_open) {
-    db->jd = open(db->journal, O_RDWR);
-    if (db->jd == -1) return -1;
-  }
-  if (flock(db->jd, LOCK_EX)) return -1;
+int journal_check(kvdb_t *db, bool already_open) {
+  if (!already_open || flock(db->jd, LOCK_EX)) return -1;
 
   char buf[32] = "";
   int is_valid = 0;
   read(db->jd, buf, sizeof(buf));
   sscanf(buf, "%d", &is_valid);
   if (!is_valid) {
-    if (!already_open) {
-      flock(db->jd, LOCK_UN);
-      close(db->jd);
-      db->jd = -1;
-    }
+    if (!already_open) flock(db->jd, LOCK_UN);
     return 0;
   }
 
@@ -144,10 +131,6 @@ int journal_check(kvdb_t *db) {
 
   lseek(db->jd, 0, SEEK_SET);
   write(db->jd, "0", 1);
-  if (!already_open) {
-    flock(db->jd, LOCK_UN);
-    close(db->jd);
-    db->jd = -1;
-  }
+  if (!already_open) flock(db->jd, LOCK_UN);
   return 0;
 }
