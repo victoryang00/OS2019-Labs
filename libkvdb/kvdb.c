@@ -3,8 +3,8 @@
 int kvdb_open(kvdb_t *db, const char *filename) {
   db->filename = filename;
   sprintf(db->journal, "%s.journal", filename);
-  db->fd = open(filename, O_CREAT | O_RDWR);
-  db->jd = open(db->journal, O_CREAT | O_RDWR);
+  db->fd = open(filename, O_CREAT | O_RDWR, S_IRWXU | S_IRWXG | S_IRWXO);
+  db->jd = open(db->journal, O_CREAT | O_RDWR, S_IRWXU | S_IRWXG | S_IRWXO);
 
   if (db->fd == -1 || db->jd == -1) return -1;
   Log("%s opened", db->filename);
