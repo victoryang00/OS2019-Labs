@@ -38,12 +38,12 @@ char *kvdb_get(kvdb_t *db, const char *key) {
     if (!strcmp(key_read, key)) {
       if (value) free(value);
       value = malloc(len2 + 1);
-      lseek(db->fd, offset + 19 + len1, SEEK_SET);
+      lseek(db->fd, offset + 67 + len1, SEEK_SET);
       read(db->fd, value, len2);
       value[len2] = '\0';
       //Log("value updated: %s", value);
     }
-    offset += 20 + len1 + len2;
+    offset += 68 + len1 + len2;
     lseek(db->fd, offset, SEEK_SET);
   }
 
@@ -75,14 +75,14 @@ int journal_write(kvdb_t *db, const char *key, const char *value) {
 
   char buf[128] = "";
   off_t offset = lseek(db->fd, 0, SEEK_END);
-  sprintf(buf, NFORM " " NFORM " " NFORM "\n", (int64_t)offset, (int64_t)strlen(key), (int64_t)strlen(value));
+  sprintf(buf, NFORM "\n" NFORM "\n" NFORM "\n", (int64_t)offset, (int64_t)strlen(key), (int64_t)strlen(value));
   lseek(db->jd, 2, SEEK_SET);
   write(db->jd, buf, sizeof(buf));
 
-  lseek(db->jd, 29, SEEK_SET);
+  lseek(db->jd, 101, SEEK_SET);
   write(db->jd, key, strlen(key));
   write(db->jd, "\n", 1);
-  lseek(db->jd, 30 + strlen(key), SEEK_SET);
+  lseek(db->jd, 102 + strlen(key), SEEK_SET);
   write(db->jd, value, strlen(value));
   write(db->jd, "\n", 1);
 
@@ -98,7 +98,7 @@ int journal_write(kvdb_t *db, const char *key, const char *value) {
 int journal_check(kvdb_t *db, bool already_open) {
   if (!already_open || flock(db->jd, LOCK_EX)) return -1;
 
-  char buf[32] = "";
+  char buf[128] = "";
   lseek(db->jd, 0, SEEK_SET);
   read(db->jd, buf, sizeof(buf));
   if (buf[0] != '1') {
@@ -107,12 +107,12 @@ int journal_check(kvdb_t *db, bool already_open) {
   }
 
   if (!already_open || flock(db->fd, LOCK_EX)) return -1;
-  int offset = 0;
-  int len1 = 0;
-  int len2 = 0;
+  int64_t offset = 0;
+  int64_t len1 = 0;
+  int64_t len2 = 0;
   lseek(db->jd, 2, SEEK_SET);
   read(db->jd, buf, sizeof(buf));
-  sscanf(buf, "%d %d %d", &offset, &len1, &len2);
+  sscanf(buf, NFORM NFORM NFORM, &offset, &len1, &len2);
 
   char *key = malloc((size_t)len1);
   char *value = malloc((size_t)len2);
@@ -122,11 +122,11 @@ int journal_check(kvdb_t *db, bool already_open) {
   lseek(db->jd, 30 + len1, SEEK_SET);
   read(db->jd, value, (size_t)len2);
 
-  sprintf(buf, "%08d %08d\n", len1, len2);
+  sprintf(buf, NFORM "\n" NFORM "\n", len1, len2);
   lseek(db->fd, (off_t)offset, SEEK_SET);
   write(db->fd, buf, strlen(buf));
 
-  lseek(db->fd, (off_t)offset + 18, SEEK_SET);
+  lseek(db->fd, (off_t)offset + 66, SEEK_SET);
   write(db->fd, key, strlen(key));
   write(db->fd, "\n", 1);
   write(db->fd, value, strlen(value));
