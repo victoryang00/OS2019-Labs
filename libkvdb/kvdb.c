@@ -4,8 +4,12 @@ int kvdb_open(kvdb_t *db, const char *filename) {
   db->filename = filename;
   sprintf(db->journal, "%s.journal", filename);
   db->fd = open(filename, O_CREAT | O_RDWR);
+  db->jd = open(db->journal, O_CREAT | O_RDWR);
+
+  if (db->fd == -1 || db->jd == -1) return -1;
   Log("%s opened", db->filename);
-  return db->fd == -1 ? -1 : 0;
+  close(db->jd);
+  return 0;
 }
 
 int kvdb_close(kvdb_t *db) {
@@ -52,7 +56,7 @@ char *kvdb_get(kvdb_t *db, const char *key) {
 }
 
 int journal_write(kvdb_t *db, const char *key, const char *value) {
-  db->jd = open(db->journal, O_RDWR | O_CREAT);
+  db->jd = open(db->journal, O_RDWR);
   if (db->jd == -1) return -1;
   while (true) {
     if (flock(db->jd, LOCK_EX)) return -1;
@@ -91,7 +95,7 @@ int journal_write(kvdb_t *db, const char *key, const char *value) {
 int journal_check(kvdb_t *db) {
   bool already_open = db->jd != -1;
   if (!already_open) {
-    db->jd = open(db->journal, O_RDWR | O_CREAT);
+    db->jd = open(db->journal, O_RDWR);
     if (db->jd == -1) return -1;
   }
   if (flock(db->jd, LOCK_EX)) return -1;
