@@ -9,6 +9,7 @@
 #include <sys/file.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <time.h>
 #include <unistd.h>
 
 #define DEBUG
@@ -52,13 +53,16 @@ char *kvdb_get(kvdb_t *db, const char *key);
 
 #ifdef DEBUG
 #define TOTAL 10
-#define DEATH 2
-inline void boom() {
+#define DEATH 3
+inline void boom(const char *msg) {
   int judge = rand() % TOTAL;
-  if (judge < DEATH) _exit(EXIT_FAILURE);
+  if (judge < DEATH) {
+    CLog(FG_RED, "boom: %s", msg);
+    _exit(EXIT_FAILURE);
+  }
 }
 #else
-inline void boom() { }
+inline void boom(const char *msg) { return; }
 #endif
 
 #endif

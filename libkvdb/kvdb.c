@@ -24,6 +24,9 @@ inline void find_end(int fd) {
 }
 
 int kvdb_open(kvdb_t *db, const char *filename) {
+#ifdef DEBUG
+  srand((unsigned)time(0));
+#endif
   db->filename = filename;
   db->fd = open(filename, OP_TYPE, OP_PRIV);
   if (db->fd == -1) return ER_OPEN;
