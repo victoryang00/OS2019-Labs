@@ -120,7 +120,7 @@ char *kvdb_get(kvdb_t *db, const char *key) {
   char *buf = malloc(SZ_RSVD);
   char *rkey = malloc(SZ_KEYS);
   char *rval = malloc(SZ_VALV);
-  char *ret = malloc(SZ_VALV);
+  char *ret = calloc(1, SZ_VALV);
 
   boom("get-1");
   kvdb_fsck(db);
