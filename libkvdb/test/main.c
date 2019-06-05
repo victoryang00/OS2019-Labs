@@ -1,40 +1,72 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <time.h>
+#include <unistd.h>
+#include <string.h>
+#include <pthread.h>
 #include "../kvdb.h"
-#include <stdlib.h>
 
-#define DEBUG
-#include "../debug.h"
+extern bool isBroke;
+char alphaOff = 0;
 
-int main() {
-  kvdb_t db;
-  int ret = 0;
-  
-  Log(">>> Open");
-  ret = kvdb_open(&db, "a.db");
-  Assert(!ret, "returned %d", ret);
+void work_place_r(kvdb_t *db){
+	char a[128], b[128];
+	int num = 0;;
+	memset(a, 0, sizeof(a));
+	memset(b, 0, sizeof(b));
+	for(int i=0;i < 20;i++){
+		a[i] = 'a'+alphaOff;
+		b[i] = 'b'+alphaOff;
+		printf("$$$ %s %s\n", a, b);
+		//alphaOff += 1;
+		char* str = NULL;
+		while(str == NULL)
+			str= kvdb_get(db, a);
 
-  while (true) {
-    char cmd[16], key[128], val[128];
-    printf(">>> ");
-    scanf(" %s", cmd);
-    if (!strcmp(cmd, "set")) {
-      scanf(" %s %s", key, val);
-      kvdb_put(&db, key, val);
-    } else if (!strcmp(cmd, "get")) {
-      scanf(" %s", key);
-      char *ret = kvdb_get(&db, key);
-      if (ret) {
-        printf("<<< %s -> %s\n", key, ret);
-        free(ret);
-      } else {
-        printf("<<< %s not found\n", key);
-      }
-    } else {
-      printf("<<< invalid cmd\n");
-    }
-  }
+		printf("\33[1;35mnum:%d %s\33[0m\n", num, str);
+	}
+	printf("end\n");
+}
 
-  Log(">>> Close");
-  ret = kvdb_close(&db);
-  Assert(!ret, "returned %d", ret);
-  return 0;
+void work_place_w(kvdb_t *db){
+	char a[128], b[128];
+	memset(a, 0, sizeof(a));
+	memset(b, 0, sizeof(b));
+	for(int i=0;i < 20;i++){
+		a[i] = 'a'+alphaOff;
+		b[i] = 'b'+alphaOff;
+		printf("$$$ %s %s\n", a, b);
+		//alphaOff += 1;
+		kvdb_put(db, a, b);
+	}
+	printf("end\n");
+}
+
+int main(){
+	kvdb_t db;
+	int pid = fork();
+	pid++;
+	pid += fork();
+	kvdb_open(&db, "b.db");
+
+	pthread_t id1, id2, id3, id4;
+	pthread_create(&id1, NULL, (void*)work_place_r, (void*)&db);
+	pthread_create(&id2, NULL, (void*)work_place_r, (void*)&db);
+	pthread_create(&id3, NULL, (void*)work_place_w, (void*)&db);
+	pthread_create(&id4, NULL, (void*)work_place_w, (void*)&db);
+	/*
+	if(ret1!=0 || ret2!=0 || ret3!=0 || ret4!=0){
+		printf("\33[1;31mthread error\33[0m\n");
+		return 0;
+	}
+	*/
+
+	pthread_join(id1, NULL);
+	pthread_join(id2, NULL);
+	pthread_join(id3, NULL);
+	pthread_join(id4, NULL);
+
+	kvdb_close(&db);
+
+	return 0;
 }
