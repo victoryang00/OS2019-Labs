@@ -11,7 +11,7 @@ int main() {
   char *value;
   
   Log(">>> Open");
-  ret = kvdb_open(&db, "a.db"); // BUG: should check for errors
+  ret = kvdb_open(&db, "a.db");
   Assert(!ret, "returned %d", ret);
 
   Log(">>> Put");
