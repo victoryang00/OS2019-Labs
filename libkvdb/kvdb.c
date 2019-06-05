@@ -105,7 +105,7 @@ char *kvdb_get(kvdb_t *db, const char *key) {
   kvdb_fsck(db);
   find_start(db->fd);
   off_t offset = lseek(db->fd, 0, SEEK_CUR);
-  while (read(db->fd, buf, sizeof(buf))) {
+  while (read(db->fd, buf, SZ_RSVD)) {
     CLog(FG_RED, "buf: %s", buf);
     sscanf(buf, " %s %s", rkey, rval);
     CLog(FG_GREEN, "read key-value: %s %s", rkey, rval);
