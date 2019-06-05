@@ -54,14 +54,14 @@ int kvdb_close(kvdb_t *db) {
 void kvdb_fsck(kvdb_t *db) {
   lseek(db->fd, 0, SEEK_SET);
   char *buf = malloc(SZ_RSVD);
-  read(db->fd, buf, 1);
+  read(db->fd, buf, 2);
   if (buf[0] == 'Y') {
     CLog(FG_PURPLE, "fsck trys to update db");
-    lseek(db->fd, 2, SEEK_SET);
     read(db->fd, buf, SZ_RSVD);
     char *key = malloc(SZ_KEYS);
     char *val = malloc(SZ_VALV);
     sscanf(buf, " %s %s", key, val);
+    CLog(FG_PURPLE, "update pair: %s %s", key, val);
     
     find_end(db->fd);
     write(db->fd, key, strlen(key));
@@ -75,8 +75,6 @@ void kvdb_fsck(kvdb_t *db) {
     lseek(db->fd, 0, SEEK_SET);
     write(db->fd, "N\n", 2);
     CLog(FG_PURPLE, "fsck finished");
-  } else {
-    CLog(FG_PURPLE, "fsck ok");
   }
   free(buf);
 }
