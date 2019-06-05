@@ -53,8 +53,8 @@ void kvdb_fsck(kvdb_t *db) {
   lseek(db->fd, 0, SEEK_SET);
   char *buf = malloc(SZ_RSVD);
   read(db->fd, buf, 1);
-  if (buf[0] != '\n') {
-    lseek(db->fd, 0, SEEK_SET);
+  if (buf[0] != 'Y') {
+    lseek(db->fd, 2, SEEK_SET);
     read(db->fd, buf, SZ_RSVD);
     char *key = malloc(SZ_KEYS);
     char *val = malloc(SZ_VALV);
@@ -70,7 +70,7 @@ void kvdb_fsck(kvdb_t *db) {
     free(val);
 
     lseek(db->fd, 0, SEEK_SET);
-    write(db->fd, "\n", 1);
+    write(db->fd, "N\n", 2);
   }
   free(buf);
 }
@@ -78,11 +78,13 @@ void kvdb_fsck(kvdb_t *db) {
 int kvdb_put(kvdb_t *db, const char *key, const char *value) {
   if (flock(db->fd, LOCK_EX)) return ER_LOCK;
   kvdb_fsck(db);
-  lseek(db->fd, 0, SEEK_SET);
+  lseek(db->fd, 2, SEEK_SET);
   write(db->fd, key, strlen(key));
   write(db->fd, " ", 1);
   write(db->fd, value, strlen(value));
   write(db->fd, "\n", 1);
+  lseek(db->fd, 0, SEEK_SET);
+  write(db->fd, "Y\n", 2);
   // sync();
   kvdb_fsck(db);
   if (flock(db->fd, LOCK_UN)) return ER_UNLK;
