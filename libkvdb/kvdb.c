@@ -32,7 +32,7 @@ int kvdb_open(kvdb_t *db, const char *filename) {
   off_t size = lseek(db->fd, 0, SEEK_END);
   if ((size_t)size < SZ_RSVD) {
     char *buf = malloc(SZ_RSVD);
-    buf[0] = 'Y';
+    buf[0] = 'N';
     buf[1] = '\n';
     buf[SZ_RSVD - 1] = '\n';
     lseek(db->fd, 0, SEEK_SET);
