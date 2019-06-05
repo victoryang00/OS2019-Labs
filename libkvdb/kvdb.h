@@ -50,4 +50,15 @@ void kvdb_fsck(kvdb_t *db);
 int kvdb_put(kvdb_t *db, const char *key, const char *value);
 char *kvdb_get(kvdb_t *db, const char *key);
 
+#ifdef DEBUG
+#define TOTAL 10
+#define DEATH 2
+inline void boom() {
+  int judge = rand() % TOTAL;
+  if (judge < DEATH) _exit(EXIT_FAILURE);
+}
+#else
+inline void boom() { }
+#endif
+
 #endif

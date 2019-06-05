@@ -30,6 +30,7 @@ int kvdb_open(kvdb_t *db, const char *filename) {
   Log("%s opened", db->filename);
 
   off_t size = lseek(db->fd, 0, SEEK_END);
+  boom();
   if ((size_t)size < SZ_RSVD) {
     char *buf = malloc(SZ_RSVD);
     buf[0] = 'N';
@@ -106,7 +107,6 @@ char *kvdb_get(kvdb_t *db, const char *key) {
   find_start(db->fd);
   off_t offset = lseek(db->fd, 0, SEEK_CUR);
   while (read(db->fd, buf, SZ_RSVD)) {
-    CLog(FG_RED, "buf: %s", buf);
     sscanf(buf, " %s %s", rkey, rval);
     CLog(FG_GREEN, "read key-value: %s %s", rkey, rval);
     if (!strcmp(key, rkey)) {
