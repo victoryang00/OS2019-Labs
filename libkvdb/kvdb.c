@@ -54,6 +54,7 @@ void kvdb_fsck(kvdb_t *db) {
   char *buf = malloc(SZ_RSVD);
   read(db->fd, buf, 1);
   if (buf[0] != 'Y') {
+    CLog(FG_PURPLE, "fsck trys to update db");
     lseek(db->fd, 2, SEEK_SET);
     read(db->fd, buf, SZ_RSVD);
     char *key = malloc(SZ_KEYS);
@@ -71,6 +72,9 @@ void kvdb_fsck(kvdb_t *db) {
 
     lseek(db->fd, 0, SEEK_SET);
     write(db->fd, "N\n", 2);
+    CLog(FG_PURPLE, "fsck finished");
+  } else {
+    CLog(FG_PURPLE, "fsck ok");
   }
   free(buf);
 }
