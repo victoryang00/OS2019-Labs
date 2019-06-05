@@ -22,7 +22,7 @@
 
 #define Byte sizeof(int8_t)
 #define KB (1024 * Byte)
-#define MB (1024 * Byte)
+#define MB (1024 * KB)
 
 #define SZ_KEYS  1 * MB
 #define SZ_VALV 16 * MB
