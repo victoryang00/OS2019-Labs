@@ -33,7 +33,7 @@ int kvdb_open(kvdb_t *db, const char *filename) {
   Log("%s opened", db->filename);
 
   off_t size = lseek(db->fd, 0, SEEK_END);
-  boom();
+  boom("before initialize db");
   if ((size_t)size < SZ_RSVD) {
     char *buf = malloc(SZ_RSVD);
     buf[0] = 'N';
@@ -59,6 +59,7 @@ void kvdb_fsck(kvdb_t *db) {
   lseek(db->fd, 0, SEEK_SET);
   char *buf = malloc(SZ_RSVD);
   read(db->fd, buf, 2);
+  boom("before fsck");
   if (buf[0] == 'Y') {
     CLog(FG_PURPLE, "fsck trys to update db");
     read(db->fd, buf, SZ_RSVD);
@@ -68,15 +69,22 @@ void kvdb_fsck(kvdb_t *db) {
     CLog(FG_PURPLE, "update pair: %s %s", key, val);
     
     find_end(db->fd);
+    boom("before fsck write");
     write(db->fd, key, strlen(key));
+    boom("fsck write-1");
     write(db->fd, " ", 1);
+    boom("fsck write-2");
     write(db->fd, val, strlen(val));
+    boom("fsck write-3");
     write(db->fd, "\n", 1);
     // sync();
     free(key);
+    boom("fsck free-1");
     free(val);
+    boom("fsck free-2");
 
     lseek(db->fd, 0, SEEK_SET);
+    boom("fsck write-4");
     write(db->fd, "N\n", 2);
     CLog(FG_PURPLE, "fsck finished");
   }
@@ -87,14 +95,22 @@ int kvdb_put(kvdb_t *db, const char *key, const char *value) {
   if (flock(db->fd, LOCK_EX)) return ER_LOCK;
   kvdb_fsck(db);
   lseek(db->fd, 2, SEEK_SET);
+  boom("put-1");
   write(db->fd, key, strlen(key));
+  boom("put-2");
   write(db->fd, " ", 1);
+  boom("put-3");
   write(db->fd, value, strlen(value));
+  boom("put-4");
   write(db->fd, "\n", 1);
+  boom("put-5");
   lseek(db->fd, 0, SEEK_SET);
+  boom("put-6");
   write(db->fd, "Y\n", 2);
+  boom("put-7");
   // sync();
   kvdb_fsck(db);
+  boom("put before unlk");
   if (flock(db->fd, LOCK_UN)) return ER_UNLK;
   return 0;
 }
@@ -106,23 +122,29 @@ char *kvdb_get(kvdb_t *db, const char *key) {
   char *rval = malloc(SZ_VALV);
   char *ret = malloc(SZ_VALV);
 
+  boom("get-1");
   kvdb_fsck(db);
+  boom("get-2");
   find_start(db->fd);
+  boom("get-3");
   off_t offset = lseek(db->fd, 0, SEEK_CUR);
   while (read(db->fd, buf, SZ_RSVD)) {
     sscanf(buf, " %s %s", rkey, rval);
+    boom("get-4");
     CLog(FG_GREEN, "read key-value: %s %s", rkey, rval);
     if (!strcmp(key, rkey)) {
       CLog(FG_YELLOW, "updated val: %s", rval);
       strcpy(ret, rval);
     }
     offset += strlen(rkey) + strlen(rval) + 2;
+    boom("get-5");
     lseek(db->fd, offset, SEEK_SET);
   }
 
   free(buf);
   free(rkey);
   free(rval);
+  boom("get-6");
   if (flock(db->fd, LOCK_UN)) {
     free(ret);
     return NULL;
