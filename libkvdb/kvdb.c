@@ -107,7 +107,11 @@ char *kvdb_get(kvdb_t *db, const char *key) {
   off_t offset = lseek(db->fd, 0, SEEK_CUR);
   while (read(db->fd, buf, sizeof(buf))) {
     sscanf(buf, " %s %s", rkey, rval);
-    if (!strcmp(key, rkey)) strcpy(ret, rval);
+    CLog(FG_GREEN, "read key: %s", rkey);
+    if (!strcmp(key, rkey)) {
+      CLog(FG_YELLOW, "updated val: %s", rval);
+      strcpy(ret, rval);
+    }
     offset += strlen(rkey) + strlen(rval) + 2;
     lseek(db->fd, offset, SEEK_SET);
   }
