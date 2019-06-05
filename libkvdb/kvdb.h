@@ -6,7 +6,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <semaphore.h>
 #include <sys/file.h>
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -16,17 +15,18 @@
 #include "debug.h"
 
 #if defined __i386__
-#define NFORM "%032lld"
+#define LLD "%032lld"
 #elif defined __x86_64__
-#define NFORM "%032ld"
+#define LLD "%032ld"
 #endif
 
+#define Byte sizeof(int8_t)
+#define KB (1024 * Byte)
+#define MB (1024 * Byte)
+
 struct kvdb {
-  const char *filename;
-  char journal[64];
-  sem_t sem;
   int fd;
-  int jd;
+  const char *filename;
 };
 typedef struct kvdb kvdb_t;
 
@@ -34,8 +34,5 @@ int kvdb_open(kvdb_t *db, const char *filename);
 int kvdb_close(kvdb_t *db);
 int kvdb_put(kvdb_t *db, const char *key, const char *value);
 char *kvdb_get(kvdb_t *db, const char *key);
-
-int journal_write(kvdb_t *db, const char *key, const char *value);
-int journal_check(kvdb_t *db, bool already_open);
 
 #endif
