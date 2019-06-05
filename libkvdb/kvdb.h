@@ -52,8 +52,8 @@ int kvdb_put(kvdb_t *db, const char *key, const char *value);
 char *kvdb_get(kvdb_t *db, const char *key);
 
 #ifdef DEBUG
-#define TOTAL 10
-#define DEATH 3
+#define TOTAL 114514
+#define DEATH 19
 inline void boom(const char *msg) {
   int judge = rand() % TOTAL;
   if (judge < DEATH) {
