@@ -107,7 +107,7 @@ char *kvdb_get(kvdb_t *db, const char *key) {
   off_t offset = lseek(db->fd, 0, SEEK_CUR);
   while (read(db->fd, buf, sizeof(buf))) {
     sscanf(buf, " %s %s", rkey, rval);
-    CLog(FG_GREEN, "read key: %s", rkey);
+    CLog(FG_GREEN, "read key-value: %s %s", rkey, rval);
     if (!strcmp(key, rkey)) {
       CLog(FG_YELLOW, "updated val: %s", rval);
       strcpy(ret, rval);
