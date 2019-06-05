@@ -25,8 +25,8 @@
 #define MB (1024 * KB)
 
 #define SZ_KEYS  1 * MB
-#define SZ_VALV 16 * MB
-#define SZ_RSVD 17 * MB
+#define SZ_VALV 1 * MB
+#define SZ_RSVD 2 * MB
 
 #define OP_TYPE O_CREAT | O_RDWR
 #define OP_PRIV S_IRWXU | S_IRWXG | S_IRWXO

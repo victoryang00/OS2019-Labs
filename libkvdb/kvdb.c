@@ -96,17 +96,11 @@ int kvdb_put(kvdb_t *db, const char *key, const char *value) {
 }
 
 char *kvdb_get(kvdb_t *db, const char *key) {
+  if (flock(db->fd, LOCK_EX)) return NULL;
   char *buf = malloc(SZ_RSVD);
   char *rkey = malloc(SZ_KEYS);
   char *rval = malloc(SZ_VALV);
   char *ret = malloc(SZ_VALV);
-  if (flock(db->fd, LOCK_EX)) {
-    free(buf);
-    free(rkey);
-    free(rval);
-    free(ret);
-    return NULL;
-  }
 
   kvdb_fsck(db);
   find_start(db->fd);
