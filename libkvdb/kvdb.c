@@ -32,7 +32,9 @@ int kvdb_open(kvdb_t *db, const char *filename) {
   off_t size = lseek(db->fd, 0, SEEK_END);
   if ((size_t)size < SZ_RSVD) {
     char *buf = malloc(SZ_RSVD);
-    buf[0] = buf[SZ_RSVD - 1] = '\n';
+    buf[0] = 'Y';
+    buf[1] = '\n';
+    buf[SZ_RSVD - 1] = '\n';
     lseek(db->fd, 0, SEEK_SET);
     write(db->fd, buf, SZ_RSVD);
     lseek(db->fd, 0, SEEK_SET);
@@ -53,7 +55,7 @@ void kvdb_fsck(kvdb_t *db) {
   lseek(db->fd, 0, SEEK_SET);
   char *buf = malloc(SZ_RSVD);
   read(db->fd, buf, 1);
-  if (buf[0] != 'Y') {
+  if (buf[0] == 'Y') {
     CLog(FG_PURPLE, "fsck trys to update db");
     lseek(db->fd, 2, SEEK_SET);
     read(db->fd, buf, SZ_RSVD);
