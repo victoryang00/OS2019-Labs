@@ -30,6 +30,7 @@ int kvdb_open(kvdb_t *db, const char *filename) {
   db->filename = filename;
   db->fd = open(filename, OP_TYPE, OP_PRIV);
   if (db->fd == -1) return ER_OPEN;
+  pthread_mutex_init(db->mutex, NULL);
   Log("%s opened", db->filename);
 
   off_t size = lseek(db->fd, 0, SEEK_END);
@@ -52,6 +53,25 @@ int kvdb_close(kvdb_t *db) {
   if (close(db->fd)) return ER_CLOS;
   db->fd = -1;
   Log("%s closed", db->filename);
+  return RT_SUCC;
+}
+
+int kvdb_lock(kvdb_t *db) {
+  int mx = 0;
+  if ((mx = pthread_mutex_lock(db->mutex))) {
+    if (mx == EOWNERDEAD) {
+      pthread_mutex_consistent(db->mutex);
+    } else {
+      return ER_MUTX;
+    }
+  }
+  if (flock(db->fd, LOCK_EX)) return ER_LOCK;
+  return RT_SUCC;
+}
+
+int kvdb_unlk(kvdb_t *db) {
+  if (flock(db->fd, LOCK_UN)) return ER_UNLK;
+  if (pthread_mutex_unlock(db->mutex)) return ER_MUTX;
   return RT_SUCC;
 }
 
@@ -92,7 +112,7 @@ void kvdb_fsck(kvdb_t *db) {
 }
 
 int kvdb_put(kvdb_t *db, const char *key, const char *value) {
-  if (flock(db->fd, LOCK_EX)) return ER_LOCK;
+  if (kvdb_lock(db)) return ER_LOCK;
   kvdb_fsck(db);
   lseek(db->fd, 2, SEEK_SET);
   boom("put-1");
@@ -111,12 +131,12 @@ int kvdb_put(kvdb_t *db, const char *key, const char *value) {
   // sync();
   kvdb_fsck(db);
   boom("put before unlk");
-  if (flock(db->fd, LOCK_UN)) return ER_UNLK;
+  if (kvdb_unlk(db)) return ER_UNLK;
   return 0;
 }
 
 char *kvdb_get(kvdb_t *db, const char *key) {
-  if (flock(db->fd, LOCK_EX)) return NULL;
+  if (kvdb_lock(db)) return NULL;
   char *buf = malloc(SZ_RSVD);
   char *rkey = malloc(SZ_KEYS);
   char *rval = malloc(SZ_VALV);
@@ -145,7 +165,7 @@ char *kvdb_get(kvdb_t *db, const char *key) {
   free(rkey);
   free(rval);
   boom("get-6");
-  if (flock(db->fd, LOCK_UN)) {
+  if (kvdb_unlk(db)) {
     free(ret);
     return NULL;
   }

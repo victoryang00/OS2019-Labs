@@ -2,6 +2,7 @@
 #define __KVDB_H__
 
 #include <fcntl.h>
+#include <pthread.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -37,16 +38,20 @@
 #define ER_CLOS -3
 #define ER_LOCK -4
 #define ER_UNLK -5
+#define ER_MUTX -6
 #define RT_SUCC 0
 
 struct kvdb {
   int fd;
   const char *filename;
+  pthread_mutex_t *mutex;
 };
 typedef struct kvdb kvdb_t;
 
 int kvdb_open(kvdb_t *db, const char *filename);
 int kvdb_close(kvdb_t *db);
+int kvdb_lock(kvdb_t *db);
+int kvdb_unlk(kvdb_t *db);
 void kvdb_fsck(kvdb_t *db);
 int kvdb_put(kvdb_t *db, const char *key, const char *value);
 char *kvdb_get(kvdb_t *db, const char *key);
