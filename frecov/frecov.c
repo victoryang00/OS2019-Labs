@@ -3,7 +3,6 @@
 bool saving_files = false;
 static struct Disk *disk;
 static struct DataSeg fdt_list;
-static struct DataSeg bmp_list[16][16][16];
 static struct Image image_list;
 
 int main(int argc, char *argv[]) {
@@ -30,17 +29,55 @@ int main(int argc, char *argv[]) {
   return 0;
 }
 
+struct Disk *disk_load_fat(const char *file) {
+  int fd = 0;
+  struct stat sb = {};
+  struct Disk *ret = malloc(sizeof(struct Disk));
+
+  fd = open(file, O_RDONLY);
+  Assert(fd, "failed to open file");
+  Assert(!fstat(fd, &sb), "fstat failed");
+
+  ret->head = mmap(NULL, sb.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
+  ret->tail = ret->head + (size_t) sb.st_size;
+  Assert(ret->head != MAP_FAILED, "mmap failed");
+
+  disk_get_sections(ret);
+  return ret;
+}
+
+void disk_get_sections(struct Disk *disk) {
+  disk->mbr = (struct MBR *) disk->head;
+  Assert(disk->mbr->SignatureWord == 0xaa55, "Expecting signature 0xaa55, got 0x%x", disk->mbr->SignatureWord);
+  Log("MBR    at %p, offset 0x%x", disk->mbr, (int) ((void *) disk->mbr - disk->head));
+
+  disk->fsinfo = (struct FSInfo *) ((void *) disk->mbr + 512);
+  Log("FSInfo at %p, offset 0x%x", disk->fsinfo, (int) ((void *) disk->fsinfo - disk->head));
+
+  size_t offst = (size_t) disk->mbr->BPB_BytsPerSec * disk->mbr->BPB_RsvdSecCnt;
+  size_t fatsz = (size_t) disk->mbr->BPB_BytsPerSec * disk->mbr->BPB_FATSz32;
+  disk->fat[0] = (struct FAT *) (((void *) disk->head) + offst);
+  disk->fat[1] = (struct FAT *) (((void *) disk->head) + offst + fatsz * (disk->mbr->BPB_NumFATs - 1));
+  Log("FAT1   at %p, offset 0x%x", disk->fat[0], (int) ((void *) disk->fat[0] - disk->head));
+  Log("FAT2   at %p, offset 0x%x", disk->fat[1], (int) ((void *) disk->fat[1] - disk->head));
+
+  offst += (size_t) fatsz * disk->mbr->BPB_NumFATs;
+  offst += (size_t) disk->mbr->BPB_BytsPerSec * (disk->mbr->BPB_RootClus - 2) * disk->mbr->BPB_SecPerClus;
+  disk->data = (((void *) disk->head) + offst);
+  Log("DATA   at %p, offset 0x%x", disk->data, (int) ((void *) disk->data - disk->head));
+}
+
+unsigned char check_sum(unsigned char *c) {
+  unsigned char sum = 0;
+  for (int i = 0; i < 11; ++i) {
+    sum = ((sum & 1) ? 0x80 : 0) + (sum >> 1) + c[i];
+  }
+  return sum;
+}
+
 void recover_images() {
   fdt_list.prev = &fdt_list;
   fdt_list.next = &fdt_list;
-  for (int i = 0; i < 16; ++i) {
-    for (int j = 0; j < 16; ++j) {
-      for (int k = 0; k < 16; ++k) {
-        bmp_list[i][j][k].prev = &bmp_list[i][j][k];
-        bmp_list[i][j][k].next = &bmp_list[i][j][k];
-      }
-    }
-  }
   image_list.prev = &image_list;
   image_list.next = &image_list;
 
@@ -53,8 +90,6 @@ void recover_images() {
         handle_fdt(p, nr_clu, false);
         break;
       case TYPE_BMP:
-        handle_bmp(p, clusz);
-        break;
       default:
         break;
     }
@@ -194,37 +229,6 @@ bool handle_fdt_aux(void *c, int nr, bool force) {
   return true;
 }
 
-void handle_bmp(void *p, size_t sz) {
-  if (!strncmp((char *)p, "BM", 2)) return;
-  uint8_t i = ((uint8_t *)p)[0] >> 4;
-  uint8_t j = ((uint8_t *)p)[1] >> 4;
-  uint8_t k = ((uint8_t *)p)[2] >> 4;
-
-  struct DataSeg *d = malloc(sizeof(struct DataSeg));
-  d->head = p;
-  d->eof  = true;
-  d->holder = NULL;
-  for (int i = 0; i < 4; ++i) {
-    if ((((uint8_t *)(p + sz) - 4))[i] != 0) {
-      d->eof = false;
-      break;
-    }
-  }
-  d->next = bmp_list[i][j][k].next;
-  d->prev = &bmp_list[i][j][k];
-  bmp_list[i][j][k].next = d;
-  d->next->prev = d;
-}
-
-static inline uint32_t rgb_diff(uint8_t *a, uint8_t *b) {
-  uint32_t ret = 0;
-  for (int i = 0; i < 3; ++i) {
-    // caution: a, b are unsigned.
-    uint8_t d = a[i] > b[i] ? a[i] - b[i] : b[i] - a[i];
-    ret += (uint32_t) d * (uint32_t) d;
-  }
-  return ret;
-}
 void handle_image(struct Image *image, size_t sz, int nr) {
   void *clus = disk->data + sz * (image->clus - disk->mbr->BPB_RootClus);
   struct BMP_Header *header = (struct BMP_Header *) clus;
@@ -258,7 +262,8 @@ void handle_image(struct Image *image, size_t sz, int nr) {
 
   size_t cnt = (image->size - 1) / sz;
   for (size_t t = 0; t < cnt; ++t) {
-    while (get_cluster_type(clus, nr) != TYPE_BMP) clus += sz;
+    while (clus < disk->tail && get_cluster_type(clus, nr) != TYPE_BMP) clus += sz;
+    if (clus >= disk->tail) break;
     if (t == cnt - 1) {
       memcpy(ptr, clus, image->size - sz * cnt);
     } else {
@@ -316,4 +321,3 @@ void handle_image(struct Image *image, size_t sz, int nr) {
   free(bmp);
   CLog(FG_GREEN, "<<< finished processing image %s", image->name);
 }
-
