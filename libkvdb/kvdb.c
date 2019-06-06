@@ -97,7 +97,7 @@ void kvdb_fsck(kvdb_t *db) {
     write(db->fd, val, strlen(val));
     boom("fsck write-3");
     write(db->fd, "\n", 1);
-    // sync();
+    sync();
     free(key);
     boom("fsck free-1");
     free(val);
@@ -128,7 +128,7 @@ int kvdb_put(kvdb_t *db, const char *key, const char *value) {
   boom("put-6");
   write(db->fd, "Y\n", 2);
   boom("put-7");
-  // sync();
+  sync();
   kvdb_fsck(db);
   boom("put before unlk");
   if (kvdb_unlk(db)) return ER_UNLK;
