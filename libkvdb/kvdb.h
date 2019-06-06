@@ -13,7 +13,7 @@
 #include <time.h>
 #include <unistd.h>
 
-#define DEBUG
+//#define DEBUG
 #include "debug.h"
 
 #if defined __i386__
