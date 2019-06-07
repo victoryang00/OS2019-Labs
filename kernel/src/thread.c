@@ -70,7 +70,6 @@ int kmt_create(struct task *task, const char *name, void (*entry)(void *arg), vo
   task->count   = 0;
   task->alarm   = NULL;
   task->suicide = 0;
-  memset(task->fildes, 0, NR_FIDS * sizeof(file_t *));
   task->next    = NULL;
 
   // We cannot create context before initializing the stack
@@ -84,6 +83,9 @@ int kmt_create(struct task *task, const char *name, void (*entry)(void *arg), vo
     (void *) task->stack + sizeof(task->stack) 
   };
   task->context = _kcontext(stack, entry, arg);
+  
+  // init file descriptors
+  memset(task->fildes, 0, NR_FILDS * sizeof(file_t *));
 
   bool holding = spinlock_holding(&os_trap_lock);
   if (!holding) spinlock_acquire(&os_trap_lock);
