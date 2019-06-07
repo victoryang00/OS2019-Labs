@@ -69,6 +69,7 @@ bool get_dir(const char *arg, const char *pwd, char *dir) {
       sprintf(buf, "%s/%s", pwd, arg);
     }
   }
+  Log("%s", buf);
 
   size_t pos = 0;
   size_t cur = 0;
