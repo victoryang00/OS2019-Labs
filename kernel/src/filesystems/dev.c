@@ -37,6 +37,7 @@ ssize_t devops_write(file_t *file, const char *buf, size_t size) {
 
 void devfs_init(filesystem_t *fs, const char *path, device_t *dev) {
   for (int i = 0; i < nr_devices; ++i) {
+    CLog(BG_YELLOW, "add inode of %s/%s", path, devices[i]->name);
     inode_t *ip = pmm->alloc(sizeof(inode_t));
     ip->type = TYPE_DEVI;
     ip->ptr = devices[i];
