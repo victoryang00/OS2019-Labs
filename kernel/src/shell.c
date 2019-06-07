@@ -118,14 +118,14 @@ FUNC(ls) {
 FUNC(cd) {
   char dir[256] = "";
   if (!get_dir(arg, pwd, dir)) {
-    sprintf(ret, "Invalid directory address.");
+    sprintf(ret, "Invalid directory address.\n");
   }
 
   if (vfs->access(dir, 0)) {
-    sprintf(ret, "Cannot access %s.");
+    sprintf(ret, "Cannot access %s.\n");
   } else {
     strcpy(pwd, dir);
-    sprintf(ret, "Current dir = %s", dir);
+    sprintf(ret, "Directory changed to %s.\n", dir);
   }
 }
 
