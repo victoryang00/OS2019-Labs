@@ -5,22 +5,27 @@
 
 mnt_t mnt_head;
 
-static inline mnt_t *find_mnt(const char *path) {
+inline mnt_t *find_mnt(const char *path) {
+  size_t max_match = 0;
+  mnt_t ret = 0;
   for (mnt_t *mp = mnt_head.next; mp != &mnt_head; mp = mp->next) {
     if (!strncmp(path, mp->path, strlen(mp->path))) {
-      return mp;
+      if (strlen(mp->path) > max_match) {
+        max_match = strlen(mp->path);
+        ret = mp;
+      }
     }
   }
-  return NULL;
+  return ret;
 }
 
-static inline inode_t *find_inode_by_path(const char *path) {
+inline inode_t *find_inode_by_path(const char *path) {
   mnt_t *mp = find_mnt(path);
   if (!mp) return NULL;
   return mp->fs->ops->lookup(mp->fs, path + strlen(mp->path), 0);
 }
 
-static inline file_t *find_file_by_fd(int fd) {
+inline file_t *find_file_by_fd(int fd) {
   task_t *cur = get_current_task();
   return cur->fildes[fd];
 }
