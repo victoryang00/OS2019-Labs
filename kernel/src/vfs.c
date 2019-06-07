@@ -105,6 +105,8 @@ int vfs_open(const char *path, int flags) {
   fp->flags = flags;
   fp->inode = ip;
   fp->offset = 0;
+
+  cur->fildes[fd] = fp;
   return fd;
 }
  
