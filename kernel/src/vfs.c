@@ -28,6 +28,8 @@ static inline file_t *find_file_by_fd(int fd) {
 void vfs_init() {
   mnt_head.next = &mnt_head;
   mnt_head.prev = &mnt_head;
+
+  mount_devfs();
 }
 
 int vfs_access(const char *path, int mode) {
