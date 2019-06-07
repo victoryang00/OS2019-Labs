@@ -86,7 +86,7 @@ int vfs_open(const char *path, int flags) {
       break;
     }
   }
-  Assert(fd > 0, "No fd is available.");
+  Assert(fd != -1, "No fd is available.");
   
   mnt_t *mp = find_mnt(path);
   Assert(mp, "Path %s is not mounted!", path);
