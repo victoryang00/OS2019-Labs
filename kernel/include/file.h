@@ -3,13 +3,13 @@
 
 #include <common.h>
 
-struct file_t;
-struct inodeops_t;
-struct inode_t;
+struct file;
+struct inodeops;
+struct inode;
 
 typedef struct file {
   int refcnt;
-  inode_t *inode;
+  struct inode *inode;
   uint64_t offset;
 } file_t;
 
