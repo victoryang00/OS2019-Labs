@@ -17,8 +17,13 @@ filesystem_t ramfs = {
 
 void ramfs_init(filesystem_t *fs, const char *path, device_t *dev) {
   fs->dev = dev;
-  root.fs = fs;
+  root.type = TYPE_MNT;
+  root.ptr = NULL;
   sprintf(root.path, path);
+  root.fs = fs;
+  root.parent = &root;
+  root.fchild = NULL;
+  root.cousin = NULL;
 }
 
 inode_t *ramfs_lookup(filesystem_t *fs, const char *path, int flags) {
