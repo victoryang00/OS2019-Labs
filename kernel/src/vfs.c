@@ -38,6 +38,9 @@ void vfs_init() {
 
   extern void mount_devfs();
   mount_devfs();
+
+  //extern void mount_procfs();
+  //mount_procfs();
 }
 
 int vfs_access(const char *path, int mode) {
