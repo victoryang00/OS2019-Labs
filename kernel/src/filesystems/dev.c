@@ -25,7 +25,7 @@ void mount_devfs() {
   devfs_root.fchild = NULL;
   devfs_root.cousin = NULL;
   sprintf(devfs_root.path, path);
-  vfs->mount(path, fs);
+  vfs->mount(path, &devfs);
 
   devfs_init(&devfs, "/dev", NULL);
   CLog(BG_YELLOW, "/dev initialiezd.");
