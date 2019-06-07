@@ -27,7 +27,7 @@ void shell_task(void *arg) {
   int stdin = vfs->open(buf, O_RDONLY);
   int stdout = vfs->open(buf, O_WRONLY);
 
-  sprintf(buf, "Welcome to sHELL.\nType [help] for help.\n");
+  sprintf(buf, "Welcome to sHELL.\nType [help] for help.\n\n");
   vfs->write(stdout, buf, strlen(buf));
 
   sprintf(pwd, "/");
