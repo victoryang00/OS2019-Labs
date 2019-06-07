@@ -55,7 +55,7 @@ int vfs_mount(const char *path, filesystem_t *fs) {
   ip->parent = pp;
   ip->fchild = NULL;
   ip->cousin = NULL;
-  ip->ops = pmm->alloc(sizeof(inode));
+  ip->ops = pmm->alloc(sizeof(inodeops_t));
   memcpy(ip->ops, &common_ops);
 
   inode_insert(pp, ip);
