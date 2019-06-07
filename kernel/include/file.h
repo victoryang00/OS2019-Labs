@@ -7,13 +7,17 @@ struct file;
 struct inodeops;
 struct inode;
 
-typedef struct file {
-  int refcnt;
-  struct inode *inode;
-  uint64_t offset;
-} file_t;
+typedef struct file file_t;
+typedef struct inodeops inodeops_t;
+typedef struct inode inode_t;
 
-typedef struct inodeops {
+struct file {
+  int refcnt;
+  inode_t *inode;
+  uint64_t offset;
+};
+
+struct inodeops {
   int (*open)(file_t *file, int flags);
   int (*close)(file_t *file);
   ssize_t (*read)(file_t *file, char *buf, size_t size);
@@ -23,13 +27,13 @@ typedef struct inodeops {
   int (*rmdir)(const char *name);
   int (*link)(const char *name, inode_t *inode);
   int (*unlink)(const char *name);
-} inodeops_t;
+};
 
-typedef struct inode {
+struct inode {
   int refcnt;
   void *ptr;
   filesystem_t *fs;
   inodeops_t *ops;
-} inode_t;
+};
 
 #endif
