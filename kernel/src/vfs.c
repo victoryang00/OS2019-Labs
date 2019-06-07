@@ -17,7 +17,7 @@ static inline mnt_t *find_mnt(const char *path) {
 static inline inode_t *find_inode_by_path(const char *path) {
   mnt_t *mp = find_mnt(path);
   if (!mp) return NULL;
-  return mp->fs->ops->lookup(mp->fs, path + strlen(mp->path), NULL);
+  return mp->fs->ops->lookup(mp->fs, path + strlen(mp->path), 0);
 }
 
 static inline file_t *find_file_by_fd(int fd) {
@@ -51,7 +51,7 @@ int vfs_unmount(const char *path) {
   Assert(mp, "Path %s not mounted!", path);
   mp->prev->next = mp->next;
   mp->next->prev = mp->prev;
-  free(mp);
+  pmm->free(mp);
   return 0;
 }
 
