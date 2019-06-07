@@ -2,6 +2,7 @@
 #include <shell.h>
 
 const cmd_t cmd_list[] = {
+  { "help",  help  },
   { "ping",  ping  },
   { "fuck",  fuck  },
   { "echo",  echo  },
@@ -42,6 +43,15 @@ void shell_task(void *arg) {
     vfs->write(stdout, "\n", 1);
   }
   Panic("shell cannot exit.");
+}
+
+FUNC(help) {
+  sprintf(ret, "Available commands: [");
+  for (int i = 0; i < NR_CMD; ++i) {
+    strcat(ret, cmd_list[i].name);
+    if (i) strcat(ret, ", ");
+  }
+  strcat(ret, "]");
 }
 
 FUNC(ping) {

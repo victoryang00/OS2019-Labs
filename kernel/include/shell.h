@@ -13,6 +13,7 @@ typedef struct cmd {
 void shell_task(void *arg);
 int handle_command(char *cmd);
 
+FUNC(help);
 FUNC(ping);
 FUNC(fuck);
 FUNC(echo);
