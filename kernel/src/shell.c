@@ -1,4 +1,5 @@
 #include <common.h>
+#include <shell.h>
 
 const cmd_t cmd_list[] = {
   { "ping ",  ping  },
@@ -43,4 +44,38 @@ void shell_task(void *arg) {
   Panic("shell cannot exit.");
 }
 
+FUNC(ping) {
+  sprintf(ret, "pong");
+}
 
+FUNC(fuck) {
+  sprintf(ret, "nm$l");
+}
+
+FUNC(echo) {
+  strcpy(ret, arg);
+}
+
+FUNC(ls) {
+  Panic("not implemented!");
+}
+
+FUNC(cd) {
+  Panic("not implemented!");
+}
+
+FUNC(cat) {
+  Panic("not implemented!");
+}
+
+FUNC(mkdir) {
+  Panic("not implemented!");
+}
+
+FUNC(rmdir) {
+  Panic("not implemented!");
+}
+
+FUNC(rm) {
+  Panic("not implemented!");
+}

@@ -3,23 +3,24 @@
 
 #include <common.h>
 
+#define FUNC(name) void name(const char *arg, char *ret)
+
 typedef struct cmd {
   const char *name;
-  void (*func)(char *arg, char *ret);
+  void (*func)(const char *arg, char *ret);
 } cmd_t;
 
 void shell_task(void *arg);
 int handle_command(char *cmd);
 
-void ping(char *arg, char *ret);
-void fuck(char *arg, char *ret);
-void echo(char *arg, char *ret);
-
-void ls(char *arg, char *ret);
-void cd(char *arg, char *ret);
-void cat(char *arg, char *ret);
-void mkdir(char *arg, char *ret);
-void rmdir(char *arg, char *ret);
-void rm(char *arg, char *ret);
+FUNC(ping);
+FUNC(fuck);
+FUNC(echo);
+FUNC(ls);
+FUNC(cd);
+FUNC(cat);
+FUNC(mkdir);
+FUNC(rmdir);
+FUNC(rm);
 
 #endif
