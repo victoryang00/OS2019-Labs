@@ -42,7 +42,7 @@ void shell_task(void *arg) {
         succ = true;
         arg += strlen(cmd_list[i].name);
         while (*arg == ' ') ++arg;
-        cmd_list[i].func(arg, ret);
+        cmd_list[i].func(arg, pwd, ret);
       }
     }
     if (!succ) sprintf(ret, "Invalid command.\n");
