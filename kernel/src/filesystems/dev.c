@@ -46,8 +46,8 @@ void devfs_init(filesystem_t *fs, const char *path, device_t *dev) {
     Log("OK1 %p", ip);
     ip->type = TYPE_DEVI;
     ip->ptr = devices[i];
-    CLog(FG_YELLOW, "%s", path);
-    CLog(FG_YELLOW, "%s", devices[i]->name);
+    CLog(FG_YELLOW, "%20s", path);
+    CLog(FG_YELLOW, "%20s", devices[i]->name);
     sprintf(ip->path, "%s/%s", path, devices[i]->name);
     ip->fs = fs;
     ip->ops = pmm->alloc(sizeof(inodeops_t));
