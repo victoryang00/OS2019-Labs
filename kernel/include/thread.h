@@ -24,7 +24,7 @@ enum task_states {
   ST_X  // Special
 };
 
-typedef struct task {
+struct task {
   uint32_t pid;
   const char* name;
   void (*entry)(void *);
@@ -45,7 +45,7 @@ typedef struct task {
   file_t *fildes[NR_FILDS];
 
   struct task *next;
-} task_t;
+};
 
 struct task *get_current_task();
 void set_current_task(struct task *);

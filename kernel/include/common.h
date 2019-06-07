@@ -4,7 +4,6 @@
 #include <am.h>
 #include <x86.h>
 #include <klib.h>
-#include <fcntl.h>
 #include <limits.h>
 #include <stdbool.h>
 #include <sys/types.h>
