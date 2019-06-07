@@ -44,7 +44,7 @@ static void os_run() {
 }
 
 static _Context *os_trap(_Event ev, _Context *context) {
-  CLog(BG_CYAN, "Event %d: %s", ev.event, ev.msg);
+  //CLog(BG_CYAN, "Event %d: %s", ev.event, ev.msg);
 
   bool holding = spinlock_holding(&os_trap_lock);
   if (holding) {
@@ -73,7 +73,7 @@ static _Context *os_trap(_Event ev, _Context *context) {
     return context;
   } else {
     spinlock_acquire(&os_trap_lock);
-    CLog(FG_PURPLE, ">>>>>> IN TO TRAP");
+    //CLog(FG_PURPLE, ">>>>>> IN TO TRAP");
     _Context *ret = NULL;
     for (struct os_handler *hp = root_handler.next; hp != NULL; hp = hp->next) {
       Assert(hp->seq == INT_MIN || hp->seq == INT_MAX || hp->seq >= -5 || hp->seq <= 5, "invalid handler, seq = %d", hp->seq);
@@ -82,7 +82,7 @@ static _Context *os_trap(_Event ev, _Context *context) {
         if (next) ret = next;
       }
     }
-    CLog(FG_PURPLE, "<<<<<< OUT OF TRAP");
+    //CLog(FG_PURPLE, "<<<<<< OUT OF TRAP");
     spinlock_release(&os_trap_lock);
 
     Assert(ret, "returning to a null context after trap");
