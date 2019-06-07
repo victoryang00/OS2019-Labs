@@ -36,11 +36,11 @@ inode_t *devfs_lookup(filesystem_t *fs, const char *path, int flags) {
     device_t *dev = dev_lookup(path + 1);
     if (!dev) {
       CLog(FG_YELLOW, "device not found. creation failed.");
-      return NULL
+      return NULL;
     }
 
     inode_t dev_ip = pmm->alloc(sizeof(inode_t));
-    ops = pmm->alloc(sizeof(inodeops_t));
+    inodeops_t ops = pmm->alloc(sizeof(inodeops_t));
     ops->read = dev->ops->read;
     ops->write = dev->ops->write;
 
