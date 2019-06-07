@@ -5,7 +5,9 @@
 #include <vfs.h>
 
 struct file {
+  int fd;
   int refcnt;
+  int flags;
   inode_t *inode;
   uint64_t offset;
 };
@@ -25,6 +27,7 @@ struct inodeops {
 struct inode {
   int refcnt;
   void *ptr;
+  const char *path;
   filesystem_t *fs;
   inodeops_t *ops;
 };

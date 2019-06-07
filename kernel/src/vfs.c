@@ -20,14 +20,6 @@ static inline inode_t *find_inode_by_path(const char *path) {
   return mp->fs->ops->lookup(mp->fs, path + strlen(mp->path), 0);
 }
 
-static inline int get_next_free_fd() {
-  task_t *cur = get_current_task();
-  for (int i = 0; i < NR_FILDS; ++i) {
-    if (!cur->fildes[i]) return i;
-  }
-  Panic("No free fd available!");
-}
-
 static inline file_t *find_file_by_fd(int fd) {
   task_t *cur = get_current_task();
   return cur->fildes[fd];
@@ -76,14 +68,41 @@ int vfs_link(const char *oldpath, const char *newpath) {
 }
 
 int vfs_unlink(const char *path) {
+  mnt_t *mp = find_mnt(path);
+  Assert(mp, "Path %s is not mounted!", path);
+  inode_t *ip = mp->fs->ops->lookup(mp->fs, path + strlen(mp->path), flags);
+  Assert(ip, "Inode %s is not found!", path + strlen(mp->path));
+  ip->ops->unlink(ip->path);
   return 0;
 }
 
 int vfs_open(const char *path, int flags) {
-  int fd = get_next_free_fd();
-  return 0;
-}
+  task_t *cur = get_current_task();
+  int fd = -1;
+  file_t *fp = NULL;
+  for (int i = 0; i < NR_FILDS; ++i) {
+    if (!cur->fildes[i]) {
+      fd = i;
+      fp = cur->fildes[i];
+      break;
+    }
+  }
+  Assert(fp, "No fd is available.");
+  
+  mnt_t *mp = find_mnt(path);
+  Assert(mp, "Path %s is not mounted!", path);
+  inode_t *ip = mp->fs->ops->lookup(mp->fs, path + strlen(mp->path), flags);
+  Assert(ip, "Inode %s is not found!", path + strlen(mp->path));
 
+  fp = pmm->alloc(sizeof(file_t));
+  fp->fd = fd;
+  fp->refcnt = 0;
+  fp->flags = flags;
+  fp->inode = ip;
+  fp->offset = 0;
+  return fd;
+}
+ 
 ssize_t vfs_read(int fd, void *buf, size_t nbyte) {
   file_t *fp = find_file_by_fd(fd);
   return fp->inode->ops->read(fp, buf, nbyte);
