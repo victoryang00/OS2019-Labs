@@ -110,21 +110,25 @@ int vfs_open(const char *path, int flags) {
  
 ssize_t vfs_read(int fd, void *buf, size_t nbyte) {
   file_t *fp = find_file_by_fd(fd);
+  Assert(fp, "file pointer is NULL");
   return fp->inode->ops->read(fp, buf, nbyte);
 }
 
 ssize_t vfs_write(int fd, void *buf, size_t nbyte) {
   file_t *fp = find_file_by_fd(fd);
+  Assert(fp, "file pointer is NULL");
   return fp->inode->ops->write(fp, buf, nbyte);
 }
 
 off_t vfs_lseek(int fd, off_t offset, int whence) {
   file_t *fp = find_file_by_fd(fd);
+  Assert(fp, "file pointer is NULL");
   return fp->inode->ops->lseek(fp, offset, whence);
 }
 
 int vfs_close(int fd) {
   file_t *fp = find_file_by_fd(fd);
+  Assert(fp, "file pointer is NULL");
   return fp->inode->ops->close(fp);
 }
 
