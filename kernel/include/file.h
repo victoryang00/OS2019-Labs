@@ -57,7 +57,7 @@ int common_mkdir(const char *name);
 int common_rmdir(const char *name);
 int common_link(const char *name, inode_t *inode);
 int common_unlink(const char *name);
-void common_readdir(char *ret);
+void common_readdir(inode_t *inode, char *ret);
 
 inline inode_t *inode_search(inode_t *cur, const char *path) {
   for (inode_t *ip = cur->fchild; ip != NULL; ip = ip->cousin) {

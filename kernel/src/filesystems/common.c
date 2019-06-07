@@ -13,7 +13,7 @@ inodeops_t common_ops = {
   .link    = common_link,
   .unlink  = common_unlink,
   .readdir = common_readdir,
-}
+};
 
 int common_open(file_t *file, int flags) {
   return 0;
