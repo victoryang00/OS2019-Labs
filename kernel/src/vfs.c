@@ -1,5 +1,5 @@
 #include <common.h>
-#include <os.h>
+#include <vfs.h>
 #include <devices.h>
 #include <threads.h>
 
