@@ -27,7 +27,7 @@ void shell_task(void *arg) {
   int stdin = vfs->open(buf, O_RDONLY);
   int stdout = vfs->open(buf, O_WRONLY);
 
-  vfs->write("Welcome to hell!\nPress [ENTER] to use shell.");
+  vfs->write(stdout, "Welcome to hell!\nPress [ENTER] to use shell.");
   vfs->read(stdin, buf, sizeof(buf));
 
   sprintf(pwd, "/");
