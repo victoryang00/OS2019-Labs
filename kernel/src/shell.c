@@ -69,7 +69,6 @@ bool get_dir(const char *arg, const char *pwd, char *dir) {
       sprintf(buf, "%s/%s", pwd, arg);
     }
   }
-  Log("%s", buf);
 
   size_t pos = 0;
   size_t cur = 0;
@@ -90,8 +89,9 @@ bool get_dir(const char *arg, const char *pwd, char *dir) {
     }
   }
   dir[cur] = '\0';
-  Log("%s %d", dir, cur);
-  if (dir[cur - 1] == '/') dir[cur - 1] = '\0';
+  size_t len = strlen(dir);
+  Log("%s %d", dir, len);
+  if (dir[len - 1] == '/') dir[len - 1] = '\0';
   return true;
 }
 
