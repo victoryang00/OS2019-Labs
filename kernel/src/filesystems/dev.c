@@ -1,6 +1,6 @@
 #include <common.h>
 
-void devfs_init(filesysem_t *fs, const char *name, device_t *dev);
+void devfs_init(filesystem_t *fs, const char *name, device_t *dev);
 inode_t *devfs_lookup(filesystem_t *fs, const char *path, int flags);
 int devfs_close(inode_t *inode);
 
