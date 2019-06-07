@@ -21,6 +21,7 @@ void ramfs_init(filesystem_t *fs, const char *path, device_t *dev) {
   root.ptr = NULL;
   sprintf(root.path, path);
   root.fs = fs;
+  root.ops = &common_ops;
   root.parent = &root;
   root.fchild = NULL;
   root.cousin = NULL;

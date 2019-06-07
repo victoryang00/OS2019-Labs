@@ -86,7 +86,6 @@ FUNC(pwd) {
 
 FUNC(ls) {
   inode_t *cur = inode_search(&root, pwd);
-  Log("%p %p", cur, &root);
   cur->ops->readdir(cur, ret);
 }
 
