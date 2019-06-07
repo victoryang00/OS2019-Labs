@@ -21,6 +21,8 @@
 #include <devices.h>
 #include <spinlock.h>
 #include <semaphore.h>
+#include <file.h>
+#include <vfs.h>
 
 #define likely(x)   __builtin_expect(!!(x), 1)
 #define unlikely(x) __builtin_expect(!!(x), 0)
