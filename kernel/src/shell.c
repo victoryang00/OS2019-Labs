@@ -29,6 +29,7 @@ void shell_task(void *arg) {
   while (true) {
     vfs->write(stdout, buf, strlen(buf));
     vfs->read(stdin, cmd, sizeof(cmd));
+    while (*cmd == ' ') ++cmd;
 
     bool succ = false;
     for (int i = 0; i < NR_CMD; ++i) {
@@ -41,7 +42,6 @@ void shell_task(void *arg) {
     }
     if (!succ) sprintf(ret, "invalid command.");
     vfs->write(stdout, ret, strlen(ret));
-    vfs->write(stdout, "\n", 1);
   }
   Panic("shell cannot exit.");
 }
@@ -52,15 +52,15 @@ FUNC(help) {
     if (i) strcat(ret, ", ");
     strcat(ret, cmd_list[i].name);
   }
-  strcat(ret, "]");
+  strcat(ret, "]\n");
 }
 
 FUNC(ping) {
-  sprintf(ret, "pong");
+  sprintf(ret, "pong\n");
 }
 
 FUNC(fuck) {
-  sprintf(ret, "nm$l");
+  sprintf(ret, "nm$l\n");
 }
 
 FUNC(echo) {
