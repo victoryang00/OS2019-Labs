@@ -76,7 +76,9 @@ bool get_dir(const char *arg, const char *pwd, char *dir) {
     if (!strncmp(dir + i, "./", 2)) i += 2;
     if (!strncmp(dir + i, "../", 3)) {
       i += 3;
-      while (cur > 0 && dir[cur] != '/') --cur;
+      do { 
+        --cur;
+      } while (cur > 0 && dir[cur] != '/');
     }
     if (i > len) break;
     dir[cur] = dir[i];
