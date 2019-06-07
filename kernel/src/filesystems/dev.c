@@ -1,10 +1,11 @@
 #include <common.h>
 
+extern device_t *devices;
+inode_t devfs_root;
+
 void devfs_init(filesystem_t *fs, const char *name, device_t *dev);
 inode_t *devfs_lookup(filesystem_t *fs, const char *path, int flags);
 int devfs_close(inode_t *inode);
-
-inode_t devfs_root;
 
 fsops_t devfs_ops = {
   .init   = devfs_init,
@@ -42,7 +43,7 @@ void devfs_init(filesystem_t *fs, const char *path, device_t *dev) {
   for (int i = 0; i < LENGTH(devices); ++i) {
     inode_t *ip = pmm->alloc(sizeof(inode_t));
     ip->type = TYPE_DEVI;
-    ip->ptr = (void*)(devices + i);
+    ip->ptr = devices[i];
     sprintf(ip->path, "%s/%s", path, devices[i]->name);
     ip->fs = fs;
     ip->ops = pmm->alloc(sizeof(inodeops_t));
