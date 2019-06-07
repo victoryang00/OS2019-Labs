@@ -30,9 +30,8 @@ void shell_task(void *arg) {
     vfs->read(stdin, cmd, sizeof(cmd));
 
     bool succ = false;
-    Log("size is %d", NR_CMD);
     for (int i = 0; i < NR_CMD; ++i) {
-      if (!strcmp(cmd, cmd_list[i].name)) {
+      if (!strncmp(cmd, cmd_list[i].name, strlen(cmd_list[i].name))) {
         succ = true;
         char *arg = cmd + strlen(cmd_list[i].name);
         cmd_list[i].func(arg, ret);
