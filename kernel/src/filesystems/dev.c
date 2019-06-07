@@ -33,7 +33,7 @@ inode_t *devfs_lookup(filesystem_t *fs, const char *path, int flags) {
   if (!strcmp(path, ip->path)) return ip;
   else {
     CLog(FG_YELLOW, "inode not found. create a new one.");
-    device_t *dev = dev_lookup(dev_name + 1);
+    device_t *dev = dev_lookup(path + 1);
     if (!dev) {
       CLog(FG_YELLOW, "device not found. creation failed.");
       return NULL
@@ -46,7 +46,7 @@ inode_t *devfs_lookup(filesystem_t *fs, const char *path, int flags) {
 
     dev_ip->refcnt = 0;
     dev_ip->ptr = NULL;
-    sprintf(dev_ip->path, "%s", dev_name);
+    sprintf(dev_ip->path, "%s", path);
     dev_ip->fs = &devfs;
     dev_ip->ops = ops;
     return dev_ip;
