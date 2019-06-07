@@ -18,7 +18,7 @@ filesystem_t ramfs = {
 void ramfs_init(filesystem_t *fs, const char *path, device_t *dev) {
   fs->dev = dev;
   root.fs = fs;
-  root.path = path;
+  sprintf(root.path, path);
 }
 
 inode_t *ramfs_lookup(filesystem_t *fs, const char *path, int flags) {
