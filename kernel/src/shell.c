@@ -48,8 +48,8 @@ void shell_task(void *arg) {
 FUNC(help) {
   sprintf(ret, "Available commands: [");
   for (int i = 0; i < NR_CMD; ++i) {
-    strcat(ret, cmd_list[i].name);
     if (i) strcat(ret, ", ");
+    strcat(ret, cmd_list[i].name);
   }
   strcat(ret, "]");
 }
