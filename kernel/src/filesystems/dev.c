@@ -65,9 +65,13 @@ inode_t *devfs_lookup(filesystem_t *fs, const char *path, int flags) {
     dev_ip->parent = ip;
     dev_ip->fchild = NULL;
     dev_ip->cousin = NULL;
-    ip = ip->fchild;
-    while (ip->cousin) ip = ip->cousin;
-    ip->cousin = dev_ip;
+    if (ip->fchild) {
+      ip = ip->fchild;
+      while (ip->cousin) ip = ip->cousin;
+      ip->cousin = dev_ip;
+    } else {
+      ip->fchild = dev_ip;
+    }
     return dev_ip;
   }
 }
