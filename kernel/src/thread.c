@@ -70,6 +70,7 @@ int kmt_create(struct task *task, const char *name, void (*entry)(void *arg), vo
   task->count   = 0;
   task->alarm   = NULL;
   task->suicide = 0;
+  memset(task->fildes, 0, NR_FIDS * sizeof(file_t *));
   task->next    = NULL;
 
   // We cannot create context before initializing the stack

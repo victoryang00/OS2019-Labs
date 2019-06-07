@@ -83,11 +83,10 @@ int vfs_open(const char *path, int flags) {
   for (int i = 0; i < NR_FILDS; ++i) {
     if (!cur->fildes[i]) {
       fd = i;
-      fp = cur->fildes[i];
       break;
     }
   }
-  Assert(fp, "No fd is available.");
+  Assert(fd > 0, "No fd is available.");
   
   mnt_t *mp = find_mnt(path);
   Assert(mp, "Path %s is not mounted!", path);
