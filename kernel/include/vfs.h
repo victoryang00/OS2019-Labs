@@ -6,12 +6,6 @@
 #include <klib.h>
 #include <devices.h>
 
-struct fsops;
-struct filesystem;
-
-typedef struct fsops fsops_t;
-typedef struct filesystem filesystem_t;
-
 struct fsops {
   void (*init)(filesystem_t *fs, const char *name, device_t *dev);
   inode_t *(*lookup)(filesystem_t *fs, const char *path, int flags);

@@ -51,4 +51,7 @@ typedef struct {
   void (*init)();
 } MODULE(dev);
 
+typedef struct fsops fsops_t;
+typedef struct filesystem filesystem_t;
+
 #endif
