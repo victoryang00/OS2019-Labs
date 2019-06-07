@@ -8,6 +8,8 @@ void shell_task(void *arg) {
   int stdin = vfs->open(buf, O_RDONLY);
   int stdout = vfs->open(buf, O_WRONLY);
   while (true) {
+    sprintf(buf, "(tty%d) $", tty_id);
+    vfs->write(stdout, buf, strlen(buf));
     ssize_t nread = vfs->read(stdin, buf, sizeof(buf));
     vfs->write(stdout, buf, nread);
   }

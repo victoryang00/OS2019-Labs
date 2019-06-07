@@ -72,7 +72,6 @@ inode_t *devfs_lookup(filesystem_t *fs, const char *path, int flags) {
     } else {
       ip->fchild = dev_ip;
     }
-    CLog(FG_YELLOW, "OKOK");
     return dev_ip;
   }
 }
