@@ -44,10 +44,10 @@ void devfs_init(filesystem_t *fs, const char *path, device_t *dev) {
   for (int i = 0; i < 8; ++i) {
     inode_t *ip = pmm->alloc(sizeof(inode_t));
     Log("OK1 %p", ip);
-    //ip->type = TYPE_DEVI;
-    //ip->ptr = devices[i];
+    ip->type = TYPE_DEVI;
+    ip->ptr = devices[i];
     //sprintf(ip->path, "%s/%s", path, devices[i]->name);
-    //ip->fs = fs;
+    ip->fs = fs;
     ip->ops = pmm->alloc(sizeof(inodeops_t));
     Log("OK2 %p", ip->ops);
     continue;
