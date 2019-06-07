@@ -30,7 +30,7 @@ void devfs_init() {
 
 inode_t *devfs_lookup(filesystem_t *fs, const char *path, int flags) {
   inode_t *ip = inode_search(&devfs_root, path);
-  if (!strcpy(path, ip->path)) return ip;
+  if (!strcmp(path, ip->path)) return ip;
   else {
     CLog(FG_YELLOW, "inode not found. create a new one.");
     device_t *dev = dev_lookup(dev_name + 1);
