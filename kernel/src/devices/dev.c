@@ -50,6 +50,7 @@ void input_task(void *arg);
 static void dev_init() {
   DEVICES(CREATE);
   DEVICES(INIT);
+  nr_devices = LENGTH(devices);
 
   kmt->create(pmm->alloc(sizeof(task_t)), "input-task", input_task, NULL);
   kmt->create(pmm->alloc(sizeof(task_t)), "tty-task", tty_task, NULL);
