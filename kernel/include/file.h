@@ -31,9 +31,23 @@ struct inodeops {
 struct inode {
   int refcnt;
   void *ptr;
-  const char *path;
+  char path[128];
   filesystem_t *fs;
   inodeops_t *ops;
+
+  inode_t *parent;
+  inode_t *fchild;
+  inode_t *cousin;
 };
+
+inline inode_t *inode_search(inode_t *cur, const char *path) {
+  for (inode_t *ip = cur->fchild; ip = ip->cousin; ip != NULL) {
+    if (!strncpy(path, ip->path, strlen(ip->path))) {
+      if (strlen(path) == strlen(ip->path)) return ip;
+      else return inode_search(ip, path + strlen(ip->path));
+    }
+  }
+  return cur;
+}
 
 #endif
