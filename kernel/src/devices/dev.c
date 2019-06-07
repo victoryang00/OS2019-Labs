@@ -14,10 +14,12 @@ extern devops_t tty_ops, fb_ops, rd_ops, input_ops;
   _(7, tty_t,   "tty4",     4, &tty_ops)
 
 #define DEV_CNT(...) + 1
+int nr_devices;
 device_t *devices[0 DEVICES(DEV_CNT)];
 
 device_t *dev_lookup(const char *name) {
-  for (int i = 0; i < LENGTH(devices); i++) 
+  nr_devices = LENGTH(devices);
+  for (int i = 0; i < nr_devices; i++) 
     if (strcmp(devices[i]->name, name) == 0)
       return devices[i];
   panic("lookup device failed.");
