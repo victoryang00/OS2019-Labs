@@ -18,6 +18,7 @@ const int NR_CMD = sizeof(cmd_list) / sizeof(cmd_t);
 void shell_task(void *arg) {
   int tty_id = (int)arg;
   char buf[128] = "";
+  char pwd[256] = "";
   char cmd[256] = "";
   char ret[256] = "";
 
@@ -25,8 +26,10 @@ void shell_task(void *arg) {
   int stdin = vfs->open(buf, O_RDONLY);
   int stdout = vfs->open(buf, O_WRONLY);
 
-  sprintf(buf, "(tty%d) $ ", tty_id);
+  sprintf(pwd, "/");
   while (true) {
+    sprintf(buf, "(tty%d) %s\n -> ", pwd, tty_id);
+
     vfs->write(stdout, buf, strlen(buf));
     ssize_t nread = vfs->read(stdin, cmd, sizeof(cmd) - 1);
     cmd[nread] = '\0';
