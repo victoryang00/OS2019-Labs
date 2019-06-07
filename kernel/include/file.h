@@ -2,6 +2,7 @@
 #define __FILE_H__
 
 #include <common.h>
+#include <vfs.h>
 
 struct file;
 struct inodeops;
