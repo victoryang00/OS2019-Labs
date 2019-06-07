@@ -7,14 +7,14 @@
 #include <devices.h>
 
 typedef struct fsops {
-  void (*init)(struct filesystem *fs, const char *name, dev_t *dev);
+  void (*init)(struct filesystem *fs, const char *name, device_t *dev);
   inode_t *(*lookup)(struct filesystem *fs, const char *path, int flags);
   int (*close)(inode_t *inode);
 } fsops_t;
 
 typedef struct filesystem {
   fsops_t *ops;
-  dev_t *dev;
+  device_t *dev;
 } filesystem_t;
 
 MODULE {
