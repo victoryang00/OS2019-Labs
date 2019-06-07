@@ -1,7 +1,7 @@
 #include <common.h>
 
 extern int nr_devices;
-extern device_t *devices;
+extern device_t **devices;
 inode_t devfs_root;
 
 void devfs_init(filesystem_t *fs, const char *name, device_t *dev);
@@ -42,7 +42,6 @@ void devfs_init(filesystem_t *fs, const char *path, device_t *dev) {
   vfs->mount(path, fs);
 
   for (int i = 0; i < nr_devices; ++i) {
-    if (!devices[i]) continue;
     inode_t *ip = pmm->alloc(sizeof(inode_t));
     ip->type = TYPE_DEVI;
     ip->ptr = devices[i];
