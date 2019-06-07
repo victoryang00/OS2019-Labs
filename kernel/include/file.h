@@ -30,9 +30,11 @@ struct inodeops {
 };
 extern inodeops_t common_ops;
 
-#define TYPE_MNT 0
-#define TYPE_DIR 1
-#define TYPE_FIL 2
+#define TYPE_MNTP 0
+#define TYPE_DIRC 1
+#define TYPE_FILE 2
+#define TYPE_DEVI 3
+#define TYPE_PROC 4
 
 struct inode {
   int refcnt;

@@ -21,12 +21,12 @@ void mount_devfs() {
   devfs_init(&devfs, "/dev", NULL);
 }
 
-ssize_t devfs_read(file_t *file, char *buf, size_t size) {
+ssize_t devops_read(file_t *file, char *buf, size_t size) {
   device_t *device = (device_t *)file->inode->ptr;
   return device->ops->read(device, 0, buf, size);
 }
 
-ssize_t devfs_write(file_t *file, const char *buf, size_t size) {
+ssize_t devops_write(file_t *file, const char *buf, size_t size) {
   device_t *device = (device_t *)file->inode->ptr;
   return device->ops->write(device, 0, buf, size);
 }
@@ -38,6 +38,23 @@ void devfs_init(filesystem_t *fs, const char *path, device_t *dev) {
   devfs_root.cousin = NULL;
   sprintf(devfs_root.path, path);
   vfs->mount(path, fs);
+
+  for (int i = 0; i < LENGTH(devices); ++i) {
+    inode_t *ip = pmm->alloc(sizeof(inode_t));
+    ip->type = TYPE_DEVI;
+    ip->ptr = (void*)(devices + i);
+    sprintf(ip->path, "%s/%s", path, devices[i]->name);
+    ip->fs = fs;
+    ip->ops = pmm->alloc(sizeof(inodeops_t));
+    memcpy(ip->ops, common_ops, sizeof(inodeops_t));
+    ip->ops->read = devops_read;
+    ip->ops->write = devops_write;
+
+    ip->parent = &devfs_root;
+    ip->fchild = NULL;
+    ip->cousin = NULL;
+    inode_insert(ip->parent, ip);
+  }
 }
 
 inode_t *devfs_lookup(filesystem_t *fs, const char *path, int flags) {
