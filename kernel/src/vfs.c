@@ -47,7 +47,6 @@ int vfs_mount(const char *path, filesystem_t *fs) {
   mnt_head.prev = mp;
   mp->prev->next = mp;
 
-  mp->fs->ops->init();
   CLog(BG_YELLOW, "Path %s is mounted.", path);
   return 0;
 }

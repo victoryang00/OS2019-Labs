@@ -7,12 +7,13 @@
 #include <devices.h>
 
 struct fsops {
-  void (*init)(filesystem_t *fs, const char *name, device_t *dev);
+  void (*init)(filesystem_t *fs, const char *path, device_t *dev);
   inode_t *(*lookup)(filesystem_t *fs, const char *path, int flags);
   int (*close)(inode_t *inode);
 };
 
 struct filesystem {
+  const char *name;
   fsops_t *ops;
   device_t *dev;
 };

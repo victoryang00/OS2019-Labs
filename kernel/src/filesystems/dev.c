@@ -1,6 +1,6 @@
 #include <common.h>
 
-void devfs_init();
+void devfs_init(filesysem_t *fs, const char *name, device_t *dev);
 inode_t *devfs_lookup(filesystem_t *fs, const char *path, int flags);
 int devfs_close(inode_t *inode);
 
@@ -18,7 +18,7 @@ filesystem_t devfs = {
 };
 
 void mount_devfs() {
-  vfs->mount("/dev", &devfs);
+  devfs_init(&devfs, "/dev", NULL);
 }
 
 ssize_t devfs_read(file_t *file, char *buf, size_t size) {
@@ -31,11 +31,13 @@ ssize_t devfs_write(file_t *file, const char *buf, size_t size) {
   return device->ops->write(device, 0, buf, size);
 }
 
-void devfs_init() {
+void devfs_init(filesystem_t *fs, const char *path, device_t *dev) {
+  Assert(!dev, "/dev has no device");
   devfs_root.parent = &devfs_root;
   devfs_root.fchild = NULL;
   devfs_root.cousin = NULL;
   sprintf(devfs_root.path, "/");
+  vfs->mount(path, fs);
 }
 
 inode_t *devfs_lookup(filesystem_t *fs, const char *path, int flags) {
