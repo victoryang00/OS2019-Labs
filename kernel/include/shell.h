@@ -17,6 +17,7 @@ FUNC(help);
 FUNC(ping);
 FUNC(fuck);
 FUNC(echo);
+FUNC(pwd);
 FUNC(ls);
 FUNC(cd);
 FUNC(cat);

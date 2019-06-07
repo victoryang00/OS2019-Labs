@@ -7,6 +7,7 @@ const cmd_t cmd_list[] = {
   { "fuck",  fuck  },
   { "echo",  echo  },
   { "ls",    ls    },
+  { "pwd",   pwd   },
   { "cd",    cd    },
   { "cat",   cat   },
   { "mkdir", mkdir },
@@ -17,7 +18,7 @@ const int NR_CMD = sizeof(cmd_list) / sizeof(cmd_t);
 
 void shell_task(void *arg) {
   int tty_id = (int)arg;
-  char buf[128] = "";
+  char buf[256] = "";
   char pwd[256] = "";
   char cmd[256] = "";
   char ret[256] = "";
@@ -31,8 +32,8 @@ void shell_task(void *arg) {
     sprintf(buf, "(tty%d) %s\n -> ", tty_id, pwd);
     vfs->write(stdout, buf, strlen(buf));
 
-    ssize_t nread = vfs->read(stdin, cmd, sizeof(cmd) - 1);
-    cmd[nread] = '\0';
+    ssize_t nread = vfs->read(stdin, cmd, sizeof(cmd));
+    cmd[nread - 1] = '\0';
     char *arg = cmd;
     while (*arg == ' ') ++arg;
 
@@ -70,6 +71,10 @@ FUNC(fuck) {
 
 FUNC(echo) {
   sprintf(ret, "%s", arg);
+}
+
+FUNC(pwd) {
+  sprintf(ret, "%s", pwd);
 }
 
 FUNC(ls) {
