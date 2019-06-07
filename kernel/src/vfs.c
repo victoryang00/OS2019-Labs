@@ -49,7 +49,7 @@ int vfs_mount(const char *path, filesystem_t *fs) {
 
   inode_t *pp = inode_search(&root, path);
   Assert(strcmp(path, pp->path), "inode %s exists!", path);
-  inode_t *ip = pmm->alloc(sizeof(inode));
+  inode_t *ip = pmm->alloc(sizeof(inode_t));
   ip->type = TYPE_MNT;
   ip->fs = fs;
   ip->parent = pp;
