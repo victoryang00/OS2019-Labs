@@ -44,7 +44,7 @@ inode_t *devfs_lookup(filesystem_t *fs, const char *path, int flags) {
   inode_t *ip = inode_search(&devfs_root, path);
   if (!strcmp(path, ip->path)) return ip;
   else {
-    CLog(FG_YELLOW, "inode not found. create a new one.");
+    CLog(FG_YELLOW, "inode %s not found. create a new one.", path);
     device_t *device = dev_lookup(path + 1);
     if (!device) {
       CLog(FG_YELLOW, "device not found. creation failed.");
