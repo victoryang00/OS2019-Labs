@@ -63,7 +63,7 @@ int vfs_mount(const char *path, filesystem_t *fs) {
   ip->type = TYPE_MNT;
   ip->fs = fs;
   ip->ptr = NULL;
-  ip->path = path;
+  sprintf(ip->path, path);
   ip->parent = pp;
   ip->fchild = NULL;
   ip->cousin = NULL;
