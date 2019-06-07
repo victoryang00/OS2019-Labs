@@ -39,8 +39,8 @@ inode_t *devfs_lookup(filesystem_t *fs, const char *path, int flags) {
       return NULL;
     }
 
-    inode_t dev_ip = pmm->alloc(sizeof(inode_t));
-    inodeops_t ops = pmm->alloc(sizeof(inodeops_t));
+    inode_t *dev_ip = pmm->alloc(sizeof(inode_t));
+    inodeops_t *ops = pmm->alloc(sizeof(inodeops_t));
     ops->read = dev->ops->read;
     ops->write = dev->ops->write;
 
