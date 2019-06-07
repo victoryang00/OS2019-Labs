@@ -21,6 +21,16 @@ void mount_devfs() {
   vfs->mount("/dev", &devfs);
 }
 
+ssize_t devfs_read(file_t *file, char *buf, size_t size) {
+  device_t *device = (device_t *)file->inode->ptr;
+  return dev->ops->read(device, 0, buf, size);
+}
+
+ssize_t devfs_write(file_t *file, char *buf, size_t size) {
+  device_t *device = (device_t *)file->inode->ptr;
+  return dev->ops->write(device, 0, buf, size);
+}
+
 void devfs_init() {
   devfs_root.parent = &devfs_root;
   devfs_root.fchild = NULL;
@@ -33,19 +43,19 @@ inode_t *devfs_lookup(filesystem_t *fs, const char *path, int flags) {
   if (!strcmp(path, ip->path)) return ip;
   else {
     CLog(FG_YELLOW, "inode not found. create a new one.");
-    device_t *dev = dev_lookup(path + 1);
-    if (!dev) {
+    device_t *device = dev_lookup(path + 1);
+    if (!device) {
       CLog(FG_YELLOW, "device not found. creation failed.");
       return NULL;
     }
 
     inode_t *dev_ip = pmm->alloc(sizeof(inode_t));
     inodeops_t *ops = pmm->alloc(sizeof(inodeops_t));
-    ops->read = dev->ops->read;
-    ops->write = dev->ops->write;
+    ops->read = devfs_read;
+    ops->write = devfs_write;
 
     dev_ip->refcnt = 0;
-    dev_ip->ptr = NULL;
+    dev_ip->ptr = (void *)device;
     sprintf(dev_ip->path, "%s", path);
     dev_ip->fs = &devfs;
     dev_ip->ops = ops;
