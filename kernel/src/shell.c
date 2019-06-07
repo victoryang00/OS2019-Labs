@@ -48,6 +48,7 @@ void shell_task(void *arg) {
     }
     if (!succ) sprintf(ret, "Invalid command.\n");
     vfs->write(stdout, ret, strlen(ret));
+    vfs->write(stdout, "\n", 1);
   }
   Panic("shell cannot exit.");
 }
@@ -70,11 +71,11 @@ FUNC(fuck) {
 }
 
 FUNC(echo) {
-  sprintf(ret, "%s", arg);
+  sprintf(ret, "%s\n", arg);
 }
 
 FUNC(pwd) {
-  sprintf(ret, "%s", pwd);
+  sprintf(ret, "%s\n", pwd);
 }
 
 FUNC(ls) {
