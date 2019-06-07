@@ -29,13 +29,14 @@ void shell_task(void *arg) {
   while (true) {
     vfs->write(stdout, buf, strlen(buf));
     vfs->read(stdin, cmd, sizeof(cmd));
-    while (*cmd == ' ') ++cmd;
+    char *arg = cmd;
+    while (*arg == ' ') ++arg;
 
     bool succ = false;
     for (int i = 0; i < NR_CMD; ++i) {
-      if (!strncmp(cmd, cmd_list[i].name, strlen(cmd_list[i].name))) {
+      if (!strncmp(arg, cmd_list[i].name, strlen(cmd_list[i].name))) {
         succ = true;
-        char *arg = cmd + strlen(cmd_list[i].name);
+        arg += strlen(cmd_list[i].name);
         while (*arg == ' ') ++arg;
         cmd_list[i].func(arg, ret);
       }
