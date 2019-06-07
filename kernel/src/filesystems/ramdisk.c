@@ -17,7 +17,7 @@ filesystem_t ramfs = {
 
 void ramfs_init(filesystem_t *fs, const char *path, device_t *dev) {
   fs->dev = dev;
-  root.type = TYPE_MNT;
+  root.type = TYPE_MNTP;
   root.ptr = NULL;
   sprintf(root.path, path);
   root.fs = fs;
