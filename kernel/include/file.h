@@ -38,7 +38,7 @@ struct inode {
   int refcnt;
   int type;
   void *ptr;
-  char path[128];
+  char *path;
   filesystem_t *fs;
   inodeops_t *ops;
 
