@@ -6,7 +6,6 @@
 #include <klib.h>
 #include <limits.h>
 #include <stdbool.h>
-#include <sys/types.h>
 #include <sys/stat.h>
 
 #include <kernel.h>
