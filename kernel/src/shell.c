@@ -59,27 +59,28 @@ void shell_task(void *arg) {
 }
 
 bool get_dir(const char *arg, const char *pwd, char *dir) {
+  char buf[256] = "";
   if (arg[0] == '/') {
-    sprintf(dir, "%s", arg);
+    sprintf(buf, "%s", arg);
   } else {
     if (pwd[strlen(pwd) - 1] == '/') {
-      sprintf(dir, "%s%s", pwd, arg);
+      sprintf(buf, "%s%s", pwd, arg);
     } else {
-      sprintf(dir, "%s/%s", pwd, arg);
+      sprintf(buf, "%s/%s", pwd, arg);
     }
   }
 
   size_t cur = 0;
-  size_t len = strlen(dir);
+  size_t len = strlen(buf);
   for (size_t i = 0; i <= len; ++i, ++cur) {
-    if (!strncmp(dir + i, "//", 2)) return false;
-    if (!strncmp(dir + i, "/./", 3)) i += 2;
-    if (!strncmp(dir + i, "/../", 4)) {
+    if (!strncmp(buf + i, "//", 2)) return false;
+    if (!strncmp(buf + i, "/./", 3)) i += 2;
+    if (!strncmp(buf + i, "/../", 4)) {
       i += 3;
       while (cur > 0 && dir[cur] != '/') --cur;
     }
     if (i > len) break;
-    dir[cur] = dir[i];
+    dir[cur] = buf[i];
   }
   return true;
 }
