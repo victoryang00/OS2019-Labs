@@ -29,6 +29,7 @@ void vfs_init() {
   mnt_head.next = &mnt_head;
   mnt_head.prev = &mnt_head;
 
+  extern void mount_devfs();
   mount_devfs();
 }
 
