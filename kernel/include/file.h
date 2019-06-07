@@ -2,15 +2,6 @@
 #define __FILE_H__
 
 #include <common.h>
-
-struct file;
-struct inodeops;
-struct inode;
-
-typedef struct file file_t;
-typedef struct inodeops inodeops_t;
-typedef struct inode inode_t;
-
 #include <vfs.h>
 
 struct file {
