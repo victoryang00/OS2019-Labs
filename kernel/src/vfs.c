@@ -88,10 +88,8 @@ int vfs_open(const char *path, int flags) {
   }
   Assert(fd != -1, "No fd is available.");
   
-  printf("before find_mnt\n");
   mnt_t *mp = find_mnt(path);
   Assert(mp, "Path %s is not mounted!", path);
-  printf("mounted!\n");
   inode_t *ip = mp->fs->ops->lookup(mp->fs, path + strlen(mp->path), flags);
   Assert(ip, "Inode %s is not found!", path + strlen(mp->path));
 
