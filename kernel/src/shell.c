@@ -58,6 +58,28 @@ void shell_task(void *arg) {
   Panic("shell cannot exit.");
 }
 
+bool get_dir(const char *arg, const char *pwd, char *dir) {
+  if (arg[0] == '/') {
+    sprintf(dir, "%s", arg);
+  } else {
+    sprintf(dir, "%s%s", pwd, arg);
+  }
+
+  size_t cur = 0;
+  size_t len = strlen(dir);
+  for (size_t i = 0; i <= len; ++i, ++cur) {
+    if (!strncmp(dir + i, "//", 2)) return false;
+    if (!strncmp(dir + i, "./", 2)) i += 2;
+    if (!strncmp(dir + i, "../", 3)) {
+      i += 3;
+      while (cur > 0 && dir[cur] != '/') --cur;
+    }
+    if (i > len) break;
+    dir[cur] = dir[i];
+  }
+  return true;
+}
+
 FUNC(help) {
   sprintf(ret, "Available commands: \n");
   for (int i = 0; i < NR_CMD; ++i) {
@@ -90,7 +112,17 @@ FUNC(ls) {
 }
 
 FUNC(cd) {
-  Panic("not implemented!");
+  char dir[256] = "";
+  if (!get_dir(arg, pwd, dir)) {
+    sprintf(ret, "Invalid directory address.");
+  }
+
+  if (vfs->access(dir, 0)) {
+    sprintf(ret, "Cannot access %s.");
+  } else {
+    strcpy(pwd, dir);
+    sprintf(ret, "Current dir = %s", dir);
+  }
 }
 
 FUNC(cat) {

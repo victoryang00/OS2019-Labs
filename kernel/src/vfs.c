@@ -44,8 +44,8 @@ void vfs_init() {
 }
 
 int vfs_access(const char *path, int mode) {
-  return 0;
-}
+  inode_t *ip = inode_search(&root, path);
+  return strlen(ip->path) == path;
 
 int vfs_mount(const char *path, filesystem_t *fs) {
   Assert(!find_mnt(path), "Path %s already mounted!", path);

@@ -11,7 +11,7 @@ typedef struct cmd {
 } cmd_t;
 
 void shell_task(void *arg);
-int handle_command(char *cmd);
+bool get_dir(const char *arg, const char *pwd, char *dir);
 
 FUNC(help);
 FUNC(ping);
