@@ -62,7 +62,6 @@ int common_unlink(const char *name);
 void common_readdir(inode_t *inode, char *ret);
 
 inline inode_t *inode_search(inode_t *cur, const char *path) {
-  Log("looking for %s from %s", path, cur);
   for (inode_t *ip = cur->fchild; ip != NULL; ip = ip->cousin) {
     Log("%s -> %s", cur->path, ip->path);
     if (!strncmp(path, ip->path, strlen(ip->path))) {

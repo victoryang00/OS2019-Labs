@@ -65,7 +65,7 @@ int vfs_mount(const char *path, filesystem_t *fs) {
   ip->type = TYPE_MNTP;
   ip->fs = fs;
   ip->ptr = NULL;
-  sprintf(ip->path, path);
+  sprintf(ip->path, "%s", path);
   ip->parent = pp;
   ip->fchild = NULL;
   ip->cousin = NULL;
