@@ -59,7 +59,7 @@ void shell_task(void *arg) {
 }
 
 bool get_dir(const char *arg, const char *pwd, char *dir) {
-  char buf[256] = "/";
+  char buf[256] = "";
   if (arg[0] == '/') {
     sprintf(buf, "%s", arg);
   } else {
@@ -70,9 +70,9 @@ bool get_dir(const char *arg, const char *pwd, char *dir) {
     }
   }
 
-  size_t cur = 1;
+  size_t cur = 0;
   size_t len = strlen(buf);
-  for (size_t i = 1; i <= len; ++i, ++cur) {
+  for (size_t i = 0; i <= len; ++i, ++cur) {
     if (!strncmp(buf + i, "//", 2)) return false;
     if (!strncmp(buf + i, "/./", 3)) i += 2;
     if (!strncmp(buf + i, "/../", 4)) {
