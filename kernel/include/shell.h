@@ -3,11 +3,11 @@
 
 #include <common.h>
 
-#define FUNC(name) void name(const char *arg, char *ret)
+#define FUNC(name) void name(const char *arg, char *pwd, char *ret)
 
 typedef struct cmd {
   const char *name;
-  void (*func)(const char *arg, char *ret);
+  void (*func)(const char *arg, char *pwd, char *ret);
 } cmd_t;
 
 void shell_task(void *arg);

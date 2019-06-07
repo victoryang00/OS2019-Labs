@@ -28,9 +28,9 @@ void shell_task(void *arg) {
 
   sprintf(pwd, "/");
   while (true) {
-    sprintf(buf, "(tty%d) %s\n -> ", pwd, tty_id);
-
+    sprintf(buf, "(tty%d) %s\n -> ", tty_id, pwd);
     vfs->write(stdout, buf, strlen(buf));
+
     ssize_t nread = vfs->read(stdin, cmd, sizeof(cmd) - 1);
     cmd[nread] = '\0';
     char *arg = cmd;
