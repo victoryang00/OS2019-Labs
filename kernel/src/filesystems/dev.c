@@ -1,5 +1,6 @@
 #include <common.h>
 
+extern size_t nr_devices;
 extern device_t *devices[];
 inode_t devfs_root;
 
