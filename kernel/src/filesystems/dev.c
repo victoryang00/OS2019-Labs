@@ -47,6 +47,7 @@ void devfs_init(filesystem_t *fs, const char *path, device_t *dev) {
     ip->type = TYPE_DEVI;
     ip->ptr = devices[i];
     CLog(FG_YELLOW, "%20s", path);
+    devices[i]->name[20] = '\0';
     CLog(FG_YELLOW, "%20s", devices[i]->name);
     sprintf(ip->path, "%s/%s", path, devices[i]->name);
     ip->fs = fs;
