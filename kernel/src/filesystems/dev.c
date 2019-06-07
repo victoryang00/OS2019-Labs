@@ -20,11 +20,10 @@ filesystem_t devfs = {
 };
 
 void mount_devfs() {
-  Assert(!dev, "/dev has no device");
   devfs_root.parent = &root;
   devfs_root.fchild = NULL;
   devfs_root.cousin = NULL;
-  sprintf(devfs_root.path, path);
+  sprintf(devfs_root.path, "/dev");
   vfs->mount(path, &devfs);
 
   devfs_init(&devfs, "/dev", NULL);
