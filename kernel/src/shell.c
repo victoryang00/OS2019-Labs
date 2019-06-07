@@ -2,15 +2,15 @@
 #include <shell.h>
 
 const cmd_t cmd_list[] = {
-  { "ping ",  ping  },
-  { "fuck ",  fuck  },
-  { "echo ",  echo  },
-  { "ls ",    ls    },
-  { "cd ",    cd    },
-  { "cat ",   cat   },
-  { "mkdir ", mkdir },
-  { "rmdir ", rmdir },
-  { "rm "   , rm    },
+  { "ping",  ping  },
+  { "fuck",  fuck  },
+  { "echo",  echo  },
+  { "ls",    ls    },
+  { "cd",    cd    },
+  { "cat",   cat   },
+  { "mkdir", mkdir },
+  { "rmdir", rmdir },
+  { "rm"   , rm    },
 };
 const int NR_CMD = sizeof(cmd_list) / sizeof(cmd_t);
 
@@ -31,7 +31,7 @@ void shell_task(void *arg) {
 
     bool succ = false;
     for (int i = 0; i < NR_CMD; ++i) {
-      if (!strcmp(buf, cmd_list[i].name)) {
+      if (!strcmp(cmd, cmd_list[i].name)) {
         succ = true;
         char *arg = cmd + strlen(cmd_list[i].name);
         cmd_list[i].func(arg, ret);
