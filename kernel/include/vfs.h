@@ -14,6 +14,7 @@ struct fsops {
 
 struct filesystem {
   const char *name;
+  inode_t *root;
   fsops_t *ops;
   device_t *dev;
 };

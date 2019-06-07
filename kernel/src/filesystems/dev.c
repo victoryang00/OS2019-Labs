@@ -2,7 +2,6 @@
 
 extern size_t nr_devices;
 extern device_t *devices[];
-inode_t devfs_root;
 
 void devfs_init(filesystem_t *fs, const char *name, device_t *dev);
 inode_t *devfs_lookup(filesystem_t *fs, const char *path, int flags);
@@ -20,11 +19,7 @@ filesystem_t devfs = {
 };
 
 void mount_devfs() {
-  devfs_root.parent = &root;
-  devfs_root.fchild = NULL;
-  devfs_root.cousin = NULL;
-  sprintf(devfs_root.path, "/dev");
-  vfs->mount(path, &devfs);
+  vfs->mount("/dev", &devfs);
 
   devfs_init(&devfs, "/dev", NULL);
   CLog(BG_YELLOW, "/dev initialiezd.");
@@ -52,7 +47,7 @@ void devfs_init(filesystem_t *fs, const char *path, device_t *dev) {
     ip->ops->read = devops_read;
     ip->ops->write = devops_write;
 
-    ip->parent = &devfs_root;
+    ip->parent = devfs.root;
     ip->fchild = NULL;
     ip->cousin = NULL;
     inode_insert(ip->parent, ip);
@@ -60,7 +55,7 @@ void devfs_init(filesystem_t *fs, const char *path, device_t *dev) {
 }
 
 inode_t *devfs_lookup(filesystem_t *fs, const char *path, int flags) {
-  inode_t *ip = inode_search(&devfs_root, path);
+  inode_t *ip = inode_search(devfs.root, path);
   return (strlen(ip->path) == strlen(path)) ? ip : NULL;
 }
 
