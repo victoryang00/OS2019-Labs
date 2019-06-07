@@ -88,6 +88,7 @@ bool get_dir(const char *arg, const char *pwd, char *dir) {
       ++pos, ++cur;
     }
   }
+  dir[cur] = '\0';
   return true;
 }
 
