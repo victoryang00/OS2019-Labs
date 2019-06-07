@@ -28,7 +28,8 @@ void shell_task(void *arg) {
   sprintf(buf, "(tty%d) $ ", tty_id);
   while (true) {
     vfs->write(stdout, buf, strlen(buf));
-    vfs->read(stdin, cmd, sizeof(cmd));
+    ssize_t nread = vfs->read(stdin, cmd, sizeof(cmd) - 1);
+    cmd[nread] = '\0';
     char *arg = cmd;
     while (*arg == ' ') ++arg;
 
