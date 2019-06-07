@@ -1,5 +1,7 @@
 #include <common.h>
 #include <shell.h>
+#include <file.h>
+#include <vfs.h>
 
 const cmd_t cmd_list[] = {
   { "help",  help  },
@@ -83,7 +85,8 @@ FUNC(pwd) {
 }
 
 FUNC(ls) {
-  Panic("not implemented!");
+  inode_t *cur = inode_search(&root, pwd);
+  cur->ops->readdir(cur, ret);
 }
 
 FUNC(cd) {
