@@ -23,12 +23,12 @@ void mount_devfs() {
 
 ssize_t devfs_read(file_t *file, char *buf, size_t size) {
   device_t *device = (device_t *)file->inode->ptr;
-  return dev->ops->read(device, 0, buf, size);
+  return device->ops->read(device, 0, buf, size);
 }
 
 ssize_t devfs_write(file_t *file, char *buf, size_t size) {
   device_t *device = (device_t *)file->inode->ptr;
-  return dev->ops->write(device, 0, buf, size);
+  return device->ops->write(device, 0, buf, size);
 }
 
 void devfs_init() {
