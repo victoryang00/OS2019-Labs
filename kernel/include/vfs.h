@@ -17,4 +17,11 @@ struct filesystem {
   device_t *dev;
 };
 
+typedef struct mnt_table {
+  const char *path;
+  filesystem_t *fs;
+  struct mnt_table *next;
+  struct mnt_table *prev;
+} mnt_t;
+
 #endif
