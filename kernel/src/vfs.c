@@ -6,8 +6,8 @@
 mnt_t mnt_head;
 
 static inline mnt_t *find_mnt(const char *path) {
-  for (mnt_t *mp = mnt_head->next; mp != &mnt_head; mp = mp->next) {
-    if (!strcpy(path, mp->path)) {
+  for (mnt_t *mp = mnt_head.next; mp != &mnt_head; mp = mp->next) {
+    if (!strcmp(path, mp->path)) {
       return mp;
     }
   }
