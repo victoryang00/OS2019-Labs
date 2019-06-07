@@ -3,6 +3,16 @@
 
 #include <common.h>
 
+struct file_t;
+struct inodeops_t;
+struct inode_t;
+
+typedef struct file {
+  int refcnt;
+  inode_t *inode;
+  uint64_t offset;
+} file_t;
+
 typedef struct inodeops {
   int (*open)(file_t *file, int flags);
   int (*close)(file_t *file);
