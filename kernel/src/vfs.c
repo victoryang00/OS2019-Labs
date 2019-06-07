@@ -7,7 +7,7 @@ mnt_t mnt_head;
 
 inline mnt_t *find_mnt(const char *path) {
   size_t max_match = 0;
-  mnt_t ret = 0;
+  mnt_t *ret = NULL;
   for (mnt_t *mp = mnt_head.next; mp != &mnt_head; mp = mp->next) {
     if (!strncmp(path, mp->path, strlen(mp->path))) {
       if (strlen(mp->path) > max_match) {
