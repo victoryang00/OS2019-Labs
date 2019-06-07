@@ -20,7 +20,15 @@ filesystem_t devfs = {
 };
 
 void mount_devfs() {
+  Assert(!dev, "/dev has no device");
+  devfs_root.parent = &root;
+  devfs_root.fchild = NULL;
+  devfs_root.cousin = NULL;
+  sprintf(devfs_root.path, path);
+  vfs->mount(path, fs);
+
   devfs_init(&devfs, "/dev", NULL);
+  CLog(BG_YELLOW, "/dev initialiezd.");
 }
 
 ssize_t devops_read(file_t *file, char *buf, size_t size) {
@@ -34,13 +42,6 @@ ssize_t devops_write(file_t *file, const char *buf, size_t size) {
 }
 
 void devfs_init(filesystem_t *fs, const char *path, device_t *dev) {
-  Assert(!dev, "/dev has no device");
-  devfs_root.parent = &root;
-  devfs_root.fchild = NULL;
-  devfs_root.cousin = NULL;
-  sprintf(devfs_root.path, path);
-  vfs->mount(path, fs);
-
   for (int i = 0; i < nr_devices; ++i) {
     inode_t *ip = pmm->alloc(sizeof(inode_t));
     ip->type = TYPE_DEVI;
