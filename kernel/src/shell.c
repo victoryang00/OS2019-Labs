@@ -42,7 +42,7 @@ void shell_task(void *arg) {
         cmd_list[i].func(arg, ret);
       }
     }
-    if (!succ) sprintf(ret, "invalid command.");
+    if (!succ) sprintf(ret, "Invalid command.\n");
     vfs->write(stdout, ret, strlen(ret));
   }
   Panic("shell cannot exit.");
