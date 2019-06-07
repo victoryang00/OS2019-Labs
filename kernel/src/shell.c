@@ -35,6 +35,7 @@ void shell_task(void *arg) {
       if (!strncmp(cmd, cmd_list[i].name, strlen(cmd_list[i].name))) {
         succ = true;
         char *arg = cmd + strlen(cmd_list[i].name);
+        while (*arg == ' ') ++arg;
         cmd_list[i].func(arg, ret);
       }
     }
@@ -63,7 +64,7 @@ FUNC(fuck) {
 }
 
 FUNC(echo) {
-  strcpy(ret, arg);
+  sprintf(ret, "%s", arg);
 }
 
 FUNC(ls) {
