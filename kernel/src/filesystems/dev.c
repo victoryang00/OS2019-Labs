@@ -42,14 +42,14 @@ void devfs_init(filesystem_t *fs, const char *path, device_t *dev) {
   vfs->mount(path, fs);
 
   for (int i = 0; i < 8; ++i) {
-    Log("OK1");
     inode_t *ip = pmm->alloc(sizeof(inode_t));
+    Log("OK1 %p", ip);
     ip->type = TYPE_DEVI;
     ip->ptr = devices[i];
     sprintf(ip->path, "%s/%s", path, devices[i]->name);
     ip->fs = fs;
-    Log("OK2");
     ip->ops = pmm->alloc(sizeof(inodeops_t));
+    Log("OK2 %p", ip->ops);
     memcpy(ip->ops, &common_ops, sizeof(inodeops_t));
     ip->ops->read = devops_read;
     ip->ops->write = devops_write;
