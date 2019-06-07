@@ -46,6 +46,7 @@ int vfs_mount(const char *path, filesystem_t *fs) {
   mp->next = &mnt_head;
   mnt_head.prev = mp;
   mp->prev->next = mp;
+  CLog(FG_YELLOW, "Path %s is mounted.", path);
   return 0;
 }
 
@@ -55,6 +56,7 @@ int vfs_unmount(const char *path) {
   mp->prev->next = mp->next;
   mp->next->prev = mp->prev;
   pmm->free(mp);
+  CLog(FG_YELLOW, "Path %s is unmounted.", path);
   return 0;
 }
 
