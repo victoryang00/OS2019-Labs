@@ -27,6 +27,9 @@ void shell_task(void *arg) {
   int stdin = vfs->open(buf, O_RDONLY);
   int stdout = vfs->open(buf, O_WRONLY);
 
+  vfs->write("Welcome to hell!\nPress [ENTER] to use shell.");
+  vfs->read(stdin, buf, sizeof(buf));
+
   sprintf(pwd, "/");
   while (true) {
     sprintf(buf, "(tty%d) %s\n -> ", tty_id, pwd);
@@ -54,12 +57,13 @@ void shell_task(void *arg) {
 }
 
 FUNC(help) {
-  sprintf(ret, "Available commands: [");
+  sprintf(ret, "Available commands: \n");
   for (int i = 0; i < NR_CMD; ++i) {
-    if (i) strcat(ret, ", ");
+    strcat(ret, " - ");
     strcat(ret, cmd_list[i].name);
+    strcat(ret, "\n");
   }
-  strcat(ret, "]\n");
+  strcat(ret, "\n");
 }
 
 FUNC(ping) {
