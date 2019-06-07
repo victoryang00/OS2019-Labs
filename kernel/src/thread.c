@@ -121,11 +121,11 @@ struct task *kmt_sched() {
   }
 
   // pick a next task
-  Log("========== TASKS ==========");
+  KMTLog("========== TASKS ==========");
   struct task *ret = NULL;
   for (struct task *tp = &root_task; tp != NULL; tp = tp->next) {
     kmt_inspect_fence(tp);
-    Log("%d:%s [%s, L%d, C%d]", tp->pid, tp->name, task_states_human[tp->state], tp->owner, tp->count);
+    KMTLog("%d:%s [%s, L%d, C%d]", tp->pid, tp->name, task_states_human[tp->state], tp->owner, tp->count);
 
     if (tp->owner != -1 && tp->owner != _cpu()) continue;
     if (tp->state == ST_E || tp->state == ST_W) {
@@ -134,7 +134,7 @@ struct task *kmt_sched() {
       }
     }
   }
-  Log("===========================");
+  KMTLog("===========================");
   ret->owner = _cpu();
   return ret;
 }
@@ -169,7 +169,7 @@ _Context *kmt_context_switch(_Event ev, _Context *context) {
   _Context *ret = NULL;
   struct task *cur = get_current_task();
   if (cur) {
-    Log("Next is %d: %s", cur->pid, cur->name);
+    KMTLog("Next is %d: %s", cur->pid, cur->name);
     kmt_inspect_fence(cur);
     cur->state   = ST_R;
     ret = cur->context;
@@ -184,7 +184,7 @@ _Context *kmt_context_switch(_Event ev, _Context *context) {
       Panic("ESP not in stack area when loading it.");
     }
   } else {
-    Log("Next is NULL task");
+    KMTLog("Next is NULL task");
     ret = null_contexts[_cpu()];
     null_contexts[_cpu()] = NULL;
     Assert(ret, "null context is empty");

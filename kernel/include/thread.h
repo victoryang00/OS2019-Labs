@@ -8,6 +8,14 @@
  * Kernel Multi-thread module (KMT, Proc)
  */
 
+#ifdef KMT_DEBUG
+#define KMTLog(...)  Log(__VA_ARGS__)
+#define KMTCLog(...) CLog(__VA_ARGS__)
+#else
+#define KMTLog(...) 
+#define KMTCLog(...)
+#endif
+
 #define NR_TASKS 64
 #define NR_FILDS 64
 #define FILL_FENCE 0xcd
