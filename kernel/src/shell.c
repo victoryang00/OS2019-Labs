@@ -122,6 +122,7 @@ FUNC(pwd) {
 
 FUNC(ls) {
   inode_t *cur = inode_search(&root, pwd);
+  Log("current folder is %s", cur->path);
   cur->ops->readdir(cur, ret);
 }
 
