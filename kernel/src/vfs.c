@@ -26,8 +26,15 @@ inline file_t *find_file_by_fd(int fd) {
 }
 
 void vfs_init() {
-  mnt_head.next = &mnt_head;
-  mnt_head.prev = &mnt_head;
+  device_t *ramdev = dev_lookup("ramdisk1");
+  ramfs->init(ramfs, "/", ramdev);
+
+  mnt_root = pmm->alloc(sizeof(mnt_t));
+  mnt_root->fs = &ramdisk_fs;
+  mnt_root->next = &mnt_head;
+  mnt_root->prev = &mnt_head;
+  mnt_head.next = mnt_root;
+  mnt_head.prev = mnt_root;
 
   extern void mount_devfs();
   mount_devfs();

@@ -17,6 +17,7 @@ struct filesystem {
   fsops_t *ops;
   device_t *dev;
 };
+extern filesystem_t ranfs;
 
 typedef struct mnt_table {
   const char *path;
