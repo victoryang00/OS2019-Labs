@@ -14,7 +14,7 @@
 #define MAX_CPU 8
 
 #define DEBUG
-#define MEM_DEBUG
+//#define MEM_DEBUG
 //#define KMT_DEBUG
 #include <debug.h>
 
