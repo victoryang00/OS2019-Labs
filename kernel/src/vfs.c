@@ -4,7 +4,7 @@
 #include <threads.h>
 
 mnt_t mnt_head;
-inode root;
+inode_t root;
 
 inline mnt_t *find_mnt(const char *path) {
   size_t max_match = 0;
@@ -47,9 +47,9 @@ int vfs_mount(const char *path, filesystem_t *fs) {
   mnt_head.prev = mp;
   mp->prev->next = mp;
 
-  inode *pp = inode_search(&root, path);
+  inode_t *pp = inode_search(&root, path);
   Assert(strcmp(path, pp->path), "inode %s exists!", path);
-  inode *ip = pmm->alloc(sizeof(inode));
+  inode_t *ip = pmm->alloc(sizeof(inode));
   ip->type = TYPE_MNT;
   ip->fs = fs;
   ip->parent = pp;
