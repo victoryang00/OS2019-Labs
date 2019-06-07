@@ -26,7 +26,8 @@ static void os_init() {
   dev->init();
   CLog(BG_GREEN, "dev ok");
 
-  kmt->create(pmm->alloc(sizeof(task_t)), "shell", shell_task, 1);
+  extern void shell_task(void *);
+  kmt->create(pmm->alloc(sizeof(task_t)), "shell", shell_task, (void *)1);
 }
 
 static void os_run() {

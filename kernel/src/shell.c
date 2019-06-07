@@ -1,6 +1,7 @@
 #include <common.h>
 
-void shell_task(int tty_id) {
+void shell_task(void *arg) {
+  int tty_id = (int)arg;
   char buf[128] = "";
 
   sprintf(buf, "/dev/tty%d", tty_id);
