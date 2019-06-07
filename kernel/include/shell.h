@@ -4,7 +4,7 @@
 #include <common.h>
 
 typedef struct cmd {
-  const char name;
+  const char *name;
   void (*func)(char *arg, char *ret);
 } cmd_t;
 
