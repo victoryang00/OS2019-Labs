@@ -9,7 +9,7 @@ void shell_task(void *arg) {
   int stdout = vfs->open(buf, O_WRONLY);
   while (true) {
     Log("before write");
-    sprintf(buf, "(tty%d) $", tty_id);
+    sprintf(buf, "(tty%d) $ ", tty_id);
     vfs->write(stdout, buf, strlen(buf));
     Log("before read");
     ssize_t nread = vfs->read(stdin, buf, sizeof(buf));
