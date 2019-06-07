@@ -37,7 +37,7 @@ void shell_task(void *arg) {
         cmd_list[i].func(arg, ret);
       }
     }
-    if (!succ) sprinf(ret, "invalid command.");
+    if (!succ) sprintf(ret, "invalid command.");
     vfs->write(stdout, ret, strlen(ret));
     vfs->write(stdout, "\n", 1);
   }
