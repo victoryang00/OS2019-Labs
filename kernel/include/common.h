@@ -4,8 +4,11 @@
 #include <am.h>
 #include <x86.h>
 #include <klib.h>
+#include <fcntl.h>
 #include <limits.h>
 #include <stdbool.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 
 #include <kernel.h>
 #include <nanos.h>

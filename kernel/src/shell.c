@@ -7,7 +7,7 @@ void shell_task(int tty_id) {
   int stdin = vfs->open(buf, O_RDONLY);
   int stdout = vfs->open(buf, O_WRONLY);
   while (true) {
-    ssize nread = vfs->read(stdin, buf, sizeof(buf));
+    ssize_t nread = vfs->read(stdin, buf, sizeof(buf));
     vfs->write(stdout, buf, nread);
   }
   Panic("shell cannot exit.");
