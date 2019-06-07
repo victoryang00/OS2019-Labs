@@ -4,6 +4,7 @@
 #include <threads.h>
 
 mnt_t mnt_head;
+inode root;
 
 inline mnt_t *find_mnt(const char *path) {
   size_t max_match = 0;
@@ -17,12 +18,6 @@ inline mnt_t *find_mnt(const char *path) {
     }
   }
   return ret;
-}
-
-inline inode_t *find_inode_by_path(const char *path) {
-  mnt_t *mp = find_mnt(path);
-  if (!mp) return NULL;
-  return mp->fs->ops->lookup(mp->fs, path + strlen(mp->path), 0);
 }
 
 inline file_t *find_file_by_fd(int fd) {
@@ -52,6 +47,18 @@ int vfs_mount(const char *path, filesystem_t *fs) {
   mnt_head.prev = mp;
   mp->prev->next = mp;
 
+  inode *pp = inode_search(&root, path);
+  Assert(strcmp(path, pp->path), "inode %s exists!", path);
+  inode *ip = pmm->alloc(sizeof(inode));
+  ip->type = TYPE_MNT;
+  ip->fs = fs;
+  ip->parent = pp;
+  ip->fchild = NULL;
+  ip->cousin = NULL;
+  ip->ops = pmm->alloc(sizeof(inode));
+  memcpy(ip->ops, &common_ops);
+
+  inode_insert(pp, ip);
   CLog(BG_YELLOW, "Path %s is mounted.", path);
   return 0;
 }
@@ -79,11 +86,6 @@ int vfs_link(const char *oldpath, const char *newpath) {
 }
 
 int vfs_unlink(const char *path) {
-  mnt_t *mp = find_mnt(path);
-  Assert(mp, "Path %s is not mounted!", path);
-  inode_t *ip = mp->fs->ops->lookup(mp->fs, path + strlen(mp->path), 0);
-  Assert(ip, "Inode %s is not found!", path + strlen(mp->path));
-  ip->ops->unlink(ip->path);
   return 0;
 }
 

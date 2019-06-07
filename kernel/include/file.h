@@ -26,10 +26,17 @@ struct inodeops {
   int (*rmdir)(const char *name);
   int (*link)(const char *name, inode_t *inode);
   int (*unlink)(const char *name);
+  void (*readdir)(inode_t *inode, char *ret);
 };
+extern inodeops_t common_ops;
+
+#define TYPE_MNT 0
+#define TYPE_DIR 1
+#define TYPE_FIL 2
 
 struct inode {
   int refcnt;
+  int type;
   void *ptr;
   char path[128];
   filesystem_t *fs;
@@ -39,6 +46,18 @@ struct inode {
   inode_t *fchild;
   inode_t *cousin;
 };
+extern inode_t root;
+
+int common_open(file_t *file, int flags);
+int common_close(file_t *file);
+ssize_t common_read(file_t *file, char *buf, size_t size);
+ssize_t common_write(file_t *file, const char *buf, size_t size);
+off_t common_lseek(file_t *file, off_t offset, int whence);
+int common_mkdir(const char *name);
+int common_rmdir(const char *name);
+int common_link(const char *name, inode_t *inode);
+int common_unlink(const char *name);
+void common_readdir(char *ret);
 
 inline inode_t *inode_search(inode_t *cur, const char *path) {
   for (inode_t *ip = cur->fchild; ip != NULL; ip = ip->cousin) {
@@ -48,6 +67,27 @@ inline inode_t *inode_search(inode_t *cur, const char *path) {
     }
   }
   return cur;
+}
+
+inline void inode_insert(inode_t *parent, inode_t *child) {
+  if (parent->fchild) {
+    inode_t *ip = parent->fchild;
+    while (ip->cousin) ip = ip->cousin;
+    ip->cousin = child;
+  } else {
+    parent->fchild = child;
+  }
+}
+
+inline void inode_remove(inode_t *parent, inode_t *child) {
+  if (parent->fchild == child) {
+    parent->fchild = child->cousin;
+  } else {
+    inode_t *ip = parent->fchild;
+    while (ip->cousin && ip->cousin != child) ip = ip->cousin;
+    if (ip->cousin == NULL) return;
+    ip->cousin = child->cousin;
+  }
 }
 
 #endif
