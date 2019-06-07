@@ -70,7 +70,7 @@ int vfs_link(const char *oldpath, const char *newpath) {
 int vfs_unlink(const char *path) {
   mnt_t *mp = find_mnt(path);
   Assert(mp, "Path %s is not mounted!", path);
-  inode_t *ip = mp->fs->ops->lookup(mp->fs, path + strlen(mp->path), flags);
+  inode_t *ip = mp->fs->ops->lookup(mp->fs, path + strlen(mp->path), 0);
   Assert(ip, "Inode %s is not found!", path + strlen(mp->path));
   ip->ops->unlink(ip->path);
   return 0;
