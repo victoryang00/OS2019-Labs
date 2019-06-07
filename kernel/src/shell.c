@@ -62,7 +62,11 @@ bool get_dir(const char *arg, const char *pwd, char *dir) {
   if (arg[0] == '/') {
     sprintf(dir, "%s", arg);
   } else {
-    sprintf(dir, "%s%s", pwd, arg);
+    if (pwd[strlen(pwd) - 1] == '/') {
+      sprintf(dir, "%s%s", pwd, arg);
+    } else {
+      sprintf(dir, "%s/%s", pwd, arg);
+    }
   }
 
   size_t cur = 0;
