@@ -9,6 +9,7 @@
  */
 
 #define NR_TASKS 64
+#define NR_FILDS 64
 #define FILL_FENCE 0xcd
 #define FILL_STACK 0xfd
 
@@ -41,7 +42,7 @@ typedef struct task {
   void *alarm;
   bool suicide;
 
-  file_t *fildes[64];
+  file_t *fildes[NR_FILDS];
 
   struct task *next;
 } task_t;

@@ -20,6 +20,14 @@ static inline inode_t *find_inode_by_path(const char *path) {
   return mp->fs->ops->lookup(mp->fs, path + strlen(mp->path), 0);
 }
 
+static inline int get_next_free_fd() {
+  task_t *cur = get_current_task();
+  for (int i = 0; i < NR_FILDS; ++i) {
+    if (!cur->fildes[i]) return i;
+  }
+  Panic("No free fd available!");
+}
+
 static inline file_t *find_file_by_fd(int fd) {
   task_t *cur = get_current_task();
   return cur->fildes[fd];
@@ -72,6 +80,7 @@ int vfs_unlink(const char *path) {
 }
 
 int vfs_open(const char *path, int flags) {
+  int fd = get_next_free_fd();
   return 0;
 }
 
