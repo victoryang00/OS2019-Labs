@@ -41,7 +41,7 @@ void devfs_init(filesystem_t *fs, const char *path, device_t *dev) {
   sprintf(devfs_root.path, path);
   vfs->mount(path, fs);
 
-  for (int i = 0; i < nr_devices; ++i) {
+  for (int i = 0; i < 8; ++i) {
     inode_t *ip = pmm->alloc(sizeof(inode_t));
     ip->type = TYPE_DEVI;
     ip->ptr = devices[i];
