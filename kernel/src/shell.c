@@ -90,7 +90,7 @@ bool get_dir(const char *arg, const char *pwd, char *dir) {
   }
   dir[cur] = '\0';
   len = strlen(dir);
-  if (dir[len - 1] == '/') dir[len - 1] = '\0';
+  if (len > 1 && dir[len - 1] == '/') dir[len - 1] = '\0';
   return true;
 }
 
