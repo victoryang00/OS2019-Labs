@@ -96,7 +96,7 @@ int kmt_create(struct task *task, const char *name, void (*entry)(void *arg), vo
 
   // reload process fs
   extern filesystem_t procfs;
-  procfs->ops->init(&procfs, "/proc", NULL);
+  procfs.ops->init(&procfs, "/proc", NULL);
 
   return task->pid;
 }
