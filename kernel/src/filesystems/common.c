@@ -227,7 +227,6 @@ void commonfs_init(filesystem_t *fs, const char *path, device_t *dev) {
   int32_t blk = 1;
   while (blk) {
     commonfs_entry_t entry = commonfs_get_entry(fs, blk);  
-    char abspath[256] = "";
 
     inode_t *ip = pmm->alloc(sizeof(inode_t));
     ip->refcnt = 0;
