@@ -252,35 +252,7 @@ void commonfs_init(filesystem_t *fs, const char *path, device_t *dev) {
 
 inode_t *commonfs_lookup(filesystem_t *fs, const char *path, int flags) {
   inode_t *ip = inode_search(fs->root, path);
-  if (strlen(ip->path) == strlen(path)) {
-    return ip;
-  } else {
-    if (flags & O_CREAT) {
-      size_t len = strlen(path);
-      for (size_t i = strlen(ip->path) + strlen("/"); i < len; ++i) {
-        if (path[i] == '/') return NULL;
-      }
-      
-      inode_t *pp = ip;
-      ip = pmm->alloc(sizeof(inode_t));
-      ip->refcnt = 0;
-      ip->type = TYPE_FILE;
-      ip->ptr = NULL;
-      ip->size = 0;
-      ip->fs = fs;
-      ip->ops = pmm->alloc(sizeof(inodeops_t));
-      memcpy(ip->ops, &common_ops, sizeof(inodeops_t));
-
-      ip->parent = pp;
-      ip->fchild = NULL;
-      ip->cousin = NULL;
-      inode_insert(pp, ip);
-      return ip;
-    } else {
-      return NULL;
-    }
-  }
-}
+  return (strlen(ip->path) == strlen(path)) ? ip : NULL;
 
 int commonfs_close(inode_t *inode) {
   if (inode->size <= 0) {

@@ -130,7 +130,6 @@ FUNC(ls) {
   if (!get_dir(arg, pwd, dir)) {
     sprintf(ret, "Invalid directory address.\n");
   } else {
-      Log("OK");
     if (vfs->access(dir, O_RDONLY)) {
       sprintf(ret, "Cannot access %s.\n");
     } else {
