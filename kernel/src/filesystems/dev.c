@@ -14,8 +14,10 @@ fsops_t devfs_ops = {
 };
 
 filesystem_t devfs = {
-  .ops = &devfs_ops,
-  .dev = NULL,
+  .name = "devfs",
+  .root = NULL,
+  .ops  = &devfs_ops,
+  .dev  = NULL,
 };
 
 void mount_devfs() {

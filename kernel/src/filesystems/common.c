@@ -88,8 +88,10 @@ fsops_t commonfs_ops = {
 };
 
 filesystem_t commonfs = {
-  .ops = &commonfs_ops,
-  .dev = NULL,
+  .name = "commonfs",
+  .root = &root,
+  .ops  = &commonfs_ops,
+  .dev  = NULL,
 };
 
 int common_open(filesystem_t *fs, file_t *file, int flags) {

@@ -13,8 +13,10 @@ fsops_t procfs_ops = {
 };
 
 filesystem_t procfs = {
-  .ops = &procfs_ops,
-  .dev = NULL,
+  .name = "procfs",
+  .root = NULL,
+  .ops  = &procfs_ops,
+  .dev  = NULL,
 };
 
 void mount_procfs() {
