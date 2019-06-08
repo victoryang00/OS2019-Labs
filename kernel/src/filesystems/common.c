@@ -2,6 +2,16 @@
 #include <file.h>
 #include <vfs.h>
 
+const char *inode_types_human[] = {
+  "INVL",
+  "MNTP",
+  "DIRC",
+  "FILE",
+  "DEVI",
+  "PROC",
+  "PROX",
+};
+
 inodeops_t common_ops = {
   .open    = common_open,
   .close   = common_close,
@@ -54,8 +64,10 @@ int common_unlink(const char *name) {
 void common_readdir(inode_t *inode, char *ret) {
   sprintf(ret, "ls %s:\n", inode->path);
   for (inode_t *ip = inode->fchild; ip != NULL; ip = ip->cousin) {
-    CLog(FG_PURPLE, "%s", ip->path);
+    CLog(FG_PURPLE, "%s %s", inode_types_human[ip->type], ip->path);
     strcat(ret, " - ");
+    strcat(ret, inode_types_human[ip->type]);
+    strcat(ret, " ");
     strcat(ret, ip->path);
     strcat(ret, "\n");
   }

@@ -30,12 +30,16 @@ struct inodeops {
 };
 extern inodeops_t common_ops;
 
-#define TYPE_MNTP 0
-#define TYPE_DIRC 1
-#define TYPE_FILE 2
-#define TYPE_DEVI 3
-#define TYPE_PROC 4
-#define TYPE_PROX 5 // special proc
+enum INODE_TYPES {
+  TYPE_INVL, // invalid
+  TYPE_MNTP, // mount point
+  TYPE_DIRC, // directory
+  TYPE_FILE, // file
+  TYPE_DEVI, // device (/dev)
+  TYPE_PROC, // process (/proc)
+  TYPE_PROX, // special proc
+};
+extern const char *inode_types_human[];
 
 struct inode {
   int refcnt;
