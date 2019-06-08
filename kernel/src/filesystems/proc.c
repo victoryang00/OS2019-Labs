@@ -91,7 +91,7 @@ void procfs_init(filesystem_t *fs, const char *path, device_t *dev) {
     succ = false;
     for (inode_t *ip = procfs.root->fchild; ip != NULL; ip = ip->cousin) {
       if (ip->type == TYPE_PROC) {
-        inode_remove(procfs.root, procfs.root->fchild);
+        inode_remove(procfs.root, ip);
         succ = true;
         break;
       }
