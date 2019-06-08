@@ -89,7 +89,7 @@ int common_rmdir(const char *name) {
 }
 
 int common_link(const char *name, inode_t *inode) {
-  inode_t *pp = inode_search(name);
+  inode_t *pp = inode_search(&root, name);
   if (strlen(pp->path) == strlen(name)) {
     return -1;
   }
