@@ -161,7 +161,7 @@ FUNC(cat) {
       if (fd == -1) {
         sprintf(ret, "VFS ERROR: open failed.");
       } else {
-        vfs->read(fd, ret, sizeof(ret));
+        vfs->read(fd, ret, 256);
         vfs->close(fd);
       }
     }
