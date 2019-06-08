@@ -31,9 +31,6 @@ commonfs_entry_t commonfs_get_entry(filesystem_t *fs, int32_t blk) {
   commonfs_entry_t ret;
   commonfs_params_t *params = (commonfs_params_t *)fs->root->ptr;
   off_t offset = params->data_head + blk * params->blk_size;
-  Log("data_head is %d", (int)params->data_head);
-  Log("blk_size is %d", (int)params->blk_size);
-  Log("offset is %d", (int)offset);
   fs->dev->ops->read(fs->dev, offset, (void *)(&ret), sizeof(commonfs_entry_t));
   Log("read OK");
   return ret;
@@ -229,19 +226,14 @@ void commonfs_init(filesystem_t *fs, const char *path, device_t *dev) {
   dev->ops->read(dev, 0, fs->root->ptr, sizeof(commonfs_params_t));
   int32_t blk = 1;
   while (blk) {
-    Log("0");
     commonfs_entry_t entry = commonfs_get_entry(fs, blk);  
-    Log("1");
     inode_t *pp = fs->ops->lookup(fs, entry.path, O_CREAT);
-    Log("2");
     inode_t *ip = pmm->alloc(sizeof(inode_t));
-    Log("3");
     ip->refcnt = 0;
-    Log("4");
     ip->type = (int)entry.type;
     ip->flags = (int)entry.flags;
     ip->ptr = (void *)(entry.head);
-    sprintf(ip->path, entry.path);
+    sprintf(ip->path, "%s/%s", path, entry.path);
     ip->offset = 0;
     ip->size = commonfs_get_file_size(fs, &entry);
     ip->fs = fs;
