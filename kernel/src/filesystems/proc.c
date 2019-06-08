@@ -34,7 +34,7 @@ ssize_t procops_read(file_t *file, char *buf, size_t size) {
     task_t *cur = get_current_task();
     return read_proc(cur, buf, size); 
   } else if (!strcmp(path, "/proc/cpuinfo")) {
-    return snprintf(buf, size, "CPU info:\n - Cores: %d\n - Model: i996\n", _ncpu());
+    return snprintf(buf, size, "CPU info:\n - Cores: %d\n - Model: i%d-996X\n", _ncpu(), _ncpu() + 3);
   } else if (!strcmp(path, "/proc/meminfo")) {
     return snprintf(buf, size, "MEM info:\n - Start: 0x%p\n -   End: 0x%p\n", _heap.start, _heap.end);
   } else {
