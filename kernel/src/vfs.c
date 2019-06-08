@@ -27,10 +27,10 @@ inline file_t *find_file_by_fd(int fd) {
 
 void vfs_init() {
   device_t *ramdev = dev_lookup("ramdisk1");
-  ramfs.ops->init(&ramfs, "/", ramdev);
+  commonfs.ops->init(&commonfs, "/", ramdev);
 
   mnt_t *mnt_root = pmm->alloc(sizeof(mnt_t));
-  mnt_root->fs = &ramfs;
+  mnt_root->fs = &commonfs;
   mnt_root->next = &mnt_head;
   mnt_root->prev = &mnt_head;
   mnt_head.next = mnt_root;
