@@ -163,6 +163,7 @@ inode_t *common_lookup(filesystem_t *fs, const char *path, int flags) {
       ip->fchild = NULL;
       ip->cousin = NULL;
       inode_insert(pp, ip);
+      return ip;
     } else {
       return NULL;
     }
@@ -173,4 +174,5 @@ int devfs_close(inode_t *inode) {
   if (inode->size <= 0) {
     inode_remove(inode->parent, inode);
   }
+  return 0;
 }
