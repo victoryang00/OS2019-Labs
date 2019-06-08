@@ -103,7 +103,7 @@ int common_link(const char *name, inode_t *inode) {
   ip->size = sizeof(void *);
   ip->fs = pp->fs;
   ip->ops = pmm->alloc(sizeof(inodeops_t));
-  memcpy(ip->ops, common_ops, sizeof(inodeops_t));
+  memcpy(ip->ops, &common_ops, sizeof(inodeops_t));
 
   ip->parent = pp;
   ip->fchild = NULL;
@@ -113,8 +113,8 @@ int common_link(const char *name, inode_t *inode) {
 }
 
 int common_unlink(const char *name) {
-  inode_t *ip = inode_search(name);
-  if (ip->type != TYPE_FILE) {
+  inode_t *ip = inode_search(&root, name);
+  if (ip->type != TYPE_FILE || ip->type != TYPE_LINK) {
     return -1;
   }
   inode_delete(ip);
