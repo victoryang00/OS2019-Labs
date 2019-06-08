@@ -224,6 +224,7 @@ void mount_commonfs() {
 }
 
 void commonfs_init(filesystem_t *fs, const char *path, device_t *dev) {
+  fs->dev = dev;
   fs->root->ptr = pmm->alloc(sizeof(commonfs_params_t));
   dev->ops->read(dev, 0, fs->root->ptr, sizeof(commonfs_params_t));
   int32_t blk = 1;
