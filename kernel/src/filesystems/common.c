@@ -54,7 +54,7 @@ int common_unlink(const char *name) {
 void common_readdir(inode_t *inode, char *ret) {
   sprintf(ret, "ls %s:\n", inode->path);
   for (inode_t *ip = inode->fchild; ip != NULL; ip = ip->cousin) {
-    Log("%s", ip->path);
+    CLog(FG_PURPLE, "%s", ip->path);
     strcat(ret, " - ");
     strcat(ret, ip->path);
     strcat(ret, "\n");
