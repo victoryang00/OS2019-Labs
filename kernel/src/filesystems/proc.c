@@ -25,7 +25,8 @@ void mount_procfs() {
 }
 
 inline void read_proc(task_t *tp, char *buf) {
-  sprintf(buf, "%d - %s - %s", tp->pid, task_states_human[tp->state], tp->name);
+  sprintf(buf, "Process %d:\n - Name: %s\n - State: %s\n",
+      tp->pid, tp->name, task_states_human[tp->state]);
 }
 ssize_t procops_read(file_t *file, char *buf, size_t size) {
   char *path = file->inode->path;
@@ -33,9 +34,9 @@ ssize_t procops_read(file_t *file, char *buf, size_t size) {
     task_t *cur = get_current_task();
     read_proc(cur, buf); 
   } else if (!strcpy(path, "/proc/cpuinfo")) {
-
+    sprintf("CPU info:\n - Cores: %d\n", _ncpu());
   } else if (!strcpy(path, "/proc/meminfo")) {
-
+    sprintf("MEM info:\n - Start: %p\n - End: %p\n", _heap.start, _heap.end);
   } else {
     read_proc(file->inode->ptr, buf);
   }
