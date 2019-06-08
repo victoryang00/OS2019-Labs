@@ -46,7 +46,7 @@ size_t commonfs_get_file_size(filesystem_t *fs, commonfs_entry_t *entry) {
     } else {
       commonfs_entry_t ce = commonfs_get_entry(fs, blk);
       for (size_t i = 0; i < params->blk_size; ++i) {
-        if (!ce->content[i]) break;
+        if (!ce.content[i]) break;
         ++ret;
       }
       break;
@@ -233,15 +233,15 @@ void commonfs_init(filesystem_t *fs, const char *path, device_t *dev) {
   int32_t blk = 1;
   while (blk) {
     commonfs_entry_t entry = commonfs_get_entry(fs, blk);  
-    inode_t *pp = fs->ops->lookup(fs, entry->path, O_CREAT);
+    inode_t *pp = fs->ops->lookup(fs, entry.path, O_CREAT);
     inode_t *ip = pmm->alloc(sizeof(inode_t));
     ip->refcnt = 0;
     ip->type = (int)entry.type;
     ip->flags = (int)entry.flags;
     ip->ptr = (void *)(entry.head);
-    ip->path = entry->path;
+    ip->path = entry.path;
     ip->offset = 0;
-    ip->size = commonfs_get_file_size(fs, entry.head);
+    ip->size = commonfs_get_file_size(fs, &entry);
     ip->fs = fs;
     ip->ops = pmm->alloc(sizeof(inodeops_t));
     memcpy(ip->ops, &common_ops, sizeof(inodeops_t));
