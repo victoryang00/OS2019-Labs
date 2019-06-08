@@ -16,7 +16,7 @@ typedef union commonfs_entry {
     int16_t type;
     int16_t flags;
     char path[24];
-  }
+  };
 } commonfs_entry_t;
 
 int32_t commonfs_get_next_blk(filesystem_t *fs, int32_t blk) {
