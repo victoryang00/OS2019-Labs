@@ -215,6 +215,7 @@ void mount_commonfs() {
   vfs->mount("/mnt", &commonfs);
 
   device_t *dev = dev_lookup("ramdisk1");
+  Log("device found!");
   commonfs_init(&commonfs, "/mnt", dev);
   CLog(BG_YELLOW, "/mnt initialized.");
 }
@@ -224,6 +225,7 @@ void commonfs_init(filesystem_t *fs, const char *path, device_t *dev) {
   dev->ops->read(dev, 0, fs->root->ptr, sizeof(commonfs_params_t));
   int32_t blk = 1;
   while (blk) {
+    Log("block %d", blk);
     commonfs_entry_t entry = commonfs_get_entry(fs, blk);  
     inode_t *pp = fs->ops->lookup(fs, entry.path, O_CREAT);
     inode_t *ip = pmm->alloc(sizeof(inode_t));
