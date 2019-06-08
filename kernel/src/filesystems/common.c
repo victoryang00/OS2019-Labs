@@ -230,7 +230,7 @@ void commonfs_init(filesystem_t *fs, const char *path, device_t *dev) {
     char abspath[256] = "";
     sprintf(abspath, "%s%s", path, entry.path);
 
-    inode_t *pp = fs->ops->lookup(fs, entry.path, O_CREAT);
+    inode_t *pp = fs->ops->lookup(fs, abspath, O_CREAT);
     inode_t *ip = pmm->alloc(sizeof(inode_t));
     ip->refcnt = 0;
     ip->type = (int)entry.type;
