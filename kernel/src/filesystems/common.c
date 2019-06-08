@@ -233,7 +233,7 @@ void commonfs_init(filesystem_t *fs, const char *path, device_t *dev) {
     ip->flags = (int)entry.flags;
     ip->ptr = (void *)(entry.head);
     sprintf(ip->path, "%s", path);
-    if (path[strlen(path) - 1] = '/') {
+    if (path[strlen(path) - 1] == '/') {
       ip->path[strlen(path) - 1] = '\0';
     }
     strcat(ip->path, "%s", entry.path);
