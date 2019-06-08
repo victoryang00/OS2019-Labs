@@ -36,7 +36,7 @@ ssize_t procops_read(file_t *file, char *buf, size_t size) {
   } else if (!strcmp(path, "/proc/cpuinfo")) {
     return snprintf(buf, size, "CPU info:\n - Cores: %d\n", _ncpu());
   } else if (!strcmp(path, "/proc/meminfo")) {
-    return snprintf(buf, size, "MEM info:\n - Start: %p\n - End: %p\n", _heap.start, _heap.end);
+    return snprintf(buf, size, "MEM info:\n - Start: 0x%p\n -   0xEnd: %p\n", _heap.start, _heap.end);
   } else {
     return read_proc(file->inode->ptr, buf, size);
   }
