@@ -46,7 +46,18 @@ void vfs_init() {
 int vfs_access(const char *path, int mode) {
   inode_t *ip = inode_search(&root, path);
   Log("in access, inode for %s found: %s", path, ip->path);
-  return strlen(ip->path) == strlen(path) ? 0 : -1;
+  if (strlen(ip->path) == strlen(path)) return 0;
+  else {
+    if (mode & O_CREAT) {
+      size_t len = strlen(path);
+      for (size_t i = strlen(ip->path) + 1; i < len; ++i) {
+        if (path[i] == '/') return -1;
+      }
+      return 0;
+    } else {
+      return -1;
+    }
+  }
 }
 
 int vfs_mount(const char *path, filesystem_t *fs) {
@@ -153,7 +164,7 @@ off_t vfs_lseek(int fd, off_t offset, int whence) {
 int vfs_close(int fd) {
   file_t *fp = find_file_by_fd(fd);
   Assert(fp, "file pointer is NULL");
-  int ret = fp->inode->ops->close(fp);
+  int ret = fp->inode->fs->ops->close(fp);
 
   task_t *cur = get_current_task();
   cur->fildes[fd] = NULL;

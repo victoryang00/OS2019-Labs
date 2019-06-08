@@ -7,6 +7,7 @@
 #define O_RDONLY 0x01
 #define O_WRONLY 0x02
 #define O_RDWR   0x03
+#define O_CREAT  0x04
 
 struct file {
   int fd;
@@ -38,6 +39,7 @@ enum INODE_TYPES {
   TYPE_DEVI, // device (/dev)
   TYPE_PROC, // process (/proc)
   TYPE_PROX, // special proc
+  TYPE_LINK, // linked file
 };
 extern const char *inode_types_human[];
 
@@ -46,6 +48,8 @@ struct inode {
   int type;
   void *ptr;
   char path[256];
+  off_t offset;
+  size_t size;
   filesystem_t *fs;
   inodeops_t *ops;
 
@@ -97,6 +101,13 @@ inline void inode_remove(inode_t *parent, inode_t *child) {
     if (ip->cousin == NULL) return;
     ip->cousin = child->cousin;
   }
+}
+
+inline void inode_delete(inode_t *cur) {
+  while (cur->fchild) {
+    inode_delete(cur->fchild);
+  }
+  inode_remove(cur->parent, cur);
 }
 
 #endif

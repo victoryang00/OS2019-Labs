@@ -10,6 +10,7 @@ const char *inode_types_human[] = {
   "DEVI",
   "PROC",
   "PROX",
+  "LINK",
 };
 
 inodeops_t common_ops = {
@@ -34,30 +35,89 @@ int common_close(file_t *file) {
 }
 
 ssize_t common_read(file_t *file, char *buf, size_t size) {
-  return 0;
+  Assert(file->ip->fs->dev, "fs with no device");
+  device_t *dev = file->ip->fs->dev;
+  off_t offset = (off_t)file->ip->ptr + file->ip->offset;
+  if (offset > file->ip->size) {
+    buf[0] = '\0';
+    return 0;
+  } else {
+    ssize_t ret = dev->ops->read(dev, offset, buf, size);
+    file->ip->offset += (off_t)ret;
+    return ret;
+  }
 }
 
 ssize_t common_write(file_t *file, const char *buf, size_t size) {
-  return 0;
+  Assert(file->ip->fs->dev, "fs with no device");
+  device_t *dev = file->ip->fs->dev;
+  off_t offset = (off_t)file->ip->ptr + file->ip->offset;
+  ssize_t ret = dev->ops->write(dev, offset, buf, size);
+  file->ip->offset += (off_t)ret;
+  if (file->ip->offset > file->ip->size) file->ip->size = (size_t)file->ip->offset;
+  return ret;
 }
 
 off_t common_lseek(file_t *file, off_t offset, int whence) {
-  return 0;
+  switch (whence) {
+    case SEEK_SET:
+      file->ip->offset = offset;
+      break;
+    case SEEK_CUR:
+      file->ip->offset += offset;
+      break;
+    case SEEK_END:
+    default:
+      file->ip->offset = file->ip->size + offset;
+      break;
+  }
+  return file->ip->offset;
 }
 
 int common_mkdir(const char *name) {
+
   return 0;
 }
 
 int common_rmdir(const char *name) {
+  inode_t *ip = inode_search(&root, name);
+  if (ip->type != TYPE_DIRC) {
+    return -1;
+  }
+  inode_delete(ip);
   return 0;
 }
 
 int common_link(const char *name, inode_t *inode) {
+  inode_t *pp = inode_search(name);
+  if (strlen(pp->path) == strlen(name)) {
+    return -1;
+  }
+
+  inode_t *ip = pmm->alloc(sizeof(inode_t));
+  ip->refcnt = 0;
+  ip->type = TYPE_LINK;
+  ip->ptr = (void *)inode;
+  sprintf(ip->path, name);
+  ip->offset = 0;
+  ip->size = sizeof(void *);
+  ip->fs = pp->fs;
+  ip->ops = pmm->alloc(sizeof(inodeops_t));
+  memcpy(ip->ops, common_ops, sizeof(inodeops_t));
+
+  ip->parent = pp;
+  ip->fchild = NULL;
+  ip->cousin = NULL;
+  inode_insert(pp, ip);
   return 0;
 }
 
 int common_unlink(const char *name) {
+  inode_t *ip = inode_search(name);
+  if (ip->type != TYPE_FILE) {
+    return -1;
+  }
+  inode_delete(ip);
   return 0;
 }
 
@@ -71,5 +131,46 @@ void common_readdir(inode_t *inode, char *ret) {
     strcat(ret, " ");
     strcat(ret, ip->path);
     strcat(ret, "\n");
+  }
+}
+
+void common_init(filesystem_t *fs, const char *name, device_t *dev) {
+  
+}
+
+inode_t *common_lookup(filesystem_t *fs, const char *path, int flags) {
+  inode_t *ip = inode_search(&root, path);
+  if (strlen(ip->path) == strlen(path)) {
+    return ip;
+  } else {
+    if (flags & O_CREAT) {
+      size_t len = strlen(path);
+      for (size_t i = strlen(ip->path) + strlen("/"); i < len; ++i) {
+        if (path[i] == '/') return NULL;
+      }
+      
+      inode_t *pp = ip;
+      ip = pmm->alloc(sizeof(inode_t));
+      ip->refcnt = 0;
+      ip->type = TYPE_FILE;
+      ip->ptr = NULL;
+      ip->size = 0;
+      ip->fs = fs;
+      ip->ops = pmm->alloc(sizeof(inodeops_t));
+      memcpy(ip->ops, &common_ops, sizeof(inodeops_t));
+
+      ip->parent = pp;
+      ip->fchild = NULL;
+      ip->cousin = NULL;
+      inode_insert(pp, ip);
+    } else {
+      return NULL;
+    }
+  }
+}
+
+int devfs_close(inode_t *inode) {
+  if (inode->size <= 0) {
+    inode_remove(inode->parent, inode);
   }
 }
