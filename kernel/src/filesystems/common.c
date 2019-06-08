@@ -35,6 +35,7 @@ commonfs_entry_t commonfs_get_entry(filesystem_t *fs, int32_t blk) {
   Log("blk_size is %d", (int)params->blk_size);
   Log("offset is %d", (int)offset);
   fs->dev->ops->read(fs->dev, offset, (void *)(&ret), sizeof(commonfs_entry_t));
+  Log("read OK");
   return ret;
 }
 
@@ -225,7 +226,6 @@ void mount_commonfs() {
 void commonfs_init(filesystem_t *fs, const char *path, device_t *dev) {
   fs->root->ptr = pmm->alloc(sizeof(commonfs_params_t));
   dev->ops->read(dev, 0, fs->root->ptr, sizeof(commonfs_params_t));
-  Log("read is %s", (char *)fs->root->ptr);
   int32_t blk = 1;
   while (blk) {
     Log("0");
