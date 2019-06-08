@@ -178,7 +178,7 @@ FUNC(cat) {
 FUNC(write) {
   char dir[256] = "";
   char arg1[256] = "";
-  char *arg2 = arg;
+  const char *arg2 = arg;
   for (size_t i = 0; *arg2 != '\0'; ++i, ++arg2) {
     arg1[i] = *arg2;
     if (*arg2 = ' ') break;
