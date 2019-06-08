@@ -226,7 +226,7 @@ void commonfs_init(filesystem_t *fs, const char *path, device_t *dev) {
   fs->root->ptr = pmm->alloc(sizeof(commonfs_params_t));
   size_t nread = dev->ops->read(dev, 0, fs->root->ptr, sizeof(commonfs_params_t));
   Log("read %d bytes", nread);
-  Log("blksize is %d", (int)params->blk_size);
+  Log("blksize is %d", *((int*)fs->root->ptr));
   int32_t blk = 1;
   while (blk) {
     Log("0");
