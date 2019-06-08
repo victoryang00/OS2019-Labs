@@ -31,6 +31,7 @@ enum task_states {
   ST_Z, // Zombie
   ST_X  // Special
 };
+extern const char *task_states_human[];
 
 struct task {
   uint32_t pid;

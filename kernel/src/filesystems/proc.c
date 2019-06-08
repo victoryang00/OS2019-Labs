@@ -24,8 +24,21 @@ void mount_procfs() {
   CLog(BG_YELLOW, "/proc initialiezd.");
 }
 
+inline void read_proc(task_t *tp, char *buf) {
+  sprintf(buf, "%d - %s - %s", tp->pid, task_states_human[tp->state], tp->name);
+}
 ssize_t procops_read(file_t *file, char *buf, size_t size) {
-  sprintf(buf, "read not implemented!!");
+  char *path = file->inode->path;
+  if (!strcpy(path, "/proc/self")) {
+    task_t *cur = get_current_task();
+    read_proc(cur, buf); 
+  } else if (!strcpy(path, "/proc/cpuinfo")) {
+
+  } else if (!strcpy(path, "/proc/meminfo")) {
+
+  } else {
+    read_proc(file->inode->ptr, buf);
+  }
   return strlen(buf);
 }
 
