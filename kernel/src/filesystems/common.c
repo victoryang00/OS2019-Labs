@@ -224,10 +224,15 @@ void commonfs_init(filesystem_t *fs, const char *path, device_t *dev) {
   dev->ops->read(dev, 0, fs->root->ptr, sizeof(commonfs_params_t));
   int32_t blk = 1;
   while (blk) {
+    Log("0");
     commonfs_entry_t entry = commonfs_get_entry(fs, blk);  
+    Log("1");
     inode_t *pp = fs->ops->lookup(fs, entry.path, O_CREAT);
+    Log("2");
     inode_t *ip = pmm->alloc(sizeof(inode_t));
+    Log("3");
     ip->refcnt = 0;
+    Log("4");
     ip->type = (int)entry.type;
     ip->flags = (int)entry.flags;
     ip->ptr = (void *)(entry.head);
@@ -237,13 +242,11 @@ void commonfs_init(filesystem_t *fs, const char *path, device_t *dev) {
     ip->fs = fs;
     ip->ops = pmm->alloc(sizeof(inodeops_t));
     memcpy(ip->ops, &common_ops, sizeof(inodeops_t));
-    Log("1");
 
     ip->parent = pp;
     ip->fchild = NULL;
     ip->cousin = NULL;
     inode_insert(pp, ip);
-    Log("2");
 
     blk = commonfs_get_next_blk(fs, blk);
   }
