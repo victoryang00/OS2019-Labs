@@ -17,18 +17,18 @@ filesystem_t ramfs = {
 
 void ramfs_init(filesystem_t *fs, const char *path, device_t *dev) {
   fs->dev = dev;
-  root.type = TYPE_MNTP;
-  root.ptr = NULL;
-  sprintf(root.path, path);
-  root.fs = fs;
-  root.ops = &common_ops;
-  root.parent = &root;
-  root.fchild = NULL;
-  root.cousin = NULL;
+  root->type = TYPE_MNTP;
+  root->ptr = NULL;
+  sprintf(root->path, path);
+  root->fs = fs;
+  root->ops = &common_ops;
+  root->parent = root;
+  root->fchild = NULL;
+  root->cousin = NULL;
 }
 
 inode_t *ramfs_lookup(filesystem_t *fs, const char *path, int flags) {
-  inode_t *ip = inode_search(&root, path);
+  inode_t *ip = inode_search(root, path);
   if (!strcmp(path, ip->path)) return ip;
   else {
     CLog(FG_YELLOW, "inode %s not found. create a new one.", path);
