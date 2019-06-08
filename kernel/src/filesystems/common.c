@@ -32,7 +32,7 @@ fsops_t commonfs_ops = {
   .close  = commonfs_close,
 };
 
-filesystem_t common_fs = {
+filesystem_t commonfs = {
   .ops = &commonfs_ops,
   .dev = NULL,
 };
