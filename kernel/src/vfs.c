@@ -69,7 +69,7 @@ int vfs_access(const char *path, int mode) {
 
 int vfs_mount(const char *path, filesystem_t *fs) {
   mnt_t *mp = find_mnt(path);
-  Assert(!mp || strlen(path) != strlen(path), "Path %s already mounted!", path);
+  Assert(!mp || strlen(mp->path) != strlen(path), "Path %s already mounted!", path);
   
   mp = pmm->alloc(sizeof(mnt_t));
   mp->path = path;
