@@ -145,11 +145,11 @@ void common_readdir(inode_t *inode, char *ret) {
   }
 }
 
-void common_init(filesystem_t *fs, const char *name, device_t *dev) {
+void commonfs_init(filesystem_t *fs, const char *name, device_t *dev) {
   fs->dev = dev;
 }
 
-inode_t *common_lookup(filesystem_t *fs, const char *path, int flags) {
+inode_t *commonfs_lookup(filesystem_t *fs, const char *path, int flags) {
   inode_t *ip = inode_search(&root, path);
   if (strlen(ip->path) == strlen(path)) {
     return ip;
