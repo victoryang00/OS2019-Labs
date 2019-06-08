@@ -144,8 +144,13 @@ FUNC(cd) {
     if (vfs->access(dir, 0)) {
       sprintf(ret, "Cannot access %s.\n");
     } else {
-      strcpy(pwd, dir);
-      sprintf(ret, "Directory changed to %s.\n", dir);
+      inode_t *ip = inode_search(&root, dir);
+      if (ip->type == TYPE_MNT || ip->type == DIRC) {
+        strcpy(pwd, dir);
+        sprintf(ret, "Directory changed to %s.\n", dir);
+      } else {
+        sprintf(ret, "Invalid inode type of %s: %s.\n", dir, inode_types_human[ip->type]);
+      }
     }
   }
 }
