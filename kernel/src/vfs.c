@@ -26,6 +26,7 @@ inline file_t *find_file_by_fd(int fd) {
 }
 
 void vfs_init() {
+  root = commonfs.root = pmm->alloc(sizeof(inode_t));
   root = pmm->alloc(sizeof(inode_t));
   root->refcnt = 0;
   root->type = TYPE_MNTP;

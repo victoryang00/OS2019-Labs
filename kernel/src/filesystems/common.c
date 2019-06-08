@@ -89,7 +89,7 @@ fsops_t commonfs_ops = {
 
 filesystem_t commonfs = {
   .name = "commonfs",
-  .root = root,
+  .root = NULL,
   .ops  = &commonfs_ops,
   .dev  = NULL,
 };
