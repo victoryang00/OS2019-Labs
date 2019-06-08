@@ -229,7 +229,6 @@ void commonfs_init(filesystem_t *fs, const char *path, device_t *dev) {
 
   root->ptr = pmm->alloc(sizeof(commonfs_params_t));
   dev->ops->read(dev, 0, root->ptr, sizeof(commonfs_params_t));
-  commonfs_params_t *params = (commonfs_params_t *)root->ptr;
   int32_t blk = 1;
   while (blk) {
     commonfs_entry_t entry = commonfs_get_entry(fs, blk);  
@@ -239,7 +238,7 @@ void commonfs_init(filesystem_t *fs, const char *path, device_t *dev) {
     ip->type = (int)entry.type;
     ip->flags = (int)entry.flags;
     ip->ptr = (void *)(entry.head);
-    ip->path = entry.path;
+    ip->path = (const char *)entry.path;
     ip->offset = 0;
     ip->size = commonfs_get_file_size(fs, &entry);
     ip->fs = fs;
