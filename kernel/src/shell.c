@@ -199,6 +199,7 @@ FUNC(write) {
         sprintf(ret, "VFS ERROR: open failed.");
       } else {
         vfs->write(fd, (void *)arg2, strlen(arg2));
+        vfs->write(fd, "\n", 1);
         vfs->close(fd);
       }
     }
