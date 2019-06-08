@@ -30,12 +30,12 @@ inline ssize_t read_proc(task_t *tp, char *buf, size_t size) {
 }
 ssize_t procops_read(file_t *file, char *buf, size_t size) {
   char *path = file->inode->path;
-  if (!strcpy(path, "/proc/self")) {
+  if (!strcmp(path, "/proc/self")) {
     task_t *cur = get_current_task();
     return read_proc(cur, buf, size); 
-  } else if (!strcpy(path, "/proc/cpuinfo")) {
+  } else if (!strcmp(path, "/proc/cpuinfo")) {
     return snprintf(buf, size, "CPU info:\n - Cores: %d\n", _ncpu());
-  } else if (!strcpy(path, "/proc/meminfo")) {
+  } else if (!strcmp(path, "/proc/meminfo")) {
     return snprintf(buf, size, "MEM info:\n - Start: %p\n - End: %p\n", _heap.start, _heap.end);
   } else {
     return read_proc(file->inode->ptr, buf, size);
