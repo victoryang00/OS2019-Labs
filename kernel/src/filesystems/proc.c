@@ -33,7 +33,7 @@ inline void procfs_self() {
   inode_t *ip = pmm->alloc(sizeof(inode_t));
   ip->type = TYPE_PROX;
   ip->ptr = NULL;
-  sprintf(ip->path, "%s/self", path);
+  sprintf(ip->path, "/proc/self");
   ip->fs = &procfs;
   ip->ops = pmm->alloc(sizeof(inodeops_t));
   memcpy(ip->ops, &common_ops, sizeof(inodeops_t));
@@ -49,7 +49,7 @@ inline void procfs_cpuinfo() {
   inode_t *ip = pmm->alloc(sizeof(inode_t));
   ip->type = TYPE_PROX;
   ip->ptr = NULL;
-  sprintf(ip->path, "%s/meminfo", path);
+  sprintf(ip->path, "/proc/meminfo");
   ip->fs = &procfs;
   ip->ops = pmm->alloc(sizeof(inodeops_t));
   memcpy(ip->ops, &common_ops, sizeof(inodeops_t));
@@ -65,7 +65,7 @@ inline void procfs_meminfo() {
   inode_t *ip = pmm->alloc(sizeof(inode_t));
   ip->type = TYPE_PROX;
   ip->ptr = NULL;
-  sprintf(ip->path, "%s/meminfo", path);
+  sprintf(ip->path, "/proc/meminfo");
   ip->fs = &procfs;
   ip->ops = pmm->alloc(sizeof(inodeops_t));
   memcpy(ip->ops, &common_ops, sizeof(inodeops_t));
