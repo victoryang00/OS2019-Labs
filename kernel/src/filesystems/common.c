@@ -161,6 +161,7 @@ void commonfs_init(filesystem_t *fs, const char *path, device_t *dev) {
 
   root = pmm->alloc(sizeof(inode_t));
   root->type = TYPE_MNTP;
+  root->flags = P_RD;
   root->ptr = NULL;
   sprintf(root->path, path);
   root->fs = fs;

@@ -128,7 +128,7 @@ FUNC(ls) {
   if (!get_dir(arg, pwd, dir)) {
     sprintf(ret, "Invalid directory address.\n");
   } else {
-    if (vfs->access(dir, 0)) {
+    if (vfs->access(dir, O_RDONLY)) {
       sprintf(ret, "Cannot access %s.\n");
     } else {
       inode_t *cur = inode_search(root, dir);
@@ -142,7 +142,7 @@ FUNC(cd) {
   if (!get_dir(arg, pwd, dir)) {
     sprintf(ret, "Invalid directory address.\n");
   } else {
-    if (vfs->access(dir, 0)) {
+    if (vfs->access(dir, O_RDONLY)) {
       sprintf(ret, "Cannot access %s.\n");
     } else {
       inode_t *ip = inode_search(root, dir);
@@ -161,10 +161,10 @@ FUNC(cat) {
   if (!get_dir(arg, pwd, dir)) {
     sprintf(ret, "Invalid directory address.\n");
   } else {
-    if (vfs->access(dir, 0)) {
+    if (vfs->access(dir, O_RDONLY)) {
       sprintf(ret, "Cannot access %s.\n");
     } else {
-      int fd = vfs->open(dir, 0);
+      int fd = vfs->open(dir, O_RDONLY);
       if (fd == -1) {
         sprintf(ret, "VFS ERROR: open failed.");
       } else {

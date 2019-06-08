@@ -40,6 +40,7 @@ void devfs_init(filesystem_t *fs, const char *path, device_t *dev) {
     CLog(BG_YELLOW, "add inode of %s/%s", path, devices[i]->name);
     inode_t *ip = pmm->alloc(sizeof(inode_t));
     ip->type = TYPE_DEVI;
+    ip->flags = P_RD | P_WR;
     ip->ptr = devices[i];
     sprintf(ip->path, "%s/%s", path, devices[i]->name);
     ip->fs = fs;

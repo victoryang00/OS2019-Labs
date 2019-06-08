@@ -76,6 +76,7 @@ int vfs_mount(const char *path, filesystem_t *fs) {
   inode_t *ip = pmm->alloc(sizeof(inode_t));
   fs->root = ip;
   ip->type = TYPE_MNTP;
+  ip->flags = P_RD;
   ip->fs = fs;
   ip->ptr = NULL;
   sprintf(ip->path, "%s", path);
