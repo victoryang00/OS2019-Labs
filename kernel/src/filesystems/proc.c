@@ -81,6 +81,7 @@ void procfs_init(filesystem_t *fs, const char *path, device_t *dev) {
   if (procfs.root->fchild == NULL) {
     // first init, add /self, /cpuinfo, /meminfo
     procfs_self();
+    Log("OK!");
     procfs_cpuinfo();
     procfs_meminfo();
   }
