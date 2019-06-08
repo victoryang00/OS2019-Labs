@@ -4,7 +4,6 @@
 #include <threads.h>
 
 mnt_t mnt_head;
-extern inode_t *root;
 
 inline mnt_t *find_mnt(const char *path) {
   size_t max_match = 0;

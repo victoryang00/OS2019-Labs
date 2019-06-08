@@ -61,7 +61,7 @@ struct inode {
   inode_t *fchild;
   inode_t *cousin;
 };
-extern inode_t root;
+extern inode_t *root;
 
 int common_open(file_t *file, int flags);
 int common_close(file_t *file);
