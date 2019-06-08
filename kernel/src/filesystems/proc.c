@@ -45,6 +45,7 @@ ssize_t procops_read(file_t *file, char *buf, size_t size) {
 inline void procfs_self() {
   inode_t *ip = pmm->alloc(sizeof(inode_t));
   ip->type = TYPE_PROX;
+  ip->flags = P_RD;
   ip->ptr = NULL;
   sprintf(ip->path, "/proc/self");
   ip->fs = &procfs;
@@ -61,6 +62,7 @@ inline void procfs_self() {
 inline void procfs_cpuinfo() {
   inode_t *ip = pmm->alloc(sizeof(inode_t));
   ip->type = TYPE_PROX;
+  ip->flags = P_RD;
   ip->ptr = NULL;
   sprintf(ip->path, "/proc/cpuinfo");
   ip->fs = &procfs;
@@ -77,6 +79,7 @@ inline void procfs_cpuinfo() {
 inline void procfs_meminfo() {
   inode_t *ip = pmm->alloc(sizeof(inode_t));
   ip->type = TYPE_PROX;
+  ip->flags = P_RD;
   ip->ptr = NULL;
   sprintf(ip->path, "/proc/meminfo");
   ip->fs = &procfs;
@@ -116,6 +119,7 @@ void procfs_init(filesystem_t *fs, const char *path, device_t *dev) {
     CLog(BG_YELLOW, "add inode of %s/%d", path, tp->pid);
     inode_t *ip = pmm->alloc(sizeof(inode_t));
     ip->type = TYPE_PROC;
+    ip->flags = P_RD;
     ip->ptr = (void *)tp;
     sprintf(ip->path, "%s/%d", path, tp->pid);
     ip->fs = fs;
