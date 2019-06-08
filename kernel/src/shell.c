@@ -82,7 +82,7 @@ bool get_dir(const char *arg, const char *pwd, char *dir) {
       continue;
     } else if (!strncmp(buf + pos, "/../", 4)) {
       pos += 3;
-      while (cur > 0 && dir[cur - 1] != '/') --cur;
+      while (cur > 0 && dir[cur] != '/') --cur;
       continue;
     } else {
       dir[cur] = buf[pos];
