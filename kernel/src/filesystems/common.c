@@ -86,7 +86,6 @@ off_t common_lseek(file_t *file, off_t offset, int whence) {
 }
 
 int common_mkdir(const char *name) {
-
   return 0;
 }
 
