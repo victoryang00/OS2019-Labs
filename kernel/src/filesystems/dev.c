@@ -49,7 +49,7 @@ void devfs_init(filesystem_t *fs, const char *path, device_t *dev) {
     ip->ops->read = devops_read;
     ip->ops->write = devops_write;
 
-    ip->parent = devfs.root;
+    ip->parent = fs->root;
     ip->fchild = NULL;
     ip->cousin = NULL;
     inode_insert(ip->parent, ip);
@@ -57,7 +57,7 @@ void devfs_init(filesystem_t *fs, const char *path, device_t *dev) {
 }
 
 inode_t *devfs_lookup(filesystem_t *fs, const char *path, int flags) {
-  inode_t *ip = inode_search(devfs.root, path);
+  inode_t *ip = inode_search(fs->root, path);
   return (strlen(ip->path) == strlen(path)) ? ip : NULL;
 }
 

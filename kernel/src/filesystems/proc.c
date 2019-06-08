@@ -53,7 +53,7 @@ inline void procfs_self() {
   memcpy(ip->ops, &common_ops, sizeof(inodeops_t));
   ip->ops->read = procops_read;
 
-  ip->parent = procfs.root;
+  ip->parent = fs->root;
   ip->fchild = NULL;
   ip->cousin = NULL;
   inode_insert(ip->parent, ip);
@@ -70,7 +70,7 @@ inline void procfs_cpuinfo() {
   memcpy(ip->ops, &common_ops, sizeof(inodeops_t));
   ip->ops->read = procops_read;
 
-  ip->parent = procfs.root;
+  ip->parent = fs->root;
   ip->fchild = NULL;
   ip->cousin = NULL;
   inode_insert(ip->parent, ip);
@@ -87,14 +87,14 @@ inline void procfs_meminfo() {
   memcpy(ip->ops, &common_ops, sizeof(inodeops_t));
   ip->ops->read = procops_read;
 
-  ip->parent = procfs.root;
+  ip->parent = fs->root;
   ip->fchild = NULL;
   ip->cousin = NULL;
   inode_insert(ip->parent, ip);
 }
 
 void procfs_init(filesystem_t *fs, const char *path, device_t *dev) {
-  if (procfs.root->fchild == NULL) {
+  if (fs->root->fchild == NULL) {
     // first init, add /self, /cpuinfo, /meminfo
     procfs_self();
     procfs_cpuinfo();
@@ -105,9 +105,9 @@ void procfs_init(filesystem_t *fs, const char *path, device_t *dev) {
   bool succ = true;
   while (succ) {
     succ = false;
-    for (inode_t *ip = procfs.root->fchild; ip != NULL; ip = ip->cousin) {
+    for (inode_t *ip = fs->root->fchild; ip != NULL; ip = ip->cousin) {
       if (ip->type == TYPE_PROC) {
-        inode_remove(procfs.root, ip);
+        inode_remove(fs->root, ip);
         succ = true;
         break;
       }
@@ -127,7 +127,7 @@ void procfs_init(filesystem_t *fs, const char *path, device_t *dev) {
     memcpy(ip->ops, &common_ops, sizeof(inodeops_t));
     ip->ops->read = procops_read;
 
-    ip->parent = procfs.root;
+    ip->parent = fs->root;
     ip->fchild = NULL;
     ip->cousin = NULL;
     inode_insert(ip->parent, ip);
@@ -135,7 +135,7 @@ void procfs_init(filesystem_t *fs, const char *path, device_t *dev) {
 }
 
 inode_t *procfs_lookup(filesystem_t *fs, const char *path, int flags) {
-  inode_t *ip = inode_search(procfs.root, path);
+  inode_t *ip = inode_search(fs->root, path);
   return (strlen(ip->path) == strlen(path)) ? ip : NULL;
 }
 

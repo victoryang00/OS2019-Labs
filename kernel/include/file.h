@@ -25,16 +25,16 @@ struct file {
 };
 
 struct inodeops {
-  int (*open)(file_t *file, int flags);
-  int (*close)(file_t *file);
-  ssize_t (*read)(file_t *file, char *buf, size_t size);
-  ssize_t (*write)(file_t *file, const char *buf, size_t size);
-  off_t (*lseek)(file_t *file, off_t offset, int whence);
-  int (*mkdir)(const char *name);
-  int (*rmdir)(const char *name);
-  int (*link)(const char *name, inode_t *inode);
-  int (*unlink)(const char *name);
-  void (*readdir)(inode_t *inode, char *ret);
+  int (*open)(filesystem_t *fs, file_t *file, int flags);
+  int (*close)(filesystem_t *fs, file_t *file);
+  ssize_t (*read)(filesystem_t *fs, file_t *file, char *buf, size_t size);
+  ssize_t (*write)(filesystem_t *fs, file_t *file, const char *buf, size_t size);
+  off_t (*lseek)(filesystem_t *fs, file_t *file, off_t offset, int whence);
+  int (*mkdir)(filesystem_t *fs, const char *name);
+  int (*rmdir)(filesystem_t *fs, const char *name);
+  int (*link)(filesystem_t *fs, const char *name, inode_t *inode);
+  int (*unlink)(filesystem_t *fs, const char *name);
+  void (*readdir)(filesystem_t *fs, inode_t *inode, char *ret);
 };
 extern inodeops_t common_ops;
 
@@ -67,16 +67,16 @@ struct inode {
 };
 extern inode_t *root;
 
-int common_open(file_t *file, int flags);
-int common_close(file_t *file);
-ssize_t common_read(file_t *file, char *buf, size_t size);
-ssize_t common_write(file_t *file, const char *buf, size_t size);
-off_t common_lseek(file_t *file, off_t offset, int whence);
-int common_mkdir(const char *name);
-int common_rmdir(const char *name);
-int common_link(const char *name, inode_t *inode);
-int common_unlink(const char *name);
-void common_readdir(inode_t *inode, char *ret);
+int common_open(filesystem_t *fs, file_t *file, int flags);
+int common_close(filesystem_t *fs, file_t *file);
+ssize_t common_read(filesystem_t *fs, file_t *file, char *buf, size_t size);
+ssize_t common_write(filesystem_t *fs, file_t *file, const char *buf, size_t size);
+off_t common_lseek(filesystem_t *fs, file_t *file, off_t offset, int whence);
+int common_mkdir(filesystem_t *fs, const char *name);
+int common_rmdir(filesystem_t *fs, const char *name);
+int common_link(filesystem_t *fs, const char *name, inode_t *inode);
+int common_unlink(filesystem_t *fs, const char *name);
+void common_readdir(filesystem_t *fs, inode_t *inode, char *ret);
 
 inode_t *inode_search(inode_t *cur, const char *path);
 void inode_insert(inode_t *parent, inode_t *child);

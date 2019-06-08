@@ -67,8 +67,6 @@ const char *inode_types_human[] = {
   "LINK",
 };
 
-inode_t *root;
-
 inodeops_t common_ops = {
   .open    = common_open,
   .close   = common_close,
@@ -93,15 +91,15 @@ filesystem_t commonfs = {
   .dev = NULL,
 };
 
-int common_open(file_t *file, int flags) {
+int common_open(filesystem_t *fs, file_t *file, int flags) {
   return 0;
 }
 
-int common_close(file_t *file) {
+int common_close(filesystem_t *fs, file_t *file) {
   return 0;
 }
 
-ssize_t common_read(file_t *file, char *buf, size_t size) {
+ssize_t common_read(filesystem_t *fs, file_t *file, char *buf, size_t size) {
   Assert(file->inode->fs->dev, "fs with no device");
   device_t *dev = file->inode->fs->dev;
   off_t offset = (off_t)file->inode->ptr + file->inode->offset;
@@ -115,7 +113,7 @@ ssize_t common_read(file_t *file, char *buf, size_t size) {
   }
 }
 
-ssize_t common_write(file_t *file, const char *buf, size_t size) {
+ssize_t common_write(filesystem_t *fs, file_t *file, const char *buf, size_t size) {
   Assert(file->inode->fs->dev, "fs with no device");
   device_t *dev = file->inode->fs->dev;
   off_t offset = (off_t)file->inode->ptr + file->inode->offset;
@@ -125,7 +123,7 @@ ssize_t common_write(file_t *file, const char *buf, size_t size) {
   return ret;
 }
 
-off_t common_lseek(file_t *file, off_t offset, int whence) {
+off_t common_lseek(filesystem_t *fs, file_t *file, off_t offset, int whence) {
   switch (whence) {
     case SEEK_SET:
       file->inode->offset = offset;
@@ -141,12 +139,12 @@ off_t common_lseek(file_t *file, off_t offset, int whence) {
   return file->inode->offset;
 }
 
-int common_mkdir(const char *name) {
+int common_mkdir(filesystem_t *fs, const char *name) {
   return 0;
 }
 
-int common_rmdir(const char *name) {
-  inode_t *ip = inode_search(root, name);
+int common_rmdir(filesystem_t *fs, const char *name) {
+  inode_t *ip = inode_search(fs->root, name);
   if (ip->type != TYPE_DIRC) {
     return -1;
   }
@@ -154,8 +152,8 @@ int common_rmdir(const char *name) {
   return 0;
 }
 
-int common_link(const char *name, inode_t *inode) {
-  inode_t *pp = inode_search(root, name);
+int common_link(filesystem_t fs, const char *name, inode_t *inode) {
+  inode_t *pp = fs->ops->lookup(fs, name, O_RDWR);
   if (strlen(pp->path) == strlen(name)) {
     return -1;
   }
@@ -178,8 +176,8 @@ int common_link(const char *name, inode_t *inode) {
   return 0;
 }
 
-int common_unlink(const char *name) {
-  inode_t *ip = inode_search(root, name);
+int common_unlink(filesystem_t *fs, const char *name) {
+  inode_t *ip = fs->ops->lookup(fs, name, O_RDWR);
   if (ip->type != TYPE_FILE || ip->type != TYPE_LINK) {
     return -1;
   }
@@ -187,7 +185,7 @@ int common_unlink(const char *name) {
   return 0;
 }
 
-void common_readdir(inode_t *inode, char *ret) {
+void common_readdir(filesystem_t *fs, inode_t *inode, char *ret) {
   sprintf(ret, "ls %s:\n", inode->path);
   strcat(ret, " + TYPE PRIV FILENAME\n");
   for (inode_t *ip = inode->fchild; ip != NULL; ip = ip->cousin) {
@@ -212,23 +210,17 @@ void common_readdir(inode_t *inode, char *ret) {
   }
 }
 
+void mount_commonfs() {
+  vfs->mount("/mnt", &commonfs);
+
+  device_t *dev = dev_lookup("ramdisk1");
+  commonfs_init(&commonfs, "/mnt", dev);
+  CLog(BG_YELLOW, "/mnt initialized.");
+}
+
 void commonfs_init(filesystem_t *fs, const char *path, device_t *dev) {
-  fs->dev = dev;
-  fs->root = pmm->alloc(sizeof(inode_t));
-
-  root = fs->root;
-  root->type = TYPE_MNTP;
-  root->flags = P_RD;
-  root->ptr = NULL;
-  sprintf(root->path, path);
-  root->fs = fs;
-  root->ops = &common_ops;
-  root->parent = root;
-  root->fchild = NULL;
-  root->cousin = NULL;
-
-  root->ptr = pmm->alloc(sizeof(commonfs_params_t));
-  dev->ops->read(dev, 0, root->ptr, sizeof(commonfs_params_t));
+  fs->root->ptr = pmm->alloc(sizeof(commonfs_params_t));
+  dev->ops->read(dev, 0, fs->root->ptr, sizeof(commonfs_params_t));
   int32_t blk = 1;
   while (blk) {
     commonfs_entry_t entry = commonfs_get_entry(fs, blk);  
@@ -255,7 +247,7 @@ void commonfs_init(filesystem_t *fs, const char *path, device_t *dev) {
 }
 
 inode_t *commonfs_lookup(filesystem_t *fs, const char *path, int flags) {
-  inode_t *ip = inode_search(root, path);
+  inode_t *ip = inode_search(fs->root, path);
   if (strlen(ip->path) == strlen(path)) {
     return ip;
   } else {

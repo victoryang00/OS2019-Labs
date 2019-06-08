@@ -25,21 +25,17 @@ inline file_t *find_file_by_fd(int fd) {
 }
 
 void vfs_init() {
-  device_t *ramdev = dev_lookup("ramdisk1");
-  commonfs.ops->init(&commonfs, "/", ramdev);
-
-  mnt_t *mnt_root = pmm->alloc(sizeof(mnt_t));
-  mnt_root->fs = &commonfs;
-  mnt_root->next = &mnt_head;
-  mnt_root->prev = &mnt_head;
   mnt_head.next = mnt_root;
   mnt_head.prev = mnt_root;
-
+  
   extern void mount_devfs();
   mount_devfs();
 
   extern void mount_procfs();
   mount_procfs();
+
+  extern void mount_commonfs();
+  mount_commonfs();
 }
 
 int vfs_access(const char *path, int mode) {
