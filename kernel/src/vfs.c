@@ -46,21 +46,18 @@ void vfs_init() {
   mnt_root.prev = &mnt_head;
   mnt_head.next = &mnt_root;
   mnt_head.prev = &mnt_root;
+
+  extern void mount_commonfs();
+  mount_commonfs();
   
   extern void mount_devfs();
   mount_devfs();
 
   extern void mount_procfs();
   mount_procfs();
-
-  extern void mount_commonfs();
-  mount_commonfs();
 }
 
 int vfs_access(const char *path, int mode) {
-  // root has no fs
-  if (!strcmp(path, "/")) return 0;
-
   mnt_t *mp = find_mnt(path);
   Assert(mp, "Path %s not mounted!", path);
   if (mp->fs->ops->lookup(mp->fs, path, mode) != NULL) {

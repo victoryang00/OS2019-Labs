@@ -213,11 +213,10 @@ int common_readdir(filesystem_t *fs, inode_t *inode, char *ret) {
 }
 
 void mount_commonfs() {
-  vfs->mount("/mnt", &commonfs);
-
+  //vfs->mount("/mnt", &commonfs);
   device_t *dev = dev_lookup("ramdisk0");
-  commonfs_init(&commonfs, "/mnt", dev);
-  CLog(BG_YELLOW, "/mnt initialized.");
+  commonfs_init(&commonfs, "/", dev);
+  CLog(BG_YELLOW, "/ initialized.");
 }
 
 void commonfs_init(filesystem_t *fs, const char *path, device_t *dev) {
