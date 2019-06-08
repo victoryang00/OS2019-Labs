@@ -26,6 +26,17 @@ inodeops_t common_ops = {
   .readdir = common_readdir,
 };
 
+fsops_t commonfs_ops = {
+  .init   = commonfs_init,
+  .lookup = commonfs_lookup,
+  .close  = commonfs_close,
+};
+
+filesystem_t common_fs = {
+  .ops = &commonfs_ops,
+  .dev = NULL,
+};
+
 int common_open(file_t *file, int flags) {
   return 0;
 }
@@ -135,7 +146,7 @@ void common_readdir(inode_t *inode, char *ret) {
 }
 
 void common_init(filesystem_t *fs, const char *name, device_t *dev) {
-  
+  fs->dev = dev;
 }
 
 inode_t *common_lookup(filesystem_t *fs, const char *path, int flags) {
@@ -170,7 +181,7 @@ inode_t *common_lookup(filesystem_t *fs, const char *path, int flags) {
   }
 }
 
-int devfs_close(inode_t *inode) {
+int commonfs_close(inode_t *inode) {
   if (inode->size <= 0) {
     inode_remove(inode->parent, inode);
   }
