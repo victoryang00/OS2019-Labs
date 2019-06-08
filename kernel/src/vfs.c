@@ -3,7 +3,7 @@
 #include <devices.h>
 #include <threads.h>
 
-mnt_t mnt_head;
+mnt_t mnt_head, mnt_root;
 
 inline mnt_t *find_mnt(const char *path) {
   size_t max_match = 0;
@@ -25,8 +25,12 @@ inline file_t *find_file_by_fd(int fd) {
 }
 
 void vfs_init() {
-  mnt_head.next = mnt_root;
-  mnt_head.prev = mnt_root;
+  mnt_root.path = "/";
+  mnt_root.fs = NULL;
+  mnt_head.next = &mnt_root;
+  mnt_head.prev = &mnt_root;
+  mnt_root.next = &mnt_head;
+  mnt_root.prev = &mnt_head;
   
   extern void mount_devfs();
   mount_devfs();

@@ -152,7 +152,7 @@ int common_rmdir(filesystem_t *fs, const char *name) {
   return 0;
 }
 
-int common_link(filesystem_t fs, const char *name, inode_t *inode) {
+int common_link(filesystem_t *fs, const char *name, inode_t *inode) {
   inode_t *pp = fs->ops->lookup(fs, name, O_RDWR);
   if (strlen(pp->path) == strlen(name)) {
     return -1;
