@@ -121,8 +121,11 @@ FUNC(pwd) {
 }
 
 FUNC(ls) {
-  inode_t *cur = inode_search(&root, pwd);
-  Log("current folder is %s", cur->path);
+  char dir[256] = "";
+  if (!get_dir(arg, pwd, dir)) {
+    sprintf(ret, "Invalid directory address.\n");
+  }
+  inode_t *cur = inode_search(&root, dir);
   cur->ops->readdir(cur, ret);
 }
 
