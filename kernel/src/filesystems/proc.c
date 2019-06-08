@@ -53,7 +53,7 @@ inline void procfs_self() {
   memcpy(ip->ops, &common_ops, sizeof(inodeops_t));
   ip->ops->read = procops_read;
 
-  ip->parent = fs->root;
+  ip->parent = ip->fs->root;
   ip->fchild = NULL;
   ip->cousin = NULL;
   inode_insert(ip->parent, ip);
@@ -70,7 +70,7 @@ inline void procfs_cpuinfo() {
   memcpy(ip->ops, &common_ops, sizeof(inodeops_t));
   ip->ops->read = procops_read;
 
-  ip->parent = fs->root;
+  ip->parent = ip->fs->root;
   ip->fchild = NULL;
   ip->cousin = NULL;
   inode_insert(ip->parent, ip);
@@ -87,7 +87,7 @@ inline void procfs_meminfo() {
   memcpy(ip->ops, &common_ops, sizeof(inodeops_t));
   ip->ops->read = procops_read;
 
-  ip->parent = fs->root;
+  ip->parent = ip->fs->root;
   ip->fchild = NULL;
   ip->cousin = NULL;
   inode_insert(ip->parent, ip);
