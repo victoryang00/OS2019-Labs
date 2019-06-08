@@ -124,6 +124,7 @@ FUNC(ls) {
   char dir[256] = "";
   if (!get_dir(arg, pwd, dir)) {
     sprintf(ret, "Invalid directory address.\n");
+    return;
   }
   inode_t *cur = inode_search(&root, dir);
   cur->ops->readdir(cur, ret);
@@ -133,6 +134,7 @@ FUNC(cd) {
   char dir[256] = "";
   if (!get_dir(arg, pwd, dir)) {
     sprintf(ret, "Invalid directory address.\n");
+    return;
   }
 
   if (vfs->access(dir, 0)) {
