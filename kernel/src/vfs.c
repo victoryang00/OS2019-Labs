@@ -34,14 +34,14 @@ void vfs_init() {
   sprintf(root->path, "/");
   root->offset = 0;
   root->size = 4;
-  root->fs = NULL;
+  root->fs = &commonfs;
   root->ops = &common_ops;
   root->parent = root;
   root->fchild = NULL;
   root->cousin = NULL;
 
   mnt_root.path = "/";
-  mnt_root.fs = NULL;
+  mnt_root.fs = &commonfs;
   mnt_root.next = &mnt_head;
   mnt_root.prev = &mnt_head;
   mnt_head.next = &mnt_root;
