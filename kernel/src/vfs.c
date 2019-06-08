@@ -104,9 +104,9 @@ int vfs_unmount(const char *path) {
 int vfs_readdir(const char *path, char *buf) {
   mnt_t *mp = find_mnt(path);
   Assert(mp, "Path %s not mounted!", path);
-  inode_t *ip = mp->fs->lookup(path, O_RDONLY);
+  inode_t *ip = mp->fs->ops->lookup(path, O_RDONLY);
   if (!ip) return -1;
-  return ip->readdir(mp->fs, ip, buf);
+  return ip->ops->readdir(mp->fs, ip, buf);
 }
 
 int vfs_mkdir(const char *path) {
@@ -157,19 +157,19 @@ int vfs_open(const char *path, int flags) {
 ssize_t vfs_read(int fd, void *buf, size_t nbyte) {
   file_t *fp = find_file_by_fd(fd);
   Assert(fp, "file pointer is NULL");
-  return fp->inode->ops->read(fp, buf, nbyte);
+  return fp->inode->ops->read(fp->inode->fs, fp, buf, nbyte);
 }
 
 ssize_t vfs_write(int fd, void *buf, size_t nbyte) {
   file_t *fp = find_file_by_fd(fd);
   Assert(fp, "file pointer is NULL");
-  return fp->inode->ops->write(fp, buf, nbyte);
+  return fp->inode->ops->write(fp->inode->fs, fp, buf, nbyte);
 }
 
 off_t vfs_lseek(int fd, off_t offset, int whence) {
   file_t *fp = find_file_by_fd(fd);
   Assert(fp, "file pointer is NULL");
-  return fp->inode->ops->lseek(fp, offset, whence);
+  return fp->inode->ops->lseek(fp->inode->fs, fp, offset, whence);
 }
 
 int vfs_close(int fd) {
