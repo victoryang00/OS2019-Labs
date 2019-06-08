@@ -45,7 +45,7 @@ void vfs_init() {
 
 int vfs_access(const char *path, int mode) {
   inode_t *ip = inode_search(&root, path);
-  Log("in access, inode found: %s", ip->path);
+  Log("in access, inode for %s found: %s", path, ip->path);
   return strlen(ip->path) == strlen(path) ? 0 : -1;
 }
 
