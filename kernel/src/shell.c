@@ -29,6 +29,8 @@ void shell_task(void *arg) {
   sprintf(buf, "/dev/tty%d", tty_id);
   int stdin = vfs->open(buf, O_RDONLY);
   int stdout = vfs->open(buf, O_WRONLY);
+  Assert(stdin >= 0, "failed to open stdin");
+  Assert(stdout >= 0, "failed to open stdout");
 
   sprintf(buf, "Welcome to sHELL.\nType [help] for help.\n\n");
   vfs->write(stdout, buf, strlen(buf));
