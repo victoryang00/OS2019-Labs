@@ -236,7 +236,7 @@ void commonfs_init(filesystem_t *fs, const char *path, device_t *dev) {
     if (path[strlen(path) - 1] == '/') {
       ip->path[strlen(path) - 1] = '\0';
     }
-    strcat(ip->path, "%s", entry.path);
+    strcat(ip->path, entry.path);
     ip->offset = 0;
     ip->size = commonfs_get_file_size(fs, &entry);
     ip->fs = fs;
