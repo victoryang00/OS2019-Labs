@@ -101,12 +101,12 @@ int vfs_unmount(const char *path) {
   return 0;
 }
 
-int vfs_readdir(const char *path, char *buf) {
+int vfs_readdir(const char *path, void *buf) {
   mnt_t *mp = find_mnt(path);
   Assert(mp, "Path %s not mounted!", path);
-  inode_t *ip = mp->fs->ops->lookup(fs, path, O_RDONLY);
+  inode_t *ip = mp->fs->ops->lookup(mp->fs, path, O_RDONLY);
   if (!ip) return -1;
-  return ip->ops->readdir(mp->fs, ip, buf);
+  return ip->ops->readdir(mp->fs, ip, (char *)buf);
 }
 
 int vfs_mkdir(const char *path) {
