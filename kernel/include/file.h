@@ -76,7 +76,7 @@ int common_mkdir(filesystem_t *fs, const char *name);
 int common_rmdir(filesystem_t *fs, const char *name);
 int common_link(filesystem_t *fs, const char *name, inode_t *inode);
 int common_unlink(filesystem_t *fs, const char *name);
-void common_readdir(filesystem_t *fs, inode_t *inode, char *ret);
+int common_readdir(filesystem_t *fs, inode_t *inode, char *ret);
 
 inode_t *inode_search(inode_t *cur, const char *path);
 void inode_insert(inode_t *parent, inode_t *child);
