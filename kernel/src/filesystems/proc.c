@@ -24,23 +24,22 @@ void mount_procfs() {
   CLog(BG_YELLOW, "/proc initialiezd.");
 }
 
-inline void read_proc(task_t *tp, char *buf) {
-  sprintf(buf, "Process %d:\n - Name: %s\n - State: %s\n",
+inline ssize_t read_proc(task_t *tp, char *buf, size_t size) {
+  return snprintf(buf, size, "Process %d:\n - Name: %s\n - State: %s\n",
       tp->pid, tp->name, task_states_human[tp->state]);
 }
 ssize_t procops_read(file_t *file, char *buf, size_t size) {
   char *path = file->inode->path;
   if (!strcpy(path, "/proc/self")) {
     task_t *cur = get_current_task();
-    read_proc(cur, buf); 
+    return read_proc(cur, buf, size); 
   } else if (!strcpy(path, "/proc/cpuinfo")) {
-    sprintf(ret, "CPU info:\n - Cores: %d\n", _ncpu());
+    return snprintf(buf, size, "CPU info:\n - Cores: %d\n", _ncpu());
   } else if (!strcpy(path, "/proc/meminfo")) {
-    sprintf(ret, "MEM info:\n - Start: %p\n - End: %p\n", _heap.start, _heap.end);
+    return snprintf(buf, size, "MEM info:\n - Start: %p\n - End: %p\n", _heap.start, _heap.end);
   } else {
-    read_proc(file->inode->ptr, buf);
+    return read_proc(file->inode->ptr, buf, size);
   }
-  return strlen(buf);
 }
 
 inline void procfs_self() {
