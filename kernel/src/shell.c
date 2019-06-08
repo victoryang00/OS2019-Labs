@@ -183,6 +183,7 @@ FUNC(write) {
     arg1[i] = *arg2;
     if (*arg2 == ' ') {
       arg1[i] = '\0';
+      ++arg2;
       break;
     }
   }
