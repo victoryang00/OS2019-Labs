@@ -124,24 +124,27 @@ FUNC(ls) {
   char dir[256] = "";
   if (!get_dir(arg, pwd, dir)) {
     sprintf(ret, "Invalid directory address.\n");
-    return;
+  } else {
+    if (vfs->access(dir, 0)) {
+      sprintf(ret, "Cannot access %s.\n");
+    } else {
+      inode_t *cur = inode_search(&root, dir);
+      cur->ops->readdir(cur, ret);
+    }
   }
-  inode_t *cur = inode_search(&root, dir);
-  cur->ops->readdir(cur, ret);
 }
 
 FUNC(cd) {
   char dir[256] = "";
   if (!get_dir(arg, pwd, dir)) {
     sprintf(ret, "Invalid directory address.\n");
-    return;
-  }
-
-  if (vfs->access(dir, 0)) {
-    sprintf(ret, "Cannot access %s.\n");
   } else {
-    strcpy(pwd, dir);
-    sprintf(ret, "Directory changed to %s.\n", dir);
+    if (vfs->access(dir, 0)) {
+      sprintf(ret, "Cannot access %s.\n");
+    } else {
+      strcpy(pwd, dir);
+      sprintf(ret, "Directory changed to %s.\n", dir);
+    }
   }
 }
 
