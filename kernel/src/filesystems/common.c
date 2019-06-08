@@ -135,12 +135,22 @@ int common_unlink(const char *name) {
 
 void common_readdir(inode_t *inode, char *ret) {
   sprintf(ret, "ls %s:\n", inode->path);
-  strcat(ret, " + TYPE FILENAME\n");
+  strcat(ret, " + TYPE PRIV FILENAME\n");
   for (inode_t *ip = inode->fchild; ip != NULL; ip = ip->cousin) {
     CLog(FG_PURPLE, "%s %s", inode_types_human[ip->type], ip->path);
     strcat(ret, " - ");
     strcat(ret, inode_types_human[ip->type]);
     strcat(ret, " ");
+
+    if (ip->type == TYPE_DIRC) {
+      strcat(ret, "D --");
+    } else {
+      strcat(ret, "- ");
+      strcat(ret, ip->flags & O_RDONLY ? "R" : "-");
+      strcat(ret, ip->flags & O_WRONLY ? "W" : "-");
+    }
+    strcat(ret, " ");
+
     strcat(ret, ip->path);
     strcat(ret, "\n");
   }

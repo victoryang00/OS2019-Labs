@@ -21,10 +21,10 @@ const int NR_CMD = sizeof(cmd_list) / sizeof(cmd_t);
 
 void shell_task(void *arg) {
   int tty_id = (int)arg;
-  char buf[256] = "";
-  char pwd[256] = "";
-  char cmd[256] = "";
-  char ret[256] = "";
+  char buf[512] = "";
+  char pwd[512] = "";
+  char cmd[512] = "";
+  char ret[512] = "";
 
   sprintf(buf, "/dev/tty%d", tty_id);
   int stdin = vfs->open(buf, O_RDONLY);
@@ -61,7 +61,7 @@ void shell_task(void *arg) {
 }
 
 bool get_dir(const char *arg, const char *pwd, char *dir) {
-  char buf[256] = "";
+  char buf[512] = "";
   if (arg[0] == '/') {
     sprintf(buf, "%s", arg);
   } else {
@@ -124,7 +124,7 @@ FUNC(pwd) {
 }
 
 FUNC(ls) {
-  char dir[256] = "";
+  char dir[512] = "";
   if (!get_dir(arg, pwd, dir)) {
     sprintf(ret, "Invalid directory address.\n");
   } else {
@@ -138,7 +138,7 @@ FUNC(ls) {
 }
 
 FUNC(cd) {
-  char dir[256] = "";
+  char dir[512] = "";
   if (!get_dir(arg, pwd, dir)) {
     sprintf(ret, "Invalid directory address.\n");
   } else {
@@ -157,7 +157,7 @@ FUNC(cd) {
 }
 
 FUNC(cat) {
-  char dir[256] = "";
+  char dir[512] = "";
   if (!get_dir(arg, pwd, dir)) {
     sprintf(ret, "Invalid directory address.\n");
   } else {
@@ -168,7 +168,7 @@ FUNC(cat) {
       if (fd == -1) {
         sprintf(ret, "VFS ERROR: open failed.");
       } else {
-        vfs->read(fd, ret, 256);
+        vfs->read(fd, ret, 512);
         vfs->close(fd);
       }
     }
@@ -176,8 +176,8 @@ FUNC(cat) {
 }
 
 FUNC(write) {
-  char dir[256] = "";
-  char arg1[256] = "";
+  char dir[512] = "";
+  char arg1[512] = "";
   const char *arg2 = arg;
   for (size_t i = 0; *arg2 != '\0'; ++i, ++arg2) {
     arg1[i] = *arg2;
