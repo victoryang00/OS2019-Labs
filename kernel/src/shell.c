@@ -133,8 +133,7 @@ FUNC(ls) {
     if (vfs->access(dir, O_RDONLY)) {
       sprintf(ret, "Cannot access %s.\n");
     } else {
-      inode_t *cur = inode_search(root, dir);
-      cur->ops->readdir(cur, ret);
+      vfs->readdir(cur, ret);
     }
   }
 }

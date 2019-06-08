@@ -34,7 +34,7 @@ struct inodeops {
   int (*rmdir)(filesystem_t *fs, const char *name);
   int (*link)(filesystem_t *fs, const char *name, inode_t *inode);
   int (*unlink)(filesystem_t *fs, const char *name);
-  void (*readdir)(filesystem_t *fs, inode_t *inode, char *ret);
+  int (*readdir)(filesystem_t *fs, inode_t *inode, char *ret);
 };
 extern inodeops_t common_ops;
 

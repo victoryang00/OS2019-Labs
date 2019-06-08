@@ -101,6 +101,14 @@ int vfs_unmount(const char *path) {
   return 0;
 }
 
+int vfs_readdir(const char *path, char *buf) {
+  mnt_t *mp = find_mnt(path);
+  Assert(mp, "Path %s not mounted!", path);
+  inode_t *ip = mp->fs->lookup(path, O_RDONLY);
+  if (!ip) return -1;
+  return ip->readdir(mp->fs, ip, buf);
+}
+
 int vfs_mkdir(const char *path) {
   return 0;
 }
@@ -179,6 +187,7 @@ MODULE_DEF(vfs) {
   .access  = vfs_access,
   .mount   = vfs_mount,
   .unmount = vfs_unmount,
+  .readdir = vfs_readdir,
   .mkdir   = vfs_mkdir,
   .rmdir   = vfs_rmdir,
   .link    = vfs_link,

@@ -185,7 +185,7 @@ int common_unlink(filesystem_t *fs, const char *name) {
   return 0;
 }
 
-void common_readdir(filesystem_t *fs, inode_t *inode, char *ret) {
+int common_readdir(filesystem_t *fs, inode_t *inode, char *ret) {
   sprintf(ret, "ls %s:\n", inode->path);
   strcat(ret, " + TYPE PRIV FILENAME\n");
   for (inode_t *ip = inode->fchild; ip != NULL; ip = ip->cousin) {
@@ -208,6 +208,7 @@ void common_readdir(filesystem_t *fs, inode_t *inode, char *ret) {
     strcat(ret, ip->path);
     strcat(ret, "\n");
   }
+  return 0;
 }
 
 void mount_commonfs() {
