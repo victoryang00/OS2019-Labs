@@ -28,7 +28,7 @@ inline file_t *find_file_by_fd(int fd) {
 void vfs_init() {
   root = pmm->alloc(sizeof(inode_t));
   root->refcnt = 0;
-  root->type = TYPE_MNT;
+  root->type = TYPE_MNTP;
   root->flags = P_RD;
   root->ptr = NULL;
   sprintf(root->path, "/");
@@ -60,7 +60,7 @@ void vfs_init() {
 int vfs_access(const char *path, int mode) {
   mnt_t *mp = find_mnt(path);
   Assert(mp, "Path %s not mounted!", path);
-  if (mp->fs->ops->lookup(path, mode) != NULL) {
+  if (mp->fs->ops->lookup(mp->fs, path, mode) != NULL) {
     return 0;
   } else {
     return 1;
