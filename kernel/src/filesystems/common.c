@@ -2,6 +2,60 @@
 #include <file.h>
 #include <vfs.h>
 
+typedef struct commonfs_params {
+  int32_t blk_size;
+  int32_t map_head;
+  int32_t data_head;
+  int32_t min_free;
+} commonfs_params_t;
+
+typedef union commonfs_entry {
+  char content[32];
+  struct {
+    int32_t head;
+    int16_t type;
+    int16_t flags;
+    char path[24];
+  }
+} commonfs_entry_t;
+
+int32_t commonfs_get_next_blk(filesystem_t *fs, int32_t blk) {
+  int32_t ret = 0;
+  commonfs_params_t *params = (commonfs_params_t *)fs->root->ptr;
+  off_t offset = params->map_head + blk * sizeof(int32_t);
+  fs->dev->ops->read(fs->dev, offset, (void *)(&ret), sizeof(int32_t));
+  return ret;
+}
+
+commonfs_entry_t commonfs_get_entry(filesystem_t *fs, int32_t blk) {
+  commonfs_entry_t ret;
+  commonfs_params_t *params = (commonfs_params_t *)fs->root->ptr;
+  off_t offset = params->data_head + blk * params->blk_size;
+  fs->dev->ops->read(fs->dev, offset, (void *)(&ret), sizeof(commonfs_entry_t));
+  return ret;
+}
+
+size_t commonfs_get_file_size(filesystem_t *fs, commonfs_entry_t *entry) {
+  size_t ret = 0;
+  int32_t blk = entry->head;
+  commonfs_params_t *params = (commonfs_params_t *)fs->root->ptr;
+  while (true) {
+    int32_t next = commonfs_get_next_blk(blk);
+    if (next) {
+      ret += params->blk_size;
+    } else {
+      commonfs_entry_t ce = commonfs_get_entry(blk);
+      for (size_t i = 0; i < params->blk_size; ++i) {
+        if (!ce->content[i]) break;
+        ++ret;
+      }
+      break;
+    }
+    blk = next;
+  }
+  return ret;
+}
+
 const char *inode_types_human[] = {
   "INVL",
   "MNTP",
@@ -160,8 +214,9 @@ void common_readdir(inode_t *inode, char *ret) {
 
 void commonfs_init(filesystem_t *fs, const char *path, device_t *dev) {
   fs->dev = dev;
+  fs->root = pmm->alloc(sizeof(inode_t));
 
-  root = pmm->alloc(sizeof(inode_t));
+  root = fs->root;
   root->type = TYPE_MNTP;
   root->flags = P_RD;
   root->ptr = NULL;
@@ -171,6 +226,33 @@ void commonfs_init(filesystem_t *fs, const char *path, device_t *dev) {
   root->parent = root;
   root->fchild = NULL;
   root->cousin = NULL;
+
+  root->ptr = pmm->alloc(sizeof(commonfs_params_t));
+  dev->ops->read(dev, 0, root->ptr, sizeof(commonfs_params_t));
+  commonfs_params_t *params = (commonfs_params_t *)root->ptr;
+  int32_t blk = 1;
+  while (blk) {
+    commonfs_entry_t entry = commonfs_get_entry(fs, blk);  
+    inode_t *pp = fs->ops->lookup(fs, entry->path, O_CREAT);
+    inode_t *ip = pmm->alloc(sizeof(inode_t));
+    ip->refcnt = 0;
+    ip->type = (int)entry->type;
+    ip->flags = (int)entry->flags;
+    ip->ptr = (void *)(entry->head);
+    ip->path = entry->path;
+    ip->offset = 0;
+    ip->size = commfs_get_file_size(entry->head);
+    ip->fs = fs;
+    ip->ops = pmm->alloc(sizeof(inodeops_t));
+    memcpy(ip->ops, &common_ops, sizeof(inodeops_t));
+
+    ip->parent = pp;
+    ip->fchild = NULL;
+    ip->cousin = NULL;
+    inode_insert(pp, ip);
+
+    blk = commonfs_get_next_blk(fs, blk);
+  }
 }
 
 inode_t *commonfs_lookup(filesystem_t *fs, const char *path, int flags) {
