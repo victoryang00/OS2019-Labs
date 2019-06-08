@@ -193,10 +193,10 @@ FUNC(write) {
   if (!get_dir(arg1, pwd, dir)) {
     sprintf(ret, "Invalid directory address.\n");
   } else {
-    if (vfs->access(dir, O_WRONLY)) {
+    if (vfs->access(dir, O_WRONLY | O_CREAT)) {
       sprintf(ret, "Cannot access %s.\n");
     } else {
-      int fd = vfs->open(dir, O_WRONLY);
+      int fd = vfs->open(dir, O_WRONLY | O_CREAT);
       if (fd == -1) {
         sprintf(ret, "VFS ERROR: open failed.");
       } else {
