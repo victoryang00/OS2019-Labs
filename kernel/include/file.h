@@ -107,10 +107,9 @@ inline void inode_remove(inode_t *parent, inode_t *child) {
   }
 }
 
-inline void inode_delete(inode_t *);
 inline void inode_delete(inode_t *cur) {
   while (cur->fchild) {
-    inode_delete(cur->fchild);
+    //inode_delete(cur->fchild);
   }
   inode_remove(cur->parent, cur);
 }
