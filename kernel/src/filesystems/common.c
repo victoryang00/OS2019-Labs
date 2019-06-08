@@ -31,6 +31,7 @@ commonfs_entry_t commonfs_get_entry(filesystem_t *fs, int32_t blk) {
   commonfs_entry_t ret;
   commonfs_params_t *params = (commonfs_params_t *)fs->root->ptr;
   off_t offset = params->data_head + blk * params->blk_size;
+  Log("offset is %d", (int)offset);
   fs->dev->ops->read(fs->dev, offset, (void *)(&ret), sizeof(commonfs_entry_t));
   return ret;
 }
