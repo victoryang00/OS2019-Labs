@@ -12,6 +12,7 @@ const cmd_t cmd_list[] = {
   { "pwd",   pwd   },
   { "cd",    cd    },
   { "cat",   cat   },
+  { "write", write },
   { "mkdir", mkdir },
   { "rmdir", rmdir },
   { "rm"   , rm    },
@@ -168,6 +169,27 @@ FUNC(cat) {
         sprintf(ret, "VFS ERROR: open failed.");
       } else {
         vfs->read(fd, ret, 256);
+        vfs->close(fd);
+      }
+    }
+  }
+}
+
+FUNC(write) {
+  char dir[256] = "";
+  char *arg1 = strtok(arg, ' ');
+  char *arg2 = arg + strlen(arg1) + 1;
+  if (!get_dir(arg1, pwd, dir)) {
+    sprintf(ret, "Invalid directory address.\n");
+  } else {
+    if (vfs->access(dir, 0)) {
+      sprintf(ret, "Cannot access %s.\n");
+    } else {
+      int fd = vfs->open(dir, 0);
+      if (fd == -1) {
+        sprintf(ret, "VFS ERROR: open failed.");
+      } else {
+        vfs->write(fd, arg2, strlen(arg2));
         vfs->close(fd);
       }
     }
