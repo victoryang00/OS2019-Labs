@@ -30,6 +30,22 @@ ssize_t procops_read(file_t *file, char *buf, size_t size) {
 }
 
 void procfs_init(filesystem_t *fs, const char *path, device_t *dev) {
+  for (task_t *tp = root_task.next; tp != &root_task; tp = tp->next) {
+    CLog(BG_YELLOW, "add inode of %s/%d", path, tp->pid);
+    inode_t *ip = pmm->alloc(sizeof(inode_t));
+    ip->type = TYPE_PROC;
+    ip->ptr = (void *)tp;
+    sprintf(ip->path, "%s/%d", path, tp->pid);
+    ip->fs = fs;
+    ip->ops = pmm->alloc(sizeof(inodeops_t));
+    memcpy(ip->ops, &common_ops, sizeof(inodeops_t));
+    ip->ops->read = procops_read;
+
+    ip->parent = procfs.root;
+    ip->fchild = NULL;
+    ip->cousin = NULL;
+    inode_insert(ip->parent, ip);
+  }
 }
 
 inode_t *procfs_lookup(filesystem_t *fs, const char *path, int flags) {
