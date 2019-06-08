@@ -42,9 +42,6 @@ void procfs_init(filesystem_t *fs, const char *path, device_t *dev) {
     }
   }
 
-  inode_t *ip = pmm->alloc(sizeof(inode_t));
-
-
   for (task_t *tp = root_task.next; tp != NULL; tp = tp->next) {
     CLog(BG_YELLOW, "add inode of %s/%d", path, tp->pid);
     inode_t *ip = pmm->alloc(sizeof(inode_t));
