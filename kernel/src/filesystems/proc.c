@@ -28,7 +28,7 @@ inline ssize_t read_proc(task_t *tp, char *buf, size_t size) {
   return snprintf(buf, size, "Process %d:\n - Name: %s\n - State: %s\n",
       tp->pid, tp->name, task_states_human[tp->state]);
 }
-ssize_t procops_read(file_t *file, char *buf, size_t size) {
+ssize_t procops_read(filesystem_t *fs, file_t *file, char *buf, size_t size) {
   char *path = file->inode->path;
   if (!strcmp(path, "/proc/self")) {
     task_t *cur = get_current_task();

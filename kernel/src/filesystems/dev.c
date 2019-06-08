@@ -25,12 +25,12 @@ void mount_devfs() {
   CLog(BG_YELLOW, "/dev initialiezd.");
 }
 
-ssize_t devops_read(file_t *file, char *buf, size_t size) {
+ssize_t devops_read(filesystem_t *fs, file_t *file, char *buf, size_t size) {
   device_t *device = (device_t *)file->inode->ptr;
   return device->ops->read(device, 0, buf, size);
 }
 
-ssize_t devops_write(file_t *file, const char *buf, size_t size) {
+ssize_t devops_write(filesystem_t *fs, file_t *file, const char *buf, size_t size) {
   device_t *device = (device_t *)file->inode->ptr;
   return device->ops->write(device, 0, buf, size);
 }
