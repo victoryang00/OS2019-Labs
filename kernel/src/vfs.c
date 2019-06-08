@@ -4,7 +4,7 @@
 #include <threads.h>
 
 mnt_t mnt_head;
-inode_t root;
+extern inode_t *root;
 
 inline mnt_t *find_mnt(const char *path) {
   size_t max_match = 0;
@@ -44,7 +44,7 @@ void vfs_init() {
 }
 
 int vfs_access(const char *path, int mode) {
-  inode_t *ip = inode_search(&root, path);
+  inode_t *ip = inode_search(root, path);
   Log("in access, inode for %s found: %s", path, ip->path);
   if (strlen(ip->path) == strlen(path)) return 0;
   else {
@@ -70,7 +70,7 @@ int vfs_mount(const char *path, filesystem_t *fs) {
   mnt_head.prev = mp;
   mp->prev->next = mp;
 
-  inode_t *pp = inode_search(&root, path);
+  inode_t *pp = inode_search(root, path);
   Assert(strcmp(path, pp->path), "inode %s exists!", path);
   inode_t *ip = pmm->alloc(sizeof(inode_t));
   fs->root = ip;

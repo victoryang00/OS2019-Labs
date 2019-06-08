@@ -13,6 +13,8 @@ const char *inode_types_human[] = {
   "LINK",
 };
 
+inode_t *root;
+
 inodeops_t common_ops = {
   .open    = common_open,
   .close   = common_close,
@@ -90,7 +92,7 @@ int common_mkdir(const char *name) {
 }
 
 int common_rmdir(const char *name) {
-  inode_t *ip = inode_search(&root, name);
+  inode_t *ip = inode_search(root, name);
   if (ip->type != TYPE_DIRC) {
     return -1;
   }
@@ -99,7 +101,7 @@ int common_rmdir(const char *name) {
 }
 
 int common_link(const char *name, inode_t *inode) {
-  inode_t *pp = inode_search(&root, name);
+  inode_t *pp = inode_search(root, name);
   if (strlen(pp->path) == strlen(name)) {
     return -1;
   }
@@ -123,7 +125,7 @@ int common_link(const char *name, inode_t *inode) {
 }
 
 int common_unlink(const char *name) {
-  inode_t *ip = inode_search(&root, name);
+  inode_t *ip = inode_search(root, name);
   if (ip->type != TYPE_FILE || ip->type != TYPE_LINK) {
     return -1;
   }
@@ -144,12 +146,22 @@ void common_readdir(inode_t *inode, char *ret) {
   }
 }
 
-void commonfs_init(filesystem_t *fs, const char *name, device_t *dev) {
+void commonfs_init(filesystem_t *fs, const char *path, device_t *dev) {
   fs->dev = dev;
+
+  root = pmm->alloc(sizeof(inode_t));
+  root->type = TYPE_MNTP;
+  root->ptr = NULL;
+  sprintf(root->path, path);
+  root->fs = fs;
+  root->ops = &common_ops;
+  root->parent = root;
+  root->fchild = NULL;
+  root->cousin = NULL;
 }
 
 inode_t *commonfs_lookup(filesystem_t *fs, const char *path, int flags) {
-  inode_t *ip = inode_search(&root, path);
+  inode_t *ip = inode_search(root, path);
   if (strlen(ip->path) == strlen(path)) {
     return ip;
   } else {
