@@ -35,6 +35,7 @@ extern inodeops_t common_ops;
 #define TYPE_FILE 2
 #define TYPE_DEVI 3
 #define TYPE_PROC 4
+#define TYPE_PROX 5 // special proc
 
 struct inode {
   int refcnt;
