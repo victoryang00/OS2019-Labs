@@ -59,7 +59,7 @@ void vfs_init() {
 
 int vfs_access(const char *path, int mode) {
   // root has no fs
-  if (!strncpy(path, "/")) return 0;
+  if (!strcmp(path, "/")) return 0;
 
   mnt_t *mp = find_mnt(path);
   Assert(mp, "Path %s not mounted!", path);
