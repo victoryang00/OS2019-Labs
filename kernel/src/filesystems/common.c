@@ -240,7 +240,7 @@ void commonfs_init(filesystem_t *fs, const char *path, device_t *dev) {
     ip->ops = pmm->alloc(sizeof(inodeops_t));
     memcpy(ip->ops, &common_ops, sizeof(inodeops_t));
 
-    inode_t *pp = fs->ops->lookup(fs, ip->path, O_CREAT);
+    inode_t *pp = inode_search(fs->root, ip->path);
     ip->parent = pp;
     ip->fchild = NULL;
     ip->cousin = NULL;
