@@ -18,9 +18,9 @@ filesystem_t procfs = {
 };
 
 void mount_procfs() {
-  vfs->mount("/proc", &devfs);
+  vfs->mount("/proc", &procfs);
 
-  devfs_init(&devfs, "/proc", NULL);
+  procfs_init(&procfs, "/proc", NULL);
   CLog(BG_YELLOW, "/proc initialiezd.");
 }
 
