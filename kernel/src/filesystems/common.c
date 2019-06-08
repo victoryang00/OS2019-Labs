@@ -35,43 +35,43 @@ int common_close(file_t *file) {
 }
 
 ssize_t common_read(file_t *file, char *buf, size_t size) {
-  Assert(file->ip->fs->dev, "fs with no device");
-  device_t *dev = file->ip->fs->dev;
-  off_t offset = (off_t)file->ip->ptr + file->ip->offset;
-  if (offset > file->ip->size) {
+  Assert(file->inode->fs->dev, "fs with no device");
+  device_t *dev = file->inode->fs->dev;
+  off_t offset = (off_t)file->inode->ptr + file->inode->offset;
+  if (offset > file->inode->size) {
     buf[0] = '\0';
     return 0;
   } else {
     ssize_t ret = dev->ops->read(dev, offset, buf, size);
-    file->ip->offset += (off_t)ret;
+    file->inode->offset += (off_t)ret;
     return ret;
   }
 }
 
 ssize_t common_write(file_t *file, const char *buf, size_t size) {
-  Assert(file->ip->fs->dev, "fs with no device");
-  device_t *dev = file->ip->fs->dev;
-  off_t offset = (off_t)file->ip->ptr + file->ip->offset;
+  Assert(file->inode->fs->dev, "fs with no device");
+  device_t *dev = file->inode->fs->dev;
+  off_t offset = (off_t)file->inode->ptr + file->inode->offset;
   ssize_t ret = dev->ops->write(dev, offset, buf, size);
-  file->ip->offset += (off_t)ret;
-  if (file->ip->offset > file->ip->size) file->ip->size = (size_t)file->ip->offset;
+  file->inode->offset += (off_t)ret;
+  if (file->inode->offset > file->inode->size) file->inode->size = (size_t)file->inode->offset;
   return ret;
 }
 
 off_t common_lseek(file_t *file, off_t offset, int whence) {
   switch (whence) {
     case SEEK_SET:
-      file->ip->offset = offset;
+      file->inode->offset = offset;
       break;
     case SEEK_CUR:
-      file->ip->offset += offset;
+      file->inode->offset += offset;
       break;
     case SEEK_END:
     default:
-      file->ip->offset = file->ip->size + offset;
+      file->inode->offset = file->inode->size + offset;
       break;
   }
-  return file->ip->offset;
+  return file->inode->offset;
 }
 
 int common_mkdir(const char *name) {
