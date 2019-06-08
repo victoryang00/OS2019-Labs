@@ -9,6 +9,9 @@
 #define O_RDWR   0x03
 #define O_CREAT  0x04
 
+#define P_RD O_RDONLY
+#define P_WR O_WRONLY
+
 #define SEEK_SET 0x00
 #define SEEK_CUR 0x01
 #define SEEK_END 0x02
@@ -50,6 +53,7 @@ extern const char *inode_types_human[];
 struct inode {
   int refcnt;
   int type;
+  int flags;
   void *ptr;
   char path[256];
   off_t offset;

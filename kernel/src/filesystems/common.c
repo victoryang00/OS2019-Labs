@@ -142,12 +142,12 @@ void common_readdir(inode_t *inode, char *ret) {
     strcat(ret, inode_types_human[ip->type]);
     strcat(ret, " ");
 
-    if (ip->type == TYPE_DIRC) {
+    if (ip->type == TYPE_DIRC || ip->type == TYPE_MNTP) {
       strcat(ret, "D --");
     } else {
       strcat(ret, "- ");
-      strcat(ret, ip->flags & O_RDONLY ? "R" : "-");
-      strcat(ret, ip->flags & O_WRONLY ? "W" : "-");
+      strcat(ret, ip->flags & P_RD ? "R" : "-");
+      strcat(ret, ip->flags & P_WR ? "W" : "-");
     }
     strcat(ret, " ");
 
