@@ -253,6 +253,7 @@ void commonfs_init(filesystem_t *fs, const char *path, device_t *dev) {
 inode_t *commonfs_lookup(filesystem_t *fs, const char *path, int flags) {
   inode_t *ip = inode_search(fs->root, path);
   return (strlen(ip->path) == strlen(path)) ? ip : NULL;
+}
 
 int commonfs_close(inode_t *inode) {
   if (inode->size <= 0) {
