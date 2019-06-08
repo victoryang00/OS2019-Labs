@@ -3,7 +3,7 @@
 #include <devices.h>
 #include <threads.h>
 
-inode_t root;
+inode_t *root;
 mnt_t mnt_head, mnt_root;
 
 inline mnt_t *find_mnt(const char *path) {
@@ -26,18 +26,19 @@ inline file_t *find_file_by_fd(int fd) {
 }
 
 void vfs_init() {
-  root.refcnt = 0;
-  root.type = TYPE_MNT;
-  root.flags = P_RD;
-  root.ptr = NULL;
-  sprintf(root.path, "/");
-  root.offset = 0;
-  root.size = 4;
-  root.fs = NULL;
-  root.ops = &common_ops;
-  root.parent = &root;
-  root.fchild = NULL;
-  root.cousin = NULL;
+  root = pmm->alloc(sizeof(inode_t));
+  root->refcnt = 0;
+  root->type = TYPE_MNT;
+  root->flags = P_RD;
+  root->ptr = NULL;
+  sprintf(root->path, "/");
+  root->offset = 0;
+  root->size = 4;
+  root->fs = NULL;
+  root->ops = &common_ops;
+  root->parent = root;
+  root->fchild = NULL;
+  root->cousin = NULL;
 
   mnt_root.path = "/";
   mnt_root.fs = NULL;
