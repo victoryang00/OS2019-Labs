@@ -228,21 +228,20 @@ void commonfs_init(filesystem_t *fs, const char *path, device_t *dev) {
   while (blk) {
     commonfs_entry_t entry = commonfs_get_entry(fs, blk);  
     char abspath[256] = "";
-    sprintf(abspath, "%s%s", path, entry.path);
 
-    inode_t *pp = fs->ops->lookup(fs, abspath, O_CREAT);
     inode_t *ip = pmm->alloc(sizeof(inode_t));
     ip->refcnt = 0;
     ip->type = (int)entry.type;
     ip->flags = (int)entry.flags;
     ip->ptr = (void *)(entry.head);
-    sprintf(ip->path, abspath);
+    sprintf(ip->path, "%s%s", path, entry.path);
     ip->offset = 0;
     ip->size = commonfs_get_file_size(fs, &entry);
     ip->fs = fs;
     ip->ops = pmm->alloc(sizeof(inodeops_t));
     memcpy(ip->ops, &common_ops, sizeof(inodeops_t));
 
+    inode_t *pp = fs->ops->lookup(fs, ip->path, O_CREAT);
     ip->parent = pp;
     ip->fchild = NULL;
     ip->cousin = NULL;
