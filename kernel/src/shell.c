@@ -149,7 +149,22 @@ FUNC(cd) {
 }
 
 FUNC(cat) {
-  Panic("not implemented!");
+  char dir[256] = "";
+  if (!get_dir(arg, pwd, dir)) {
+    sprintf(ret, "Invalid directory address.\n");
+  } else {
+    if (vfs->access(dir, 0)) {
+      sprintf(ret, "Cannot access %s.\n");
+    } else {
+      int fd = vfs->open(dir, 0);
+      if (fd == -1) {
+        sprinf(ret, "VFS ERROR: open failed.");
+      } else {
+        vfs->read(fd, ret, sizeof(ret));
+        vfs->close(fd);
+      }
+    }
+  }
 }
 
 FUNC(mkdir) {

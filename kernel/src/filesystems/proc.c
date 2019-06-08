@@ -49,7 +49,7 @@ inline void procfs_cpuinfo() {
   inode_t *ip = pmm->alloc(sizeof(inode_t));
   ip->type = TYPE_PROX;
   ip->ptr = NULL;
-  sprintf(ip->path, "/proc/meminfo");
+  sprintf(ip->path, "/proc/cpuinfo");
   ip->fs = &procfs;
   ip->ops = pmm->alloc(sizeof(inodeops_t));
   memcpy(ip->ops, &common_ops, sizeof(inodeops_t));
