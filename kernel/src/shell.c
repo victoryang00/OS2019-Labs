@@ -131,7 +131,7 @@ FUNC(ls) {
     if (vfs->access(dir, 0)) {
       sprintf(ret, "Cannot access %s.\n");
     } else {
-      inode_t *cur = inode_search(&root, dir);
+      inode_t *cur = inode_search(root, dir);
       cur->ops->readdir(cur, ret);
     }
   }
@@ -145,7 +145,7 @@ FUNC(cd) {
     if (vfs->access(dir, 0)) {
       sprintf(ret, "Cannot access %s.\n");
     } else {
-      inode_t *ip = inode_search(&root, dir);
+      inode_t *ip = inode_search(root, dir);
       if (ip->type == TYPE_MNTP || ip->type == TYPE_DIRC) {
         strcpy(pwd, dir);
         sprintf(ret, "Directory changed to %s.\n", dir);
