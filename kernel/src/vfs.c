@@ -60,6 +60,7 @@ void vfs_init() {
 int vfs_access(const char *path, int mode) {
   mnt_t *mp = find_mnt(path);
   Assert(mp, "Path %s not mounted!", path);
+  Log("OK");
   if (mp->fs->ops->lookup(mp->fs, path, mode) != NULL) {
     return 0;
   } else {
