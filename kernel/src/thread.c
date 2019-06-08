@@ -94,6 +94,10 @@ int kmt_create(struct task *task, const char *name, void (*entry)(void *arg), vo
   tp->next = task;
   if (!holding) spinlock_release(&os_trap_lock);
 
+  // reload process fs
+  extern filesystem_t procfs;
+  procfs->ops->init(&procfs, "/proc", NULL);
+
   return task->pid;
 }
 

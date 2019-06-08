@@ -30,6 +30,10 @@ ssize_t procops_read(file_t *file, char *buf, size_t size) {
 }
 
 void procfs_init(filesystem_t *fs, const char *path, device_t *dev) {
+  while (procfs.root->fchild != NULL) {
+    inode_remove(&procfs.root, procfs.root->fchild);
+  }
+
   for (task_t *tp = root_task.next; tp != NULL; tp = tp->next) {
     CLog(BG_YELLOW, "add inode of %s/%d", path, tp->pid);
     inode_t *ip = pmm->alloc(sizeof(inode_t));
