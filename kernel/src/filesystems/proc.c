@@ -25,7 +25,7 @@ void mount_procfs() {
 }
 
 ssize_t procops_read(file_t *file, char *buf, size_t size) {
-  sprintf("read not implemented!!");
+  sprintf(buf, "read not implemented!!");
 }
 
 void procfs_init(filesystem_t *fs, const char *path, device_t *dev) {
