@@ -10,7 +10,6 @@ inode_t *inode_search(inode_t *cur, const char *path) {
       else return inode_search(ip, path);
     }
   }
-  CLog("get %s", cur->path);
   return cur;
 }
 
