@@ -40,12 +40,8 @@ void vfs_init() {
   root->fchild = NULL;
   root->cousin = NULL;
 
-  mnt_root.path = "/";
-  mnt_root.fs = NULL;
-  mnt_head.next = &mnt_root;
-  mnt_head.prev = &mnt_root;
-  mnt_root.next = &mnt_head;
-  mnt_root.prev = &mnt_head;
+  mnt_head.next = &mnt_head;
+  mnt_head.prev = &mnt_head;
   
   extern void mount_devfs();
   mount_devfs();
