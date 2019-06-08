@@ -236,12 +236,12 @@ void commonfs_init(filesystem_t *fs, const char *path, device_t *dev) {
     inode_t *pp = fs->ops->lookup(fs, entry->path, O_CREAT);
     inode_t *ip = pmm->alloc(sizeof(inode_t));
     ip->refcnt = 0;
-    ip->type = (int)entry->type;
-    ip->flags = (int)entry->flags;
-    ip->ptr = (void *)(entry->head);
+    ip->type = (int)entry.type;
+    ip->flags = (int)entry.flags;
+    ip->ptr = (void *)(entry.head);
     ip->path = entry->path;
     ip->offset = 0;
-    ip->size = commfs_get_file_size(entry->head);
+    ip->size = commonfs_get_file_size(fs, entry.head);
     ip->fs = fs;
     ip->ops = pmm->alloc(sizeof(inodeops_t));
     memcpy(ip->ops, &common_ops, sizeof(inodeops_t));
