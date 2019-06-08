@@ -40,11 +40,11 @@ size_t commonfs_get_file_size(filesystem_t *fs, commonfs_entry_t *entry) {
   int32_t blk = entry->head;
   commonfs_params_t *params = (commonfs_params_t *)fs->root->ptr;
   while (true) {
-    int32_t next = commonfs_get_next_blk(blk);
+    int32_t next = commonfs_get_next_blk(fs, blk);
     if (next) {
       ret += params->blk_size;
     } else {
-      commonfs_entry_t ce = commonfs_get_entry(blk);
+      commonfs_entry_t ce = commonfs_get_entry(fs, blk);
       for (size_t i = 0; i < params->blk_size; ++i) {
         if (!ce->content[i]) break;
         ++ret;
