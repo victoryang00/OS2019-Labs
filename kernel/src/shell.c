@@ -41,6 +41,7 @@ void shell_task(void *arg) {
     cmd[nread - 1] = '\0';
     char *arg = cmd;
     while (*arg == ' ') ++arg;
+    memset(ret, 0, sizeof(ret));
 
     bool succ = false;
     for (int i = 0; i < NR_CMD; ++i) {
