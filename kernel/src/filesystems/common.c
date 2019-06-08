@@ -63,7 +63,7 @@ int common_unlink(const char *name) {
 
 void common_readdir(inode_t *inode, char *ret) {
   sprintf(ret, "ls %s:\n", inode->path);
-  strcat(ret, " + TYPE FILENAME");
+  strcat(ret, " + TYPE FILENAME\n");
   for (inode_t *ip = inode->fchild; ip != NULL; ip = ip->cousin) {
     CLog(FG_PURPLE, "%s %s", inode_types_human[ip->type], ip->path);
     strcat(ret, " - ");
