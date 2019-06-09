@@ -318,7 +318,7 @@ int naive_unlink(filesystem_t *fs, const char *path) {
 
 int naive_readdir(filesystem_t *fs, inode_t *inode, char *ret) {
   sprintf(ret, "ls %s:\n", inode->path);
-  strcat(ret, " + TYPE PRIV FILENAME\n");
+  strcat(ret, " + TYPE PRIV SIZE FILENAME\n");
   for (inode_t *ip = inode->fchild; ip != NULL; ip = ip->cousin) {
     CLog(FG_PURPLE, "%s %s", inode_types_human[ip->type], ip->path);
     strcat(ret, " - ");
@@ -334,6 +334,15 @@ int naive_readdir(filesystem_t *fs, inode_t *inode, char *ret) {
     }
     strcat(ret, ip->flags & P_RD ? "R" : "-");
     strcat(ret, ip->flags & P_WR ? "W" : "-");
+    strcat(ret, " ");
+
+    char size[8] = "";
+    if (ip->type == TYPE_FILE) {
+      sprintf(ret, "%04d", ip->size);
+    } else {
+      sprintf(ret, "----");
+    }
+    strcat(ret, size);
     strcat(ret, " ");
 
     strcat(ret, ip->path);
