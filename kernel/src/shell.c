@@ -170,7 +170,7 @@ FUNC(cat) {
           " %d: command not supported by fs.\n"
           " %d: file does not exist.\n"
           " %d: file has wrong type.\n"
-          " %d: fild has wrong privilege.\n",
+          " %d: file has wrong privilege.\n",
           fd, E_BADFS, E_NOENT, E_BADTP, E_BADPR);
     } else {
       vfs->read(fd, ret, 512);
@@ -202,7 +202,7 @@ FUNC(write) {
           " %d: command not supported by fs.\n"
           " %d: file does not exist.\n"
           " %d: file has wrong type.\n"
-          " %d: fild has wrong privilege.\n",
+          " %d: file has wrong privilege.\n",
           fd, E_BADFS, E_NOENT, E_BADTP, E_BADPR);
     } else {
       ssize_t nwrite = vfs->write(fd, (void *)arg2, strlen(arg2));
