@@ -35,8 +35,8 @@ int32_t commonfs_get_last_entry_blk(filesystem_t *fs) {
   }
 }
 
-void commonfs_put_params(filesystem_t *fs) {
-  fs->dev->ops->write(fs->dev, 0, (void *)fs->root->ptr, sizeof(commonfs_params_t));
+void commonfs_put_params(filesystem_t *fs, commonfs_params_t *params) {
+  fs->dev->ops->write(fs->dev, 0, (void *)params, sizeof(commonfs_params_t));
 }
 
 void commonfs_add_map(filesystem_t *fs, int32_t from, int32_t to) {
