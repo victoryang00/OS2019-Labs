@@ -75,6 +75,7 @@ size_t naivefs_get_file_size(filesystem_t *fs, naivefs_entry_t *entry) {
   int32_t blk = entry->head;
   naivefs_params_t *params = (naivefs_params_t *)fs->root->ptr;
   while (true) {
+    Log("blk %d", blk);
     int32_t next = naivefs_get_next_blk(fs, blk);
     if (next) {
       ret += params->blk_size;
