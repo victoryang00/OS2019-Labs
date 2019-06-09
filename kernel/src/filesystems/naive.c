@@ -139,8 +139,7 @@ int naive_close(filesystem_t *fs, file_t *file) {
     file->inode->size = file->inode->offset;
   }
   file->inode->offset = 0;
-  fs->ops->close(file->inode);
-  return 0;
+  return fs->ops->close(file->inode);
 }
 
 ssize_t naive_read(filesystem_t *fs, file_t *file, char *buf, size_t size) {

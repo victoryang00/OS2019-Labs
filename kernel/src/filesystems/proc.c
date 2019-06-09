@@ -25,6 +25,17 @@ void mount_procfs() {
   CLog(BG_YELLOW, "/proc initialiezd.");
 }
 
+int procops_open(filesystem_t *fs, file_t *file, int flags) {
+  if ((flags & file->inode->flags) != (flags & ~O_CREAT)) return E_BADPR;
+  file->inode->offset = 0;
+  return 0;
+}
+
+int procops_close(filesystem_t *fs, file_t *file) {
+  file->inode->offset = 0;
+  return fs->ops->close(file->inode);
+}
+
 inline ssize_t read_proc(task_t *tp, char *buf, size_t size) {
   return snprintf(buf, size, "Process %d:\n - Name: %s\n - State: %s\n",
       tp->pid, tp->name, task_states_human[tp->state]);
@@ -52,6 +63,8 @@ inline void procfs_self() {
   ip->fs = &procfs;
   ip->ops = pmm->alloc(sizeof(inodeops_t));
   memcpy(ip->ops, &error_ops, sizeof(inodeops_t));
+  ip->ops->open = procops_open;
+  ip->ops->close = procops_close;
   ip->ops->read = procops_read;
 
   ip->parent = ip->fs->root;
@@ -140,6 +153,8 @@ void procfs_init(filesystem_t *fs, const char *path, device_t *dev) {
     ip->fs = fs;
     ip->ops = pmm->alloc(sizeof(inodeops_t));
     memcpy(ip->ops, &error_ops, sizeof(inodeops_t));
+    ip->ops->open = procops_open;
+    ip->ops->close = procops_close;
     ip->ops->read = procops_read;
 
     ip->parent = fs->root;
