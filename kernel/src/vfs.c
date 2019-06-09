@@ -205,7 +205,7 @@ off_t vfs_lseek(int fd, off_t offset, int whence) {
 int vfs_close(int fd) {
   file_t *fp = find_file_by_fd(fd);
   Assert(fp, "file pointer is NULL");
-  int ret = fp->inode->fs->ops->close(fp->inode);
+  int ret = fp->inode->ops->close(fp->inode->fs, fp);
 
   task_t *cur = get_current_task();
   cur->fildes[fd] = NULL;

@@ -130,10 +130,16 @@ filesystem_t naivefs = {
 
 int naive_open(filesystem_t *fs, file_t *file, int flags) {
   if ((flags & file->inode->flags) != flags) return -1;
+  file->inode->offset = 0;
   return 0;
 }
 
 int naive_close(filesystem_t *fs, file_t *file) {
+  if (file->inode->offset > file->inode->size) {
+    file->inode->size = file->inode->offset;
+  }
+  file->inode->offset = 0;
+  fs->ops->close(file->inode);
   return 0;
 }
 
