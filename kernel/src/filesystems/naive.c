@@ -257,7 +257,8 @@ int naive_link(filesystem_t *fs, const char *path, inode_t *inode) {
 
 int naive_unlink(filesystem_t *fs, const char *path) {
   inode_t *ip = fs->ops->lookup(fs, path, O_RDWR);
-  if (!ip || ip->type != TYPE_FILE || ip->type != TYPE_LINK) {
+  if (!ip) return -1;
+  if (ip->type != TYPE_FILE || ip->type != TYPE_LINK) {
     return -1;
   }
 
