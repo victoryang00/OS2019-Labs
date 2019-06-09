@@ -15,6 +15,7 @@ void spinlock_init(struct spinlock *lk, const char *name) {
 }
 
 void spinlock_acquire(struct spinlock *lk) {
+  if(!strcmp(lk->name, "vfs-lock")) Log("LK");
   spinlock_pushcli();
   Assert(!spinlock_holding(lk), "Acquiring lock %s when holding it.", lk->name);
 
@@ -27,6 +28,7 @@ void spinlock_acquire(struct spinlock *lk) {
 }
 
 void spinlock_release(struct spinlock *lk) {
+  if(!strcmp(lk->name, "vfs-lock")) Log("UN");
   Assert(spinlock_holding(lk), "Releasing lock %s not holded by cpu %d.", lk->name, _cpu());
 
   lk->holder = -1;
