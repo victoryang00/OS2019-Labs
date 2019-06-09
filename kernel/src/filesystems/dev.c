@@ -44,7 +44,7 @@ void devfs_init(filesystem_t *fs, const char *path, device_t *dev) {
     fs->root->fs = fs;
     fs->root->ptr = NULL;
     sprintf(fs->root->path, path);
-    fs->root->parent = pp;
+    fs->root->parent = NULL;
     fs->root->fchild = NULL;
     fs->root->cousin = NULL;
     fs->root->ops = pmm->alloc(sizeof(inodeops_t));
