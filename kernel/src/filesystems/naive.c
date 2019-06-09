@@ -345,7 +345,7 @@ int naive_readdir(filesystem_t *fs, inode_t *inode, char *ret) {
   sprintf(ret, "ls %s:\n", inode->path);
   strcat(ret, " + TYPE PRIV SIZE FILENAME\n");
   for (inode_t *ip = inode->fchild; ip != NULL; ip = ip->cousin) {
-    CVFSLog(FG_PURPLE, "%s %s", inode_types_human[ip->type], ip->path);
+    VFSCLog(FG_PURPLE, "%s %s", inode_types_human[ip->type], ip->path);
     strcat(ret, " - ");
     strcat(ret, inode_types_human[ip->type]);
     strcat(ret, " ");
@@ -383,11 +383,11 @@ int naive_readdir(filesystem_t *fs, inode_t *inode, char *ret) {
 void mount_naivefs() {
   device_t *dev = dev_lookup("ramdisk0");
   naivefs_init(&naivefs, "/", dev);
-  CVFSLog(BG_YELLOW, "/ initialized.");
+  VFSCLog(BG_YELLOW, "/ initialized.");
   
   dev = dev_lookup("ramdisk1");
   naivefs_init(&emptyfs, "/mnt", dev);
-  CVFSLog(BG_YELLOW, "/mnt initialized.");
+  VFSCLog(BG_YELLOW, "/mnt initialized.");
   vfs->mount("/mnt", &emptyfs);
 }
 
