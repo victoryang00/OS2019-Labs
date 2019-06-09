@@ -252,7 +252,9 @@ FUNC(rm) {
       if (!vfs->unlink(dir)) {
         sprintf(ret, "Successfully removed %s.\n", dir);
       } else {
-        sprintf(ret, "VFS ERROR: unlink failed.\n");
+        sprintf(ret, "VFS ERROR: unlink failed.\n"
+            "Possible reasons:\n"
+            " - `rm` can only delete FILE and LINK files.\n");
       }
     }
   }

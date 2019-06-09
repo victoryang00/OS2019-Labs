@@ -59,7 +59,7 @@ void naivefs_put_entry(filesystem_t *fs, int32_t blk, naivefs_entry_t *entry) {
   fs->dev->ops->write(fs->dev, offset, (void *)entry, sizeof(naivefs_entry_t));
 }
 
-void naivefs_add_entry(filesystem_t *fs, naivefs_entry_t *entry) {
+int32_t naivefs_add_entry(filesystem_t *fs, naivefs_entry_t *entry) {
   naivefs_params_t *params = (naivefs_params_t *)fs->root->ptr;
   int32_t last = naivefs_get_last_entry_blk(fs);
   int32_t blk = params->min_free;
@@ -67,6 +67,7 @@ void naivefs_add_entry(filesystem_t *fs, naivefs_entry_t *entry) {
   naivefs_add_map(fs, last, blk);
   naivefs_put_entry(fs, blk, entry);
   naivefs_put_params(fs, params);
+  return blk;
 }
 
 size_t naivefs_get_file_size(filesystem_t *fs, naivefs_entry_t *entry) {
@@ -196,12 +197,13 @@ int naive_mkdir(filesystem_t *fs, const char *path) {
   };
   if(strlen(path) >= 23) return -1; // naivefs limitation
   sprintf(entry.path, path);
-  naivefs_add_entry(fs, &entry);
+  int32_t blk = naivefs_add_entry(fs, &entry);
   
   inode_t *ip = pmm->alloc(sizeof(inode_t));
   ip->refcnt = 0;
   ip->type = TYPE_DIRC;
   ip->flags = P_RD | P_WR;
+  ip->ptr = (void *)blk;
   sprintf(ip->path, path);
   ip->offset = 0;
   ip->size = 4;
@@ -226,10 +228,19 @@ int naive_link(filesystem_t *fs, const char *path, inode_t *inode) {
     return -1;
   }
 
+  naivefs_entry_t entry = {
+    .head = 0x00000000,
+    .type = TYPE_LINK,
+    .flags = P_RD | P_WR,
+  };
+  if(strlen(path) >= 23) return -1; // naivefs limitation
+  sprintf(entry.path, path);
+  int32_t blk = naivefs_add_entry(fs, &entry);
+
   inode_t *ip = pmm->alloc(sizeof(inode_t));
   ip->refcnt = 0;
   ip->type = TYPE_LINK;
-  ip->ptr = (void *)inode;
+  ip->ptr = (void *)blk;
   sprintf(ip->path, path);
   ip->offset = 0;
   ip->size = sizeof(void *);
@@ -246,9 +257,15 @@ int naive_link(filesystem_t *fs, const char *path, inode_t *inode) {
 
 int naive_unlink(filesystem_t *fs, const char *path) {
   inode_t *ip = fs->ops->lookup(fs, path, O_RDWR);
-  if (ip->type != TYPE_FILE || ip->type != TYPE_LINK) {
+  if (!ip || ip->type != TYPE_FILE || ip->type != TYPE_LINK) {
     return -1;
   }
+
+  int32_t blk = (int32_t)ip->ptr;
+  naivefs_entry_t entry = naivefs_get_entry(fs, blk);
+  entry->type = TYPE_INVL;
+  naivefs_put_entry(fs, blk, &entry);
+
   inode_delete(ip);
   return 0;
 }
