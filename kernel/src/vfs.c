@@ -129,6 +129,7 @@ int vfs_readdir(const char *path, void *buf) {
   Assert(mp, "Path %s not mounted!", path);
   inode_t *ip = mp->fs->ops->lookup(mp->fs, path, O_RDONLY);
   if (!ip) return E_NOENT;
+  Log("inode has fs %s", mp->fs->name);
   return ip->ops->readdir(mp->fs, ip, (char *)buf);
 }
 
