@@ -17,6 +17,7 @@ inline mnt_t *find_mnt(const char *path) {
       }
     }
   }
+  Log("%s is mounted by %s", path, ret->path);
   return ret;
 }
 
@@ -127,7 +128,7 @@ int vfs_readdir(const char *path, void *buf) {
   mnt_t *mp = find_mnt(path);
   Assert(mp, "Path %s not mounted!", path);
   inode_t *ip = mp->fs->ops->lookup(mp->fs, path, O_RDONLY);
-  if (!ip) return -1;
+  if (!ip) return E_NOENT;
   return ip->ops->readdir(mp->fs, ip, (char *)buf);
 }
 
