@@ -4,20 +4,20 @@
 #include <vfs.h>
 
 const cmd_t cmd_list[] = {
-  { "help",   help  },
-  { "ping",   ping  },
-  { "fuck",   fuck  },
-  { "echo",   echo  },
-  { "ls",     ls    },
-  { "pwd",    pwd   },
-  { "cd",     cd    },
-  { "cat",    cat   },
-  { "write",  write },
+  { "help",   help   },
+  { "ping",   ping   },
+  { "fuck",   fuck   },
+  { "echo",   echo   },
+  { "ls",     ls     },
+  { "pwd",    pwd    },
+  { "cd",     cd     },
+  { "cat",    cat    },
+  { "write",  write  },
   { "append", append },
-  { "link",   link  },
-  { "mkdir",  mkdir },
-  { "rmdir",  rmdir },
-  { "rm"   ,  rm    },
+  { "link",   link   },
+  { "mkdir",  mkdir  },
+  { "rmdir",  rmdir  },
+  { "rm"   ,  rm     },
 };
 const int NR_CMD = sizeof(cmd_list) / sizeof(cmd_t);
 
