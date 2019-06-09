@@ -5,7 +5,7 @@
 
 inode_t *root;
 mnt_t mnt_head, mnt_root;
-semaphore_t vfs_sem;
+sem_t vfs_sem;
 
 inline mnt_t *find_mnt(const char *path) {
   size_t max_match = 0;
