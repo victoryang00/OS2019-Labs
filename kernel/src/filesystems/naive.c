@@ -383,8 +383,8 @@ void mount_naivefs() {
   
   dev = dev_lookup("ramdisk1");
   naivefs_init(&emptyfs, "/mnt", dev);
-  vfs->mount("/mnt", &emptyfs);
   CLog(BG_YELLOW, "/mnt initialized.");
+  vfs->mount("/mnt", &emptyfs);
 }
 
 void naivefs_init(filesystem_t *fs, const char *path, device_t *dev) {
