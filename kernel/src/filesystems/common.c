@@ -114,19 +114,22 @@ ssize_t common_read(filesystem_t *fs, file_t *file, char *buf, size_t size) {
   }
 
   ssize_t nread = 0;
-  while (size > 0) {
+  while (blk != 0 && size > 0) {
     commonfs_entry_t entry = commonfs_get_entry(fs, blk);
+    ssize_t delta = 0;
     if (params->blk_size - offset >= size) {
-      nread += snprintf(buf, size, entry.content + offset);
-      return nread;
+      delta = snprintf(buf, size, entry.content + offset);
     } else {
-      nread += snprintf(buf, params->blk_size - offset, entry.content + offset);
+      delta = snprintf(buf, params->blk_size - offset, entry.content + offset);
     }
+    if (delta == 0) break;
+    size -= delta;
+    nread += delta;
     
     offset = 0;
     blk = commonfs_get_next_blk(fs, blk);
-    if (blk == 0) return nread;
   }
+  return nread;
 }
 
 ssize_t common_write(filesystem_t *fs, file_t *file, const char *buf, size_t size) {
