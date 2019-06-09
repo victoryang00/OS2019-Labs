@@ -143,7 +143,6 @@ ssize_t naive_read(filesystem_t *fs, file_t *file, char *buf, size_t size) {
   int32_t blk = (int32_t)file->inode->ptr;
   
   while (offset >= params->blk_size) {
-    Log("blk size is %d", params->blk_size);
     offset -= params->blk_size;
     blk = naivefs_get_next_blk(fs, blk);
     if (blk == 0) return 0;
@@ -174,7 +173,6 @@ ssize_t naive_write(filesystem_t *fs, file_t *file, const char *buf, size_t size
   int32_t blk = (int32_t)file->inode->ptr;
   
   while (offset >= params->blk_size) {
-    Log("blk size is %d", params->blk_size);
     offset -= params->blk_size;
     blk = naivefs_get_next_blk(fs, blk);
     if (blk == 0) return 0;
@@ -397,13 +395,16 @@ inode_t *naivefs_lookup(filesystem_t *fs, const char *path, int flags) {
       }
 
       naivefs_params_t *params = (naivefs_params_t *)fs->root->ptr;
+      Log("blk size is %d", params->blk_size);
       naivefs_entry_t entry = {
         .head = params->min_free,
         .type = TYPE_FILE,
         .flags = P_RD | P_WR,
       };
       ++params->min_free;
+      Log("blk size is %d", params->blk_size);
       int32_t blk = naivefs_add_entry(fs, &entry);
+      Log("blk size is %d", params->blk_size);
 
       inode_t *pp = ip;
       ip = pmm->alloc(sizeof(inode_t));
