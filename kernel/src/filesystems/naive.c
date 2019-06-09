@@ -395,16 +395,13 @@ inode_t *naivefs_lookup(filesystem_t *fs, const char *path, int flags) {
       }
 
       naivefs_params_t *params = (naivefs_params_t *)fs->root->ptr;
-      Log("blk size is %d", params->blk_size);
       naivefs_entry_t entry = {
         .head = params->min_free,
         .type = TYPE_FILE,
         .flags = P_RD | P_WR,
       };
       ++params->min_free;
-      Log("blk size is %d", params->blk_size);
       int32_t blk = naivefs_add_entry(fs, &entry);
-      Log("blk size is %d", params->blk_size);
 
       inode_t *pp = ip;
       ip = pmm->alloc(sizeof(inode_t));
@@ -418,11 +415,13 @@ inode_t *naivefs_lookup(filesystem_t *fs, const char *path, int flags) {
       ip->fs = 0;
       ip->ops = pmm->alloc(sizeof(inodeops_t));
       memcpy(ip->ops, &naive_ops, sizeof(inodeops_t));
+      Log("blk size is %d", params->blk_size);
 
       ip->parent = pp;
       ip->fchild = NULL;
       ip->cousin = NULL;
       inode_insert(pp, ip);
+      Log("blk size is %d", params->blk_size);
       return ip;
     } else {
       return NULL;
