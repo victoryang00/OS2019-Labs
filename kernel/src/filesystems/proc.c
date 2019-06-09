@@ -82,6 +82,8 @@ inline void procfs_cpuinfo() {
   ip->fs = &procfs;
   ip->ops = pmm->alloc(sizeof(inodeops_t));
   memcpy(ip->ops, &error_ops, sizeof(inodeops_t));
+  ip->ops->open = procops_open;
+  ip->ops->close = procops_close;
   ip->ops->read = procops_read;
 
   ip->parent = ip->fs->root;
@@ -99,6 +101,8 @@ inline void procfs_meminfo() {
   ip->fs = &procfs;
   ip->ops = pmm->alloc(sizeof(inodeops_t));
   memcpy(ip->ops, &error_ops, sizeof(inodeops_t));
+  ip->ops->open = procops_open;
+  ip->ops->close = procops_close;
   ip->ops->read = procops_read;
 
   ip->parent = ip->fs->root;
