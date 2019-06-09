@@ -220,7 +220,7 @@ int common_rmdir(filesystem_t *fs, const char *path) {
 
 int common_link(filesystem_t *fs, const char *path, inode_t *inode) {
   inode_t *pp = fs->ops->lookup(fs, path, O_RDWR);
-  if (strlen(pp->path) == strlen(name)) {
+  if (strlen(pp->path) == strlen(path)) {
     return -1;
   }
 
@@ -228,7 +228,7 @@ int common_link(filesystem_t *fs, const char *path, inode_t *inode) {
   ip->refcnt = 0;
   ip->type = TYPE_LINK;
   ip->ptr = (void *)inode;
-  sprintf(ip->path, name);
+  sprintf(ip->path, path);
   ip->offset = 0;
   ip->size = sizeof(void *);
   ip->fs = pp->fs;
