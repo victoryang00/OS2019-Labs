@@ -442,7 +442,10 @@ inode_t *naivefs_lookup(filesystem_t *fs, const char *path, int flags) {
 
 int naivefs_close(inode_t *inode) {
   if (inode->type == TYPE_FILE && inode->size <= 0) {
-    // TODO: remove the file from disk
+    int32_t blk = (int32_t)inode->ptr;
+    naivefs_entry_t entry = naivefs_get_entry(fs, blk);
+    entry.type = TYPE_INVL;
+    naivefs_put_entry(fs, blk, &entry);
     inode_remove(inode->parent, inode);
   }
   return 0;
