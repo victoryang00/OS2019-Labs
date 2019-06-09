@@ -49,8 +49,8 @@ void devfs_init(filesystem_t *fs, const char *path, device_t *dev) {
     fs->root->cousin = NULL;
     fs->root->ops = pmm->alloc(sizeof(inodeops_t));
     memcpy(fs->root->ops, &error_ops, sizeof(inodeops_t));
-    ip->ops->read = devops_read;
-    ip->ops->write = devops_write;
+    fs->root->ops->read = devops_read;
+    fs->root->ops->write = devops_write;
   }
 
   for (int i = 0; i < nr_devices; ++i) {
