@@ -240,8 +240,8 @@ FUNC(append) {
           " %d: file has wrong privilege.\n",
           fd, E_BADFS, E_NOENT, E_BADTP, E_BADPR);
     } else {
-      ssize_t nwrite = vfs->write(fd, (void *)arg2, strlen(arg2));
       vfs->lseek(fd, 0, SEEK_END);
+      ssize_t nwrite = vfs->write(fd, (void *)arg2, strlen(arg2));
       vfs->write(fd, "\n", 1);
       vfs->close(fd);
       sprintf(ret, "Appended %d bytes successfully.\n", nwrite);
