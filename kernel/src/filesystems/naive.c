@@ -129,7 +129,7 @@ filesystem_t naivefs = {
 };
 
 int naive_open(filesystem_t *fs, file_t *file, int flags) {
-  if ((flags & file->inode->flags) != flags) return -1;
+  if ((flags & file->inode->flags) != flags) return E_BADPR;
   file->inode->offset = 0;
   return 0;
 }
@@ -237,14 +237,14 @@ off_t naive_lseek(filesystem_t *fs, file_t *file, off_t offset, int whence) {
 
 int naive_mkdir(filesystem_t *fs, const char *path) {
   inode_t *pp = inode_search(fs->root, path);
-  if (strlen(pp->path) == strlen(path)) return -1;
+  if (strlen(pp->path) == strlen(path)) return E_ALRDY;
 
   naivefs_entry_t entry = {
     .head = 0x00000000,
     .type = TYPE_DIRC,
     .flags = P_RD | P_WR,
   };
-  if(strlen(path) >= 23) return -1; // naivefs limitation
+  if(strlen(path) >= 23) return E_TOOLG; // naivefs limitation
   sprintf(entry.path, path);
   int32_t blk = naivefs_add_entry(fs, &entry);
   
@@ -269,10 +269,10 @@ int naive_mkdir(filesystem_t *fs, const char *path) {
 
 int naive_rmdir(filesystem_t *fs, const char *path) {
   inode_t *ip = fs->ops->lookup(fs, path, O_RDWR);
-  if (!ip) return -1;
-  if (ip->type != TYPE_DIRC) return -2;
-  if (!(ip->flags & O_WRONLY)) return -3;
-  if (ip->fchild) return -4;
+  if (!ip) return E_NOENT;
+  if (ip->type != TYPE_DIRC) return E_BADTP;
+  if (!(ip->flags & O_WRONLY)) return E_BADPR;
+  if (ip->fchild) return E_NOEMP;
 
   int32_t blk = ip->blk;
   naivefs_entry_t entry = naivefs_get_entry(fs, blk);
@@ -284,15 +284,16 @@ int naive_rmdir(filesystem_t *fs, const char *path) {
 }
 
 int naive_link(filesystem_t *fs, const char *path, inode_t *inode) {
+  if (inode->type != TYPE_FILE && inode->type != TYPE_LINK) return E_BADTP;
   inode_t *pp = inode_search(root, path);
-  if (strlen(pp->path) == strlen(path)) return -2;
+  if (strlen(pp->path) == strlen(path)) return E_ALRDY;
 
   naivefs_entry_t entry = {
     .head = 0x00000000,
     .type = TYPE_LINK,
     .flags = P_RD | P_WR,
   };
-  if(strlen(path) >= 23) return -3; // naivefs limitation
+  if(strlen(path) >= 23) return E_TOOLG; // naivefs limitation
   sprintf(entry.path, path);
   int32_t blk = naivefs_add_entry(fs, &entry);
 
@@ -318,9 +319,9 @@ int naive_link(filesystem_t *fs, const char *path, inode_t *inode) {
 
 int naive_unlink(filesystem_t *fs, const char *path) {
   inode_t *ip = fs->ops->lookup(fs, path, O_RDWR);
-  if (!ip) return -1;
-  if (ip->type != TYPE_FILE && ip->type != TYPE_LINK) return -2;
-  if (!(ip->flags & O_WRONLY)) return -3;
+  if (!ip) return E_NOENT;
+  if (ip->type != TYPE_FILE && ip->type != TYPE_LINK) return E_BADTP;
+  if (!(ip->flags & O_WRONLY)) return E_BADPR;
 
   int32_t blk = ip->blk;
   naivefs_entry_t entry = naivefs_get_entry(fs, blk);

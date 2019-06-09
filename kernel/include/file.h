@@ -12,6 +12,14 @@
 #define P_RD O_RDONLY
 #define P_WR O_WRONLY
 
+#define E_BADFS -1 // bad fs
+#define E_NOENT -2 // not found
+#define E_ALRDY -3 // already done
+#define E_BADTP -4 // bad file type
+#define E_BADPR -5 // bad privilege
+#define E_TOOLG -6 // too long / large
+#define E_NOEMP -7 // not empty
+
 #define SEEK_SET 0x00
 #define SEEK_CUR 0x01
 #define SEEK_END 0x02
@@ -37,6 +45,7 @@ struct inodeops {
   int (*readdir)(filesystem_t *fs, inode_t *inode, char *ret);
 };
 extern inodeops_t naive_ops;
+extern inodeops_t error_ops;
 
 enum INODE_TYPES {
   TYPE_INVL, // invalid

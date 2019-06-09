@@ -235,9 +235,10 @@ FUNC(link) {
       } else {
         sprintf(ret, "VFS ERROR: link failed with status %d.\n"
             "Possible reasons:\n"
-            " -1: target is not a file.\n"
-            " -2: target is not available.\n"
-            " -3: filename is too long.\n", status);
+            " %d: target is not a file.\n"
+            " %d: target is not available.\n"
+            " %d: filename is too long.\n",
+            status, E_BADTP, E_NOENT, E_TOOLG);
       }
     }
   }
@@ -274,10 +275,11 @@ FUNC(rmdir) {
       } else {
         sprintf(ret, "VFS ERROR: rmdir failed with status %d.\n"
             "Possible reasons:\n"
-            " -1: dir does not exist.\n"
-            " -2: not a directory or is a mount point.\n"
-            " -3: dir has wrong privilege.\n"
-            " -4: dir is not empty.\n", status);
+            " %d: dir does not exist.\n"
+            " %d: not a directory or is a mount point.\n"
+            " %d: dir has wrong privilege.\n"
+            " %d: dir is not empty.\n",
+            status, E_NOENT, E_BADTP, E_BADPR, E_NOEMP);
       }
     }
   }
@@ -297,9 +299,10 @@ FUNC(rm) {
       } else {
         sprintf(ret, "VFS ERROR: unlink failed with status %d.\n"
             "Possible reasons:\n"
-            " -1: file does not exist.\n"
-            " -2: file has wrong type.\n"
-            " -3: file has wrong privilege.\n", status);
+            " %d: file does not exist.\n"
+            " %d: file has wrong type.\n"
+            " %d: file has wrong privilege.\n",
+            status, E_NOENT, E_BADTP, E_BADPR);
       }
     }
   }
