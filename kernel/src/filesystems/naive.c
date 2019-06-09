@@ -177,11 +177,9 @@ ssize_t naive_write(filesystem_t *fs, file_t *file, const char *buf, size_t size
     blk = naivefs_get_next_blk(fs, blk);
     if (blk == 0) return 0;
   }
-    Log("1");
 
   ssize_t nwrite = 0;
   while (blk != 0 && size > 0) {
-    Log("2");
     naivefs_entry_t entry = naivefs_get_entry(fs, blk);
     ssize_t delta = 0;
     if (params->blk_size - offset >= size) {
@@ -390,6 +388,7 @@ inode_t *naivefs_lookup(filesystem_t *fs, const char *path, int flags) {
     }
   } else {
     if (flags & O_CREAT) {
+      Log("1");
       size_t len = strlen(path);
       if (len >= 23) return NULL; // naivefs limitation
       for (size_t i = strlen(ip->path) + 1; i < len; ++i) {
