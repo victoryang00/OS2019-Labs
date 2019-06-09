@@ -167,9 +167,10 @@ FUNC(cat) {
     if (fd < 0) {
       sprintf(ret, "VFS ERROR: open failed with status %d.\n"
           "Possible reasons:\n"
+          " %d: command not supported by fs.\n"
           " %d: file does not exist.\n"
           " %d: fild has wrong privilege.\n",
-          fd, E_NOENT, E_BADPR);
+          fd, E_BADFS, E_NOENT, E_BADPR);
     } else {
       vfs->read(fd, ret, 512);
       vfs->close(fd);
@@ -197,9 +198,10 @@ FUNC(write) {
     if (fd == -1) {
       sprintf(ret, "VFS ERROR: open failed with status %d.\n"
           "Possible reasons:\n"
+          " %d: command not supported by fs.\n"
           " %d: file does not exist.\n"
           " %d: fild has wrong privilege.\n",
-          fd, E_NOENT, E_BADPR);
+          fd, E_BADFS, E_NOENT, E_BADPR);
     } else {
       ssize_t nwrite = vfs->write(fd, (void *)arg2, strlen(arg2));
       vfs->write(fd, "\n", 1);
