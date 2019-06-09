@@ -286,6 +286,7 @@ int naive_link(filesystem_t *fs, const char *path, inode_t *inode) {
   inode_t *ip = pmm->alloc(sizeof(inode_t));
   ip->refcnt = 0;
   ip->type = TYPE_LINK;
+  ip->flags = inode->flags;
   ip->ptr = (void *)blk;
   sprintf(ip->path, path);
   ip->offset = 0;
