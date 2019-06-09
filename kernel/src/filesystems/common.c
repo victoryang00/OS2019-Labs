@@ -115,6 +115,7 @@ ssize_t common_read(filesystem_t *fs, file_t *file, char *buf, size_t size) {
 
   ssize_t nread = 0;
   while (blk != 0 && size > 0) {
+    Log("blk %d", blk);
     commonfs_entry_t entry = commonfs_get_entry(fs, blk);
     ssize_t delta = 0;
     if (params->blk_size - offset >= size) {
