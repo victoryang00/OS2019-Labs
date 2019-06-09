@@ -98,7 +98,7 @@ int vfs_mount(const char *path, filesystem_t *fs) {
   Assert(strcmp(path, pp->path), "inode %s exists!", path);
   fs->root->parent = pp;
   inode_insert(pp, fs->root);
-  CVFSLog(BG_YELLOW, "Path %s is mounted.", path);
+  VFSCLog(BG_YELLOW, "Path %s is mounted.", path);
   return 0;
 }
 
@@ -108,7 +108,7 @@ int vfs_unmount(const char *path) {
   mp->prev->next = mp->next;
   mp->next->prev = mp->prev;
   pmm->free(mp);
-  CVFSLog(BG_YELLOW, "Path %s is unmounted.", path);
+  VFSCLog(BG_YELLOW, "Path %s is unmounted.", path);
   return 0;
 }
 
