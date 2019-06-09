@@ -197,6 +197,10 @@ ssize_t naive_write(filesystem_t *fs, file_t *file, const char *buf, size_t size
     blk = params->min_free;
     ++params->min_free;
   }
+
+  if (file->inode->offset + nwrite > file->inode->size) {
+    file->inode->size = file->inode->offset + nwrite;
+  }
   return nwrite;
 }
 
