@@ -63,6 +63,7 @@ void vfs_init() {
 }
 
 int vfs_access(const char *path, int mode) {
+  Log("access");
   spinlock_acquire(&vfs_lock);
 
   mnt_t *mp = find_mnt(path);
@@ -90,6 +91,7 @@ int vfs_access(const char *path, int mode) {
 }
 
 int vfs_mount(const char *path, filesystem_t *fs) {
+  Log("mount");
   spinlock_acquire(&vfs_lock);
 
   mnt_t *mp = find_mnt(path);
@@ -114,6 +116,7 @@ int vfs_mount(const char *path, filesystem_t *fs) {
 }
 
 int vfs_unmount(const char *path) {
+  Log("unmount");
   spinlock_acquire(&vfs_lock);
 
   mnt_t *mp = find_mnt(path);
@@ -187,6 +190,7 @@ int vfs_unlink(const char *path) {
 }
 
 int vfs_open(const char *path, int flags) {
+  Log("open");
   int precheck = vfs_access(path, flags);
   if (precheck) return precheck;
   spinlock_acquire(&vfs_lock);
