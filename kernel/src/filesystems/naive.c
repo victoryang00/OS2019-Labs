@@ -186,13 +186,11 @@ ssize_t naive_write(filesystem_t *fs, file_t *file, const char *buf, size_t size
   while (blk != 0 && size > 0) {
     naivefs_entry_t entry = naivefs_get_entry(fs, blk);
     ssize_t delta = 0;
-    Log("content is [%s]", entry.content);
     if (params->blk_size - offset >= size) {
       delta = snprintf(entry.content + offset, size, buf + nwrite);
     } else {
       delta = snprintf(entry.content + offset, params->blk_size - offset, buf + nwrite);
     }
-    Log("content is [%s]", entry.content);
     naivefs_put_entry(fs, blk, &entry);
     if (delta == 0) break;
     size -= delta;
@@ -203,9 +201,10 @@ ssize_t naive_write(filesystem_t *fs, file_t *file, const char *buf, size_t size
     blk = params->min_free;
     ++params->min_free;
   }
-
-  if (ip->offset + nwrite > ip->size) {
-    ip->size = ip->offset + nwrite;
+  
+  ip->offset += nwrite;
+  if (ip->offset > ip->size) {
+    ip->size = ip->offset;
   }
   return nwrite;
 }
