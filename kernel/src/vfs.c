@@ -138,7 +138,11 @@ int vfs_readdir(const char *path, void *buf) {
   mnt_t *mp = find_mnt(path);
   Assert(mp, "Path %s not mounted!", path);
   inode_t *ip = mp->fs->ops->lookup(mp->fs, path, O_RDONLY);
-  if (!ip) return E_NOENT;
+  if (!ip) {
+    spinlock_release(&vfs_lock);
+    return E_NOENT;
+  }
+
   VFSLog("inode has fs %s", mp->fs->name);
   int ret = ip->ops->readdir(mp->fs, ip, (char *)buf);
 
@@ -212,8 +216,14 @@ int vfs_open(const char *path, int flags) {
   mnt_t *mp = find_mnt(path);
   Assert(mp, "Path %s is not mounted!", path);
   inode_t *ip = mp->fs->ops->lookup(mp->fs, path, flags);
-  if (!ip) return E_NOENT;
-  if (ip->type == TYPE_DIRC || ip->type == TYPE_MNTP) return E_BADTP;
+  if (!ip) {
+    spinlock_release(&vfs_lock);
+    return E_NOENT;
+  }
+  if (ip->type == TYPE_DIRC || ip->type == TYPE_MNTP) {
+    spinlock_release(&vfs_lock);
+    return E_BADTP;
+  }
 
   fp = pmm->alloc(sizeof(file_t));
   fp->fd = fd;
