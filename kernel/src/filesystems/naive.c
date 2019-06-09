@@ -385,7 +385,7 @@ void naivefs_init(filesystem_t *fs, const char *path, device_t *dev) {
 inode_t *naivefs_lookup(filesystem_t *fs, const char *path, int flags) {
   inode_t *ip = inode_search(fs->root, path);
   if (strlen(ip->path) == strlen(path)) {
-    if ((flags & ip->flags) == flags) {
+    if ((flags & ip->flags) == (flags & ~O_CREAT)) {
       return ip;
     } else {
       return NULL;

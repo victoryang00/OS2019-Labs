@@ -167,7 +167,7 @@ FUNC(cat) {
     } else {
       int fd = vfs->open(dir, O_RDONLY);
       if (fd == -1) {
-        sprintf(ret, "VFS ERROR: open failed.");
+        sprintf(ret, "VFS ERROR: open failed.\n");
       } else {
         vfs->read(fd, ret, 512);
         vfs->close(fd);
