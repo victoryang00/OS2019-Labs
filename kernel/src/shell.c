@@ -4,19 +4,20 @@
 #include <vfs.h>
 
 const cmd_t cmd_list[] = {
-  { "help",  help  },
-  { "ping",  ping  },
-  { "fuck",  fuck  },
-  { "echo",  echo  },
-  { "ls",    ls    },
-  { "pwd",   pwd   },
-  { "cd",    cd    },
-  { "cat",   cat   },
-  { "write", write },
-  { "link",  link  },
-  { "mkdir", mkdir },
-  { "rmdir", rmdir },
-  { "rm"   , rm    },
+  { "help",   help  },
+  { "ping",   ping  },
+  { "fuck",   fuck  },
+  { "echo",   echo  },
+  { "ls",     ls    },
+  { "pwd",    pwd   },
+  { "cd",     cd    },
+  { "cat",    cat   },
+  { "write",  write },
+  { "append", append },
+  { "link",   link  },
+  { "mkdir",  mkdir },
+  { "rmdir",  rmdir },
+  { "rm"   ,  rm    },
 };
 const int NR_CMD = sizeof(cmd_list) / sizeof(cmd_t);
 
@@ -209,6 +210,41 @@ FUNC(write) {
       vfs->write(fd, "\n", 1);
       vfs->close(fd);
       sprintf(ret, "Writed %d bytes successfully.\n", nwrite);
+    }
+  }
+}
+
+FUNC(append) {
+  char dir[512] = "";
+  char arg1[512] = "";
+  const char *arg2 = arg;
+  for (size_t i = 0; *arg2 != '\0'; ++i, ++arg2) {
+    arg1[i] = *arg2;
+    if (*arg2 == ' ') {
+      arg1[i] = '\0';
+      ++arg2;
+      break;
+    }
+  }
+
+  if (!get_dir(arg1, pwd, dir)) {
+    sprintf(ret, "Invalid directory address.\n");
+  } else {
+    int fd = vfs->open(dir, O_WRONLY | O_CREAT);
+    if (fd < 0) {
+      sprintf(ret, "VFS ERROR: open failed with status %d.\n"
+          "Possible reasons:\n"
+          " %d: command not supported by fs.\n"
+          " %d: file does not exist.\n"
+          " %d: file has wrong type.\n"
+          " %d: file has wrong privilege.\n",
+          fd, E_BADFS, E_NOENT, E_BADTP, E_BADPR);
+    } else {
+      ssize_t nwrite = vfs->write(fd, (void *)arg2, strlen(arg2));
+      vfs->write(fd, "\n", 1);
+      vfs->lseek(fd, 0, SEEK_END);
+      vfs->close(fd);
+      sprintf(ret, "Appended %d bytes successfully.\n", nwrite);
     }
   }
 }
