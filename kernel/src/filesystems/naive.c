@@ -360,7 +360,7 @@ inode_t *naivefs_lookup(filesystem_t *fs, const char *path, int flags) {
   } else {
     if (flags & O_CREAT) {
       size_t len = strlen(path);
-      if (len >= 23) return -1; // naivefs limitation
+      if (len >= 23) return NULL; // naivefs limitation
       for (size_t i = strlen(ip->path) + 1; i < len; ++i) {
         if (path[i] == '/') return NULL;
       }
@@ -368,10 +368,10 @@ inode_t *naivefs_lookup(filesystem_t *fs, const char *path, int flags) {
       naivefs_params_t *params = (naivefs_params_t *)fs->root->ptr;
       naivefs_entry_t entry = {
         .head = params->min_free,
-        .type = TYPE_HEAD,
+        .type = TYPE_FILE,
         .flags = P_RD | P_WR,
       };
-      ++params->free;
+      ++params->min_free;
       int32_t blk = naivefs_add_entry(fs, &entry);
 
       inode_t *pp = ip;
