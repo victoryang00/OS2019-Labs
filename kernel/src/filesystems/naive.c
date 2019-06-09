@@ -388,16 +388,28 @@ void mount_naivefs() {
 
 void naivefs_init(filesystem_t *fs, const char *path, device_t *dev) {
   fs->dev = dev;
+
+  if (!fs->root) {
+    fs->root = pmm->alloc(sizeof(inode_t));
+    fs->root->type = TYPE_MNTP;
+    fs->root->flags = P_RD | P_WR;
+    fs->root->fs = fs;
+    fs->root->ptr = NULL;
+    sprintf(fs->root->path, path);
+    fs->root->parent = NULL;
+    fs->root->fchild = NULL;
+    fs->root->cousin = NULL;
+    fs->root->ops = &naive_ops;
+  }
   fs->root->ptr = pmm->alloc(sizeof(naivefs_params_t));
   dev->ops->read(dev, 0, fs->root->ptr, sizeof(naivefs_params_t));
 
   naivefs_params_t *params = (naivefs_params_t *)fs->root->ptr;
   if (params->blk_size == 0) {
-    Log("new disk!");
     params->blk_size  = 0x00000020;
     params->map_head  = 0x00000010;
     params->data_head = 0x00002000;
-    params->min_free  = 0x00000001;
+    params->min_free  = 0x00000000;
     dev->ops->write(dev, 0, params, sizeof(naivefs_params_t));
 
     naivefs_entry_t entry = {
@@ -407,7 +419,6 @@ void naivefs_init(filesystem_t *fs, const char *path, device_t *dev) {
     };
     sprintf(entry.path, "/");
     naivefs_add_entry(fs, &entry);
-    Log("initialized");
   }
 
   int32_t blk = 1;
