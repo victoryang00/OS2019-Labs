@@ -248,8 +248,8 @@ int naive_mkdir(filesystem_t *fs, const char *path) {
     .type = TYPE_DIRC,
     .flags = P_RD | P_WR,
   };
-  if(strlen(path) >= 23) return E_TOOLG; // naivefs limitation
-  sprintf(entry.path, "%s", path);
+  if(strlen(path) - strlen(fs->root->path) >= 23) return E_TOOLG; // naivefs limitation
+  sprintf(entry.path, "%s", path + strlen(fs->root->path));
   int32_t blk = naivefs_add_entry(fs, &entry);
   
   inode_t *ip = pmm->alloc(sizeof(inode_t));
@@ -478,7 +478,7 @@ inode_t *naivefs_lookup(filesystem_t *fs, const char *path, int flags) {
         .type = TYPE_FILE,
         .flags = P_RD | P_WR,
       };
-      sprintf(entry.path, "%s", path + strlen(ip->path));
+      sprintf(entry.path, "%s", path + strlen(fs->root->path));
       ++params->min_free;
       Log("data will be in blk %d", entry.head);
       int32_t blk = naivefs_add_entry(fs, &entry);
