@@ -173,6 +173,7 @@ ssize_t naive_write(filesystem_t *fs, file_t *file, const char *buf, size_t size
   int32_t blk = (int32_t)file->inode->ptr;
   
   while (offset >= params->blk_size) {
+    Log("blk size is %d", params->blk_size);
   Log("offset is %d", offset);
   Log("blk is %d", blk);
     offset -= params->blk_size;
