@@ -2,19 +2,6 @@
 #include <file.h>
 #include <vfs.h>
 
-inodeops_t error_ops = {
-  .open    = error_open,
-  .close   = error_close,
-  .read    = error_read,
-  .write   = error_write,
-  .lseek   = error_lseek,
-  .mkdir   = error_mkdir,
-  .rmdir   = error_rmdir,
-  .link    = error_link,
-  .unlink  = error_unlink,
-  .readdir = error_readdir,
-};
-
 int error_open(filesystem_t *fs, file_t *file, int flags) {
   return E_BADFS;
 }
@@ -54,3 +41,16 @@ int error_unlink(filesystem_t *fs, const char *path) {
 int error_readdir(filesystem_t *fs, inode_t *inode, char *ret) {
   return E_BADFS;
 }
+
+inodeops_t error_ops = {
+  .open    = error_open,
+  .close   = error_close,
+  .read    = error_read,
+  .write   = error_write,
+  .lseek   = error_lseek,
+  .mkdir   = error_mkdir,
+  .rmdir   = error_rmdir,
+  .link    = error_link,
+  .unlink  = error_unlink,
+  .readdir = error_readdir,
+};
