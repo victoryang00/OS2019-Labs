@@ -36,7 +36,7 @@ struct inodeops {
   int (*unlink)(filesystem_t *fs, const char *name);
   int (*readdir)(filesystem_t *fs, inode_t *inode, char *ret);
 };
-extern inodeops_t common_ops;
+extern inodeops_t naive_ops;
 
 enum INODE_TYPES {
   TYPE_INVL, // invalid
@@ -67,16 +67,16 @@ struct inode {
 };
 extern inode_t *root;
 
-int common_open(filesystem_t *fs, file_t *file, int flags);
-int common_close(filesystem_t *fs, file_t *file);
-ssize_t common_read(filesystem_t *fs, file_t *file, char *buf, size_t size);
-ssize_t common_write(filesystem_t *fs, file_t *file, const char *buf, size_t size);
-off_t common_lseek(filesystem_t *fs, file_t *file, off_t offset, int whence);
-int common_mkdir(filesystem_t *fs, const char *path);
-int common_rmdir(filesystem_t *fs, const char *path);
-int common_link(filesystem_t *fs, const char *path, inode_t *inode);
-int common_unlink(filesystem_t *fs, const char *path);
-int common_readdir(filesystem_t *fs, inode_t *inode, char *ret);
+int naive_open(filesystem_t *fs, file_t *file, int flags);
+int naive_close(filesystem_t *fs, file_t *file);
+ssize_t naive_read(filesystem_t *fs, file_t *file, char *buf, size_t size);
+ssize_t naive_write(filesystem_t *fs, file_t *file, const char *buf, size_t size);
+off_t naive_lseek(filesystem_t *fs, file_t *file, off_t offset, int whence);
+int naive_mkdir(filesystem_t *fs, const char *path);
+int naive_rmdir(filesystem_t *fs, const char *path);
+int naive_link(filesystem_t *fs, const char *path, inode_t *inode);
+int naive_unlink(filesystem_t *fs, const char *path);
+int naive_readdir(filesystem_t *fs, inode_t *inode, char *ret);
 
 inode_t *inode_search(inode_t *cur, const char *path);
 void inode_insert(inode_t *parent, inode_t *child);
