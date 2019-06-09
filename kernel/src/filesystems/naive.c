@@ -183,9 +183,9 @@ ssize_t naive_write(filesystem_t *fs, file_t *file, const char *buf, size_t size
     naivefs_entry_t entry = naivefs_get_entry(fs, blk);
     ssize_t delta = 0;
     if (params->blk_size - offset >= size) {
-      delta = snprintf(buf + nread, size, entry.content + offset);
+      delta = snprintf(buf + nwrite, size, entry.content + offset);
     } else {
-      delta = snprintf(buf + nread, params->blk_size - offset, entry.content + offset);
+      delta = snprintf(buf + nwrite, params->blk_size - offset, entry.content + offset);
     }
     if (delta == 0) break;
     size -= delta;
