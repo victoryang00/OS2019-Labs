@@ -43,6 +43,7 @@ ssize_t devops_read(filesystem_t *fs, file_t *file, char *buf, size_t size) {
 }
 
 ssize_t devops_write(filesystem_t *fs, file_t *file, const char *buf, size_t size) {
+  Log("dev-write");
   device_t *device = (device_t *)file->inode->ptr;
   return device->ops->write(device, 0, buf, size);
 }
