@@ -16,6 +16,7 @@
 #define DEBUG
 //#define MEM_DEBUG
 //#define KMT_DEBUG
+//#define VFS_DEBUG
 #include <debug.h>
 
 #include <thread.h>

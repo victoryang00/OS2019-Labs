@@ -2,9 +2,9 @@
 #include <file.h>
 
 inode_t *inode_search(inode_t *cur, const char *path) {
-  CLog(FG_BLUE, "looking for %s from %s", path, cur->path);
+  CVFSLog(FG_BLUE, "looking for %s from %s", path, cur->path);
   for (inode_t *ip = cur->fchild; ip != NULL; ip = ip->cousin) {
-    CLog(FG_BLUE, "%s -> %s", cur->path, ip->path);
+    CVFSLog(FG_BLUE, "%s -> %s", cur->path, ip->path);
     if (!strncmp(path, ip->path, strlen(ip->path))) {
       if (strlen(path) == strlen(ip->path)) return ip;
       else return inode_search(ip, path);

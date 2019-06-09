@@ -17,7 +17,7 @@ inline mnt_t *find_mnt(const char *path) {
       }
     }
   }
-  Log("%s is mounted by %s", path, ret->path);
+  VFSLog("%s is mounted by %s", path, ret->path);
   return ret;
 }
 
@@ -98,7 +98,7 @@ int vfs_mount(const char *path, filesystem_t *fs) {
   Assert(strcmp(path, pp->path), "inode %s exists!", path);
   fs->root->parent = pp;
   inode_insert(pp, fs->root);
-  CLog(BG_YELLOW, "Path %s is mounted.", path);
+  CVFSLog(BG_YELLOW, "Path %s is mounted.", path);
   return 0;
 }
 
@@ -108,7 +108,7 @@ int vfs_unmount(const char *path) {
   mp->prev->next = mp->next;
   mp->next->prev = mp->prev;
   pmm->free(mp);
-  CLog(BG_YELLOW, "Path %s is unmounted.", path);
+  CVFSLog(BG_YELLOW, "Path %s is unmounted.", path);
   return 0;
 }
 
@@ -117,7 +117,7 @@ int vfs_readdir(const char *path, void *buf) {
   Assert(mp, "Path %s not mounted!", path);
   inode_t *ip = mp->fs->ops->lookup(mp->fs, path, O_RDONLY);
   if (!ip) return E_NOENT;
-  Log("inode has fs %s", mp->fs->name);
+  VFSLog("inode has fs %s", mp->fs->name);
   return ip->ops->readdir(mp->fs, ip, (char *)buf);
 }
 

@@ -6,6 +6,14 @@
 #include <klib.h>
 #include <devices.h>
 
+#ifdef VFS_DEBUG
+#define VFSLog(...)  Log(__VA_ARGS__)
+#define VFSCLog(...) CLog(__VA_ARGS__)
+#else
+#define VFSLog(...) 
+#define VFSCLog(...)
+#endif
+
 struct fsops {
   void (*init)(filesystem_t *fs, const char *path, device_t *dev);
   inode_t *(*lookup)(filesystem_t *fs, const char *path, int flags);

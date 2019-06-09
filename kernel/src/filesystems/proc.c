@@ -22,7 +22,7 @@ filesystem_t procfs = {
 void mount_procfs() {
   procfs_init(&procfs, "/proc", NULL);
   vfs->mount("/proc", &procfs);
-  CLog(BG_YELLOW, "/proc initialiezd.");
+  CVFSLog(BG_YELLOW, "/proc initialiezd.");
 }
 
 int procops_open(filesystem_t *fs, file_t *file, int flags) {
@@ -144,7 +144,7 @@ void procfs_init(filesystem_t *fs, const char *path, device_t *dev) {
 
   // add all procs again
   for (task_t *tp = root_task.next; tp != NULL; tp = tp->next) {
-    CLog(BG_YELLOW, "add inode of %s/%d", path, tp->pid);
+    CVFSLog(BG_YELLOW, "add inode of %s/%d", path, tp->pid);
     inode_t *ip = pmm->alloc(sizeof(inode_t));
     ip->type = TYPE_PROC;
     ip->flags = P_RD;

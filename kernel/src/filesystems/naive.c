@@ -345,7 +345,7 @@ int naive_readdir(filesystem_t *fs, inode_t *inode, char *ret) {
   sprintf(ret, "ls %s:\n", inode->path);
   strcat(ret, " + TYPE PRIV SIZE FILENAME\n");
   for (inode_t *ip = inode->fchild; ip != NULL; ip = ip->cousin) {
-    CLog(FG_PURPLE, "%s %s", inode_types_human[ip->type], ip->path);
+    CVFSLog(FG_PURPLE, "%s %s", inode_types_human[ip->type], ip->path);
     strcat(ret, " - ");
     strcat(ret, inode_types_human[ip->type]);
     strcat(ret, " ");
@@ -383,11 +383,11 @@ int naive_readdir(filesystem_t *fs, inode_t *inode, char *ret) {
 void mount_naivefs() {
   device_t *dev = dev_lookup("ramdisk0");
   naivefs_init(&naivefs, "/", dev);
-  CLog(BG_YELLOW, "/ initialized.");
+  CVFSLog(BG_YELLOW, "/ initialized.");
   
   dev = dev_lookup("ramdisk1");
   naivefs_init(&emptyfs, "/mnt", dev);
-  CLog(BG_YELLOW, "/mnt initialized.");
+  CVFSLog(BG_YELLOW, "/mnt initialized.");
   vfs->mount("/mnt", &emptyfs);
 }
 
@@ -466,7 +466,7 @@ inode_t *naivefs_lookup(filesystem_t *fs, const char *path, int flags) {
     }
   } else {
     if (flags & O_CREAT) {
-      Log("not found. create a new one!");
+      VFSLog("not found. create a new one!");
       size_t len = strlen(path);
       if (len - strlen(fs->root->path) >= 23) return NULL; // naivefs limitation
       for (size_t i = strlen(ip->path) + 1; i < len; ++i) {
@@ -481,9 +481,9 @@ inode_t *naivefs_lookup(filesystem_t *fs, const char *path, int flags) {
       };
       sprintf(entry.path, "%s", path + strlen(fs->root->path));
       ++params->min_free;
-      Log("data will be in blk %d", entry.head);
+      VFSLog("data will be in blk %d", entry.head);
       int32_t blk = naivefs_add_entry(fs, &entry);
-      Log("entry is put in blk %d", blk);
+      VFSLog("entry is put in blk %d", blk);
 
       inode_t *pp = ip;
       ip = pmm->alloc(sizeof(inode_t));
