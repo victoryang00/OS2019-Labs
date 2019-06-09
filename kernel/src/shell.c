@@ -131,7 +131,7 @@ FUNC(ls) {
     sprintf(ret, "Invalid directory address.\n");
   } else {
     if (vfs->access(dir, O_RDONLY)) {
-      sprintf(ret, "Cannot access %s.\n");
+      sprintf(ret, "Precheck failed: cannot access %s.\n");
     } else {
       vfs->readdir(dir, ret);
     }
@@ -144,7 +144,7 @@ FUNC(cd) {
     sprintf(ret, "Invalid directory address.\n");
   } else {
     if (vfs->access(dir, O_RDONLY)) {
-      sprintf(ret, "Cannot access %s.\n");
+      sprintf(ret, "Precheck failed: cannot access %s.\n");
     } else {
       inode_t *ip = inode_search(root, dir);
       if (ip->type == TYPE_MNTP || ip->type == TYPE_DIRC) {
@@ -163,7 +163,7 @@ FUNC(cat) {
     sprintf(ret, "Invalid directory address.\n");
   } else {
     if (vfs->access(dir, O_RDONLY)) {
-      sprintf(ret, "Cannot access %s.\n");
+      sprintf(ret, "Precheck failed: cannot access %s.\n");
     } else {
       int fd = vfs->open(dir, O_RDONLY);
       if (fd == -1) {
@@ -193,7 +193,7 @@ FUNC(write) {
     sprintf(ret, "Invalid directory address.\n");
   } else {
     if (vfs->access(dir, O_WRONLY | O_CREAT)) {
-      sprintf(ret, "Cannot access %s.\n");
+      sprintf(ret, "Precheck failed: cannot access %s.\n");
     } else {
       int fd = vfs->open(dir, O_WRONLY | O_CREAT);
       if (fd == -1) {
@@ -213,7 +213,7 @@ FUNC(mkdir) {
     sprintf(ret, "Invalid directory address.\n");
   } else {
     if (vfs->access(dir, O_RDWR | O_CREAT)) {
-      sprintf(ret, "Cannot access %s.\n");
+      sprintf(ret, "Precheck failed: cannot access %s.\n");
     } else {
       if (!vfs->mkdir(dir)) {
         sprintf(ret, "Successfully created folder %s.\n", dir);
@@ -230,7 +230,7 @@ FUNC(rmdir) {
     sprintf(ret, "Invalid directory address.\n");
   } else {
     if (vfs->access(dir, O_WRONLY)) {
-      sprintf(ret, "Cannot access %s.\n");
+      sprintf(ret, "Precheck failed: cannot access %s.\n");
     } else {
       if (!vfs->mkdir(dir)) {
         sprintf(ret, "Successfully removed folder %s.\n", dir);
@@ -247,7 +247,7 @@ FUNC(rm) {
     sprintf(ret, "Invalid directory address.\n");
   } else {
     if (vfs->access(dir, O_WRONLY)) {
-      sprintf(ret, "Cannot access %s.\n");
+      sprintf(ret, "Precheck failed: cannot access %s.\n");
     } else {
       int status = vfs->unlink(dir);
       if (!status) {
