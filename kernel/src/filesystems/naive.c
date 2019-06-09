@@ -284,7 +284,7 @@ int naive_rmdir(filesystem_t *fs, const char *path) {
 }
 
 int naive_link(filesystem_t *fs, const char *path, inode_t *inode) {
-  if (inode->type != TYPE_FILE) return -1;
+  if (inode->type != TYPE_FILE && inode->type != TYPE_LINK) return -1;
 
   inode_t *pp = inode_search(root, path);
   if (strlen(pp->path) == strlen(path)) return -2;
