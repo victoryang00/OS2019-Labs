@@ -52,7 +52,7 @@ inline void procfs_self() {
   sprintf(ip->path, "/proc/self");
   ip->fs = &procfs;
   ip->ops = pmm->alloc(sizeof(inodeops_t));
-  memcpy(ip->ops, &common_ops, sizeof(inodeops_t));
+  memcpy(ip->ops, &naive_ops, sizeof(inodeops_t));
   ip->ops->read = procops_read;
 
   ip->parent = ip->fs->root;
@@ -69,7 +69,7 @@ inline void procfs_cpuinfo() {
   sprintf(ip->path, "/proc/cpuinfo");
   ip->fs = &procfs;
   ip->ops = pmm->alloc(sizeof(inodeops_t));
-  memcpy(ip->ops, &common_ops, sizeof(inodeops_t));
+  memcpy(ip->ops, &naive_ops, sizeof(inodeops_t));
   ip->ops->read = procops_read;
 
   ip->parent = ip->fs->root;
@@ -86,7 +86,7 @@ inline void procfs_meminfo() {
   sprintf(ip->path, "/proc/meminfo");
   ip->fs = &procfs;
   ip->ops = pmm->alloc(sizeof(inodeops_t));
-  memcpy(ip->ops, &common_ops, sizeof(inodeops_t));
+  memcpy(ip->ops, &naive_ops, sizeof(inodeops_t));
   ip->ops->read = procops_read;
 
   ip->parent = ip->fs->root;
@@ -126,7 +126,7 @@ void procfs_init(filesystem_t *fs, const char *path, device_t *dev) {
     sprintf(ip->path, "%s/%d", path, tp->pid);
     ip->fs = fs;
     ip->ops = pmm->alloc(sizeof(inodeops_t));
-    memcpy(ip->ops, &common_ops, sizeof(inodeops_t));
+    memcpy(ip->ops, &naive_ops, sizeof(inodeops_t));
     ip->ops->read = procops_read;
 
     ip->parent = fs->root;

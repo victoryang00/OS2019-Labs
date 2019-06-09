@@ -47,7 +47,7 @@ void devfs_init(filesystem_t *fs, const char *path, device_t *dev) {
     sprintf(ip->path, "%s/%s", path, devices[i]->name);
     ip->fs = fs;
     ip->ops = pmm->alloc(sizeof(inodeops_t));
-    memcpy(ip->ops, &common_ops, sizeof(inodeops_t));
+    memcpy(ip->ops, naive_ops, sizeof(inodeops_t));
     ip->ops->read = devops_read;
     ip->ops->write = devops_write;
 
