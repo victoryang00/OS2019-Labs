@@ -193,7 +193,7 @@ int common_mkdir(filesystem_t *fs, const char *path) {
     .type = TYPE_DIRC,
     .flags = P_RD | P_WR,
   };
-  snprintf(entry.path, path, 24);
+  snprintf(entry.path, 24, path);
   commonfs_add_entry(fs, &entry);
   
   inode_t *ip = pmm->alloc(sizeof(inode_t));
