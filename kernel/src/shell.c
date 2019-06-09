@@ -216,9 +216,9 @@ FUNC(mkdir) {
       sprintf(ret, "Cannot access %s.\n");
     } else {
       if (!vfs->mkdir(dir)) {
-        sprintf(ret, "Successfully created folder %s.", dir);
+        sprintf(ret, "Successfully created folder %s.\n", dir);
       } else {
-        sprintf(ret, "VFS ERROR: mkdir failed.");
+        sprintf(ret, "VFS ERROR: mkdir failed.\n");
       }
     }
   }
@@ -233,9 +233,9 @@ FUNC(rmdir) {
       sprintf(ret, "Cannot access %s.\n");
     } else {
       if (!vfs->mkdir(dir)) {
-        sprintf(ret, "Successfully removed folder %s.", dir);
+        sprintf(ret, "Successfully removed folder %s.\n", dir);
       } else {
-        sprintf(ret, "VFS ERROR: rmdir failed.");
+        sprintf(ret, "VFS ERROR: rmdir failed.\n");
       }
     }
   }
@@ -250,9 +250,9 @@ FUNC(rm) {
       sprintf(ret, "Cannot access %s.\n");
     } else {
       if (!vfs->unlink(dir)) {
-        sprintf(ret, "Successfully removed %s.", dir);
+        sprintf(ret, "Successfully removed %s.\n", dir);
       } else {
-        sprintf(ret, "VFS ERROR: unlink failed.");
+        sprintf(ret, "VFS ERROR: unlink failed.\n");
       }
     }
   }
