@@ -249,7 +249,8 @@ FUNC(rm) {
     if (vfs->access(dir, O_WRONLY)) {
       sprintf(ret, "Cannot access %s.\n");
     } else {
-      if (!(int status = vfs->unlink(dir))) {
+      int status = vfs->unlink(dir);
+      if (!status) {
         sprintf(ret, "Successfully removed %s.\n", dir);
       } else {
         sprintf(ret, "VFS ERROR: unlink failed with status %d.\n"
