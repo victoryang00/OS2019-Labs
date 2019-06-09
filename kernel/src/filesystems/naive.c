@@ -381,7 +381,7 @@ void naivefs_init(filesystem_t *fs, const char *path, device_t *dev) {
       ip->refcnt = 0;
       ip->type = (int)entry.type;
       ip->flags = (int)entry.flags;
-      ip->blk = (void *)(entry.head);
+      ip->blk = entry.head;
       sprintf(ip->path, "%s", path);
       if (path[strlen(path) - 1] == '/') {
         ip->path[strlen(path) - 1] = '\0';
