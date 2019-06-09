@@ -445,7 +445,7 @@ int naivefs_close(inode_t *inode) {
     int32_t blk = (int32_t)inode->ptr;
     naivefs_entry_t entry = naivefs_get_entry(inode->fs, blk);
     entry.type = TYPE_INVL;
-    naivefs_put_entry(fs, blk, &entry);
+    naivefs_put_entry(inode->fs, blk, &entry);
     inode_remove(inode->parent, inode);
   }
   return 0;
