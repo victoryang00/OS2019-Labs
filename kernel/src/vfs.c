@@ -133,6 +133,7 @@ int vfs_unmount(const char *path) {
 }
 
 int vfs_readdir(const char *path, void *buf) {
+  Log("readdir");
   spinlock_acquire(&vfs_lock);
 
   mnt_t *mp = find_mnt(path);
@@ -151,6 +152,7 @@ int vfs_readdir(const char *path, void *buf) {
 }
 
 int vfs_mkdir(const char *path) {
+  Log("mkdir");
   spinlock_acquire(&vfs_lock);
 
   mnt_t *mp = find_mnt(path);
@@ -162,6 +164,7 @@ int vfs_mkdir(const char *path) {
 }
 
 int vfs_rmdir(const char *path) {
+  Log("rmdir");
   spinlock_acquire(&vfs_lock);
 
   mnt_t *mp = find_mnt(path);
@@ -173,6 +176,7 @@ int vfs_rmdir(const char *path) {
 }
 
 int vfs_link(const char *oldpath, const char *newpath) {
+  Log("link");
   spinlock_acquire(&vfs_lock);
 
   mnt_t *mp = find_mnt(oldpath);
@@ -185,6 +189,7 @@ int vfs_link(const char *oldpath, const char *newpath) {
 }
 
 int vfs_unlink(const char *path) {
+  Log("unlink");
   spinlock_acquire(&vfs_lock);
 
   mnt_t *mp = find_mnt(path);
