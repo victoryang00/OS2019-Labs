@@ -174,9 +174,8 @@ int vfs_open(const char *path, int flags) {
   fp->inode = ip;
   fp->offset = 0;
 
-  int status = naive_open(mp->fs, fp, flags);
+  int status = ip->ops->open(mp->fs, fp, flags);
   if (status) {
-    Log("status %d", status);
     return status;
   } else {
     cur->fildes[fd] = fp;
