@@ -122,7 +122,14 @@ fsops_t naivefs_ops = {
 };
 
 filesystem_t naivefs = {
-  .name = "naivefs0",
+  .name = "naivefs",
+  .root = NULL,
+  .ops  = &naivefs_ops,
+  .dev  = NULL,
+};
+
+filesystem_t emptyfs = {
+  .name = "emptyfs",
   .root = NULL,
   .ops  = &naivefs_ops,
   .dev  = NULL,
