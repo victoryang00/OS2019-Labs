@@ -34,22 +34,22 @@ void vfs_init() {
   sprintf(root->path, "/");
   root->offset = 0;
   root->size = 4;
-  root->fs = &commonfs;
-  root->ops = &common_ops;
+  root->fs = &naivefs;
+  root->ops = &naive_ops;
   root->parent = root;
   root->fchild = NULL;
   root->cousin = NULL;
-  commonfs.root = root;
+  naivefs.root = root;
 
   mnt_root.path = "/";
-  mnt_root.fs = &commonfs;
+  mnt_root.fs = &naivefs;
   mnt_root.next = &mnt_head;
   mnt_root.prev = &mnt_head;
   mnt_head.next = &mnt_root;
   mnt_head.prev = &mnt_root;
 
-  extern void mount_commonfs();
-  mount_commonfs();
+  extern void mount_naivefs();
+  mount_naivefs();
   
   extern void mount_devfs();
   mount_devfs();
@@ -93,7 +93,7 @@ int vfs_mount(const char *path, filesystem_t *fs) {
   ip->fchild = NULL;
   ip->cousin = NULL;
   ip->ops = pmm->alloc(sizeof(inodeops_t));
-  memcpy(ip->ops, &common_ops, sizeof(inodeops_t));
+  memcpy(ip->ops, &naive_ops, sizeof(inodeops_t));
 
   inode_insert(pp, ip);
   CLog(BG_YELLOW, "Path %s is mounted.", path);
