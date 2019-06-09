@@ -412,7 +412,7 @@ inode_t *naivefs_lookup(filesystem_t *fs, const char *path, int flags) {
       sprintf(ip->path, path);
       ip->offset = 0;
       ip->size = 0;
-      ip->fs = 0;
+      ip->fs = fs;
       ip->ops = pmm->alloc(sizeof(inodeops_t));
       memcpy(ip->ops, &naive_ops, sizeof(inodeops_t));
 
