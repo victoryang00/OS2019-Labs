@@ -143,6 +143,7 @@ ssize_t naive_read(filesystem_t *fs, file_t *file, char *buf, size_t size) {
   int32_t blk = (int32_t)file->inode->ptr;
   
   while (offset >= params->blk_size) {
+    Log("blk size is %d", params->blk_size);
     offset -= params->blk_size;
     blk = naivefs_get_next_blk(fs, blk);
     if (blk == 0) return 0;
@@ -173,6 +174,7 @@ ssize_t naive_write(filesystem_t *fs, file_t *file, const char *buf, size_t size
   int32_t blk = (int32_t)file->inode->ptr;
   
   while (offset >= params->blk_size) {
+    Log("blk size is %d", params->blk_size);
     offset -= params->blk_size;
     blk = naivefs_get_next_blk(fs, blk);
     if (blk == 0) return 0;
