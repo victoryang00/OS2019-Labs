@@ -194,7 +194,7 @@ int common_mkdir(filesystem_t *fs, const char *path) {
     .flags = P_RD | P_WR,
   };
   snprintf(entry.path, path, 24);
-  commonfs_add_entry(fs, entry);
+  commonfs_add_entry(fs, &entry);
   
   inode_t *ip = pmm->alloc(sizeof(inode_t));
   ip->refcnt = 0;
@@ -219,7 +219,7 @@ int common_rmdir(filesystem_t *fs, const char *path) {
 }
 
 int common_link(filesystem_t *fs, const char *path, inode_t *inode) {
-  inode_t *pp = fs->ops->lookup(fs, name, O_RDWR);
+  inode_t *pp = fs->ops->lookup(fs, path, O_RDWR);
   if (strlen(pp->path) == strlen(name)) {
     return -1;
   }
@@ -243,7 +243,7 @@ int common_link(filesystem_t *fs, const char *path, inode_t *inode) {
 }
 
 int common_unlink(filesystem_t *fs, const char *path) {
-  inode_t *ip = fs->ops->lookup(fs, name, O_RDWR);
+  inode_t *ip = fs->ops->lookup(fs, path, O_RDWR);
   if (ip->type != TYPE_FILE || ip->type != TYPE_LINK) {
     return -1;
   }
