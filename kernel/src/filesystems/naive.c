@@ -142,7 +142,7 @@ ssize_t naive_read(filesystem_t *fs, file_t *file, char *buf, size_t size) {
   inode_t *ip = file->inode;
   while (ip->type == TYPE_LINK) ip = (inode_t *)ip->ptr;
   off_t offset = ip->offset;
-  int32_t blk = (int32_t)ip->ptr;
+  int32_t blk = ip->blk;
   
   while (offset >= params->blk_size) {
     offset -= params->blk_size;
@@ -174,7 +174,7 @@ ssize_t naive_write(filesystem_t *fs, file_t *file, const char *buf, size_t size
   inode_t *ip = file->inode;
   while (ip->type == TYPE_LINK) ip = (inode_t *)ip->ptr;
   off_t offset = ip->offset;
-  int32_t blk = (int32_t)ip->ptr;
+  int32_t blk = ip->blk;
   
   while (offset >= params->blk_size) {
     offset -= params->blk_size;
@@ -243,7 +243,7 @@ int naive_mkdir(filesystem_t *fs, const char *path) {
   ip->refcnt = 0;
   ip->type = TYPE_DIRC;
   ip->flags = P_RD | P_WR;
-  ip->ptr = (void *)blk;
+  ip->blk = blk;
   sprintf(ip->path, path);
   ip->offset = 0;
   ip->size = 4;
@@ -265,7 +265,7 @@ int naive_rmdir(filesystem_t *fs, const char *path) {
   if (!(ip->flags & O_WRONLY)) return -3;
   if (ip->fchild) return -4;
 
-  int32_t blk = (int32_t)ip->ptr;
+  int32_t blk = ip->blk;
   naivefs_entry_t entry = naivefs_get_entry(fs, blk);
   entry.type = TYPE_INVL;
   naivefs_put_entry(fs, blk, &entry);
@@ -287,13 +287,14 @@ int naive_link(filesystem_t *fs, const char *path, inode_t *inode) {
   };
   if(strlen(path) >= 23) return -3; // naivefs limitation
   sprintf(entry.path, path);
-  naivefs_add_entry(fs, &entry);
+  int32_t blk = naivefs_add_entry(fs, &entry);
 
   inode_t *ip = pmm->alloc(sizeof(inode_t));
   ip->refcnt = 0;
   ip->type = TYPE_LINK;
   ip->flags = P_RD | P_WR;
   ip->ptr = (void *)inode;
+  ip->blk = blk;
   sprintf(ip->path, path);
   ip->offset = 0;
   ip->size = sizeof(void *);
@@ -314,7 +315,7 @@ int naive_unlink(filesystem_t *fs, const char *path) {
   if (ip->type != TYPE_FILE && ip->type != TYPE_LINK) return -2;
   if (!(ip->flags & O_WRONLY)) return -3;
 
-  int32_t blk = (int32_t)ip->ptr;
+  int32_t blk = ip->blk;
   naivefs_entry_t entry = naivefs_get_entry(fs, blk);
   entry.type = TYPE_INVL;
   naivefs_put_entry(fs, blk, &entry);
@@ -380,7 +381,7 @@ void naivefs_init(filesystem_t *fs, const char *path, device_t *dev) {
       ip->refcnt = 0;
       ip->type = (int)entry.type;
       ip->flags = (int)entry.flags;
-      ip->ptr = (void *)(entry.head);
+      ip->blk = (void *)(entry.head);
       sprintf(ip->path, "%s", path);
       if (path[strlen(path) - 1] == '/') {
         ip->path[strlen(path) - 1] = '\0';
@@ -432,7 +433,7 @@ inode_t *naivefs_lookup(filesystem_t *fs, const char *path, int flags) {
       ip->refcnt = 0;
       ip->type = TYPE_FILE;
       ip->flags = P_RD | P_WR;
-      ip->ptr = (void *)blk;
+      ip->blk = blk;
       sprintf(ip->path, path);
       ip->offset = 0;
       ip->size = 0;
@@ -453,7 +454,7 @@ inode_t *naivefs_lookup(filesystem_t *fs, const char *path, int flags) {
 
 int naivefs_close(inode_t *inode) {
   if (inode->type == TYPE_FILE && inode->size <= 0) {
-    int32_t blk = (int32_t)inode->ptr;
+    int32_t blk = inode->blk;
     naivefs_entry_t entry = naivefs_get_entry(inode->fs, blk);
     entry.type = TYPE_INVL;
     naivefs_put_entry(inode->fs, blk, &entry);

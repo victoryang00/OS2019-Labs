@@ -55,6 +55,7 @@ struct inode {
   int type;
   int flags;
   void *ptr;
+  int32_t blk;
   char path[256];
   off_t offset;
   size_t size;
