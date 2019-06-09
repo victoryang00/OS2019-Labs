@@ -287,7 +287,7 @@ int naive_link(filesystem_t *fs, const char *path, inode_t *inode) {
   };
   if(strlen(path) >= 23) return -3; // naivefs limitation
   sprintf(entry.path, path);
-  int32_t blk = naivefs_add_entry(fs, &entry);
+  naivefs_add_entry(fs, &entry);
 
   inode_t *ip = pmm->alloc(sizeof(inode_t));
   ip->refcnt = 0;
