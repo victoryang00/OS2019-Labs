@@ -393,6 +393,7 @@ void naivefs_init(filesystem_t *fs, const char *path, device_t *dev) {
 
   naivefs_params_t *params = (naivefs_params_t *)fs->root->ptr;
   if (params->blk_size == 0) {
+    Log("new disk!");
     params->blk_size  = 0x00000020;
     params->map_head  = 0x00000010;
     params->data_head = 0x00000200;
@@ -406,6 +407,7 @@ void naivefs_init(filesystem_t *fs, const char *path, device_t *dev) {
     };
     sprintf(entry.path, "/");
     naivefs_add_entry(fs, &entry);
+    Log("initialized");
   }
 
   int32_t blk = 1;
