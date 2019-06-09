@@ -23,7 +23,7 @@ filesystem_t devfs = {
 void mount_devfs() {
   devfs_init(&devfs, "/dev", NULL);
   vfs->mount("/dev", &devfs);
-  CVFSLog(BG_YELLOW, "/dev initialiezd.");
+  VFSCLog(BG_YELLOW, "/dev initialiezd.");
 }
 
 int devops_open(filesystem_t *fs, file_t *file, int flags) {
@@ -67,7 +67,7 @@ void devfs_init(filesystem_t *fs, const char *path, device_t *dev) {
   }
 
   for (int i = 0; i < nr_devices; ++i) {
-    CVFSLog(BG_YELLOW, "add inode of %s/%s", path, devices[i]->name);
+    VFSCLog(BG_YELLOW, "add inode of %s/%s", path, devices[i]->name);
     inode_t *ip = pmm->alloc(sizeof(inode_t));
     ip->type = TYPE_DEVI;
     ip->flags = P_RD | P_WR;
