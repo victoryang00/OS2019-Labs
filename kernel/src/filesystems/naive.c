@@ -139,8 +139,10 @@ int naive_close(filesystem_t *fs, file_t *file) {
 
 ssize_t naive_read(filesystem_t *fs, file_t *file, char *buf, size_t size) {
   naivefs_params_t *params = (naivefs_params_t *)fs->root->ptr;
-  off_t offset = file->inode->offset;
-  int32_t blk = (int32_t)file->inode->ptr;
+  inode_t *ip = file->inode;
+  while (ip->type == TYPE_LINK) ip = (inode_t *)ip->ptr;
+  off_t offset = ip->offset;
+  int32_t blk = (int32_t)ip->ptr;
   
   while (offset >= params->blk_size) {
     offset -= params->blk_size;
@@ -169,8 +171,10 @@ ssize_t naive_read(filesystem_t *fs, file_t *file, char *buf, size_t size) {
 
 ssize_t naive_write(filesystem_t *fs, file_t *file, const char *buf, size_t size) {
   naivefs_params_t *params = (naivefs_params_t *)fs->root->ptr;
-  off_t offset = file->inode->offset;
-  int32_t blk = (int32_t)file->inode->ptr;
+  inode_t *ip = file->inode;
+  while (ip->type == TYPE_LINK) ip = (inode_t *)ip->ptr;
+  off_t offset = ip->offset;
+  int32_t blk = (int32_t)ip->ptr;
   
   while (offset >= params->blk_size) {
     offset -= params->blk_size;
@@ -198,26 +202,28 @@ ssize_t naive_write(filesystem_t *fs, file_t *file, const char *buf, size_t size
     ++params->min_free;
   }
 
-  if (file->inode->offset + nwrite > file->inode->size) {
-    file->inode->size = file->inode->offset + nwrite;
+  if (ip->offset + nwrite > ip->size) {
+    ip->size = ip->offset + nwrite;
   }
   return nwrite;
 }
 
 off_t naive_lseek(filesystem_t *fs, file_t *file, off_t offset, int whence) {
+  inode_t *ip = file->inode;
+  while (ip->type == TYPE_LINK) ip = (inode_t *)ip->ptr;
   switch (whence) {
     case SEEK_SET:
-      file->inode->offset = offset;
+      ip->offset = offset;
       break;
     case SEEK_CUR:
-      file->inode->offset += offset;
+      ip->offset += offset;
       break;
     case SEEK_END:
     default:
-      file->inode->offset = file->inode->size + offset;
+      ip->offset = ip->size + offset;
       break;
   }
-  return file->inode->offset;
+  return ip->offset;
 }
 
 int naive_mkdir(filesystem_t *fs, const char *path) {
@@ -269,25 +275,25 @@ int naive_rmdir(filesystem_t *fs, const char *path) {
 }
 
 int naive_link(filesystem_t *fs, const char *path, inode_t *inode) {
+  if (inode->type != TYPE_FILE) return -1;
+
   inode_t *pp = inode_search(root, path);
-  if (strlen(pp->path) == strlen(path)) {
-    return -1;
-  }
+  if (strlen(pp->path) == strlen(path)) return -2;
 
   naivefs_entry_t entry = {
     .head = 0x00000000,
     .type = TYPE_LINK,
     .flags = P_RD | P_WR,
   };
-  if(strlen(path) >= 23) return -1; // naivefs limitation
+  if(strlen(path) >= 23) return -3; // naivefs limitation
   sprintf(entry.path, path);
   int32_t blk = naivefs_add_entry(fs, &entry);
 
   inode_t *ip = pmm->alloc(sizeof(inode_t));
   ip->refcnt = 0;
   ip->type = TYPE_LINK;
-  ip->flags = inode->flags;
-  ip->ptr = (void *)blk;
+  ip->flags = P_RD | P_WR;
+  ip->ptr = (void *)inode;
   sprintf(ip->path, path);
   ip->offset = 0;
   ip->size = sizeof(void *);
@@ -340,6 +346,10 @@ int naive_readdir(filesystem_t *fs, inode_t *inode, char *ret) {
     char size[8] = "";
     if (ip->type == TYPE_FILE) {
       snprintf(size, 4, "%04d", ip->size);
+    } else if (ip->type == TYPE_LINK) {
+      inode_t *rip = ip;
+      while (rip->type == TYPE_LINK) rip = (inode_t *)rip->ptr;
+      snprintf(size, 4, "%04d", rip->size);
     } else {
       snprintf(size, 4, "----");
     }

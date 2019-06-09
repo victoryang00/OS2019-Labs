@@ -233,7 +233,11 @@ FUNC(link) {
       if (!status) {
         sprintf(ret, "Linked %s -> %s successfully.\n", dir1, dir2);
       } else {
-        sprintf(ret, "VFS ERROR: link returned with status %d.\n", status);
+        sprintf(ret, "VFS ERROR: link failed with status %d.\n"
+            "Possible reasons:\n"
+            " -1: target is not a file.\n"
+            " -2: target is not available.\n"
+            " -3: filename is too long.\n", status);
       }
     }
   }
