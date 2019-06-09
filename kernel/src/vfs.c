@@ -69,25 +69,27 @@ int vfs_access(const char *path, int mode) {
   mnt_t *mp = find_mnt(path);
   Assert(mp, "Path %s not mounted!", path);
   inode_t *ip = inode_search(root, path);
+
+  int ret = 0;
   if (strlen(ip->path) == strlen(path)) {
-    if ((mode & ip->flags) == (mode & ~O_CREAT)) {
-      return 0;
-    } else {
-      return -1;
+    if ((mode & ip->flags) != (mode & ~O_CREAT)) {
+      ret = E_BADPR;
     }
   } else {
     if (mode & O_CREAT) {
       size_t len = strlen(path);
       for (size_t i = strlen(ip->path) + 1; i < len; ++i) {
-        if (path[i] == '/') return -3;
+        if (path[i] == '/') {
+          ret = E_NOENT;
+          break;
+        }
       }
-      return 0;
     } else {
-      return -2;
+      ret = E_NOENT;
     }
   }
-
   spinlock_release(&vfs_lock);
+  return ret;
 }
 
 int vfs_mount(const char *path, filesystem_t *fs) {
