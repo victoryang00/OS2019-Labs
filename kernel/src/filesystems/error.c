@@ -39,7 +39,7 @@ int error_unlink(filesystem_t *fs, const char *path) {
 }
 
 int error_readdir(filesystem_t *fs, inode_t *inode, char *ret) {
-  return E_BADFS;
+  return naive_readdir(fs, inode, ret);
 }
 
 inodeops_t error_ops = {

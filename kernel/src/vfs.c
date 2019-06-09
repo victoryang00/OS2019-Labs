@@ -96,19 +96,6 @@ int vfs_mount(const char *path, filesystem_t *fs) {
 
   inode_t *pp = inode_search(root, path);
   Assert(strcmp(path, pp->path), "inode %s exists!", path);
-  inode_t *ip = pmm->alloc(sizeof(inode_t));
-  fs->root = ip;
-  ip->type = TYPE_MNTP;
-  ip->flags = P_RD;
-  ip->fs = fs;
-  ip->ptr = NULL;
-  sprintf(ip->path, "%s", path);
-  ip->parent = pp;
-  ip->fchild = NULL;
-  ip->cousin = NULL;
-  ip->ops = pmm->alloc(sizeof(inodeops_t));
-  memcpy(ip->ops, &naive_ops, sizeof(inodeops_t));
-
   inode_insert(pp, ip);
   CLog(BG_YELLOW, "Path %s is mounted.", path);
   return 0;

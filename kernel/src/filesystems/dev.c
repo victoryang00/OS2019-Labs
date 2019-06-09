@@ -21,9 +21,8 @@ filesystem_t devfs = {
 };
 
 void mount_devfs() {
-  vfs->mount("/dev", &devfs);
-
   devfs_init(&devfs, "/dev", NULL);
+  vfs->mount("/dev", &devfs);
   CLog(BG_YELLOW, "/dev initialiezd.");
 }
 
@@ -38,6 +37,20 @@ ssize_t devops_write(filesystem_t *fs, file_t *file, const char *buf, size_t siz
 }
 
 void devfs_init(filesystem_t *fs, const char *path, device_t *dev) {
+  if (!fs->root) {
+    fs->root = pmm->alloc(sizeof(inode_t));
+    fs->root->type = TYPE_MNTP;
+    fs->root->flags = P_RD;
+    fs->root->fs = fs;
+    fs->root->ptr = NULL;
+    sprintf(fs->root->path, path);
+    fs->root->parent = pp;
+    fs->root->fchild = NULL;
+    fs->root->cousin = NULL;
+    fs->root->ops = pmm->alloc(sizeof(inodeops_t));
+    memcpy(fs->root->ops, &error_ops, sizeof(inodeops_t));
+  }
+
   for (int i = 0; i < nr_devices; ++i) {
     CLog(BG_YELLOW, "add inode of %s/%s", path, devices[i]->name);
     inode_t *ip = pmm->alloc(sizeof(inode_t));

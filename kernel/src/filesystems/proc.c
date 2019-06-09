@@ -20,9 +20,8 @@ filesystem_t procfs = {
 };
 
 void mount_procfs() {
-  vfs->mount("/proc", &procfs);
-
   procfs_init(&procfs, "/proc", NULL);
+  vfs->mount("/proc", &procfs);
   CLog(BG_YELLOW, "/proc initialiezd.");
 }
 
@@ -96,6 +95,20 @@ inline void procfs_meminfo() {
 }
 
 void procfs_init(filesystem_t *fs, const char *path, device_t *dev) {
+  if (!fs->root) {
+    fs->root = pmm->alloc(sizeof(inode_t));
+    fs->root->type = TYPE_MNTP;
+    fs->root->flags = P_RD;
+    fs->root->fs = fs;
+    fs->root->ptr = NULL;
+    sprintf(fs->root->path, path);
+    fs->root->parent = pp;
+    fs->root->fchild = NULL;
+    fs->root->cousin = NULL;
+    fs->root->ops = pmm->alloc(sizeof(inodeops_t));
+    memcpy(fs->root->ops, &error_ops, sizeof(inodeops_t));
+  }
+
   if (fs->root->fchild == NULL) {
     // first init, add /self, /cpuinfo, /meminfo
     procfs_self();
