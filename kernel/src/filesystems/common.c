@@ -119,9 +119,9 @@ ssize_t common_read(filesystem_t *fs, file_t *file, char *buf, size_t size) {
     commonfs_entry_t entry = commonfs_get_entry(fs, blk);
     ssize_t delta = 0;
     if (params->blk_size - offset >= size) {
-      delta = snprintf(buf, size, entry.content + offset);
+      delta = snprintf(buf + nread, size, entry.content + offset);
     } else {
-      delta = snprintf(buf, params->blk_size - offset, entry.content + offset);
+      delta = snprintf(buf + nread, params->blk_size - offset, entry.content + offset);
     }
     if (delta == 0) break;
     size -= delta;
