@@ -63,7 +63,7 @@ int vfs_access(const char *path, int mode) {
   Assert(mp, "Path %s not mounted!", path);
   inode_t *ip = inode_search(root, path);
   if (strlen(ip->path) == strlen(path)) {
-    if ((mode & ip->flags) == mode) {
+    if ((mode & ip->flags) == (mode & ~O_CREAT)) {
       return 0;
     } else {
       return -1;
