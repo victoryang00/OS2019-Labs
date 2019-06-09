@@ -26,6 +26,17 @@ void mount_devfs() {
   CLog(BG_YELLOW, "/dev initialiezd.");
 }
 
+int devops_open(filesystem_t *fs, file_t *file, int flags) {
+  if ((flags & file->inode->flags) != (flags & ~O_CREAT)) return E_BADPR;
+  file->inode->offset = 0;
+  return 0;
+}
+
+int devops_close(filesystem_t *fs, file_t *file) {
+  file->inode->offset = 0;
+  return fs->ops->close(file->inode);
+}
+
 ssize_t devops_read(filesystem_t *fs, file_t *file, char *buf, size_t size) {
   device_t *device = (device_t *)file->inode->ptr;
   return device->ops->read(device, 0, buf, size);
@@ -49,6 +60,8 @@ void devfs_init(filesystem_t *fs, const char *path, device_t *dev) {
     fs->root->cousin = NULL;
     fs->root->ops = pmm->alloc(sizeof(inodeops_t));
     memcpy(fs->root->ops, &error_ops, sizeof(inodeops_t));
+    fs->root->ops->open = devops_open;
+    fs->root->ops->close = devops_close;
     fs->root->ops->read = devops_read;
     fs->root->ops->write = devops_write;
   }
@@ -63,6 +76,8 @@ void devfs_init(filesystem_t *fs, const char *path, device_t *dev) {
     ip->fs = fs;
     ip->ops = pmm->alloc(sizeof(inodeops_t));
     memcpy(ip->ops, &error_ops, sizeof(inodeops_t));
+    ip->ops->open = devops_open;
+    ip->ops->close = devops_close;
     ip->ops->read = devops_read;
     ip->ops->write = devops_write;
 
