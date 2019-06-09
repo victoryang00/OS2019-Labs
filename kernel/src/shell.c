@@ -266,22 +266,18 @@ FUNC(rmdir) {
   if (!get_dir(arg, pwd, dir)) {
     sprintf(ret, "Invalid directory address.\n");
   } else {
-    if (vfs->access(dir, O_WRONLY)) {
-      sprintf(ret, "Precheck failed: cannot access %s.\n");
+    int status = vfs->rmdir(dir);
+    if (!status) {
+      sprintf(ret, "Successfully removed folder %s.\n", dir);
     } else {
-      int status = vfs->rmdir(dir);
-      if (!status) {
-        sprintf(ret, "Successfully removed folder %s.\n", dir);
-      } else {
-        sprintf(ret, "VFS ERROR: rmdir failed with status %d.\n"
-            "Possible reasons:\n"
-            " %d: dir does not exist.\n"
-            " %d: not a directory or is a mount point.\n"
-            " %d: dir has wrong privilege.\n"
-            " %d: dir is not empty.\n",
-            status, E_NOENT, E_BADTP, E_BADPR, E_NOEMP);
-      }
-    }
+      sprintf(ret, "VFS ERROR: rmdir failed with status %d.\n"
+          "Possible reasons:\n"
+          " %d: dir does not exist.\n"
+          " %d: not a directory or is a mount point.\n"
+          " %d: dir has wrong privilege.\n"
+          " %d: dir is not empty.\n",
+          status, E_NOENT, E_BADTP, E_BADPR, E_NOEMP);
+    } 
   }
 }
 
