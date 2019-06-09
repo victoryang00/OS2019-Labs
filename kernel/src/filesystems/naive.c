@@ -122,13 +122,14 @@ fsops_t naivefs_ops = {
 };
 
 filesystem_t naivefs = {
-  .name = "naivefs",
+  .name = "naivefs0",
   .root = NULL,
   .ops  = &naivefs_ops,
   .dev  = NULL,
 };
 
 int naive_open(filesystem_t *fs, file_t *file, int flags) {
+  if ((flags & file->inode->flags) != flags) return -1;
   return 0;
 }
 
@@ -309,7 +310,6 @@ int naive_readdir(filesystem_t *fs, inode_t *inode, char *ret) {
 }
 
 void mount_naivefs() {
-  //vfs->mount("/mnt", &naivefs);
   device_t *dev = dev_lookup("ramdisk0");
   naivefs_init(&naivefs, "/", dev);
   CLog(BG_YELLOW, "/ initialized.");
