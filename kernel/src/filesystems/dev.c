@@ -54,7 +54,7 @@ void devfs_init(filesystem_t *fs, const char *path, device_t *dev) {
     fs->root->flags = P_RD;
     fs->root->fs = fs;
     fs->root->ptr = NULL;
-    sprintf(fs->root->path, path);
+    sprintf(fs->root->path, "%s", path);
     fs->root->parent = NULL;
     fs->root->fchild = NULL;
     fs->root->cousin = NULL;

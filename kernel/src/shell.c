@@ -116,7 +116,7 @@ FUNC(ping) {
 }
 
 FUNC(fuck) {
-  sprintf(ret, "nm$l\n");
+  sprintf(ret, "No dirty words!\n");
 }
 
 FUNC(echo) {
