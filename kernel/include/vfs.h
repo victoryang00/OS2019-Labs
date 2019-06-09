@@ -11,7 +11,7 @@ struct fsops {
   inode_t *(*lookup)(filesystem_t *fs, const char *path, int flags);
   int (*close)(inode_t *inode);
 };
-extern fsops_t commonfs_ops;
+extern fsops_t naivefs_ops;
 
 struct filesystem {
   const char *name;
@@ -19,7 +19,7 @@ struct filesystem {
   fsops_t *ops;
   device_t *dev;
 };
-extern filesystem_t commonfs;
+extern filesystem_t naivefs;
 
 typedef struct mnt_table {
   const char *path;
@@ -28,8 +28,8 @@ typedef struct mnt_table {
   struct mnt_table *prev;
 } mnt_t;
 
-void commonfs_init(filesystem_t *fs, const char *name, device_t *dev);
-inode_t *commonfs_lookup(filesystem_t *fs, const char *path, int flags);
-int commonfs_close(inode_t *inode);
+void naivefs_init(filesystem_t *fs, const char *name, device_t *dev);
+inode_t *naivefs_lookup(filesystem_t *fs, const char *path, int flags);
+int naivefs_close(inode_t *inode);
 
 #endif
