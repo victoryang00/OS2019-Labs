@@ -212,7 +212,7 @@ FUNC(mkdir) {
   if (!get_dir(arg, pwd, dir)) {
     sprintf(ret, "Invalid directory address.\n");
   } else {
-    if (vfs->access(dir, O_WRONLY)) {
+    if (vfs->access(dir, O_RDWR | O_CREAT)) {
       sprintf(ret, "Cannot access %s.\n");
     } else {
       if (!vfs->mkdir(dir)) {
