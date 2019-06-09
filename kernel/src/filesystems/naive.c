@@ -269,7 +269,7 @@ int naive_rmdir(filesystem_t *fs, const char *path) {
 }
 
 int naive_link(filesystem_t *fs, const char *path, inode_t *inode) {
-  inode_t *pp = fs->ops->lookup(fs, path, O_RDWR);
+  inode_t *pp = inode_search(root, path);
   if (strlen(pp->path) == strlen(path)) {
     return -1;
   }
