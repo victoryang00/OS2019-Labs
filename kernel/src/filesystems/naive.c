@@ -396,7 +396,7 @@ void naivefs_init(filesystem_t *fs, const char *path, device_t *dev) {
     Log("new disk!");
     params->blk_size  = 0x00000020;
     params->map_head  = 0x00000010;
-    params->data_head = 0x00000200;
+    params->data_head = 0x00002000;
     params->min_free  = 0x00000001;
     dev->ops->write(dev, 0, params, sizeof(naivefs_params_t));
 
