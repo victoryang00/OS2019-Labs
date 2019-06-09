@@ -63,6 +63,7 @@ int32_t naivefs_add_entry(filesystem_t *fs, naivefs_entry_t *entry) {
   naivefs_params_t *params = (naivefs_params_t *)fs->root->ptr;
   int32_t last = naivefs_get_last_entry_blk(fs);
   int32_t blk = params->min_free;
+  Log("new entry is in blk %d", blk);
   ++params->min_free;
   naivefs_add_map(fs, last, blk);
   naivefs_put_entry(fs, blk, entry);
