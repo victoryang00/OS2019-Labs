@@ -103,8 +103,6 @@ int common_close(filesystem_t *fs, file_t *file) {
 }
 
 ssize_t common_read(filesystem_t *fs, file_t *file, char *buf, size_t size) {
-  Assert(file->inode->fs->dev, "fs with no device");
-  device_t *dev = file->inode->fs->dev;
   commonfs_params_t *params = (commonfs_params_t *)fs->root->ptr;
   off_t offset = file->inode->offset;
   int32_t blk = (int32_t)file->inode->ptr;
