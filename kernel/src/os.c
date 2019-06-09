@@ -30,7 +30,10 @@ static void os_init() {
   CLog(BG_GREEN, "vfs ok");
 
   extern void shell_task(void *);
-  kmt->create(pmm->alloc(sizeof(task_t)), "shell", shell_task, (void *)1);
+  kmt->create(pmm->alloc(sizeof(task_t)), "shell-1", shell_task, (void *)1);
+  kmt->create(pmm->alloc(sizeof(task_t)), "shell-2", shell_task, (void *)2);
+  kmt->create(pmm->alloc(sizeof(task_t)), "shell-3", shell_task, (void *)3);
+  kmt->create(pmm->alloc(sizeof(task_t)), "shell-4", shell_task, (void *)4);
 }
 
 static void os_run() {
