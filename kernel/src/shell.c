@@ -249,14 +249,14 @@ FUNC(rm) {
     if (vfs->access(dir, O_WRONLY)) {
       sprintf(ret, "Cannot access %s.\n");
     } else {
-      if (!vfs->unlink(dir)) {
+      if (!(int status = vfs->unlink(dir))) {
         sprintf(ret, "Successfully removed %s.\n", dir);
       } else {
-        sprintf(ret, "VFS ERROR: unlink failed.\n"
+        sprintf(ret, "VFS ERROR: unlink failed with status %d.\n"
             "Possible reasons:\n"
             " -1 file does not exist,\n"
             " -2 `rm` can only delete FILE and LINK files,\n"
-            " -3 wrong privilege for the file.\n");
+            " -3 wrong privilege for the file.\n", status);
       }
     }
   }
