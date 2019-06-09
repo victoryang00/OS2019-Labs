@@ -477,6 +477,7 @@ inode_t *naivefs_lookup(filesystem_t *fs, const char *path, int flags) {
         .type = TYPE_FILE,
         .flags = P_RD | P_WR,
       };
+      sprintf(entry.path, "%s", path + strlen(ip->path));
       ++params->min_free;
       int32_t blk = naivefs_add_entry(fs, &entry);
 
