@@ -338,9 +338,9 @@ int naive_readdir(filesystem_t *fs, inode_t *inode, char *ret) {
 
     char size[8] = "";
     if (ip->type == TYPE_FILE) {
-      sprintf(ret, "%04d", ip->size);
+      sprintf(size, "%04d", ip->size);
     } else {
-      sprintf(ret, "----");
+      sprintf(size, "----");
     }
     strcat(ret, size);
     strcat(ret, " ");
