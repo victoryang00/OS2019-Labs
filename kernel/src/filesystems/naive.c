@@ -174,6 +174,7 @@ ssize_t naive_write(filesystem_t *fs, file_t *file, const char *buf, size_t size
   
   while (offset >= params->blk_size) {
   Log("offset is %d", offset);
+  Log("blk is %d", blk);
     offset -= params->blk_size;
     blk = naivefs_get_next_blk(fs, blk);
     if (blk == 0) return 0;
