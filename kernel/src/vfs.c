@@ -61,10 +61,23 @@ void vfs_init() {
 int vfs_access(const char *path, int mode) {
   mnt_t *mp = find_mnt(path);
   Assert(mp, "Path %s not mounted!", path);
-  if (mp->fs->ops->lookup(mp->fs, path, mode) != NULL) {
-    return 0;
+  inode_t *ip = inode_search(root, path);
+  if (strlen(ip->path) == strlen(path)) {
+    if (mode & ip->flags == mode) {
+      return 0;
+    } else {
+      return -1;
+    }
   } else {
-    return 1;
+    if (mode & O_CREAT) {
+      size_t len = strlen(path);
+      for (size_t i = strlen(ip->path) + 1; i < len; ++i) {
+        if (path[i] == '/') return -3;
+      }
+      return 0;
+    } else {
+      return -2;
+    }
   }
 }
 
@@ -159,7 +172,7 @@ int vfs_open(const char *path, int flags) {
   Assert(mp, "Path %s is not mounted!", path);
   inode_t *ip = mp->fs->ops->lookup(mp->fs, path, flags);
   Assert(ip, "Inode %s is not found!", path);
-  if (!(ip->flags & flags)) return -1;
+  if (flags & ip->flags != flags) return -1;
 
   fp = pmm->alloc(sizeof(file_t));
   fp->fd = fd;
