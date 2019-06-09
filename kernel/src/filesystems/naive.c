@@ -373,12 +373,34 @@ void mount_naivefs() {
   device_t *dev = dev_lookup("ramdisk0");
   naivefs_init(&naivefs, "/", dev);
   CLog(BG_YELLOW, "/ initialized.");
+  
+  dev = dev_lookup("ramdisk1");
+  naivefs_init(&emptyfs, "/mnt", dev);
+  CLog(BG_YELLOW, "/mnt initialized.");
 }
 
 void naivefs_init(filesystem_t *fs, const char *path, device_t *dev) {
   fs->dev = dev;
   fs->root->ptr = pmm->alloc(sizeof(naivefs_params_t));
   dev->ops->read(dev, 0, fs->root->ptr, sizeof(naivefs_params_t));
+
+  naivefs_params_t *params = (naivefs_params_t *)fs->root->ptr;
+  if (params->blk_size == 0) {
+    params->blk_size  = 0x00000020;
+    params->map_head  = 0x00000010;
+    params->data_head = 0x00000200;
+    params->min_free  = 0x00000001;
+    dev->ops->write(dev, 0, params, sizeof(naivefs_params_t));
+
+    naivefs_entry_t entry = {
+      .head = 0x00000000,
+      .type = (int16_t)TYPE_MNTP,
+      .flags = (int16_t)(P_RD | P_WR),
+    };
+    sprintf(entry.path, "/");
+    naivefs_add_entry(fs, &entry);
+  }
+
   int32_t blk = 1;
   while (blk) {
     naivefs_entry_t entry = naivefs_get_entry(fs, blk);  
