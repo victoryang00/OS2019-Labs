@@ -52,7 +52,7 @@ commonfs_entry_t commonfs_get_entry(filesystem_t *fs, int32_t blk) {
   return ret;
 }
 
-void commonfs_put_entry(filesystem_t *fs, int32_t blk, entry_t *entry) {
+void commonfs_put_entry(filesystem_t *fs, int32_t blk, commonfs_entry_t *entry) {
   commonfs_params_t *params = (commonfs_params_t *)fs->root->ptr;
   off_t offset = params->data_head + blk * params->blk_size;
   fs->dev->ops->write(fs->dev, offset, (void *)entry, sizeof(commonfs_entry_t));
