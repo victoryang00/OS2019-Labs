@@ -264,10 +264,13 @@ ssize_t vfs_write(int fd, void *buf, size_t nbyte) {
   spinlock_acquire(&vfs_lock);
 
   file_t *fp = find_file_by_fd(fd);
+  Log("write-1");
   Assert(fp, "file pointer is NULL");
   int ret = fp->inode->ops->write(fp->inode->fs, fp, buf, nbyte);
+  Log("write-2");
 
   spinlock_release(&vfs_lock);
+  Log("write-3");
   return ret;
 }
 
