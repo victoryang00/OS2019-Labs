@@ -44,16 +44,6 @@ void commonfs_add_map(filesystem_t *fs, int32_t from, int32_t to) {
   *(params->map_head + from) = to;
 }
 
-void commonfs_add_entry(filesystem_t *fs, commonfs_entry_t *entry) {
-  commonfs_params_t *params = (commonfs_params_t *)fs->root->ptr;
-  int32_t last = commonfs_get_last_entry_blk(fs);
-  int32_t blk = params->min_free;
-  ++params->min_free;
-  commonfs_add_map(fs, last, blk);
-  commonfs_put_entry(fs, blk, entry);
-  commonfs_put_params(fs, params);
-}
-
 commonfs_entry_t commonfs_get_entry(filesystem_t *fs, int32_t blk) {
   commonfs_entry_t ret;
   commonfs_params_t *params = (commonfs_params_t *)fs->root->ptr;
@@ -66,6 +56,16 @@ void commonfs_put_entry(filesystem_t *fs, int32_t blk, entry_t *entry) {
   commonfs_params_t *params = (commonfs_params_t *)fs->root->ptr;
   off_t offset = params->data_head + blk * params->blk_size;
   fs->dev->ops->write(fs->dev, offset, (void *)entry, sizeof(commonfs_entry_t));
+}
+
+void commonfs_add_entry(filesystem_t *fs, commonfs_entry_t *entry) {
+  commonfs_params_t *params = (commonfs_params_t *)fs->root->ptr;
+  int32_t last = commonfs_get_last_entry_blk(fs);
+  int32_t blk = params->min_free;
+  ++params->min_free;
+  commonfs_add_map(fs, last, blk);
+  commonfs_put_entry(fs, blk, entry);
+  commonfs_put_params(fs, params);
 }
 
 size_t commonfs_get_file_size(filesystem_t *fs, commonfs_entry_t *entry) {
