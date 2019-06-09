@@ -61,17 +61,12 @@ void naivefs_put_entry(filesystem_t *fs, int32_t blk, naivefs_entry_t *entry) {
 
 void naivefs_add_entry(filesystem_t *fs, naivefs_entry_t *entry) {
   naivefs_params_t *params = (naivefs_params_t *)fs->root->ptr;
-  Log("2-1");
   int32_t last = naivefs_get_last_entry_blk(fs);
   int32_t blk = params->min_free;
   ++params->min_free;
-  Log("2-2");
   naivefs_add_map(fs, last, blk);
-  Log("2-3");
   naivefs_put_entry(fs, blk, entry);
-  Log("2-4");
   naivefs_put_params(fs, params);
-  Log("2-5");
 }
 
 size_t naivefs_get_file_size(filesystem_t *fs, naivefs_entry_t *entry) {
@@ -193,36 +188,31 @@ off_t naive_lseek(filesystem_t *fs, file_t *file, off_t offset, int whence) {
 int naive_mkdir(filesystem_t *fs, const char *path) {
   inode_t *pp = inode_search(fs->root, path);
   if (strlen(pp->path) == strlen(path)) return -1;
-  Log("1");
 
   naivefs_entry_t entry = {
     .head = 0x00000000,
     .type = TYPE_DIRC,
     .flags = P_RD | P_WR,
   };
-  Log("2");
-  snprintf(entry.path, 24, path);
+  if(strlen(path) >= 23) return -1; // naivefs limitation
+  sprintf(entry.path, path);
   naivefs_add_entry(fs, &entry);
-  Log("3");
   
   inode_t *ip = pmm->alloc(sizeof(inode_t));
   ip->refcnt = 0;
   ip->type = TYPE_DIRC;
   ip->flags = P_RD | P_WR;
   sprintf(ip->path, path);
-  Log("4");
   ip->offset = 0;
   ip->size = 4;
   ip->fs = fs;
   ip->ops = pmm->alloc(sizeof(inodeops_t));
   memcpy(ip->ops, &naive_ops, sizeof(inodeops_t));
-  Log("5");
 
   ip->parent = pp;
   ip->fchild = NULL;
   ip->cousin = NULL;
   inode_insert(pp, ip);
-  Log("6");
   return 0;
 }
 
