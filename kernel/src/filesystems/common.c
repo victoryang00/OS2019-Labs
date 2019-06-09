@@ -105,14 +105,29 @@ int common_close(filesystem_t *fs, file_t *file) {
 ssize_t common_read(filesystem_t *fs, file_t *file, char *buf, size_t size) {
   Assert(file->inode->fs->dev, "fs with no device");
   device_t *dev = file->inode->fs->dev;
-  off_t offset = (off_t)file->inode->ptr + file->inode->offset;
-  if (offset > file->inode->size) {
-    buf[0] = '\0';
-    return 0;
-  } else {
-    ssize_t ret = dev->ops->read(dev, offset, buf, size);
-    file->inode->offset += (off_t)ret;
-    return ret;
+  commonfs_params_t *params = (commonfs_params_t *)fs->root->ptr;
+  off_t offset = file->inode->offset;
+  int32_t blk = (int32_t)file->inode->ptr;
+  
+  while (offset >= params->blk_size) {
+    offset -= params->blk_size;
+    blk = commonfs_get_next_blk(fs, blk);
+    if (blk == 0) return 0;
+  }
+
+  ssize_t nread = 0;
+  while (size > 0) {
+    commonfs_entry_t entry = commonfs_get_entry(fs, blk);
+    if (params->blk_size - offset >= size) {
+      nread += snprintf(buf, entry.content + offset, size);
+      return nread;
+    } else {
+      nread += snprintf(buf, entry.content + offset, params->blk_size - offset);
+    }
+    
+    offset = 0;
+    blk = commonfs_get_next_blk(fs, blk);
+    if (blk == 0) return nread;
   }
 }
 
