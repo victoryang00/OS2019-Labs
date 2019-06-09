@@ -119,10 +119,10 @@ ssize_t common_read(filesystem_t *fs, file_t *file, char *buf, size_t size) {
   while (size > 0) {
     commonfs_entry_t entry = commonfs_get_entry(fs, blk);
     if (params->blk_size - offset >= size) {
-      nread += snprintf(buf, entry.content + offset, size);
+      nread += snprintf(buf, size, entry.content + offset);
       return nread;
     } else {
-      nread += snprintf(buf, entry.content + offset, params->blk_size - offset);
+      nread += snprintf(buf, params->blk_size - offset, entry.content + offset);
     }
     
     offset = 0;
