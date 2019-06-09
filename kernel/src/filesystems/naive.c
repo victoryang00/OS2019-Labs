@@ -32,6 +32,7 @@ int32_t naivefs_get_last_entry_blk(filesystem_t *fs) {
   while (true) {
     int32_t next = naivefs_get_next_blk(fs, blk);
     if (next == 0) return blk;
+    else blk = next;
   }
 }
 
