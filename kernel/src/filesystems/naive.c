@@ -351,11 +351,56 @@ void naivefs_init(filesystem_t *fs, const char *path, device_t *dev) {
 
 inode_t *naivefs_lookup(filesystem_t *fs, const char *path, int flags) {
   inode_t *ip = inode_search(fs->root, path);
-  return (strlen(ip->path) == strlen(path)) ? ip : NULL;
+  if (strlen(ip->path) == strlen(path)) {
+    if ((flags & ip->flags) == flags) {
+      return ip;
+    } else {
+      return NULL;
+    }
+  } else {
+    if (flags & O_CREAT) {
+      size_t len = strlen(path);
+      if (len >= 23) return -1; // naivefs limitation
+      for (size_t i = strlen(ip->path) + 1; i < len; ++i) {
+        if (path[i] == '/') return NULL;
+      }
+
+      naivefs_params_t *params = (naivefs_params_t *)fs->root->ptr;
+      naivefs_entry_t entry = {
+        .head = params->min_free,
+        .type = TYPE_HEAD,
+        .flags = P_RD | P_WR,
+      };
+      ++params->free;
+      int32_t blk = naivefs_add_entry(fs, &entry);
+
+      inode_t *pp = ip;
+      ip = pmm->alloc(sizeof(inode_t));
+      ip->refcnt = 0;
+      ip->type = TYPE_FILE;
+      ip->flags = P_RD | P_WR;
+      ip->ptr = (void *)blk;
+      sprintf(ip->path, path);
+      ip->offset = 0;
+      ip->size = 0;
+      ip->fs = 0;
+      ip->ops = pmm->alloc(sizeof(inodeops_t));
+      memcpy(ip->ops, &naive_ops, sizeof(inodeops_t));
+
+      ip->parent = pp;
+      ip->fchild = NULL;
+      ip->cousin = NULL;
+      inode_insert(pp, ip);
+      return ip;
+    } else {
+      return NULL;
+    }
+  }
 }
 
 int naivefs_close(inode_t *inode) {
-  if (inode->size <= 0) {
+  if (inode->type == TYPE_FILE && inode->size <= 0) {
+    // TODO: remove the file from disk
     inode_remove(inode->parent, inode);
   }
   return 0;

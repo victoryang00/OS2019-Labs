@@ -171,8 +171,7 @@ int vfs_open(const char *path, int flags) {
   mnt_t *mp = find_mnt(path);
   Assert(mp, "Path %s is not mounted!", path);
   inode_t *ip = mp->fs->ops->lookup(mp->fs, path, flags);
-  Assert(ip, "Inode %s is not found!", path);
-  if ((flags & ip->flags) != flags) return -1;
+  if (!ip) return -1;
 
   fp = pmm->alloc(sizeof(file_t));
   fp->fd = fd;
