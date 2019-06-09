@@ -264,7 +264,7 @@ int naive_unlink(filesystem_t *fs, const char *path) {
 
   int32_t blk = (int32_t)ip->ptr;
   naivefs_entry_t entry = naivefs_get_entry(fs, blk);
-  entry->type = TYPE_INVL;
+  entry.type = TYPE_INVL;
   naivefs_put_entry(fs, blk, &entry);
 
   inode_delete(ip);
