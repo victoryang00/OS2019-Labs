@@ -465,6 +465,7 @@ inode_t *naivefs_lookup(filesystem_t *fs, const char *path, int flags) {
     }
   } else {
     if (flags & O_CREAT) {
+      Log("not found. create a new one!");
       size_t len = strlen(path);
       if (len >= 23) return NULL; // naivefs limitation
       for (size_t i = strlen(ip->path) + 1; i < len; ++i) {
@@ -479,7 +480,9 @@ inode_t *naivefs_lookup(filesystem_t *fs, const char *path, int flags) {
       };
       sprintf(entry.path, "%s", path + strlen(ip->path));
       ++params->min_free;
+      Log("data will be in blk %d", entry.head);
       int32_t blk = naivefs_add_entry(fs, &entry);
+      Log("entry is put in blk %d", blk);
 
       inode_t *pp = ip;
       ip = pmm->alloc(sizeof(inode_t));
