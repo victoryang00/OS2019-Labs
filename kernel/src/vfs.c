@@ -148,7 +148,7 @@ int vfs_mkdir(const char *path) {
   Assert(mp, "Path %s not mounted!", path);
   int ret = mp->fs->root->ops->mkdir(mp->fs, path);
 
-  spinlock_acquire(&vfs_lock);
+  spinlock_release(&vfs_lock);
   return ret;
 }
 
