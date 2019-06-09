@@ -163,16 +163,16 @@ FUNC(cat) {
   if (!get_dir(arg, pwd, dir)) {
     sprintf(ret, "Invalid directory address.\n");
   } else {
-    if (vfs->access(dir, O_RDONLY)) {
-      sprintf(ret, "Precheck failed: cannot access %s.\n");
+    int fd = vfs->open(dir, O_RDONLY);
+    if (fd < 0) {
+      sprintf(ret, "VFS ERROR: open failed with status %d.\n"
+          "Possible reasons:\n"
+          " %d: file does not exist.\n"
+          " %d: fild has wrong privilege.\n",
+          fd, E_NOENT, E_BADPR);
     } else {
-      int fd = vfs->open(dir, O_RDONLY);
-      if (fd == -1) {
-        sprintf(ret, "VFS ERROR: open failed.\n");
-      } else {
-        vfs->read(fd, ret, 512);
-        vfs->close(fd);
-      }
+      vfs->read(fd, ret, 512);
+      vfs->close(fd);
     }
   }
 }
@@ -193,18 +193,18 @@ FUNC(write) {
   if (!get_dir(arg1, pwd, dir)) {
     sprintf(ret, "Invalid directory address.\n");
   } else {
-    if (vfs->access(dir, O_WRONLY | O_CREAT)) {
-      sprintf(ret, "Precheck failed: cannot access %s.\n");
+    int fd = vfs->open(dir, O_WRONLY | O_CREAT);
+    if (fd == -1) {
+      sprintf(ret, "VFS ERROR: open failed with status %d.\n"
+          "Possible reasons:\n"
+          " %d: file does not exist.\n"
+          " %d: fild has wrong privilege.\n",
+          fd, E_NOENT, E_BADPR);
     } else {
-      int fd = vfs->open(dir, O_WRONLY | O_CREAT);
-      if (fd == -1) {
-        sprintf(ret, "VFS ERROR: open failed.");
-      } else {
-        ssize_t nwrite = vfs->write(fd, (void *)arg2, strlen(arg2));
-        vfs->write(fd, "\n", 1);
-        vfs->close(fd);
-        sprintf(ret, "Writed %d bytes successfully.\n", nwrite);
-      }
+      ssize_t nwrite = vfs->write(fd, (void *)arg2, strlen(arg2));
+      vfs->write(fd, "\n", 1);
+      vfs->close(fd);
+      sprintf(ret, "Writed %d bytes successfully.\n", nwrite);
     }
   }
 }

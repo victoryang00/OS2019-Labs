@@ -161,7 +161,7 @@ int vfs_open(const char *path, int flags) {
   mnt_t *mp = find_mnt(path);
   Assert(mp, "Path %s is not mounted!", path);
   inode_t *ip = mp->fs->ops->lookup(mp->fs, path, flags);
-  if (!ip) return -1;
+  if (!ip) return E_NOENT;
 
   fp = pmm->alloc(sizeof(file_t));
   fp->fd = fd;
@@ -170,8 +170,13 @@ int vfs_open(const char *path, int flags) {
   fp->inode = ip;
   fp->offset = 0;
 
-  cur->fildes[fd] = fp;
-  return fd;
+  int status = naive_open(mp->fs, fp, flags);
+  if (status) {
+    return status;
+  } else {
+    cur->fildes[fd] = fp;
+    return fd;
+  }
 }
  
 ssize_t vfs_read(int fd, void *buf, size_t nbyte) {
