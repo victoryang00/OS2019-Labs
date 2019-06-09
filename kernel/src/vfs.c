@@ -165,6 +165,7 @@ int vfs_open(const char *path, int flags) {
   Assert(mp, "Path %s is not mounted!", path);
   inode_t *ip = mp->fs->ops->lookup(mp->fs, path, flags);
   if (!ip) return E_NOENT;
+  if (ip->type != TYPE_LINK && ip->type != TYPE_FILE) return E_BADTP;
 
   fp = pmm->alloc(sizeof(file_t));
   fp->fd = fd;
