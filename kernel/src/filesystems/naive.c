@@ -219,7 +219,19 @@ int naive_mkdir(filesystem_t *fs, const char *path) {
 }
 
 int naive_rmdir(filesystem_t *fs, const char *path) {
-  Panic("not ready!");
+  inode_t *ip = fs->ops->lookup(fs, path, O_RDWR);
+  if (!ip) return -1;
+  if (ip->type != TYPE_DIRC) return -2;
+  if (!(ip->flags & O_WRONLY)) return -3;
+  if (ip->fchild) return -4;
+
+  int32_t blk = (int32_t)ip->ptr;
+  naivefs_entry_t entry = naivefs_get_entry(fs, blk);
+  entry.type = TYPE_INVL;
+  naivefs_put_entry(fs, blk, &entry);
+
+  inode_delete(ip);
+  return 0;
 }
 
 int naive_link(filesystem_t *fs, const char *path, inode_t *inode) {

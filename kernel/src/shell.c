@@ -232,10 +232,16 @@ FUNC(rmdir) {
     if (vfs->access(dir, O_WRONLY)) {
       sprintf(ret, "Precheck failed: cannot access %s.\n");
     } else {
-      if (!vfs->mkdir(dir)) {
+      int status = vfs->rmdir(dir);
+      if (!status) {
         sprintf(ret, "Successfully removed folder %s.\n", dir);
       } else {
-        sprintf(ret, "VFS ERROR: rmdir failed.\n");
+        sprintf(ret, "VFS ERROR: rmdir failed with status %d.\n"
+            "Possible reasons:\n"
+            " -1: dir does not exist.\n"
+            " -2: not a directory or is a mount point.\n"
+            " -3: dir has wrong privilege.\n"
+            " -4: dir is not empty.\n", status);
       }
     }
   }
