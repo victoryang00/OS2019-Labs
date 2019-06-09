@@ -240,10 +240,11 @@ FUNC(link) {
         sprintf(ret, "VFS ERROR: link failed with status %d.\n"
             "Possible reasons:\n"
             " %d: command not supported by fs.\n"
-            " %d: target is not a file.\n"
-            " %d: target is not available.\n"
+            " %d: source is not available.\n"
+            " %d: target already exists.\n"
+            " %d: source is not a file.\n"
             " %d: filename is too long.\n",
-            status, E_BADFS, E_BADTP, E_NOENT, E_TOOLG);
+            status, E_BADFS, E_NOENT, E_ALRDY, E_BADTP, E_TOOLG);
       }
     }
   }
