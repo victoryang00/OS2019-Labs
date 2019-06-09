@@ -196,7 +196,7 @@ FUNC(write) {
     sprintf(ret, "Invalid directory address.\n");
   } else {
     int fd = vfs->open(dir, O_WRONLY | O_CREAT);
-    if (fd == -1) {
+    if (fd < 0) {
       sprintf(ret, "VFS ERROR: open failed with status %d.\n"
           "Possible reasons:\n"
           " %d: command not supported by fs.\n"
