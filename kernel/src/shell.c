@@ -249,15 +249,16 @@ FUNC(mkdir) {
   if (!get_dir(arg, pwd, dir)) {
     sprintf(ret, "Invalid directory address.\n");
   } else {
-    if (vfs->access(dir, O_RDWR | O_CREAT)) {
-      sprintf(ret, "Precheck failed: cannot access %s.\n");
+    int status = vfs->mkdir(dir);
+    if (!status) {
+      sprintf(ret, "Successfully created folder %s.\n", dir);
     } else {
-      if (!vfs->mkdir(dir)) {
-        sprintf(ret, "Successfully created folder %s.\n", dir);
-      } else {
-        sprintf(ret, "VFS ERROR: mkdir failed.\n");
-      }
-    }
+      sprintf(ret, "VFS ERROR: mkdir failed with status %d.\n"
+          "Possible reasons:\n"
+          " %d: dir already exists.\n"
+          " %d: dir name too long.\n",
+          status, E_ALRDY, E_TOOLG);
+    } 
   }
 }
 
