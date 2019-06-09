@@ -243,6 +243,7 @@ int vfs_open(const char *path, int flags) {
 }
  
 ssize_t vfs_read(int fd, void *buf, size_t nbyte) {
+  Log("read");
   spinlock_acquire(&vfs_lock);
 
   file_t *fp = find_file_by_fd(fd);
@@ -254,6 +255,7 @@ ssize_t vfs_read(int fd, void *buf, size_t nbyte) {
 }
 
 ssize_t vfs_write(int fd, void *buf, size_t nbyte) {
+  Log("write");
   spinlock_acquire(&vfs_lock);
 
   file_t *fp = find_file_by_fd(fd);
