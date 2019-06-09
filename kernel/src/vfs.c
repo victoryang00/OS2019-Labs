@@ -28,7 +28,7 @@ inline file_t *find_file_by_fd(int fd) {
 }
 
 void vfs_init() {
-  spinlock_init(&vfs_sem, "vfs-lock", 0);
+  kmt->sem_init(&vfs_sem, "vfs-lock", 0);
 
   root = pmm->alloc(sizeof(inode_t));
   root->refcnt = 0;
