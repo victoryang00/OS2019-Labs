@@ -403,6 +403,7 @@ inode_t *naivefs_lookup(filesystem_t *fs, const char *path, int flags) {
       };
       ++params->min_free;
       int32_t blk = naivefs_add_entry(fs, &entry);
+      Log("2");
 
       inode_t *pp = ip;
       ip = pmm->alloc(sizeof(inode_t));
@@ -416,11 +417,13 @@ inode_t *naivefs_lookup(filesystem_t *fs, const char *path, int flags) {
       ip->fs = 0;
       ip->ops = pmm->alloc(sizeof(inodeops_t));
       memcpy(ip->ops, &naive_ops, sizeof(inodeops_t));
+      Log("3");
 
       ip->parent = pp;
       ip->fchild = NULL;
       ip->cousin = NULL;
       inode_insert(pp, ip);
+      Log("4");
       return ip;
     } else {
       return NULL;
