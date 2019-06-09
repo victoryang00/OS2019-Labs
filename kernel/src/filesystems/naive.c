@@ -168,7 +168,35 @@ ssize_t naive_read(filesystem_t *fs, file_t *file, char *buf, size_t size) {
 }
 
 ssize_t naive_write(filesystem_t *fs, file_t *file, const char *buf, size_t size) {
-  Panic("not ready!");
+  naivefs_params_t *params = (naivefs_params_t *)fs->root->ptr;
+  off_t offset = file->inode->offset;
+  int32_t blk = (int32_t)file->inode->ptr;
+  
+  while (offset >= params->blk_size) {
+    offset -= params->blk_size;
+    blk = naivefs_get_next_blk(fs, blk);
+    if (blk == 0) return 0;
+  }
+
+  ssize_t nwrite = 0;
+  while (blk != 0 && size > 0) {
+    naivefs_entry_t entry = naivefs_get_entry(fs, blk);
+    ssize_t delta = 0;
+    if (params->blk_size - offset >= size) {
+      delta = snprintf(buf + nread, size, entry.content + offset);
+    } else {
+      delta = snprintf(buf + nread, params->blk_size - offset, entry.content + offset);
+    }
+    if (delta == 0) break;
+    size -= delta;
+    nwrite += delta;
+    
+    offset = 0;
+    naivefs_add_map(fs, blk, params->min_free);
+    blk = params->min_free;
+    ++params->min_free;
+  }
+  return nwrite;
 }
 
 off_t naive_lseek(filesystem_t *fs, file_t *file, off_t offset, int whence) {
