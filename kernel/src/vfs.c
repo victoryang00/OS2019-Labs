@@ -193,6 +193,7 @@ int vfs_open(const char *path, int flags) {
   Log("open");
   int precheck = vfs_access(path, flags);
   if (precheck) return precheck;
+  Log("open-2");
   spinlock_acquire(&vfs_lock);
 
   task_t *cur = get_current_task();
