@@ -41,6 +41,7 @@ void naivefs_put_params(filesystem_t *fs, naivefs_params_t *params) {
 }
 
 void naivefs_add_map(filesystem_t *fs, int32_t from, int32_t to) {
+  if (from == to) to = 0; // for reformatted disks (like 1 -> 1)
   naivefs_params_t *params = (naivefs_params_t *)fs->root->ptr;
   fs->dev->ops->write(fs->dev, params->map_head + from * sizeof(int32_t), (void *)(&to), sizeof(int32_t));
 }
@@ -63,7 +64,6 @@ int32_t naivefs_add_entry(filesystem_t *fs, naivefs_entry_t *entry) {
   naivefs_params_t *params = (naivefs_params_t *)fs->root->ptr;
   int32_t last = naivefs_get_last_entry_blk(fs);
   int32_t blk = params->min_free;
-  Log("new entry is in blk %d", blk);
   ++params->min_free;
   naivefs_add_map(fs, last, blk);
   naivefs_put_entry(fs, blk, entry);
