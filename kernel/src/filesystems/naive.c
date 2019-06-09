@@ -187,30 +187,36 @@ off_t naive_lseek(filesystem_t *fs, file_t *file, off_t offset, int whence) {
 int naive_mkdir(filesystem_t *fs, const char *path) {
   inode_t *pp = inode_search(fs->root, path);
   if (strlen(pp->path) == strlen(path)) return -1;
+  Log("1");
 
   naivefs_entry_t entry = {
     .head = 0x00000000,
     .type = TYPE_DIRC,
     .flags = P_RD | P_WR,
   };
+  Log("2");
   snprintf(entry.path, 24, path);
   naivefs_add_entry(fs, &entry);
+  Log("1");
   
   inode_t *ip = pmm->alloc(sizeof(inode_t));
   ip->refcnt = 0;
   ip->type = TYPE_DIRC;
   ip->flags = P_RD | P_WR;
   sprintf(ip->path, path);
+  Log("1");
   ip->offset = 0;
   ip->size = 4;
   ip->fs = fs;
   ip->ops = pmm->alloc(sizeof(inodeops_t));
   memcpy(ip->ops, &naive_ops, sizeof(inodeops_t));
+  Log("1");
 
   ip->parent = pp;
   ip->fchild = NULL;
   ip->cousin = NULL;
   inode_insert(pp, ip);
+  Log("1");
   return 0;
 }
 
