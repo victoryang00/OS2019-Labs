@@ -36,12 +36,12 @@ int32_t commonfs_get_last_entry_blk(filesystem_t *fs) {
 }
 
 void commonfs_put_params(filesystem_t *fs) {
-  fs->dev->ops->write(fs->dev, 0, (void *)fs->ptr, sizeof(commonfs_params_t));
+  fs->dev->ops->write(fs->dev, 0, (void *)fs->root->ptr, sizeof(commonfs_params_t));
 }
 
 void commonfs_add_map(filesystem_t *fs, int32_t from, int32_t to) {
   commonfs_params_t *params = (commonfs_params_t *)fs->root->ptr;
-  *(params->map_head + from) = to;
+  fs->dev->ops->write(fs->dev, params->map_head + from * sizeof(int32_t), (void *)(&to), sizeof(int32_t));
 }
 
 commonfs_entry_t commonfs_get_entry(filesystem_t *fs, int32_t blk) {
