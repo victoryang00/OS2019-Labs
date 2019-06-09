@@ -235,10 +235,11 @@ FUNC(link) {
       } else {
         sprintf(ret, "VFS ERROR: link failed with status %d.\n"
             "Possible reasons:\n"
+            " %d: command not supported by fs.\n"
             " %d: target is not a file.\n"
             " %d: target is not available.\n"
             " %d: filename is too long.\n",
-            status, E_BADTP, E_NOENT, E_TOOLG);
+            status, E_BADFS, E_BADTP, E_NOENT, E_TOOLG);
       }
     }
   }
@@ -255,9 +256,10 @@ FUNC(mkdir) {
     } else {
       sprintf(ret, "VFS ERROR: mkdir failed with status %d.\n"
           "Possible reasons:\n"
+          " %d: command not supported by fs.\n"
           " %d: dir already exists.\n"
           " %d: dir name too long.\n",
-          status, E_ALRDY, E_TOOLG);
+          status, E_BADFS, E_ALRDY, E_TOOLG);
     } 
   }
 }
@@ -273,11 +275,12 @@ FUNC(rmdir) {
     } else {
       sprintf(ret, "VFS ERROR: rmdir failed with status %d.\n"
           "Possible reasons:\n"
+          " %d: command not supported by fs.\n"
           " %d: dir does not exist.\n"
           " %d: not a directory or is a mount point.\n"
           " %d: dir has wrong privilege.\n"
           " %d: dir is not empty.\n",
-          status, E_NOENT, E_BADTP, E_BADPR, E_NOEMP);
+          status, E_BADFS, E_NOENT, E_BADTP, E_BADPR, E_NOEMP);
     } 
   }
 }
@@ -293,10 +296,11 @@ FUNC(rm) {
     } else {
        sprintf(ret, "VFS ERROR: unlink failed with status %d.\n"
           "Possible reasons:\n"
+          " %d: command not supported by fs.\n"
           " %d: file does not exist.\n"
           " %d: file has wrong type.\n"
           " %d: file has wrong privilege.\n",
-          status, E_NOENT, E_BADTP, E_BADPR);
+          status, E_BADFS, E_NOENT, E_BADTP, E_BADPR);
     }
   }
 }
