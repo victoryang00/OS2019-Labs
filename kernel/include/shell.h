@@ -22,6 +22,7 @@ FUNC(ls);
 FUNC(cd);
 FUNC(cat);
 FUNC(write);
+FUNC(link);
 FUNC(mkdir);
 FUNC(rmdir);
 FUNC(rm);

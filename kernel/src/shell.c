@@ -13,6 +13,7 @@ const cmd_t cmd_list[] = {
   { "cd",    cd    },
   { "cat",   cat   },
   { "write", write },
+  { "link",  link  },
   { "mkdir", mkdir },
   { "rmdir", rmdir },
   { "rm"   , rm    },
@@ -203,6 +204,36 @@ FUNC(write) {
         vfs->write(fd, "\n", 1);
         vfs->close(fd);
         sprintf(ret, "Writed %d bytes successfully.\n", nwrite);
+      }
+    }
+  }
+}
+
+FUNC(link) {
+  char dir1[512] = "";
+  char dir2[512] = "";
+  char arg1[512] = "";
+  const char *arg2 = arg;
+  for (size_t i = 0; *arg2 != '\0'; ++i, ++arg2) {
+    arg1[i] = *arg2;
+    if (*arg2 == ' ') {
+      arg1[i] = '\0';
+      ++arg2;
+      break;
+    }
+  }
+
+  if (!get_dir(arg1, pwd, dir1) || !get_dir(arg2, pwd, dir2)) {
+    sprintf(ret, "Invalid directory address.\n");
+  } else {
+    if (vfs->access(dir2, O_WRONLY | O_CREAT)) {
+      sprintf(ret, "Precheck failed: cannot access %s.\n");
+    } else {
+      int status = vfs->link(dir1, dir2);
+      if (!status) {
+        sprintf(ret, "Linked %s -> %s successfully.\n", dir1, dir2);
+      } else {
+        sprintf(ret, "VFS ERROR: link returned with status %d.\n", status);
       }
     }
   }
