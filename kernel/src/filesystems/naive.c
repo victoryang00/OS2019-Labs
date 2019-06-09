@@ -129,7 +129,7 @@ filesystem_t naivefs = {
 };
 
 int naive_open(filesystem_t *fs, file_t *file, int flags) {
-  if ((flags & file->inode->flags) != flags) return E_BADPR;
+  if ((flags & file->inode->flags) != (flags & ~O_CREAT)) return E_BADPR;
   file->inode->offset = 0;
   return 0;
 }
