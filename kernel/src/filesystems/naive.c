@@ -284,6 +284,8 @@ int naive_rmdir(filesystem_t *fs, const char *path) {
   naivefs_put_entry(fs, blk, &entry);
 
   inode_delete(ip);
+  pmm->free(ip->ops);
+  pmm->free(ip);
   return 0;
 }
 
@@ -333,6 +335,8 @@ int naive_unlink(filesystem_t *fs, const char *path) {
   naivefs_put_entry(fs, blk, &entry);
 
   inode_delete(ip);
+  pmm->free(ip->ops);
+  pmm->free(ip);
   return 0;
 }
 
@@ -507,6 +511,8 @@ int naivefs_close(inode_t *inode) {
     entry.type = TYPE_INVL;
     naivefs_put_entry(inode->fs, blk, &entry);
     inode_remove(inode->parent, inode);
+    pmm->free(inode->ops);
+    pmm->free(inode);
   }
   return 0;
 }
