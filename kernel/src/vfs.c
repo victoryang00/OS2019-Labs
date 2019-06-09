@@ -131,8 +131,8 @@ int vfs_rmdir(const char *path) {
 }
 
 int vfs_link(const char *oldpath, const char *newpath) {
-  mnt_t *mp = find_mnt(path);
-  Assert(mp, "Path %s not mounted!", path);
+  mnt_t *mp = find_mnt(oldpath);
+  Assert(mp, "Path %s not mounted!", oldpath);
   inode_t *old_ip = mp->fs->ops->lookup(mp->fs, oldpath, O_RDWR);
   return mp->fs->root->ops->link(mp->fs, newpath, old_ip);
 }
