@@ -97,7 +97,7 @@ int vfs_mount(const char *path, filesystem_t *fs) {
   inode_t *pp = inode_search(root, path);
   Assert(strcmp(path, pp->path), "inode %s exists!", path);
   fs->root->parent = pp;
-  inode_insert(pp, ip);
+  inode_insert(pp, fs->root);
   CLog(BG_YELLOW, "Path %s is mounted.", path);
   return 0;
 }
