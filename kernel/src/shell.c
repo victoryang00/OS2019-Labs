@@ -254,7 +254,9 @@ FUNC(rm) {
       } else {
         sprintf(ret, "VFS ERROR: unlink failed.\n"
             "Possible reasons:\n"
-            " - `rm` can only delete FILE and LINK files.\n");
+            " -1 file does not exist,\n"
+            " -2 `rm` can only delete FILE and LINK files,\n"
+            " -3 wrong privilege for the file.\n");
       }
     }
   }
