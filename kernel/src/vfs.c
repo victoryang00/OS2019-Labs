@@ -193,7 +193,6 @@ ssize_t vfs_read(int fd, void *buf, size_t nbyte) {
 ssize_t vfs_write(int fd, void *buf, size_t nbyte) {
   file_t *fp = find_file_by_fd(fd);
   Assert(fp, "file pointer is NULL");
-  Log("OK, %p, %d", buf, nbyte);
   return fp->inode->ops->write(fp->inode->fs, fp, buf, nbyte);
 }
 
