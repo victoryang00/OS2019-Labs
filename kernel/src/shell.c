@@ -208,13 +208,52 @@ FUNC(write) {
 }
 
 FUNC(mkdir) {
-  Panic("not implemented!");
+  char dir[512] = "";
+  if (!get_dir(arg, pwd, dir)) {
+    sprintf(ret, "Invalid directory address.\n");
+  } else {
+    if (vfs->access(dir, O_WRONLY)) {
+      sprintf(ret, "Cannot access %s.\n");
+    } else {
+      if (!vfs->mkdir(dir, ret)) {
+        sprintf(ret, "Successfully created folder %s.", dir);
+      } else {
+        sprintf(ret, "VFS ERROR: mkdir failed.");
+      }
+    }
+  }
 }
 
 FUNC(rmdir) {
-  Panic("not implemented!");
+  char dir[512] = "";
+  if (!get_dir(arg, pwd, dir)) {
+    sprintf(ret, "Invalid directory address.\n");
+  } else {
+    if (vfs->access(dir, O_WRONLY)) {
+      sprintf(ret, "Cannot access %s.\n");
+    } else {
+      if (!vfs->mkdir(dir, ret)) {
+        sprintf(ret, "Successfully removed folder %s.", dir);
+      } else {
+        sprintf(ret, "VFS ERROR: rmdir failed.");
+      }
+    }
+  }
 }
 
 FUNC(rm) {
-  Panic("not implemented!");
+  char dir[512] = "";
+  if (!get_dir(arg, pwd, dir)) {
+    sprintf(ret, "Invalid directory address.\n");
+  } else {
+    if (vfs->access(dir, O_WRONLY)) {
+      sprintf(ret, "Cannot access %s.\n");
+    } else {
+      if (!vfs->rm(dir, ret)) {
+        sprintf(ret, "Successfully removed %s.", dir);
+      } else {
+        sprintf(ret, "VFS ERROR: rm failed.");
+      }
+    }
+  }
 }

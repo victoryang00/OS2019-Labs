@@ -27,13 +27,45 @@ int32_t commonfs_get_next_blk(filesystem_t *fs, int32_t blk) {
   return ret;
 }
 
+int32_t commonfs_get_last_entry_blk(filesystem_t *fs) {
+  int32_t blk = 1;
+  while (true) {
+    int32_t next = commonfs_get_next_blk(fs, blk);
+    if (next == 0) return blk;
+  }
+}
+
+void commonfs_put_params(filesystem_t *fs) {
+  fs->dev->ops->write(fs->dev, 0, (void *)fs->ptr, sizeof(commonfs_params_t));
+}
+
+void commonfs_add_map(filesystem_t *fs, int32_t from, int32_t to) {
+  commonfs_params_t *params = (commonfs_params_t *)fs->root->ptr;
+  *(params->map_head + from) = to;
+}
+
+void commonfs_add_entry(filesystem_t *fs, commonfs_entry_t *entry) {
+  commonfs_params_t *params = (commonfs_params_t *)fs->root->ptr;
+  int32_t last = commonfs_get_last_entry_blk(fs);
+  int32_t blk = params->min_free;
+  ++params->min_free;
+  commonfs_add_map(fs, last, blk);
+  commonfs_put_entry(fs, blk, entry);
+  commonfs_put_params(fs, params);
+}
+
 commonfs_entry_t commonfs_get_entry(filesystem_t *fs, int32_t blk) {
   commonfs_entry_t ret;
   commonfs_params_t *params = (commonfs_params_t *)fs->root->ptr;
   off_t offset = params->data_head + blk * params->blk_size;
   fs->dev->ops->read(fs->dev, offset, (void *)(&ret), sizeof(commonfs_entry_t));
-  Log("read OK");
   return ret;
+}
+
+void commonfs_put_entry(filesystem_t *fs, int32_t blk, entry_t *entry) {
+  commonfs_params_t *params = (commonfs_params_t *)fs->root->ptr;
+  off_t offset = params->data_head + blk * params->blk_size;
+  fs->dev->ops->write(fs->dev, offset, (void *)entry, sizeof(commonfs_entry_t));
 }
 
 size_t commonfs_get_file_size(filesystem_t *fs, commonfs_entry_t *entry) {
@@ -115,7 +147,6 @@ ssize_t common_read(filesystem_t *fs, file_t *file, char *buf, size_t size) {
 
   ssize_t nread = 0;
   while (blk != 0 && size > 0) {
-    Log("blk %d", blk);
     commonfs_entry_t entry = commonfs_get_entry(fs, blk);
     ssize_t delta = 0;
     if (params->blk_size - offset >= size) {
@@ -134,13 +165,7 @@ ssize_t common_read(filesystem_t *fs, file_t *file, char *buf, size_t size) {
 }
 
 ssize_t common_write(filesystem_t *fs, file_t *file, const char *buf, size_t size) {
-  Assert(file->inode->fs->dev, "fs with no device");
-  device_t *dev = file->inode->fs->dev;
-  off_t offset = (off_t)file->inode->ptr + file->inode->offset;
-  ssize_t ret = dev->ops->write(dev, offset, buf, size);
-  file->inode->offset += (off_t)ret;
-  if (file->inode->offset > file->inode->size) file->inode->size = (size_t)file->inode->offset;
-  return ret;
+  Panic("not ready!");
 }
 
 off_t common_lseek(filesystem_t *fs, file_t *file, off_t offset, int whence) {
@@ -159,20 +184,41 @@ off_t common_lseek(filesystem_t *fs, file_t *file, off_t offset, int whence) {
   return file->inode->offset;
 }
 
-int common_mkdir(filesystem_t *fs, const char *name) {
+int common_mkdir(filesystem_t *fs, const char *path) {
+  inode_t *pp = inode_search(fs->root, path);
+  if (strlen(pp->path) == strlen(path)) return -1;
+
+  commonfs_entry_t entry = {
+    .head = 0x00000000,
+    .type = TYPE_DIRC,
+    .flags = P_RD | P_WR,
+  };
+  snprintf(entry.path, path, 24);
+  commonfs_add_entry(fs, entry);
+  
+  inode_t *ip = pmm->alloc(sizeof(inode_t));
+  ip->refcnt = 0;
+  ip->type = TYPE_DIRC;
+  ip->flags = P_RD | P_WR;
+  sprintf(ip->path, path);
+  ip->offset = 0;
+  ip->size = 4;
+  ip->fs = fs;
+  ip->ops = pmm->alloc(sizeof(inodeops_t));
+  memcpy(ip->ops, &common_ops, sizeof(inodeops_t));
+
+  ip->parent = pp;
+  ip->fchild = NULL;
+  ip->cousin = NULL;
+  inode_insert(pp, ip);
   return 0;
 }
 
-int common_rmdir(filesystem_t *fs, const char *name) {
-  inode_t *ip = inode_search(fs->root, name);
-  if (ip->type != TYPE_DIRC) {
-    return -1;
-  }
-  inode_delete(ip);
-  return 0;
+int common_rmdir(filesystem_t *fs, const char *path) {
+  Panic("not ready!");
 }
 
-int common_link(filesystem_t *fs, const char *name, inode_t *inode) {
+int common_link(filesystem_t *fs, const char *path, inode_t *inode) {
   inode_t *pp = fs->ops->lookup(fs, name, O_RDWR);
   if (strlen(pp->path) == strlen(name)) {
     return -1;
@@ -196,7 +242,7 @@ int common_link(filesystem_t *fs, const char *name, inode_t *inode) {
   return 0;
 }
 
-int common_unlink(filesystem_t *fs, const char *name) {
+int common_unlink(filesystem_t *fs, const char *path) {
   inode_t *ip = fs->ops->lookup(fs, name, O_RDWR);
   if (ip->type != TYPE_FILE || ip->type != TYPE_LINK) {
     return -1;
@@ -245,29 +291,29 @@ void commonfs_init(filesystem_t *fs, const char *path, device_t *dev) {
   int32_t blk = 1;
   while (blk) {
     commonfs_entry_t entry = commonfs_get_entry(fs, blk);  
+    if (entry.type != TYPE_INVL) {
+      inode_t *ip = pmm->alloc(sizeof(inode_t));
+      ip->refcnt = 0;
+      ip->type = (int)entry.type;
+      ip->flags = (int)entry.flags;
+      ip->ptr = (void *)(entry.head);
+      sprintf(ip->path, "%s", path);
+      if (path[strlen(path) - 1] == '/') {
+        ip->path[strlen(path) - 1] = '\0';
+      }
+      strcat(ip->path, entry.path);
+      ip->offset = 0;
+      ip->size = commonfs_get_file_size(fs, &entry);
+      ip->fs = fs;
+      ip->ops = pmm->alloc(sizeof(inodeops_t));
+      memcpy(ip->ops, &common_ops, sizeof(inodeops_t));
 
-    inode_t *ip = pmm->alloc(sizeof(inode_t));
-    ip->refcnt = 0;
-    ip->type = (int)entry.type;
-    ip->flags = (int)entry.flags;
-    ip->ptr = (void *)(entry.head);
-    sprintf(ip->path, "%s", path);
-    if (path[strlen(path) - 1] == '/') {
-      ip->path[strlen(path) - 1] = '\0';
+      inode_t *pp = inode_search(fs->root, ip->path);
+      ip->parent = pp;
+      ip->fchild = NULL;
+      ip->cousin = NULL;
+      inode_insert(pp, ip);
     }
-    strcat(ip->path, entry.path);
-    ip->offset = 0;
-    ip->size = commonfs_get_file_size(fs, &entry);
-    ip->fs = fs;
-    ip->ops = pmm->alloc(sizeof(inodeops_t));
-    memcpy(ip->ops, &common_ops, sizeof(inodeops_t));
-
-    inode_t *pp = inode_search(fs->root, ip->path);
-    ip->parent = pp;
-    ip->fchild = NULL;
-    ip->cousin = NULL;
-    inode_insert(pp, ip);
-
     blk = commonfs_get_next_blk(fs, blk);
   }
 }

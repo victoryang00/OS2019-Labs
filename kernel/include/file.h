@@ -72,10 +72,10 @@ int common_close(filesystem_t *fs, file_t *file);
 ssize_t common_read(filesystem_t *fs, file_t *file, char *buf, size_t size);
 ssize_t common_write(filesystem_t *fs, file_t *file, const char *buf, size_t size);
 off_t common_lseek(filesystem_t *fs, file_t *file, off_t offset, int whence);
-int common_mkdir(filesystem_t *fs, const char *name);
-int common_rmdir(filesystem_t *fs, const char *name);
-int common_link(filesystem_t *fs, const char *name, inode_t *inode);
-int common_unlink(filesystem_t *fs, const char *name);
+int common_mkdir(filesystem_t *fs, const char *path);
+int common_rmdir(filesystem_t *fs, const char *path);
+int common_link(filesystem_t *fs, const char *path, inode_t *inode);
+int common_unlink(filesystem_t *fs, const char *path);
 int common_readdir(filesystem_t *fs, inode_t *inode, char *ret);
 
 inode_t *inode_search(inode_t *cur, const char *path);

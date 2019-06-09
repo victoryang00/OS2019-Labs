@@ -119,19 +119,28 @@ int vfs_readdir(const char *path, void *buf) {
 }
 
 int vfs_mkdir(const char *path) {
-  return 0;
+  mnt_t *mp = find_mnt(path);
+  Assert(mp, "Path %s not mounted!", path);
+  return mp->fs->root->ops->mkdir(mp->fs, path);
 }
 
 int vfs_rmdir(const char *path) {
-  return 0;
+  mnt_t *mp = find_mnt(path);
+  Assert(mp, "Path %s not mounted!", path);
+  return mp->fs->root->ops->rmdir(mp->fs, path);
 }
 
 int vfs_link(const char *oldpath, const char *newpath) {
-  return 0;
+  mnt_t *mp = find_mnt(path);
+  Assert(mp, "Path %s not mounted!", path);
+  inode_t *old_ip = mp->fs->ops->lookup(mp->fs, oldpath, O_RDWR);
+  return mp->fs->root->ops->link(mp->fs, newpath, old_ip);
 }
 
 int vfs_unlink(const char *path) {
-  return 0;
+  mnt_t *mp = find_mnt(path);
+  Assert(mp, "Path %s not mounted!", path);
+  return mp->fs->root->ops->unlink(mp->fs, path);
 }
 
 int vfs_open(const char *path, int flags) {
