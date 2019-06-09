@@ -67,7 +67,6 @@ void vfs_init() {
 
 int vfs_access(const char *path, int mode) {
   Log("access");
-  kmt->sem_wait(&vfs_sem);
 
   mnt_t *mp = find_mnt(path);
   Assert(mp, "Path %s not mounted!", path);
@@ -91,7 +90,6 @@ int vfs_access(const char *path, int mode) {
       ret = E_NOENT;
     }
   }
-  kmt->sem_signal(&vfs_sem);
   return ret;
 }
 
