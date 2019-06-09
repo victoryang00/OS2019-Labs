@@ -467,7 +467,7 @@ inode_t *naivefs_lookup(filesystem_t *fs, const char *path, int flags) {
     if (flags & O_CREAT) {
       Log("not found. create a new one!");
       size_t len = strlen(path);
-      if (len >= 23) return NULL; // naivefs limitation
+      if (len - strlen(fs->root->path) >= 23) return NULL; // naivefs limitation
       for (size_t i = strlen(ip->path) + 1; i < len; ++i) {
         if (path[i] == '/') return NULL;
       }
