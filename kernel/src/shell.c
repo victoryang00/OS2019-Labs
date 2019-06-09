@@ -290,20 +290,16 @@ FUNC(rm) {
   if (!get_dir(arg, pwd, dir)) {
     sprintf(ret, "Invalid directory address.\n");
   } else {
-    if (vfs->access(dir, O_WRONLY)) {
-      sprintf(ret, "Precheck failed: cannot access %s.\n");
+    int status = vfs->unlink(dir);
+    if (!status) {
+      sprintf(ret, "Successfully removed %s.\n", dir);
     } else {
-      int status = vfs->unlink(dir);
-      if (!status) {
-        sprintf(ret, "Successfully removed %s.\n", dir);
-      } else {
-        sprintf(ret, "VFS ERROR: unlink failed with status %d.\n"
-            "Possible reasons:\n"
-            " %d: file does not exist.\n"
-            " %d: file has wrong type.\n"
-            " %d: file has wrong privilege.\n",
-            status, E_NOENT, E_BADTP, E_BADPR);
-      }
+       sprintf(ret, "VFS ERROR: unlink failed with status %d.\n"
+          "Possible reasons:\n"
+          " %d: file does not exist.\n"
+          " %d: file has wrong type.\n"
+          " %d: file has wrong privilege.\n",
+          status, E_NOENT, E_BADTP, E_BADPR);
     }
   }
 }
