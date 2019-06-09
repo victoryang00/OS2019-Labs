@@ -147,6 +147,9 @@ int vfs_unlink(const char *path) {
 }
 
 int vfs_open(const char *path, int flags) {
+  int precheck = vfs_access(path, flags);
+  if (precheck) return precheck;
+
   task_t *cur = get_current_task();
   int fd = -1;
   file_t *fp = NULL;

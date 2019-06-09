@@ -201,7 +201,6 @@ FUNC(write) {
           " %d: fild has wrong privilege.\n",
           fd, E_NOENT, E_BADPR);
     } else {
-      Log("opened!");
       ssize_t nwrite = vfs->write(fd, (void *)arg2, strlen(arg2));
       vfs->write(fd, "\n", 1);
       vfs->close(fd);
