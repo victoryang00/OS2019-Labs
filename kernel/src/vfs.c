@@ -5,7 +5,7 @@
 
 inode_t *root;
 mnt_t mnt_head, mnt_root;
-spinlock_t vfs_lock;
+semaphore_t vfs_sem;
 
 inline mnt_t *find_mnt(const char *path) {
   size_t max_match = 0;
@@ -28,7 +28,7 @@ inline file_t *find_file_by_fd(int fd) {
 }
 
 void vfs_init() {
-  spinlock_init(&vfs_lock, "vfs-lock");
+  spinlock_init(&vfs_sem, "vfs-lock", 0);
 
   root = pmm->alloc(sizeof(inode_t));
   root->refcnt = 0;
@@ -64,7 +64,7 @@ void vfs_init() {
 
 int vfs_access(const char *path, int mode) {
   Log("access");
-  spinlock_acquire(&vfs_lock);
+  semaphore_wait(&vfs_sem);
 
   mnt_t *mp = find_mnt(path);
   Assert(mp, "Path %s not mounted!", path);
@@ -88,13 +88,13 @@ int vfs_access(const char *path, int mode) {
       ret = E_NOENT;
     }
   }
-  spinlock_release(&vfs_lock);
+  semaphore_signal(&vfs_sem);
   return ret;
 }
 
 int vfs_mount(const char *path, filesystem_t *fs) {
   Log("mount");
-  spinlock_acquire(&vfs_lock);
+  semaphore_wait(&vfs_sem);
 
   mnt_t *mp = find_mnt(path);
   Assert(!mp || strlen(mp->path) != strlen(path), "Path %s already mounted!", path);
@@ -113,13 +113,13 @@ int vfs_mount(const char *path, filesystem_t *fs) {
   inode_insert(pp, fs->root);
   VFSCLog(BG_YELLOW, "Path %s is mounted.", path);
 
-  spinlock_release(&vfs_lock);
+  semaphore_signal(&vfs_sem);
   return 0;
 }
 
 int vfs_unmount(const char *path) {
   Log("unmount");
-  spinlock_acquire(&vfs_lock);
+  semaphore_wait(&vfs_sem);
 
   mnt_t *mp = find_mnt(path);
   Assert(mp, "Path %s not mounted!", path);
@@ -128,75 +128,75 @@ int vfs_unmount(const char *path) {
   pmm->free(mp);
   VFSCLog(BG_YELLOW, "Path %s is unmounted.", path);
 
-  spinlock_release(&vfs_lock);
+  semaphore_signal(&vfs_sem);
   return 0;
 }
 
 int vfs_readdir(const char *path, void *buf) {
   Log("readdir");
-  spinlock_acquire(&vfs_lock);
+  semaphore_wait(&vfs_sem);
 
   mnt_t *mp = find_mnt(path);
   Assert(mp, "Path %s not mounted!", path);
   inode_t *ip = mp->fs->ops->lookup(mp->fs, path, O_RDONLY);
   if (!ip) {
-    spinlock_release(&vfs_lock);
+    semaphore_signal(&vfs_sem);
     return E_NOENT;
   }
 
   VFSLog("inode has fs %s", mp->fs->name);
   int ret = ip->ops->readdir(mp->fs, ip, (char *)buf);
 
-  spinlock_release(&vfs_lock);
+  semaphore_signal(&vfs_sem);
   return ret;
 }
 
 int vfs_mkdir(const char *path) {
   Log("mkdir");
-  spinlock_acquire(&vfs_lock);
+  semaphore_wait(&vfs_sem);
 
   mnt_t *mp = find_mnt(path);
   Assert(mp, "Path %s not mounted!", path);
   int ret = mp->fs->root->ops->mkdir(mp->fs, path);
 
-  spinlock_release(&vfs_lock);
+  semaphore_signal(&vfs_sem);
   return ret;
 }
 
 int vfs_rmdir(const char *path) {
   Log("rmdir");
-  spinlock_acquire(&vfs_lock);
+  semaphore_wait(&vfs_sem);
 
   mnt_t *mp = find_mnt(path);
   Assert(mp, "Path %s not mounted!", path);
   int ret = mp->fs->root->ops->rmdir(mp->fs, path);
 
-  spinlock_release(&vfs_lock);
+  semaphore_signal(&vfs_sem);
   return ret;
 }
 
 int vfs_link(const char *oldpath, const char *newpath) {
   Log("link");
-  spinlock_acquire(&vfs_lock);
+  semaphore_wait(&vfs_sem);
 
   mnt_t *mp = find_mnt(oldpath);
   Assert(mp, "Path %s not mounted!", oldpath);
   inode_t *old_ip = mp->fs->ops->lookup(mp->fs, oldpath, O_RDWR);
   int ret = mp->fs->root->ops->link(mp->fs, newpath, old_ip);
 
-  spinlock_release(&vfs_lock);
+  semaphore_signal(&vfs_sem);
   return ret;
 }
 
 int vfs_unlink(const char *path) {
   Log("unlink");
-  spinlock_acquire(&vfs_lock);
+  semaphore_wait(&vfs_sem);
 
   mnt_t *mp = find_mnt(path);
   Assert(mp, "Path %s not mounted!", path);
   int ret = mp->fs->root->ops->unlink(mp->fs, path);
 
-  spinlock_release(&vfs_lock);
+  semaphore_signal(&vfs_sem);
   return ret;
 }
 
@@ -205,7 +205,7 @@ int vfs_open(const char *path, int flags) {
   int precheck = vfs_access(path, flags);
   if (precheck) return precheck;
   Log("open-2");
-  spinlock_acquire(&vfs_lock);
+  semaphore_wait(&vfs_sem);
 
   task_t *cur = get_current_task();
   int fd = -1;
@@ -222,11 +222,11 @@ int vfs_open(const char *path, int flags) {
   Assert(mp, "Path %s is not mounted!", path);
   inode_t *ip = mp->fs->ops->lookup(mp->fs, path, flags);
   if (!ip) {
-    spinlock_release(&vfs_lock);
+    semaphore_signal(&vfs_sem);
     return E_NOENT;
   }
   if (ip->type == TYPE_DIRC || ip->type == TYPE_MNTP) {
-    spinlock_release(&vfs_lock);
+    semaphore_signal(&vfs_sem);
     return E_BADTP;
   }
 
@@ -238,7 +238,7 @@ int vfs_open(const char *path, int flags) {
   fp->offset = 0;
 
   int status = ip->ops->open(mp->fs, fp, flags);
-  spinlock_release(&vfs_lock);
+  semaphore_signal(&vfs_sem);
   if (status) {
     return status;
   } else {
@@ -249,19 +249,19 @@ int vfs_open(const char *path, int flags) {
  
 ssize_t vfs_read(int fd, void *buf, size_t nbyte) {
   Log("read");
-  spinlock_acquire(&vfs_lock);
+  semaphore_wait(&vfs_sem);
 
   file_t *fp = find_file_by_fd(fd);
   Assert(fp, "file pointer is NULL");
   int ret = fp->inode->ops->read(fp->inode->fs, fp, buf, nbyte);
 
-  spinlock_release(&vfs_lock);
+  semaphore_signal(&vfs_sem);
   return ret;
 }
 
 ssize_t vfs_write(int fd, void *buf, size_t nbyte) {
   Log("write");
-  spinlock_acquire(&vfs_lock);
+  semaphore_wait(&vfs_sem);
 
   file_t *fp = find_file_by_fd(fd);
   Log("write-1");
@@ -269,24 +269,24 @@ ssize_t vfs_write(int fd, void *buf, size_t nbyte) {
   int ret = fp->inode->ops->write(fp->inode->fs, fp, buf, nbyte);
   Log("write-2");
 
-  spinlock_release(&vfs_lock);
+  semaphore_signal(&vfs_sem);
   Log("write-3");
   return ret;
 }
 
 off_t vfs_lseek(int fd, off_t offset, int whence) {
-  spinlock_acquire(&vfs_lock);
+  semaphore_wait(&vfs_sem);
 
   file_t *fp = find_file_by_fd(fd);
   Assert(fp, "file pointer is NULL");
   int ret = fp->inode->ops->lseek(fp->inode->fs, fp, offset, whence);
 
-  spinlock_release(&vfs_lock);
+  semaphore_signal(&vfs_sem);
   return ret;
 }
 
 int vfs_close(int fd) {
-  spinlock_acquire(&vfs_lock);
+  semaphore_wait(&vfs_sem);
 
   file_t *fp = find_file_by_fd(fd);
   Assert(fp, "file pointer is NULL");
@@ -295,7 +295,7 @@ int vfs_close(int fd) {
   task_t *cur = get_current_task();
   cur->fildes[fd] = NULL;
 
-  spinlock_release(&vfs_lock);
+  semaphore_signal(&vfs_sem);
   return ret;
 }
 
