@@ -429,8 +429,8 @@ void naivefs_init(filesystem_t *fs, const char *path, device_t *dev) {
   int32_t blk = 1;
   while (blk) {
     naivefs_entry_t entry = naivefs_get_entry(fs, blk);  
-    if (entry.type != TYPE_INVL) {
       Log("blk %d", blk);
+    if (entry.type != TYPE_INVL) {
       inode_t *ip = pmm->alloc(sizeof(inode_t));
       ip->refcnt = 0;
       ip->type = (int)entry.type;
