@@ -429,7 +429,6 @@ void naivefs_init(filesystem_t *fs, const char *path, device_t *dev) {
   int32_t blk = 1;
   while (blk) {
     naivefs_entry_t entry = naivefs_get_entry(fs, blk);  
-      Log("blk %d", blk);
     if (entry.type != TYPE_INVL) {
       inode_t *ip = pmm->alloc(sizeof(inode_t));
       ip->refcnt = 0;
@@ -437,11 +436,9 @@ void naivefs_init(filesystem_t *fs, const char *path, device_t *dev) {
       ip->flags = (int)entry.flags;
       ip->blk = entry.head;
       if (ip->type == TYPE_LINK) {
-        Log("is a link!");
         naivefs_entry_t link_entry = naivefs_get_entry(fs, ip->blk);
         inode_t *lp = inode_search(fs->root, link_entry.path);
         if (strlen(lp->path) != strlen(link_entry.path)) continue;
-        Log("link valid");
         ip->ptr = (void *)lp;
       }
       sprintf(ip->path, "%s", path);

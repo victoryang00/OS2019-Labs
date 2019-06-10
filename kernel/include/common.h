@@ -13,7 +13,7 @@
 // defined in x86-nemu.h
 #define MAX_CPU 8
 
-#define DEBUG
+//#define DEBUG
 //#define MEM_DEBUG
 //#define KMT_DEBUG
 //#define VFS_DEBUG
