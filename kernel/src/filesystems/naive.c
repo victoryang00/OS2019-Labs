@@ -437,8 +437,8 @@ void naivefs_init(filesystem_t *fs, const char *path, device_t *dev) {
       ip->blk = entry.head;
       if (ip->type == TYPE_LINK) {
         naivefs_entry_t link_entry = naivefs_get_entry(fs, ip->blk);
-        inode_t *lp = inode_search(fs->root, link_entry->path);
-        if (strlen(lp->path) != strlen(link_entry->path)) continue;
+        inode_t *lp = inode_search(fs->root, link_entry.path);
+        if (strlen(lp->path) != strlen(link_entry.path)) continue;
         ip->ptr = (void *)lp;
       }
       sprintf(ip->path, "%s", path);
