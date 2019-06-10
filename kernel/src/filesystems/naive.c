@@ -296,7 +296,7 @@ int naive_link(filesystem_t *fs, const char *path, inode_t *inode) {
   if (strlen(pp->path) == strlen(path)) return E_ALRDY;
 
   naivefs_entry_t entry = {
-    .head = 0x00000000,
+    .head = inode->blk,
     .type = TYPE_LINK,
     .flags = P_RD | P_WR,
   };
@@ -435,6 +435,12 @@ void naivefs_init(filesystem_t *fs, const char *path, device_t *dev) {
       ip->type = (int)entry.type;
       ip->flags = (int)entry.flags;
       ip->blk = entry.head;
+      if (ip->type == TYPE_LINK) {
+        naivefs_entry_t link_entry = naivefs_get_entry(fs, ip->blk);
+        inode_t *lp = inode_search(fs->root, link_entry->path);
+        if (strlen(lp->path) != strlen(link_entry->path)) continue;
+        ip->ptr = (void *)lp;
+      }
       sprintf(ip->path, "%s", path);
       if (path[strlen(path) - 1] == '/') {
         ip->path[strlen(path) - 1] = '\0';
