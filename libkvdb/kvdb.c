@@ -30,6 +30,7 @@ int kvdb_open(kvdb_t *db, const char *filename) {
   db->filename = filename;
   db->fd = open(filename, OP_TYPE, OP_PRIV);
   if (db->fd == -1) return ER_OPEN;
+  db->mutex = malloc(sizeof(pthread_mutex_t));
   pthread_mutex_init(db->mutex, NULL);
   Log("%s opened", db->filename);
 
@@ -49,9 +50,11 @@ int kvdb_open(kvdb_t *db, const char *filename) {
 }
 
 int kvdb_close(kvdb_t *db) {
-  if (db->fd == -1) return ER_ALRD;
+  if (db->fd == -1 || db->mutex == NULL) return ER_ALRD;
   if (close(db->fd)) return ER_CLOS;
   db->fd = -1;
+  free(db->mutex);
+  db->mutex = NULL;
   Log("%s closed", db->filename);
   return RT_SUCC;
 }
