@@ -1,5 +1,26 @@
 #include "kvdb.h"
 
+/**
+ * About Undefined Behaviors:
+ * 1. open twice or more
+ *    1) one fd matches exactly one mutex, so the kvdb_t 
+ *       will still block different threads/processes.
+ *    2) if the open was not successful, the program
+ *       may crush and the user is to blame.
+ * 
+ * 2. close twice or more
+ *    the program may crush, the user is to blame.
+ *
+ * 3. open/close during read/write
+ *    the user is to blame for modifying the kvdb_t
+ *    instance during the whole r/w process.
+ *
+ * 4. open a bad db file
+ *    if db file is small, it will be cleaned;
+ *    otherwise some strange data will appear,
+ *    but new data will work well.
+ */
+
 inline void find_start(int fd) {
   lseek(fd, SZ_RSVD, SEEK_SET);
 }
