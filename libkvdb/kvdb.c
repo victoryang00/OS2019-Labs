@@ -165,6 +165,7 @@ char *kvdb_get(kvdb_t *db, const char *key) {
   char *rkey = malloc(SZ_KEYS);
   char *rval = malloc(SZ_VALV);
   char *ret = calloc(1, SZ_VALV);
+  if (!buf || !rkey || !rval || !ret) return NULL;
 
   boom("get-1");
   kvdb_fsck(db);
